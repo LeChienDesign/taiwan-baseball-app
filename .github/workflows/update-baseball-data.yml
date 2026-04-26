@@ -1,0 +1,115 @@
+name: Update Baseball Data
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-baseball-data
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Export abroad seed
+        id: export_seed
+        continue-on-error: true
+        run: npm run export:abroad-seed
+
+      - name: Fetch abroad live data
+        id: fetch_abroad
+        continue-on-error: true
+        run: npm run fetch:abroad-live
+
+      - name: Fetch MLB events center data
+        id: fetch_events
+        continue-on-error: true
+        run: npm run fetch:events-mlb
+
+      - name: Verify generated files
+        id: verify_files
+        if: >
+          steps.export_seed.outcome == 'success' &&
+          steps.fetch_abroad.outcome == 'success' &&
+          steps.fetch_events.outcome == 'success'
+        run: |
+          test -f server/data/abroadPlayers.seed.json
+          test -f server/data/abroadPlayers.live.json
+          test -f server/data/eventsCenter.mlb.json
+
+      - name: Commit updated data
+        if: >
+          steps.export_seed.outcome == 'success' &&
+          steps.fetch_abroad.outcome == 'success' &&
+          steps.fetch_events.outcome == 'success' &&
+          steps.verify_files.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add server/data/abroadPlayers.seed.json
+          git add server/data/abroadPlayers.live.json
+          git add server/data/eventsCenter.mlb.json
+
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update baseball data"
+          git push
+
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "## Update Baseball Data Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| export:abroad-seed | ${{ steps.export_seed.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:abroad-live | ${{ steps.fetch_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-mlb | ${{ steps.fetch_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify files | ${{ steps.verify_files.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${{ steps.export_seed.outcome }}" != "success" ]; then
+            echo "- export:abroad-seed failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [ "${{ steps.fetch_abroad.outcome }}" != "success" ]; then
+            echo "- fetch:abroad-live failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [ "${{ steps.fetch_events.outcome }}" != "success" ]; then
+            echo "- fetch:events-mlb failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Fail job if any update step failed
+        if: >
+          steps.export_seed.outcome != 'success' ||
+          steps.fetch_abroad.outcome != 'success' ||
+          steps.fetch_events.outcome != 'success'
+        run: |
+          echo "One or more update steps failed."
+          exit 1
