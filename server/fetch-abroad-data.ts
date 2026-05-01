@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { applyMlbOfficialAbroadPatches } from './providers/mlbAbroad';
+import { applyMlbAbroadFallbackPatches } from './providers/mlbAbroadFallback';
 import { applyNpbAbroadPatches } from './providers/npbAbroad';
 import { applyKboAbroadPatches } from './providers/kboAbroad';
 
@@ -192,10 +193,14 @@ async function runProvider(
     let nextPlayers = players;
 
     if (name === 'mlb') {
-      nextPlayers = await applyMlbOfficialAbroadPatches(players, { date });
-    } else if (name === 'npb') {
+  let patched = await applyMlbOfficialAbroadPatches(players, { date });
+  patched = await applyMlbAbroadFallbackPatches(patched, { date });
+  nextPlayers = patched;
+}
+ else if (name === 'npb') {
       nextPlayers = await applyNpbAbroadPatches(players, { date });
-    } else if (name === 'kbo') {
+    } 
+else if (name === 'kbo') {
       nextPlayers = await applyKboAbroadPatches(players, { date });
     } else {
       return {

@@ -66,7 +66,29 @@ type AbroadPatchMap = Record<string, AbroadPatch>;
 
 type ApplyOptions = {
   date?: string;
+  daysBack?: number;
+  maxGames?: number;
 };
+
+const REQUEST_TIMEOUT_MS = 15000;
+const htmlCache = new Map<string, string | null>();
+
+const KBO_PLAYER_ALIASES: Record<
+  string,
+  {
+    aliases: string[];
+    type?: 'pitcher' | 'hitter';
+  }
+> = {
+  'yen-cheng-wang': {
+    aliases: ['王彥程', 'Yen-Cheng Wang', 'Wang Yen-Cheng'],
+    type: 'pitcher',
+  },
+};
+
+function normalizeText(value?: string) {
+  return String(value ?? '').trim().toLowerCase();
+}
 
 function toDateOnly(value?: string) {
   if (!value) return new Date().toISOString().slice(0, 10);
@@ -75,124 +97,81 @@ function toDateOnly(value?: string) {
   return parsed.toISOString().slice(0, 10);
 }
 
-function normalizeText(value?: string) {
-  return String(value ?? '').trim().toLowerCase();
+function addDays(dateString: string, days: number) {
+  const parsed = new Date(dateString);
+  if (Number.isNaN(parsed.getTime())) return dateString;
+  parsed.setDate(parsed.getDate() + days);
+  return parsed.toISOString().slice(0, 10);
 }
 
-function htmlDecode(value?: string) {
-  if (!value) return '';
-
-  return value
-    .replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1')
-    .replace(/&amp;/g, '&')
-    .replace(/&#38;/g, '&')
-    .replace(/&quot;/g, '"')
+function decodeHtml(input: string) {
+  return input
+    .replace(/&nbsp;/g, ' ')
     .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#x2F;/g, '/')
-    .trim();
+    .replace(/&gt;/g, '>');
 }
 
-function stripHtml(value?: string) {
-  return htmlDecode(value).replace(/<[^>]+>/g, '').trim();
+function stripHtml(html: string) {
+  return decodeHtml(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<\/div>/gi, '\n')
+      .replace(/<\/li>/gi, '\n')
+      .replace(/<\/tr>/gi, '\n')
+      .replace(/<\/h\d>/gi, '\n')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\r/g, '')
+  );
 }
 
-async function fetchText(url?: string) {
-  if (!url) return null;
+function compactWhitespace(input: string) {
+  return input.replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
+}
+
+async function fetchText(url: string): Promise<string | null> {
+  if (htmlCache.has(url)) return htmlCache.get(url) ?? null;
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     const response = await fetch(url, {
       headers: {
-        Accept: 'text/html,application/xml,text/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
       signal: controller.signal,
     });
 
     clearTimeout(timeout);
 
-    if (!response.ok) return null;
-    return await response.text();
+    if (!response.ok) {
+      htmlCache.set(url, null);
+      return null;
+    }
+
+    const text = await response.text();
+    htmlCache.set(url, text);
+    return text;
   } catch {
+    htmlCache.set(url, null);
     return null;
   }
-}
-
-function googleNewsRssUrl(query: string) {
-  return `https://news.google.com/rss/search?q=${encodeURIComponent(
-    query
-  )}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
-}
-
-function parseGoogleNewsRss(xml: string, playerId: string): AbroadNewsItem[] {
-  const items = Array.from(xml.matchAll(/<item>([\s\S]*?)<\/item>/g)).slice(0, 5);
-
-  return items.map((match, index) => {
-    const block = match[1] ?? '';
-
-    const title = stripHtml(block.match(/<title>([\s\S]*?)<\/title>/i)?.[1]) || '未命名新聞';
-    const link = htmlDecode(block.match(/<link>([\s\S]*?)<\/link>/i)?.[1]);
-    const pubDateRaw = htmlDecode(block.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1]);
-    const source = stripHtml(block.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1]) || 'Google News';
-    const description = stripHtml(block.match(/<description>([\s\S]*?)<\/description>/i)?.[1]);
-
-    const parsedDate = pubDateRaw ? new Date(pubDateRaw) : null;
-    const date =
-      parsedDate && !Number.isNaN(parsedDate.getTime())
-        ? parsedDate.toISOString().slice(0, 10)
-        : new Date().toISOString().slice(0, 10);
-
-    return {
-      id: `${playerId}-kbo-news-${index + 1}`,
-      title,
-      date,
-      tag: '相關新聞',
-      summary: description || `${title}（${source}）`,
-      url: link || undefined,
-      source,
-    };
-  });
-}
-
-function dedupeNews(items: AbroadNewsItem[]) {
-  const seen = new Set<string>();
-
-  return items.filter((item) => {
-    const key = `${item.title}|${item.date}|${item.url ?? ''}`.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function newsPriority(item: AbroadNewsItem) {
-  if (item.tag === '官網同步') return 4;
-  if (item.tag === '官方頁') return 3;
-  if (item.tag === '近期異動') return 2;
-  if (item.tag === '相關新聞') return 1;
-  return 0;
-}
-
-function sortNews(items: AbroadNewsItem[]) {
-  return [...items].sort((a, b) => {
-    const p = newsPriority(b) - newsPriority(a);
-    if (p !== 0) return p;
-
-    const aTime = Date.parse(a.date || '');
-    const bTime = Date.parse(b.date || '');
-    return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
-  });
 }
 
 function isTrackedKboPlayer(player: AbroadPlayerLike) {
   const registry = abroadRegistry[player.id];
   if (registry?.provider === 'kbo') return true;
-
   return normalizeText(player.league) === 'kbo';
+}
+
+function hasRecentGames(player: AbroadPlayerLike) {
+  return Array.isArray(player.recentGames) && player.recentGames.length > 0;
 }
 
 function buildFallbackNews(
@@ -203,183 +182,202 @@ function buildFallbackNews(
   const items: AbroadNewsItem[] = [
     {
       id: `${player.id}-kbo-sync`,
-      title: `${player.name} 韓職資料同步`,
+      title: `${player.name} 官方資料同步`,
       date: requestedDate,
       tag: '官網同步',
-      summary: `已同步 ${registry.officialTeam} 官方資料入口與球員資訊欄位。`,
+      summary: `已同步 ${registry.officialTeam} 官方頁與相關入口。`,
       url: registry.officialPlayerUrl ?? registry.officialRosterUrl ?? registry.officialOrgUrl,
-      source: 'KBO',
+      source: 'KBO / Team Site',
     },
   ];
 
   if (registry.officialPlayerUrl) {
     items.push({
-      id: `${player.id}-kbo-official-page`,
-      title: `${player.name} 官方球員頁`,
+      id: `${player.id}-kbo-player`,
+      title: `${player.name} 球員官網`,
       date: requestedDate,
       tag: '官方頁',
       summary: `開啟 ${registry.officialTeam} 官方球員頁。`,
       url: registry.officialPlayerUrl,
-      source: 'KBO',
+      source: 'KBO / Team Site',
     });
   }
 
-  if (registry.officialSearchUrl) {
+  if (registry.officialNewsUrl) {
+    items.push({
+      id: `${player.id}-kbo-news`,
+      title: `${player.name} 相關新聞`,
+      date: requestedDate,
+      tag: '新聞追蹤',
+      summary: `已建立 ${player.name} 的官方 / 球隊新聞入口。`,
+      url: registry.officialNewsUrl,
+      source: 'KBO / Team Site',
+    });
+  } else if (registry.officialSearchUrl) {
     items.push({
       id: `${player.id}-kbo-search`,
       title: `${player.name} 相關新聞`,
       date: requestedDate,
-      tag: '相關新聞',
+      tag: '新聞追蹤',
       summary: `已建立 ${player.name} 的新聞搜尋入口。`,
       url: registry.officialSearchUrl,
       source: 'Google News',
     });
   }
 
-  return items;
+  return items.sort((a, b) => {
+    const aTime = Date.parse(a.date || '');
+    const bTime = Date.parse(b.date || '');
+    return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
+  });
 }
 
-function extractKboMetaValue(html: string, label: string) {
-  const pattern = new RegExp(
-    `${label}\\s*<\\/span>[^<]*<span[^>]*class=["'][^"']*player-info__value[^"']*["'][^>]*>([\\s\\S]*?)<\\/span>`,
-    'i'
+function getAliasesForPlayer(player: AbroadPlayerLike) {
+  const configured = KBO_PLAYER_ALIASES[player.id]?.aliases ?? [];
+  const dynamic = [player.enName, player.name].filter((v): v is string => !!v && !!v.trim());
+  return Array.from(new Set([...configured, ...dynamic].map((v) => v.trim()).filter(Boolean)));
+}
+
+function getConfiguredType(player: AbroadPlayerLike) {
+  return KBO_PLAYER_ALIASES[player.id]?.type ?? player.type ?? 'pitcher';
+}
+
+function candidateUrlsFromRegistry(registry: AbroadRegistryEntry) {
+  return Array.from(
+    new Set(
+      [
+        registry.officialPlayerUrl,
+        registry.officialNewsUrl,
+        registry.officialRosterUrl,
+        registry.officialOrgUrl,
+        registry.officialSearchUrl,
+      ].filter((v): v is string => !!v && !!v.trim())
+    )
   );
-  const match = html.match(pattern);
-  return stripHtml(match?.[1]);
 }
 
-function extractOgImage(html: string) {
-  const patterns = [
-    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/i,
-    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["'][^>]*>/i,
-    /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["'][^>]*>/i,
-  ];
+function parseDateFromLine(line: string, requestedDate: string) {
+  const normalized = line.replace(/\s+/g, ' ');
 
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match?.[1]) return htmlDecode(match[1]);
+  const ymd = normalized.match(/\b(20\d{2})[./-](\d{1,2})[./-](\d{1,2})\b/);
+  if (ymd) {
+    const yyyy = ymd[1];
+    const mm = String(Number(ymd[2])).padStart(2, '0');
+    const dd = String(Number(ymd[3])).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
-  return undefined;
-}
-
-function extractNumber(html: string) {
-  const patterns = [
-    /背號[^0-9]{0,10}(\d{1,3})/i,
-    /No\.[^0-9]{0,10}(\d{1,3})/i,
-    /player-info__number[^>]*>\s*#?\s*(\d{1,3})\s*</i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match?.[1]) return match[1];
+  const md = normalized.match(/\b(\d{1,2})[./-](\d{1,2})\b/);
+  if (md) {
+    const yyyy = requestedDate.slice(0, 4);
+    const mm = String(Number(md[1])).padStart(2, '0');
+    const dd = String(Number(md[2])).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
-  return undefined;
+  return null;
 }
 
-function extractHandedness(text?: string) {
-  const v = normalizeText(text);
+function parseOpponentFromLine(line: string) {
+  const match = line.match(/vs\.?\s*([A-Za-z\u3131-\u318E\uAC00-\uD7A3 ]+)/i);
+  if (match) return compactWhitespace(match[1]);
 
-  if (!v) return undefined;
-  if (v.includes('left') || v.includes('좌') || v.includes('左')) return 'L';
-  if (v.includes('right') || v.includes('우') || v.includes('右')) return 'R';
-  if (v.includes('switch') || v.includes('양')) return 'S';
+  const versusMatch = line.match(/([A-Za-z\u3131-\u318E\uAC00-\uD7A3 ]+)\s+vs\.?\s+([A-Za-z\u3131-\u318E\uAC00-\uD7A3 ]+)/i);
+  if (versusMatch) {
+    return `${compactWhitespace(versusMatch[1])} vs ${compactWhitespace(versusMatch[2])}`;
+  }
 
-  return undefined;
+  return '—';
 }
 
-function extractPosition(text?: string) {
-  const v = normalizeText(text);
+function dedupeRecentGames(items: Array<Record<string, any>>) {
+  const seen = new Set<string>();
 
-  if (!v) return undefined;
-  if (v.includes('pitcher') || v.includes('투수') || v.includes('投手')) return 'LHP';
-  if (v.includes('outfielder') || v.includes('외야') || v.includes('外野')) return 'OF';
-  if (v.includes('infielder') || v.includes('내야') || v.includes('內野')) return 'IF';
-  if (v.includes('catcher') || v.includes('포수') || v.includes('捕手')) return 'C';
-
-  return undefined;
+  return items.filter((item) => {
+    const key = `${item.date}|${item.opponent}|${item.detail1}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
-function deriveStatus(player: AbroadPlayerLike) {
-  const level = normalizeText(player.level);
+async function buildRecentGamesFromOfficialSources(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string,
+  daysBack: number,
+  maxGames: number
+) {
+  const aliases = getAliasesForPlayer(player);
+  const configuredType = getConfiguredType(player);
+  const urls = candidateUrlsFromRegistry(registry);
 
-  if (level.includes('先發')) return player.status ?? '待命';
-  if (level.includes('一軍')) return player.status ?? '待命';
-  return player.status ?? '待命';
+  if (aliases.length === 0 || urls.length === 0) return [];
+
+  const startDate = addDays(requestedDate, -daysBack);
+  const results: Array<Record<string, any>> = [];
+
+  for (const url of urls) {
+    const html = await fetchText(url);
+    if (!html) continue;
+
+    const text = stripHtml(html);
+    const lines = text
+      .split('\n')
+      .map((line) => compactWhitespace(line))
+      .filter(Boolean);
+
+    for (const line of lines) {
+      const lower = line.toLowerCase();
+      const matched = aliases.some((alias) => lower.includes(alias.toLowerCase()));
+      if (!matched) continue;
+
+      const parsedDate = parseDateFromLine(line, requestedDate);
+      if (!parsedDate) continue;
+      if (parsedDate < startDate || parsedDate > requestedDate) continue;
+
+      const opponent = parseOpponentFromLine(line);
+
+      results.push({
+        date: parsedDate,
+        opponent,
+        result: configuredType === 'pitcher' ? '登板' : '出賽',
+        detail1: line,
+        detail2: 'KBO 官方頁 / 新聞頁',
+      });
+
+      if (results.length >= maxGames) break;
+    }
+
+    if (results.length >= maxGames) break;
+  }
+
+  return dedupeRecentGames(results)
+    .sort((a, b) => Date.parse(b.date ?? '') - Date.parse(a.date ?? ''))
+    .slice(0, maxGames)
+    .map((item) => ({
+      ...item,
+      date: item.date ? item.date : '—',
+    }));
 }
 
-async function fetchGoogleNewsItems(registry: AbroadRegistryEntry) {
-  const query =
-    registry.officialSearchQuery ||
-    registry.newsKeywords.join(' ') ||
-    `${registry.name} ${registry.officialTeam}`;
-
-  const rss = await fetchText(googleNewsRssUrl(query));
-  if (!rss) return [];
-
-  return parseGoogleNewsRss(rss, registry.id);
+function inferRecentNote(recentGames: Array<Record<string, any>>) {
+  if (recentGames.length > 0) {
+    return 'KBO 官方頁補充來源';
+  }
+  return '近 45 日尚無可用官方逐場紀錄';
 }
 
-async function buildSingleKboPatch(
+function buildBasePatch(
   player: AbroadPlayerLike,
   registry: AbroadRegistryEntry,
   requestedDate: string
-): Promise<AbroadPatch> {
-  const [playerHtml, googleNewsItems] = await Promise.all([
-    fetchText(registry.officialPlayerUrl ?? registry.officialRosterUrl),
-    fetchGoogleNewsItems(registry),
-  ]);
-
-  let officialPhotoUrl: string | undefined;
-  let number = player.number;
-  let bats = player.bats;
-  let throws = player.throws;
-  let position = player.position;
-
-  if (playerHtml) {
-    officialPhotoUrl = extractOgImage(playerHtml);
-
-    number =
-      extractNumber(playerHtml) ||
-      extractKboMetaValue(playerHtml, '背號') ||
-      extractKboMetaValue(playerHtml, 'No.') ||
-      player.number;
-
-    const batText =
-      extractKboMetaValue(playerHtml, '타석') ||
-      extractKboMetaValue(playerHtml, 'Bat') ||
-      extractKboMetaValue(playerHtml, '타/투');
-    const throwText =
-      extractKboMetaValue(playerHtml, '투구') ||
-      extractKboMetaValue(playerHtml, 'Throw') ||
-      extractKboMetaValue(playerHtml, '타/투');
-    const positionText =
-      extractKboMetaValue(playerHtml, '포지션') ||
-      extractKboMetaValue(playerHtml, 'Position');
-
-    bats = extractHandedness(batText) ?? bats;
-    throws = extractHandedness(throwText) ?? throws;
-    position = extractPosition(positionText) ?? position;
-  }
-
-  const news = sortNews(
-    dedupeNews([
-      ...buildFallbackNews(player, registry, requestedDate),
-      ...googleNewsItems,
-      ...(player.news ?? []),
-    ])
-  );
-
+): AbroadPatch {
   return {
     team: registry.officialTeam ?? player.team,
     league: 'KBO',
-    level: player.level ?? '一軍 / 先發輪值',
-    number,
-    bats,
-    throws,
-    position,
-    status: deriveStatus(player),
+    officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
+    news: buildFallbackNews(player, registry, requestedDate),
     teamMeta: {
       ...(player.teamMeta ?? {}),
       code: registry.officialTeamCode ?? player.teamMeta?.code,
@@ -388,9 +386,33 @@ async function buildSingleKboPatch(
       displayName: registry.officialTeam ?? player.teamMeta?.displayName,
       leagueGroup: 'KBO',
     },
-    officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
-    officialPhotoUrl: officialPhotoUrl ?? player.officialPhotoUrl,
-    news,
+  };
+}
+
+async function buildSingleKboPatch(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string,
+  daysBack: number,
+  maxGames: number
+): Promise<AbroadPatch> {
+  const basePatch = buildBasePatch(player, registry, requestedDate);
+
+  const recentGames = hasRecentGames(player)
+    ? player.recentGames ?? []
+    : await buildRecentGamesFromOfficialSources(
+        player,
+        registry,
+        requestedDate,
+        daysBack,
+        maxGames
+      );
+
+  return {
+    ...basePatch,
+    recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
+    recentNote: inferRecentNote(recentGames),
+    news: buildFallbackNews(player, registry, requestedDate),
   };
 }
 
@@ -399,6 +421,9 @@ export async function buildKboAbroadPatches(
   options: ApplyOptions = {}
 ): Promise<AbroadPatchMap> {
   const requestedDate = toDateOnly(options.date);
+  const daysBack = typeof options.daysBack === 'number' ? options.daysBack : 45;
+  const maxGames = typeof options.maxGames === 'number' ? options.maxGames : 5;
+
   const patches: AbroadPatchMap = {};
 
   for (const player of players) {
@@ -407,7 +432,13 @@ export async function buildKboAbroadPatches(
     const registry = abroadRegistry[player.id];
     if (!registry || registry.provider !== 'kbo') continue;
 
-    patches[player.id] = await buildSingleKboPatch(player, registry, requestedDate);
+    patches[player.id] = await buildSingleKboPatch(
+      player,
+      registry,
+      requestedDate,
+      daysBack,
+      maxGames
+    );
   }
 
   return patches;
@@ -430,8 +461,6 @@ export async function applyKboAbroadPatches(
         ...(player.teamMeta ?? {}),
         ...(patch.teamMeta ?? {}),
       },
-      nextGame: patch.nextGame ?? player.nextGame,
-      seasonStats: patch.seasonStats ?? player.seasonStats,
       recentGames: patch.recentGames ?? player.recentGames,
       news: patch.news ?? player.news,
     };

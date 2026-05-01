@@ -69,6 +69,8 @@ type ApplyOptions = {
 };
 
 const STATS_API_BASE = 'https://statsapi.mlb.com/api/v1';
+const MLB_SPORT_IDS = '1,11,12,13,14,15,16';
+const MILB_ONLY_SPORT_IDS = '11,12,13,14,15,16';
 
 function toDateOnly(value?: string) {
   if (!value) return new Date().toISOString().slice(0, 10);
@@ -93,6 +95,7 @@ function addDays(dateString: string, days: number) {
 
 function yearsOld(birthDate?: string) {
   if (!birthDate) return undefined;
+
   const birth = new Date(birthDate);
   if (Number.isNaN(birth.getTime())) return undefined;
 
@@ -128,7 +131,7 @@ function buildHeadshotUrl(personId?: number) {
 async function fetchJson<T>(url: string): Promise<T | null> {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
     const response = await fetch(url, {
       headers: {
@@ -139,10 +142,7 @@ async function fetchJson<T>(url: string): Promise<T | null> {
 
     clearTimeout(timeout);
 
-    if (!response.ok) {
-      return null;
-    }
-
+    if (!response.ok) return null;
     return (await response.json()) as T;
   } catch {
     return null;
@@ -162,6 +162,17 @@ function dedupeNews(items: AbroadNewsItem[]) {
 
 function sortNews(items: AbroadNewsItem[]) {
   return [...items].sort((a, b) => {
+    const priority = (tag?: string) => {
+      if (tag === '官網同步') return 4;
+      if (tag === '官方頁') return 3;
+      if (tag === '近期異動') return 2;
+      if (tag === '新聞追蹤') return 1;
+      return 0;
+    };
+
+    const p = priority(b.tag) - priority(a.tag);
+    if (p !== 0) return p;
+
     const aTime = Date.parse(a.date || '');
     const bTime = Date.parse(b.date || '');
     return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
@@ -176,23 +187,23 @@ function buildFallbackNews(
   const items: AbroadNewsItem[] = [
     {
       id: `${player.id}-mlb-sync`,
-      title: `${player.name} MLB 官方資料同步`,
+      title: `${player.name} 官方資料同步`,
       date: requestedDate,
       tag: '官網同步',
-      summary: `已同步 ${registry.officialTeam} 官方球員資料、球季數據與近期比賽紀錄。`,
+      summary: `已同步 ${registry.officialTeam} 官方球員資料、球季數據與近期追蹤欄位。`,
       url: registry.officialPlayerUrl ?? registry.officialRosterUrl ?? registry.officialOrgUrl,
       source: 'MLB',
     },
   ];
 
-  if (registry.officialNewsUrl) {
+  if (registry.officialPlayerUrl) {
     items.push({
-      id: `${player.id}-mlb-official-news`,
-      title: `${player.name} 官方頁面`,
+      id: `${player.id}-mlb-official-player`,
+      title: `${player.name} 官方球員頁`,
       date: requestedDate,
-      tag: '官網頁',
-      summary: `開啟 ${registry.officialTeam} 官方頁面或球員頁。`,
-      url: registry.officialNewsUrl,
+      tag: '官方頁',
+      summary: `開啟 ${registry.officialTeam} 官方球員頁。`,
+      url: registry.officialPlayerUrl,
       source: 'MLB',
     });
   }
@@ -212,20 +223,80 @@ function buildFallbackNews(
   return sortNews(dedupeNews(items));
 }
 
-function getSplitGroup(statsResponse: any, groupName: 'pitching' | 'hitting') {
-  const groups = Array.isArray(statsResponse?.stats) ? statsResponse.stats : [];
-  return groups.find(
-    (group: any) =>
-      normalizeText(group?.group?.displayName) === groupName ||
-      normalizeText(group?.group?.displayName) ===
-        (groupName === 'hitting' ? 'batting' : 'pitching') ||
-      normalizeText(group?.group?.displayName) ===
-        (groupName === 'hitting' ? 'hitting' : 'pitching')
-  );
+function getStatsBlocks(statsResponse: any) {
+  return Array.isArray(statsResponse?.stats) ? statsResponse.stats : [];
+}
+
+function hasAnySplits(statsResponse: any) {
+  const groups = getStatsBlocks(statsResponse);
+  return groups.some((group: any) => Array.isArray(group?.splits) && group.splits.length > 0);
+}
+
+function filterStatsResponseToPerson(statsResponse: any, personId: number) {
+  const groups = getStatsBlocks(statsResponse);
+
+  const filteredGroups = groups
+    .map((group: any) => {
+      const splits = Array.isArray(group?.splits)
+        ? group.splits.filter((split: any) => Number(split?.player?.id) === personId)
+        : [];
+
+      return {
+        ...group,
+        splits,
+      };
+    })
+    .filter((group: any) => Array.isArray(group?.splits) && group.splits.length > 0);
+
+  return {
+    ...(statsResponse ?? {}),
+    stats: filteredGroups,
+  };
+}
+
+async function fetchStatsFallbackFromStatsEndpoint(
+  statType: 'season' | 'gameLog',
+  personId: number,
+  season: number
+) {
+  const url =
+    `${STATS_API_BASE}/stats` +
+    `?stats=${statType}` +
+    `&group=hitting,pitching` +
+    `&personIds=${personId}` +
+    `&season=${season}` +
+    `&sportIds=${MILB_ONLY_SPORT_IDS}` +
+    `&playerPool=all`;
+
+  const raw = await fetchJson<any>(url);
+  if (!raw) return null;
+
+  return filterStatsResponseToPerson(raw, personId);
+}
+
+function getSplitGroup(
+  statsResponse: any,
+  groupName: 'pitching' | 'hitting',
+  statType?: 'season' | 'gameLog'
+) {
+  const groups = getStatsBlocks(statsResponse);
+
+  return groups.find((group: any) => {
+    const groupDisplay = normalizeText(group?.group?.displayName);
+    const typeDisplay = normalizeText(group?.type?.displayName);
+
+    const groupMatch =
+      groupDisplay === groupName ||
+      groupDisplay === (groupName === 'hitting' ? 'batting' : 'pitching');
+
+    const typeMatch = statType ? typeDisplay === normalizeText(statType) : true;
+
+    return groupMatch && typeMatch;
+  });
 }
 
 function parsePitcherSeasonStats(statsResponse: any) {
-  const group = getSplitGroup(statsResponse, 'pitching');
+  const group = getSplitGroup(statsResponse, 'pitching', 'season');
   const split = Array.isArray(group?.splits) ? group.splits[0] : undefined;
   const stat = split?.stat ?? {};
 
@@ -243,7 +314,7 @@ function parsePitcherSeasonStats(statsResponse: any) {
 }
 
 function parseHitterSeasonStats(statsResponse: any) {
-  const group = getSplitGroup(statsResponse, 'hitting');
+  const group = getSplitGroup(statsResponse, 'hitting', 'season');
   const split = Array.isArray(group?.splits) ? group.splits[0] : undefined;
   const stat = split?.stat ?? {};
 
@@ -261,8 +332,19 @@ function parseHitterSeasonStats(statsResponse: any) {
   };
 }
 
+function inferPlayerType(
+  player: AbroadPlayerLike,
+  pitcherStats?: Record<string, any>,
+  hitterStats?: Record<string, any>
+) {
+  if (player.type) return player.type;
+  if (pitcherStats) return 'pitcher';
+  if (hitterStats) return 'hitter';
+  return 'pitcher';
+}
+
 function parsePitcherGameLogs(gameLogResponse: any) {
-  const group = getSplitGroup(gameLogResponse, 'pitching');
+  const group = getSplitGroup(gameLogResponse, 'pitching', 'gameLog');
   const splits = Array.isArray(group?.splits) ? group.splits : [];
 
   return splits
@@ -271,18 +353,19 @@ function parsePitcherGameLogs(gameLogResponse: any) {
     .slice(0, 5)
     .map((split: any) => {
       const stat = split?.stat ?? {};
+
       return {
         date: toDisplayDate(split?.date),
         opponent: split?.opponent?.name ?? '—',
-        result: stat?.gamesStarted ? '先發' : '登板',
+        result: Number(stat?.gamesStarted ?? 0) > 0 ? '先發' : '登板',
         detail1: `${stat?.inningsPitched ?? '—'}局 / ${stat?.earnedRuns ?? 0}ER / ${stat?.strikeOuts ?? 0}K / ${stat?.baseOnBalls ?? 0}BB`,
-        detail2: `H ${stat?.hits ?? 0} / 用球 ${stat?.pitchesThrown ?? '—'}`,
+        detail2: `H ${stat?.hits ?? 0} / 用球 ${stat?.numberOfPitches ?? stat?.pitchesThrown ?? '—'}`,
       };
     });
 }
 
 function parseHitterGameLogs(gameLogResponse: any) {
-  const group = getSplitGroup(gameLogResponse, 'hitting');
+  const group = getSplitGroup(gameLogResponse, 'hitting', 'gameLog');
   const splits = Array.isArray(group?.splits) ? group.splits : [];
 
   return splits
@@ -291,10 +374,11 @@ function parseHitterGameLogs(gameLogResponse: any) {
     .slice(0, 5)
     .map((split: any) => {
       const stat = split?.stat ?? {};
+
       return {
         date: toDisplayDate(split?.date),
         opponent: split?.opponent?.name ?? '—',
-        result: split?.isHome ? '主場' : '客場',
+        result: Number(stat?.gamesPlayed ?? 0) > 0 ? '出賽' : '待命',
         detail1: `${stat?.atBats ?? 0}AB / ${stat?.hits ?? 0}H / ${stat?.rbi ?? 0}RBI`,
         detail2: `HR ${stat?.homeRuns ?? 0} / BB ${stat?.baseOnBalls ?? 0} / SO ${stat?.strikeOuts ?? 0}`,
       };
@@ -313,6 +397,11 @@ function parseTransactions(transactionsResponse: any) {
         Date.parse(b?.transactionDate ?? b?.date ?? '') -
         Date.parse(a?.transactionDate ?? a?.date ?? '')
     );
+}
+
+function flattenScheduleDates(scheduleResponse: any) {
+  const dates = Array.isArray(scheduleResponse?.dates) ? scheduleResponse.dates : [];
+  return dates.flatMap((date: any) => (Array.isArray(date?.games) ? date.games : []));
 }
 
 function deriveStatusFromData(input: {
@@ -355,18 +444,11 @@ function deriveStatusFromData(input: {
     }
 
     const detailedState = String(todayGame?.status?.detailedState ?? '');
-    if (detailedState.includes('Final')) {
-      return '已完賽';
-    }
-
+    if (detailedState.includes('Final')) return '已完賽';
     return '今日出賽';
   }
 
-  const nextGame = upcomingSchedule.find((game) => {
-    const gameDate = String(game?.gameDate ?? '').slice(0, 10);
-    return !!gameDate;
-  });
-
+  const nextGame = upcomingSchedule[0];
   if (nextGame) {
     const probableHome = nextGame?.teams?.home?.probablePitcher?.id;
     const probableAway = nextGame?.teams?.away?.probablePitcher?.id;
@@ -378,9 +460,8 @@ function deriveStatusFromData(input: {
   return player.status ?? '待命';
 }
 
-function buildNextGame(todaySchedule: any[], upcomingSchedule: any[], personId?: number) {
-  const allGames = [...todaySchedule, ...upcomingSchedule];
-  const game = allGames.find(Boolean);
+function buildNextGame(games: any[], personId?: number) {
+  const game = games.find(Boolean);
   if (!game) return undefined;
 
   const home = game?.teams?.home?.team?.name ?? '—';
@@ -405,34 +486,55 @@ async function fetchPersonData(personId: number) {
   return fetchJson<any>(`${STATS_API_BASE}/people/${personId}`);
 }
 
-async function fetchSeasonStats(personId: number, season: number) {
-  return fetchJson<any>(
+async function fetchSeasonStats(personId: number, season: number, league?: string) {
+  const fromPeople = await fetchJson<any>(
     `${STATS_API_BASE}/people/${personId}/stats?stats=season&group=hitting,pitching&season=${season}`
   );
+
+  if (hasAnySplits(fromPeople)) {
+    return fromPeople;
+  }
+
+  if (league === 'MiLB') {
+    const fromStatsFallback = await fetchStatsFallbackFromStatsEndpoint('season', personId, season);
+    if (hasAnySplits(fromStatsFallback)) {
+      return fromStatsFallback;
+    }
+  }
+
+  return fromPeople;
 }
 
-async function fetchGameLogs(personId: number, season: number) {
-  return fetchJson<any>(
+async function fetchGameLogs(personId: number, season: number, league?: string) {
+  const fromPeople = await fetchJson<any>(
     `${STATS_API_BASE}/people/${personId}/stats?stats=gameLog&group=hitting,pitching&season=${season}`
   );
+
+  if (hasAnySplits(fromPeople)) {
+    return fromPeople;
+  }
+
+  if (league === 'MiLB') {
+    const fromStatsFallback = await fetchStatsFallbackFromStatsEndpoint('gameLog', personId, season);
+    if (hasAnySplits(fromStatsFallback)) {
+      return fromStatsFallback;
+    }
+  }
+
+  return fromPeople;
 }
 
 async function fetchTransactions(personId: number, requestedDate: string) {
   const startDate = addDays(requestedDate, -60);
   return fetchJson<any>(
-    `${STATS_API_BASE}/transactions?playerId=${personId}&startDate=${startDate}&endDate=${requestedDate}&sportId=1`
+    `${STATS_API_BASE}/transactions?playerId=${personId}&startDate=${startDate}&endDate=${requestedDate}&sportId=${MLB_SPORT_IDS}`
   );
 }
 
 async function fetchSchedule(teamId: number, startDate: string, endDate: string) {
   return fetchJson<any>(
-    `${STATS_API_BASE}/schedule?sportId=1&teamId=${teamId}&startDate=${startDate}&endDate=${endDate}`
+    `${STATS_API_BASE}/schedule?sportId=${MLB_SPORT_IDS}&teamId=${teamId}&startDate=${startDate}&endDate=${endDate}&hydrate=team,probablePitcher`
   );
-}
-
-function flattenScheduleDates(scheduleResponse: any) {
-  const dates = Array.isArray(scheduleResponse?.dates) ? scheduleResponse.dates : [];
-  return dates.flatMap((date: any) => (Array.isArray(date?.games) ? date.games : []));
 }
 
 async function buildSingleMlbPatch(
@@ -461,8 +563,8 @@ async function buildSingleMlbPatch(
   const [personResponse, seasonStatsResponse, gameLogResponse, transactionsResponse] =
     await Promise.all([
       fetchPersonData(personId),
-      fetchSeasonStats(personId, season),
-      fetchGameLogs(personId, season),
+      fetchSeasonStats(personId, season, registry.league),
+      fetchGameLogs(personId, season, registry.league),
       fetchTransactions(personId, requestedDate),
     ]);
 
@@ -486,11 +588,13 @@ async function buildSingleMlbPatch(
 
   const pitcherSeason = parsePitcherSeasonStats(seasonStatsResponse);
   const hitterSeason = parseHitterSeasonStats(seasonStatsResponse);
+  const inferredType = inferPlayerType(player, pitcherSeason, hitterSeason);
+
   const recentPitchingGames = parsePitcherGameLogs(gameLogResponse);
   const recentHittingGames = parseHitterGameLogs(gameLogResponse);
 
   const recentGames =
-    player.type === 'hitter'
+    inferredType === 'hitter'
       ? recentHittingGames.length
         ? recentHittingGames
         : player.recentGames ?? []
@@ -498,7 +602,9 @@ async function buildSingleMlbPatch(
       ? recentPitchingGames
       : player.recentGames ?? [];
 
-  const nextGame = buildNextGame(todaySchedule, upcomingSchedule, personId);
+  const allUpcomingGames = [...todaySchedule, ...upcomingSchedule].filter(Boolean);
+  const nextGame = buildNextGame(allUpcomingGames, personId);
+
   const status = deriveStatusFromData({
     player,
     personId,
@@ -509,11 +615,15 @@ async function buildSingleMlbPatch(
 
   const news = buildFallbackNews(player, registry, requestedDate);
 
+  const officialPosition =
+    person?.primaryPosition?.abbreviation ??
+    person?.primaryPosition?.name ??
+    player.position;
+
   return {
-    team: person?.currentTeam?.name ?? player.team,
-    position:
-      person?.primaryPosition?.abbreviation ??
-      player.position,
+    team: person?.currentTeam?.name ?? registry.officialTeam ?? player.team,
+    league: registry.league,
+    position: officialPosition,
     bats: person?.batSide?.code ?? player.bats,
     throws: person?.pitchHand?.code ?? player.throws,
     age: yearsOld(person?.birthDate) ?? player.age,
@@ -529,16 +639,23 @@ async function buildSingleMlbPatch(
     news,
     teamMeta: {
       ...(player.teamMeta ?? {}),
+      id: person?.currentTeam?.id ?? player.teamMeta?.id,
       code: registry.officialTeamCode ?? person?.currentTeam?.abbreviation ?? player.teamMeta?.code,
       abbreviation:
-        registry.officialTeamCode ?? person?.currentTeam?.abbreviation ?? player.teamMeta?.abbreviation,
+        registry.officialTeamCode ??
+        person?.currentTeam?.abbreviation ??
+        player.teamMeta?.abbreviation,
       logoKey: registry.teamLogoKey ?? player.teamMeta?.logoKey,
-      displayName: registry.officialTeam ?? person?.currentTeam?.name ?? player.teamMeta?.displayName,
+      displayName:
+        registry.officialTeam ??
+        person?.currentTeam?.name ??
+        player.teamMeta?.displayName,
       leagueGroup: registry.league === 'MLB' ? 'MLB' : 'MiLB',
     },
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
     officialPhotoUrl: buildHeadshotUrl(personId) ?? player.officialPhotoUrl,
     officialPersonId: personId,
+    type: inferredType,
   };
 }
 
