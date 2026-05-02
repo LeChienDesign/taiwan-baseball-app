@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-02T20:54:43.182Z",
+  "updatedAt": "2026-05-02T21:55:02.059Z",
   "date": "2026-05-02",
   "games": [
     {
@@ -81,7 +81,7 @@
       "date": "2026-05-02",
       "gamePk": 823715,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Target Field",
       "awayTeam": {
         "id": 141,
@@ -142,7 +142,7 @@
         "h": 7,
         "e": 1
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "Bottom9局",
       "gameDate": "2026-05-02T18:10:00Z"
     },
@@ -239,13 +239,16 @@
         "abbreviation": "ATH",
         "logoKey": "ATH"
       },
-      "awayScore": 1,
-      "homeScore": 2,
+      "awayScore": 6,
+      "homeScore": 5,
       "innings": [
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "CLE",
@@ -253,10 +256,13 @@
           0,
           0,
           1,
-          0
+          0,
+          4,
+          1,
+          "-"
         ],
-        "r": 1,
-        "h": 3,
+        "r": 6,
+        "h": 8,
         "e": 0
       },
       "homeLine": {
@@ -265,14 +271,17 @@
           2,
           0,
           0,
+          1,
+          1,
+          1,
           "-"
         ],
-        "r": 2,
-        "h": 4,
+        "r": 5,
+        "h": 10,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Middle4局",
+      "footerRight": "Top7局",
       "gameDate": "2026-05-02T20:05:00Z"
     },
     {
@@ -297,16 +306,20 @@
         "logoKey": "PIT"
       },
       "awayScore": 3,
-      "homeScore": 5,
+      "homeScore": 15,
       "innings": [
         1,
-        2
+        2,
+        3,
+        4
       ],
       "awayLine": {
         "team": "CIN",
         "innings": [
           2,
-          1
+          1,
+          0,
+          0
         ],
         "r": 3,
         "h": 5,
@@ -316,14 +329,16 @@
         "team": "PIT",
         "innings": [
           5,
-          "-"
+          5,
+          0,
+          5
         ],
-        "r": 5,
-        "h": 5,
+        "r": 15,
+        "h": 13,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Bottom2局",
+      "footerRight": "End4局",
       "gameDate": "2026-05-02T20:05:00Z"
     },
     {
@@ -348,12 +363,15 @@
         "logoKey": "WSH"
       },
       "awayScore": 3,
-      "homeScore": 0,
+      "homeScore": 1,
       "innings": [
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "MIL",
@@ -361,10 +379,13 @@
           3,
           0,
           0,
-          "-"
+          0,
+          0,
+          0,
+          0
         ],
         "r": 3,
-        "h": 2,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
@@ -373,14 +394,17 @@
           0,
           0,
           0,
+          1,
+          0,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 2,
-        "e": 1
+        "r": 1,
+        "h": 8,
+        "e": 2
       },
       "footerLeft": "In Progress",
-      "footerRight": "Top4局",
+      "footerRight": "Bottom7局",
       "gameDate": "2026-05-02T20:05:00Z"
     },
     {
@@ -404,22 +428,28 @@
         "abbreviation": "BOS",
         "logoKey": "BOS"
       },
-      "awayScore": 1,
-      "homeScore": 0,
+      "awayScore": 6,
+      "homeScore": 1,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6
       ],
       "awayLine": {
         "team": "HOU",
         "innings": [
           1,
           0,
-          0
+          0,
+          4,
+          1,
+          "-"
         ],
-        "r": 1,
-        "h": 1,
+        "r": 6,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
@@ -427,14 +457,17 @@
         "innings": [
           0,
           0,
+          0,
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 2,
+        "r": 1,
+        "h": 5,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Bottom3局",
+      "footerRight": "Top6局",
       "gameDate": "2026-05-02T20:10:00Z"
     },
     {
@@ -459,18 +492,26 @@
         "logoKey": "MIA"
       },
       "awayScore": 0,
-      "homeScore": 0,
+      "homeScore": 4,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "PHI",
         "innings": [
           0,
           0,
-          0
+          0,
+          0,
+          0,
+          0,
+          "-"
         ],
         "r": 0,
         "h": 1,
@@ -481,14 +522,18 @@
         "innings": [
           0,
           0,
+          2,
+          0,
+          1,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 6,
+        "r": 4,
+        "h": 9,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Bottom3局",
+      "footerRight": "Top7局",
       "gameDate": "2026-05-02T20:10:00Z"
     },
     {
@@ -497,8 +542,8 @@
       "league": "MLB",
       "date": "2026-05-02",
       "gamePk": 822988,
-      "status": "SCHEDULED",
-      "statusText": "Pre-Game",
+      "status": "LIVE",
+      "statusText": "Warmup",
       "venue": "Tropicana Field",
       "awayTeam": {
         "id": 137,
@@ -535,7 +580,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "Top1局",
       "gameDate": "2026-05-02T22:10:00Z"
     },
@@ -738,7 +783,7 @@
       "date": "2026-05-02",
       "gamePk": 824042,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 121,
@@ -799,7 +844,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "09:38",
       "gameDate": "2026-05-03T01:38:00Z"
     },
@@ -957,7 +1002,7 @@
         "date": "2026-05-02",
         "gamePk": 823715,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Target Field",
         "awayTeam": {
           "id": 141,
@@ -1018,7 +1063,7 @@
           "h": 7,
           "e": 1
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "Bottom9局",
         "gameDate": "2026-05-02T18:10:00Z"
       },
@@ -1115,13 +1160,16 @@
           "abbreviation": "ATH",
           "logoKey": "ATH"
         },
-        "awayScore": 1,
-        "homeScore": 2,
+        "awayScore": 6,
+        "homeScore": 5,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "CLE",
@@ -1129,10 +1177,13 @@
             0,
             0,
             1,
-            0
+            0,
+            4,
+            1,
+            "-"
           ],
-          "r": 1,
-          "h": 3,
+          "r": 6,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
@@ -1141,14 +1192,17 @@
             2,
             0,
             0,
+            1,
+            1,
+            1,
             "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 5,
+          "h": 10,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Middle4局",
+        "footerRight": "Top7局",
         "gameDate": "2026-05-02T20:05:00Z"
       },
       {
@@ -1173,16 +1227,20 @@
           "logoKey": "PIT"
         },
         "awayScore": 3,
-        "homeScore": 5,
+        "homeScore": 15,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
             2,
-            1
+            1,
+            0,
+            0
           ],
           "r": 3,
           "h": 5,
@@ -1192,14 +1250,16 @@
           "team": "PIT",
           "innings": [
             5,
-            "-"
+            5,
+            0,
+            5
           ],
-          "r": 5,
-          "h": 5,
+          "r": 15,
+          "h": 13,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Bottom2局",
+        "footerRight": "End4局",
         "gameDate": "2026-05-02T20:05:00Z"
       },
       {
@@ -1224,12 +1284,15 @@
           "logoKey": "WSH"
         },
         "awayScore": 3,
-        "homeScore": 0,
+        "homeScore": 1,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "MIL",
@@ -1237,10 +1300,13 @@
             3,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 3,
-          "h": 2,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -1249,14 +1315,17 @@
             0,
             0,
             0,
+            1,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 2,
-          "e": 1
+          "r": 1,
+          "h": 8,
+          "e": 2
         },
         "footerLeft": "In Progress",
-        "footerRight": "Top4局",
+        "footerRight": "Bottom7局",
         "gameDate": "2026-05-02T20:05:00Z"
       },
       {
@@ -1280,22 +1349,28 @@
           "abbreviation": "BOS",
           "logoKey": "BOS"
         },
-        "awayScore": 1,
-        "homeScore": 0,
+        "awayScore": 6,
+        "homeScore": 1,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "HOU",
           "innings": [
             1,
             0,
-            0
+            0,
+            4,
+            1,
+            "-"
           ],
-          "r": 1,
-          "h": 1,
+          "r": 6,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -1303,14 +1378,17 @@
           "innings": [
             0,
             0,
+            0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 2,
+          "r": 1,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Bottom3局",
+        "footerRight": "Top6局",
         "gameDate": "2026-05-02T20:10:00Z"
       },
       {
@@ -1335,18 +1413,26 @@
           "logoKey": "MIA"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 4,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "PHI",
           "innings": [
             0,
             0,
-            0
+            0,
+            0,
+            0,
+            0,
+            "-"
           ],
           "r": 0,
           "h": 1,
@@ -1357,14 +1443,18 @@
           "innings": [
             0,
             0,
+            2,
+            0,
+            1,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 6,
+          "r": 4,
+          "h": 9,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Bottom3局",
+        "footerRight": "Top7局",
         "gameDate": "2026-05-02T20:10:00Z"
       },
       {
@@ -1373,8 +1463,8 @@
         "league": "MLB",
         "date": "2026-05-02",
         "gamePk": 822988,
-        "status": "SCHEDULED",
-        "statusText": "Pre-Game",
+        "status": "LIVE",
+        "statusText": "Warmup",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 137,
@@ -1411,7 +1501,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "Top1局",
         "gameDate": "2026-05-02T22:10:00Z"
       },
@@ -1614,7 +1704,7 @@
         "date": "2026-05-02",
         "gamePk": 824042,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 121,
@@ -1675,7 +1765,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "09:38",
         "gameDate": "2026-05-03T01:38:00Z"
       },
