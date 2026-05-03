@@ -1,40 +1,19 @@
 {
-  "updatedAt": "2026-05-01T03:12:49.179Z",
-  "requestedDate": "2026-05-01",
+  "updatedAt": "2026-05-03T02:25:10.817Z",
   "summary": {
-    "totalPlayers": 31,
-    "mlb": 1,
-    "milb": 21,
+    "total": 31,
+    "mlb": 2,
+    "milb": 20,
     "npb": 8,
     "kbo": 1,
     "other": 0,
     "todayGames": 0,
     "finals": 0,
     "probableStarters": 0,
-    "injured": 6,
+    "injured": 4,
     "withNews": 31,
-    "withRecentGames": 15
+    "withRecentGames": 17
   },
-  "providers": [
-    {
-      "name": "mlb",
-      "ok": true,
-      "message": "MLB provider applied",
-      "affectedPlayers": 22
-    },
-    {
-      "name": "npb",
-      "ok": true,
-      "message": "NPB provider applied",
-      "affectedPlayers": 8
-    },
-    {
-      "name": "kbo",
-      "ok": true,
-      "message": "KBO provider applied",
-      "affectedPlayers": 1
-    }
-  ],
   "players": [
     {
       "id": "kai-wei-teng",
@@ -66,16 +45,23 @@
       },
       "seasonStats": {
         "pitcher": {
-          "era": "2.75",
-          "whip": "1.02",
-          "ip": "19.2",
-          "so": 18,
-          "bb": 6,
+          "era": "2.57",
+          "whip": "1.00",
+          "ip": "21.0",
+          "so": 20,
+          "bb": 7,
           "wins": 1,
           "saves": 0
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-02",
+          "opponent": "Boston Red Sox",
+          "result": "登板",
+          "detail1": "1.1局 / 0ER / 2K / 1BB",
+          "detail2": "H 0 / 用球 23"
+        },
         {
           "date": "2026-04-28",
           "opponent": "Baltimore Orioles",
@@ -103,20 +89,13 @@
           "result": "登板",
           "detail1": "2.0局 / 0ER / 3K / 1BB",
           "detail2": "H 1 / 用球 35"
-        },
-        {
-          "date": "2026-04-16",
-          "opponent": "Colorado Rockies",
-          "result": "登板",
-          "detail1": "2.0局 / 0ER / 0K / 0BB",
-          "detail2": "H 1 / 用球 21"
         }
       ],
       "news": [
         {
           "id": "kai-wei-teng-mlb-sync",
           "title": "鄧愷威 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Houston Astros 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/kai-wei-teng-678906",
@@ -125,16 +104,32 @@
         {
           "id": "kai-wei-teng-mlb-official-player",
           "title": "鄧愷威 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Houston Astros 官方球員頁。",
           "url": "https://www.mlb.com/player/kai-wei-teng-678906",
           "source": "MLB"
         },
         {
+          "id": "kai-wei-teng-mlb-transaction-0",
+          "title": "鄧愷威 近期異動",
+          "date": "2026-04-16",
+          "tag": "近期異動",
+          "summary": "RHP Kai-Wei Teng changed number to 17.",
+          "source": "MLB Transactions"
+        },
+        {
+          "id": "kai-wei-teng-mlb-transaction-1",
+          "title": "鄧愷威 近期異動",
+          "date": "2026-04-15",
+          "tag": "近期異動",
+          "summary": "RHP Kai-Wei Teng changed number to 42.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "kai-wei-teng-mlb-search",
           "title": "鄧愷威 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 鄧愷威 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Kai-Wei%20Teng",
@@ -188,6 +183,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-01",
+          "opponent": "Rochester Red Wings",
+          "result": "出賽",
+          "detail1": "5AB / 1H / 0RBI",
+          "detail2": "HR 0 / BB 0 / SO 2"
+        },
+        {
           "date": "2026-04-30",
           "opponent": "Rochester Red Wings",
           "result": "出賽",
@@ -214,20 +216,13 @@
           "result": "出賽",
           "detail1": "2AB / 1H / 0RBI",
           "detail2": "HR 0 / BB 3 / SO 0"
-        },
-        {
-          "date": "2026-04-24",
-          "opponent": "Syracuse Mets",
-          "result": "出賽",
-          "detail1": "2AB / 0H / 0RBI",
-          "detail2": "HR 0 / BB 1 / SO 0"
         }
       ],
       "news": [
         {
           "id": "tsung-che-cheng-mlb-sync",
           "title": "鄭宗哲 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Boston Red Sox 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/tsung-che-cheng-691907",
@@ -236,16 +231,24 @@
         {
           "id": "tsung-che-cheng-mlb-official-player",
           "title": "鄭宗哲 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Boston Red Sox 官方球員頁。",
           "url": "https://www.mlb.com/player/tsung-che-cheng-691907",
           "source": "MLB"
         },
         {
+          "id": "tsung-che-cheng-mlb-transaction-0",
+          "title": "鄭宗哲 近期異動",
+          "date": "2026-03-19",
+          "tag": "近期異動",
+          "summary": "Boston Red Sox optioned SS Tsung-Che Cheng to Worcester Red Sox.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "tsung-che-cheng-mlb-search",
           "title": "鄭宗哲 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 鄭宗哲 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Tsung-Che%20Cheng",
@@ -300,7 +303,7 @@
         {
           "id": "liu-chih-jung-mlb-sync",
           "title": "劉致榮 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Boston Red Sox 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chih-jung-liu-692617",
@@ -309,16 +312,24 @@
         {
           "id": "liu-chih-jung-mlb-official-player",
           "title": "劉致榮 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Boston Red Sox 官方球員頁。",
           "url": "https://www.mlb.com/player/chih-jung-liu-692617",
           "source": "MLB"
         },
         {
+          "id": "liu-chih-jung-mlb-transaction-0",
+          "title": "劉致榮 近期異動",
+          "date": "2026-03-17",
+          "tag": "近期異動",
+          "summary": "Portland Sea Dogs placed RHP Chih-Jung Liu on the 60-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "liu-chih-jung-mlb-search",
           "title": "劉致榮 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 劉致榮 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chih-Jung%20Liu",
@@ -410,7 +421,7 @@
         {
           "id": "chen-po-yu-mlb-sync",
           "title": "陳柏毓 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Pittsburgh Pirates 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/po-yu-chen-696040",
@@ -419,16 +430,24 @@
         {
           "id": "chen-po-yu-mlb-official-player",
           "title": "陳柏毓 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Pittsburgh Pirates 官方球員頁。",
           "url": "https://www.mlb.com/player/po-yu-chen-696040",
           "source": "MLB"
         },
         {
+          "id": "chen-po-yu-mlb-transaction-0",
+          "title": "陳柏毓 近期異動",
+          "date": "2026-03-27",
+          "tag": "近期異動",
+          "summary": "RHP Po-Yu Chen assigned to Altoona Curve from Indianapolis Indians.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "chen-po-yu-mlb-search",
           "title": "陳柏毓 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 陳柏毓 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Po-Yu%20Chen",
@@ -445,14 +464,14 @@
       "name": "李灝宇",
       "enName": "Hao-Yu Lee",
       "team": "Detroit Tigers",
-      "league": "MiLB",
-      "level": "AAA",
+      "league": "MLB",
+      "level": "MLB",
       "position": "3B",
       "bats": "R",
       "throws": "R",
       "age": 23,
       "number": "50",
-      "status": "傷兵",
+      "status": "待命",
       "teamColor": "#0c2340",
       "trending": true,
       "line1": "老虎體系重點內野手",
@@ -466,21 +485,35 @@
         "abbreviation": "DET",
         "logoKey": "tigers",
         "displayName": "Detroit Tigers",
-        "leagueGroup": "MiLB"
+        "leagueGroup": "MLB"
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".208",
-          "obp": ".296",
-          "slg": ".417",
-          "ops": ".713",
+          "avg": ".200",
+          "obp": ".273",
+          "slg": ".367",
+          "ops": ".640",
           "hr": 1,
-          "rbi": 3,
+          "rbi": 4,
           "sb": 0,
-          "hits": 5
+          "hits": 6
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-02",
+          "opponent": "Texas Rangers",
+          "result": "出賽",
+          "detail1": "2AB / 0H / 0RBI",
+          "detail2": "HR 0 / BB 0 / SO 0"
+        },
+        {
+          "date": "2026-05-01",
+          "opponent": "Texas Rangers",
+          "result": "出賽",
+          "detail1": "4AB / 1H / 1RBI",
+          "detail2": "HR 0 / BB 0 / SO 2"
+        },
         {
           "date": "2026-04-30",
           "opponent": "Atlanta Braves",
@@ -501,27 +534,13 @@
           "result": "出賽",
           "detail1": "2AB / 1H / 2RBI",
           "detail2": "HR 1 / BB 0 / SO 1"
-        },
-        {
-          "date": "2026-04-25",
-          "opponent": "Cincinnati Reds",
-          "result": "出賽",
-          "detail1": "1AB / 0H / 0RBI",
-          "detail2": "HR 0 / BB 0 / SO 0"
-        },
-        {
-          "date": "2026-04-24",
-          "opponent": "Cincinnati Reds",
-          "result": "出賽",
-          "detail1": "2AB / 0H / 0RBI",
-          "detail2": "HR 0 / BB 0 / SO 0"
         }
       ],
       "news": [
         {
           "id": "hao-yu-lee-mlb-sync",
           "title": "李灝宇 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Detroit Tigers 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/hao-yu-lee-701678",
@@ -530,16 +549,32 @@
         {
           "id": "hao-yu-lee-mlb-official-player",
           "title": "李灝宇 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Detroit Tigers 官方球員頁。",
           "url": "https://www.mlb.com/player/hao-yu-lee-701678",
           "source": "MLB"
         },
         {
+          "id": "hao-yu-lee-mlb-transaction-0",
+          "title": "李灝宇 近期異動",
+          "date": "2026-04-17",
+          "tag": "近期異動",
+          "summary": "Detroit Tigers recalled 2B Hao-Yu  Lee from Toledo Mud Hens.",
+          "source": "MLB Transactions"
+        },
+        {
+          "id": "hao-yu-lee-mlb-transaction-1",
+          "title": "李灝宇 近期異動",
+          "date": "2026-04-07",
+          "tag": "近期異動",
+          "summary": "Toledo Mud Hens activated 2B Hao-Yu  Lee from the 7-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "hao-yu-lee-mlb-search",
           "title": "李灝宇 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 李灝宇 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Hao-Yu%20Lee",
@@ -630,7 +665,7 @@
         {
           "id": "chen-zhong-ao-zhuang-mlb-sync",
           "title": "莊陳仲敖 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Athletics 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chen-zhong-ao-zhuang-800018",
@@ -639,16 +674,24 @@
         {
           "id": "chen-zhong-ao-zhuang-mlb-official-player",
           "title": "莊陳仲敖 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Athletics 官方球員頁。",
           "url": "https://www.mlb.com/player/chen-zhong-ao-zhuang-800018",
           "source": "MLB"
         },
         {
+          "id": "chen-zhong-ao-zhuang-mlb-transaction-0",
+          "title": "莊陳仲敖 近期異動",
+          "date": "2026-04-10",
+          "tag": "近期異動",
+          "summary": "RHP Chen Zhong-Ao Zhuang assigned to Midland RockHounds from Las Vegas Aviators.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "chen-zhong-ao-zhuang-mlb-search",
           "title": "莊陳仲敖 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 莊陳仲敖 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chen-Zhong-Ao%20Zhuang",
@@ -740,7 +783,7 @@
         {
           "id": "yu-min-lin-mlb-sync",
           "title": "林昱珉 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Arizona Diamondbacks 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/yu-min-lin-801179",
@@ -749,7 +792,7 @@
         {
           "id": "yu-min-lin-mlb-official-player",
           "title": "林昱珉 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Arizona Diamondbacks 官方球員頁。",
           "url": "https://www.mlb.com/player/yu-min-lin-801179",
@@ -758,7 +801,7 @@
         {
           "id": "yu-min-lin-mlb-search",
           "title": "林昱珉 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林昱珉 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Yu-Min%20Lin",
@@ -849,7 +892,7 @@
         {
           "id": "chang-hung-ling-mlb-sync",
           "title": "張弘稜 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Pittsburgh Pirates 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/hung-ling-chang-800213",
@@ -858,7 +901,7 @@
         {
           "id": "chang-hung-ling-mlb-official-player",
           "title": "張弘稜 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Pittsburgh Pirates 官方球員頁。",
           "url": "https://www.mlb.com/player/hung-ling-chang-800213",
@@ -867,7 +910,7 @@
         {
           "id": "chang-hung-ling-mlb-search",
           "title": "張弘稜 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 張弘稜 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Hung-Ling%20Chang",
@@ -896,7 +939,7 @@
       "line1": "巨人體系右投",
       "line2": "目前層級 Rookie",
       "intro": "曾受期待的旅美右投，現階段更需要健康與實戰累積。",
-      "recentNote": "近 45 日尚無可用官方出賽紀錄",
+      "recentNote": "MiLB 補充來源",
       "type": "pitcher",
       "teamMeta": {
         "id": 137,
@@ -917,12 +960,20 @@
           "saves": 0
         }
       },
-      "recentGames": [],
+      "recentGames": [
+        {
+          "date": "2026-05-02",
+          "opponent": "ACL D-backs",
+          "result": "登板",
+          "detail1": "2.0局 / 2ER / 0K / 0BB",
+          "detail2": "H 2 / 用球 8"
+        }
+      ],
       "news": [
         {
           "id": "li-chen-hsun-mlb-sync",
           "title": "李晨薰 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 San Francisco Giants 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chen-hsun-lee-808486",
@@ -931,7 +982,7 @@
         {
           "id": "li-chen-hsun-mlb-official-player",
           "title": "李晨薰 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 San Francisco Giants 官方球員頁。",
           "url": "https://www.mlb.com/player/chen-hsun-lee-808486",
@@ -940,7 +991,7 @@
         {
           "id": "li-chen-hsun-mlb-search",
           "title": "李晨薰 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 李晨薰 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chen-Hsun%20Lee",
@@ -992,6 +1043,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-02",
+          "opponent": "Palm Beach Cardinals",
+          "result": "登板",
+          "detail1": "1.1局 / 0ER / 3K / 0BB",
+          "detail2": "H 1 / 用球 19"
+        },
+        {
           "date": "2026-04-28",
           "opponent": "Palm Beach Cardinals",
           "result": "登板",
@@ -1017,7 +1075,7 @@
         {
           "id": "pan-wen-hui-mlb-sync",
           "title": "潘文輝 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Philadelphia Phillies 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/wen-hui-pan-808207",
@@ -1026,16 +1084,32 @@
         {
           "id": "pan-wen-hui-mlb-official-player",
           "title": "潘文輝 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Philadelphia Phillies 官方球員頁。",
           "url": "https://www.mlb.com/player/wen-hui-pan-808207",
           "source": "MLB"
         },
         {
+          "id": "pan-wen-hui-mlb-transaction-0",
+          "title": "潘文輝 近期異動",
+          "date": "2026-04-22",
+          "tag": "近期異動",
+          "summary": "Reading Fightin Phils sent RHP Wen-Hui Pan on a rehab assignment to Clearwater Threshers.",
+          "source": "MLB Transactions"
+        },
+        {
+          "id": "pan-wen-hui-mlb-transaction-1",
+          "title": "潘文輝 近期異動",
+          "date": "2026-04-02",
+          "tag": "近期異動",
+          "summary": "Reading Fightin Phils placed RHP Wen-Hui Pan on the 7-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "pan-wen-hui-mlb-search",
           "title": "潘文輝 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 潘文輝 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Wen-Hui%20Pan",
@@ -1119,7 +1193,7 @@
         {
           "id": "sha-tzu-chen-mlb-sync",
           "title": "沙子宸 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Athletics 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/tzu-chen-sha-809223",
@@ -1128,7 +1202,7 @@
         {
           "id": "sha-tzu-chen-mlb-official-player",
           "title": "沙子宸 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Athletics 官方球員頁。",
           "url": "https://www.mlb.com/player/tzu-chen-sha-809223",
@@ -1137,7 +1211,7 @@
         {
           "id": "sha-tzu-chen-mlb-search",
           "title": "沙子宸 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 沙子宸 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Tzu-Chen%20Sha",
@@ -1221,7 +1295,7 @@
         {
           "id": "lin-sheng-en-mlb-sync",
           "title": "林盛恩 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Cincinnati Reds 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/sheng-en-lin-806823",
@@ -1230,7 +1304,7 @@
         {
           "id": "lin-sheng-en-mlb-official-player",
           "title": "林盛恩 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Cincinnati Reds 官方球員頁。",
           "url": "https://www.mlb.com/player/sheng-en-lin-806823",
@@ -1239,7 +1313,7 @@
         {
           "id": "lin-sheng-en-mlb-search",
           "title": "林盛恩 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林盛恩 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Sheng-En%20Lin",
@@ -1331,7 +1405,7 @@
         {
           "id": "lin-chen-wei-mlb-sync",
           "title": "林振瑋 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 St. Louis Cardinals 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chen-wei-lin-813820",
@@ -1340,7 +1414,7 @@
         {
           "id": "lin-chen-wei-mlb-official-player",
           "title": "林振瑋 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 St. Louis Cardinals 官方球員頁。",
           "url": "https://www.mlb.com/player/chen-wei-lin-813820",
@@ -1349,7 +1423,7 @@
         {
           "id": "lin-chen-wei-mlb-search",
           "title": "林振瑋 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林振瑋 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chen-Wei%20Lin",
@@ -1402,6 +1476,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-03",
+          "opponent": "Amarillo Sod Poodles",
+          "result": "先發",
+          "detail1": "7.0局 / 0ER / 6K / 0BB",
+          "detail2": "H 2 / 用球 80"
+        },
+        {
           "date": "2026-04-25",
           "opponent": "Springfield Cardinals",
           "result": "先發",
@@ -1428,20 +1509,13 @@
           "result": "先發",
           "detail1": "3.2局 / 1ER / 2K / 3BB",
           "detail2": "H 3 / 用球 74"
-        },
-        {
-          "date": "2026-04-03",
-          "opponent": "Arkansas Travelers",
-          "result": "先發",
-          "detail1": "3.1局 / 1ER / 6K / 2BB",
-          "detail2": "H 3 / 用球 67"
         }
       ],
       "news": [
         {
           "id": "wei-en-lin-mlb-sync",
           "title": "林維恩 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Athletics 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/wei-en-lin-827734",
@@ -1450,7 +1524,7 @@
         {
           "id": "wei-en-lin-mlb-official-player",
           "title": "林維恩 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Athletics 官方球員頁。",
           "url": "https://www.mlb.com/player/wei-en-lin-827734",
@@ -1459,7 +1533,7 @@
         {
           "id": "wei-en-lin-mlb-search",
           "title": "林維恩 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林維恩 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Wei-En%20Lin",
@@ -1483,7 +1557,7 @@
       "throws": "R",
       "age": 19,
       "number": "—",
-      "status": "傷兵",
+      "status": "待命",
       "teamColor": "#005a9c",
       "line1": "道奇體系外野手",
       "line2": "目前層級 A",
@@ -1512,10 +1586,24 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-03",
+          "opponent": "Lake Elsinore Storm",
+          "result": "出賽",
+          "detail1": "1AB / 0H / 0RBI",
+          "detail2": "HR 0 / BB 1 / SO 1"
+        },
+        {
+          "date": "2026-05-02",
+          "opponent": "Lake Elsinore Storm",
+          "result": "出賽",
+          "detail1": "2AB / 0H / 0RBI",
+          "detail2": "HR 0 / BB 3 / SO 0"
+        },
+        {
           "date": "2026-05-01",
           "opponent": "Lake Elsinore Storm",
           "result": "出賽",
-          "detail1": "0AB / 0H / 1RBI",
+          "detail1": "2AB / 0H / 1RBI",
           "detail2": "HR 0 / BB 1 / SO 0"
         },
         {
@@ -1531,27 +1619,13 @@
           "result": "出賽",
           "detail1": "4AB / 2H / 3RBI",
           "detail2": "HR 1 / BB 0 / SO 1"
-        },
-        {
-          "date": "2026-04-26",
-          "opponent": "San Jose Giants",
-          "result": "出賽",
-          "detail1": "5AB / 2H / 0RBI",
-          "detail2": "HR 0 / BB 1 / SO 0"
-        },
-        {
-          "date": "2026-04-26",
-          "opponent": "San Jose Giants",
-          "result": "出賽",
-          "detail1": "5AB / 1H / 2RBI",
-          "detail2": "HR 0 / BB 0 / SO 1"
         }
       ],
       "news": [
         {
           "id": "ko-ching-hsien-mlb-sync",
           "title": "柯敬賢 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Los Angeles Dodgers 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/ching-hsien-ko-828667",
@@ -1560,16 +1634,32 @@
         {
           "id": "ko-ching-hsien-mlb-official-player",
           "title": "柯敬賢 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Los Angeles Dodgers 官方球員頁。",
           "url": "https://www.mlb.com/player/ching-hsien-ko-828667",
           "source": "MLB"
         },
         {
+          "id": "ko-ching-hsien-mlb-transaction-0",
+          "title": "柯敬賢 近期異動",
+          "date": "2026-04-17",
+          "tag": "近期異動",
+          "summary": "Ontario Tower Buzzers activated OF Ching-Hsien Ko from the 7-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
+          "id": "ko-ching-hsien-mlb-transaction-1",
+          "title": "柯敬賢 近期異動",
+          "date": "2026-04-02",
+          "tag": "近期異動",
+          "summary": "Ontario Tower Buzzers placed OF Ching-Hsien Ko on the 7-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "ko-ching-hsien-mlb-search",
           "title": "柯敬賢 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 柯敬賢 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Ching-Hsien%20Ko",
@@ -1624,7 +1714,7 @@
         {
           "id": "shen-chia-hsi-mlb-sync",
           "title": "沈家羲 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Seattle Mariners 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chia-hsi-shen-828430",
@@ -1633,16 +1723,24 @@
         {
           "id": "shen-chia-hsi-mlb-official-player",
           "title": "沈家羲 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Seattle Mariners 官方球員頁。",
           "url": "https://www.mlb.com/player/chia-hsi-shen-828430",
           "source": "MLB"
         },
         {
+          "id": "shen-chia-hsi-mlb-transaction-0",
+          "title": "沈家羲 近期異動",
+          "date": "2026-03-17",
+          "tag": "近期異動",
+          "summary": "Inland Empire 66ers placed RHP Chia-Shi Shen on the 60-day injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "shen-chia-hsi-mlb-search",
           "title": "沈家羲 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 沈家羲 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chia-Hsi%20Shen",
@@ -1671,7 +1769,7 @@
       "line1": "巨人體系年輕右投",
       "line2": "目前層級 Rookie",
       "intro": "旅美生涯仍在起步階段，屬於偏長線養成型球員。",
-      "recentNote": "近 45 日尚無可用官方出賽紀錄",
+      "recentNote": "MiLB 補充來源",
       "type": "pitcher",
       "teamMeta": {
         "id": 137,
@@ -1692,12 +1790,20 @@
           "saves": 0
         }
       },
-      "recentGames": [],
+      "recentGames": [
+        {
+          "date": "2026-05-02",
+          "opponent": "ACL D-backs",
+          "result": "登板",
+          "detail1": "1.0局 / 0ER / 1K / 0BB",
+          "detail2": "H 0 / 用球 5"
+        }
+      ],
       "news": [
         {
           "id": "yang-nien-hsi-mlb-sync",
           "title": "陽念希 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 San Francisco Giants 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/nien-hsi-yang-806825",
@@ -1706,7 +1812,7 @@
         {
           "id": "yang-nien-hsi-mlb-official-player",
           "title": "陽念希 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 San Francisco Giants 官方球員頁。",
           "url": "https://www.mlb.com/player/nien-hsi-yang-806825",
@@ -1715,7 +1821,7 @@
         {
           "id": "yang-nien-hsi-mlb-search",
           "title": "陽念希 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 陽念希 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Nien-Hsi%20Yang",
@@ -1806,7 +1912,7 @@
         {
           "id": "huang-chung-hsiang-mlb-sync",
           "title": "黃仲翔 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Arizona Diamondbacks 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chung-hsiang-huang-829473",
@@ -1815,7 +1921,7 @@
         {
           "id": "huang-chung-hsiang-mlb-official-player",
           "title": "黃仲翔 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Arizona Diamondbacks 官方球員頁。",
           "url": "https://www.mlb.com/player/chung-hsiang-huang-829473",
@@ -1824,7 +1930,7 @@
         {
           "id": "huang-chung-hsiang-mlb-search",
           "title": "黃仲翔 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 黃仲翔 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chung-Hsiang%20Huang",
@@ -1879,7 +1985,7 @@
         {
           "id": "lin-po-jun-mlb-sync",
           "title": "林鉑濬 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Seattle Mariners 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/po-jun-lin-806836",
@@ -1888,7 +1994,7 @@
         {
           "id": "lin-po-jun-mlb-official-player",
           "title": "林鉑濬 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Seattle Mariners 官方球員頁。",
           "url": "https://www.mlb.com/player/po-jun-lin-806836",
@@ -1897,7 +2003,7 @@
         {
           "id": "lin-po-jun-mlb-search",
           "title": "林鉑濬 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林鉑濬 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Po-Jun%20Lin",
@@ -1952,7 +2058,7 @@
         {
           "id": "lin-chang-tzu-chun-mlb-sync",
           "title": "林張子俊 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Milwaukee Brewers 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/chang-tzu-chun-lin-835646",
@@ -1961,16 +2067,24 @@
         {
           "id": "lin-chang-tzu-chun-mlb-official-player",
           "title": "林張子俊 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Milwaukee Brewers 官方球員頁。",
           "url": "https://www.mlb.com/player/chang-tzu-chun-lin-835646",
           "source": "MLB"
         },
         {
+          "id": "lin-chang-tzu-chun-mlb-transaction-0",
+          "title": "林張子俊 近期異動",
+          "date": "2026-03-17",
+          "tag": "近期異動",
+          "summary": "ACL Brewers placed RHP Chang Tzu-Chun Lin on the full-season injured list.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "lin-chang-tzu-chun-mlb-search",
           "title": "林張子俊 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林張子俊 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Chang%20Tzu-Chun%20Lin",
@@ -2026,7 +2140,7 @@
         {
           "id": "liao-you-lin-mlb-sync",
           "title": "廖宥霖 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Milwaukee Brewers 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/you-lin-liao-835879",
@@ -2035,7 +2149,7 @@
         {
           "id": "liao-you-lin-mlb-official-player",
           "title": "廖宥霖 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Milwaukee Brewers 官方球員頁。",
           "url": "https://www.mlb.com/player/you-lin-liao-835879",
@@ -2044,7 +2158,7 @@
         {
           "id": "liao-you-lin-mlb-search",
           "title": "廖宥霖 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 廖宥霖 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=You-Lin%20Liao",
@@ -2099,7 +2213,7 @@
         {
           "id": "su-lan-hung-mlb-sync",
           "title": "蘇嵐鴻 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 San Diego Padres 官方球員資料、球季數據與近期追蹤欄位。",
           "url": "https://www.mlb.com/player/lan-hung-su-837088",
@@ -2108,16 +2222,24 @@
         {
           "id": "su-lan-hung-mlb-official-player",
           "title": "蘇嵐鴻 官方球員頁",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 San Diego Padres 官方球員頁。",
           "url": "https://www.mlb.com/player/lan-hung-su-837088",
           "source": "MLB"
         },
         {
+          "id": "su-lan-hung-mlb-transaction-0",
+          "title": "蘇嵐鴻 近期異動",
+          "date": "2026-04-30",
+          "tag": "近期異動",
+          "summary": "RHP Lan-Hong Su assigned to ACL Padres from DSL Padres Brown.",
+          "source": "MLB Transactions"
+        },
+        {
           "id": "su-lan-hung-mlb-search",
           "title": "蘇嵐鴻 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 蘇嵐鴻 的官方 / 新聞搜尋入口。",
           "url": "https://www.mlb.com/search?q=Lan-Hung%20Su",
@@ -2169,6 +2291,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-02",
+          "opponent": "Nippon-Ham vs ORIX",
+          "result": "登板",
+          "detail1": "HR : [B] Seymour ( 3, 2nd inn. off RY.Gu Lin, 1 on )",
+          "detail2": "NPB 官方比分頁"
+        },
+        {
           "date": "2026-04-21",
           "opponent": "Yakult vs Nippon-Ham",
           "result": "登板",
@@ -2195,20 +2324,13 @@
           "result": "登板",
           "detail1": "RY.Gu Lin 1",
           "detail2": "NPB 官方比分頁"
-        },
-        {
-          "date": "2026-04-02",
-          "opponent": "Nippon-Ham vs Lotte",
-          "result": "登板",
-          "detail1": "RY.Gu Lin 1",
-          "detail2": "NPB 官方比分頁"
         }
       ],
       "news": [
         {
           "id": "ruei-yang-gu-lin-npb-sync",
           "title": "古林睿煬 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Hokkaido Nippon-Ham Fighters 官方頁與 NPB 相關入口。",
           "url": "https://media.fighters.co.jp/player/37/",
@@ -2217,7 +2339,7 @@
         {
           "id": "ruei-yang-gu-lin-npb-player",
           "title": "古林睿煬 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Hokkaido Nippon-Ham Fighters 官方球員頁。",
           "url": "https://media.fighters.co.jp/player/37/",
@@ -2226,7 +2348,7 @@
         {
           "id": "ruei-yang-gu-lin-npb-news",
           "title": "古林睿煬 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 古林睿煬 的 NPB / 官方新聞入口。",
           "url": "https://www.fighters.co.jp/",
@@ -2278,7 +2400,7 @@
         {
           "id": "yi-lei-sun-npb-sync",
           "title": "孫易磊 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Hokkaido Nippon-Ham Fighters 官方頁與 NPB 相關入口。",
           "url": "https://media.fighters.co.jp/player/96/",
@@ -2287,7 +2409,7 @@
         {
           "id": "yi-lei-sun-npb-player",
           "title": "孫易磊 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Hokkaido Nippon-Ham Fighters 官方球員頁。",
           "url": "https://media.fighters.co.jp/player/96/",
@@ -2296,7 +2418,7 @@
         {
           "id": "yi-lei-sun-npb-news",
           "title": "孫易磊 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 孫易磊 的 NPB / 官方新聞入口。",
           "url": "https://www.fighters.co.jp/",
@@ -2348,7 +2470,7 @@
         {
           "id": "chun-wei-chang-npb-sync",
           "title": "張峻瑋 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Fukuoka SoftBank Hawks 官方頁與 NPB 相關入口。",
           "url": "https://www.softbankhawks.co.jp/global/traditional-c/2026_153/",
@@ -2357,7 +2479,7 @@
         {
           "id": "chun-wei-chang-npb-player",
           "title": "張峻瑋 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Fukuoka SoftBank Hawks 官方球員頁。",
           "url": "https://www.softbankhawks.co.jp/global/traditional-c/2026_153/",
@@ -2366,7 +2488,7 @@
         {
           "id": "chun-wei-chang-npb-news",
           "title": "張峻瑋 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 張峻瑋 的 NPB / 官方新聞入口。",
           "url": "https://www.softbankhawks.co.jp/",
@@ -2419,7 +2541,7 @@
         {
           "id": "an-ko-lin-npb-sync",
           "title": "林安可 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Saitama Seibu Lions 官方頁與 NPB 相關入口。",
           "url": "https://players.seibulions.jp/player/1098",
@@ -2428,7 +2550,7 @@
         {
           "id": "an-ko-lin-npb-player",
           "title": "林安可 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Saitama Seibu Lions 官方球員頁。",
           "url": "https://players.seibulions.jp/player/1098",
@@ -2437,7 +2559,7 @@
         {
           "id": "an-ko-lin-npb-news",
           "title": "林安可 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林安可 的 NPB / 官方新聞入口。",
           "url": "https://www.seibulions.jp/",
@@ -2490,7 +2612,7 @@
         {
           "id": "yen-cheng-wang-kbo-sync",
           "title": "王彥程 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Hanwha Eagles 官方頁與相關入口。",
           "url": "https://eng.koreabaseball.com/Teams/PlayerInfoPitcher/Summary.aspx?pcode=56719",
@@ -2499,7 +2621,7 @@
         {
           "id": "yen-cheng-wang-kbo-player",
           "title": "王彥程 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Hanwha Eagles 官方球員頁。",
           "url": "https://eng.koreabaseball.com/Teams/PlayerInfoPitcher/Summary.aspx?pcode=56719",
@@ -2508,7 +2630,7 @@
         {
           "id": "yen-cheng-wang-kbo-news",
           "title": "王彥程 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 王彥程 的官方 / 球隊新聞入口。",
           "url": "https://eng.koreabaseball.com/",
@@ -2561,7 +2683,7 @@
         {
           "id": "jo-hsi-hsu-npb-sync",
           "title": "徐若熙 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Fukuoka SoftBank Hawks 官方頁與 NPB 相關入口。",
           "url": "https://www.softbankhawks.co.jp/team/player/detail/2026_00001589.html",
@@ -2570,7 +2692,7 @@
         {
           "id": "jo-hsi-hsu-npb-player",
           "title": "徐若熙 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Fukuoka SoftBank Hawks 官方球員頁。",
           "url": "https://www.softbankhawks.co.jp/team/player/detail/2026_00001589.html",
@@ -2579,7 +2701,7 @@
         {
           "id": "jo-hsi-hsu-npb-news",
           "title": "徐若熙 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 徐若熙 的 NPB / 官方新聞入口。",
           "url": "https://www.softbankhawks.co.jp/",
@@ -2632,7 +2754,7 @@
         {
           "id": "chia-hao-sung-npb-sync",
           "title": "宋家豪 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Tohoku Rakuten Golden Eagles 官方頁與 NPB 相關入口。",
           "url": "https://www.rakuteneagles.jp/team/player/detail/2026_00001013.html",
@@ -2641,7 +2763,7 @@
         {
           "id": "chia-hao-sung-npb-player",
           "title": "宋家豪 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Tohoku Rakuten Golden Eagles 官方球員頁。",
           "url": "https://www.rakuteneagles.jp/team/player/detail/2026_00001013.html",
@@ -2650,7 +2772,7 @@
         {
           "id": "chia-hao-sung-npb-news",
           "title": "宋家豪 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 宋家豪 的 NPB / 官方新聞入口。",
           "url": "https://www.rakuteneagles.jp/",
@@ -2704,7 +2826,7 @@
         {
           "id": "chia-cheng-lin-npb-sync",
           "title": "林家正 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Hokkaido Nippon-Ham Fighters 官方頁與 NPB 相關入口。",
           "url": "https://media.fighters.co.jp/player/38/",
@@ -2713,7 +2835,7 @@
         {
           "id": "chia-cheng-lin-npb-player",
           "title": "林家正 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Hokkaido Nippon-Ham Fighters 官方球員頁。",
           "url": "https://media.fighters.co.jp/player/38/",
@@ -2722,7 +2844,7 @@
         {
           "id": "chia-cheng-lin-npb-news",
           "title": "林家正 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 林家正 的 NPB / 官方新聞入口。",
           "url": "https://www.fighters.co.jp/",
@@ -2774,7 +2896,7 @@
         {
           "id": "hsiang-sheng-hsu-npb-sync",
           "title": "徐翔聖 官方資料同步",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官網同步",
           "summary": "已同步 Tokyo Yakult Swallows 官方頁與 NPB 相關入口。",
           "url": "https://npb.jp/bis/players/53255159.html",
@@ -2783,7 +2905,7 @@
         {
           "id": "hsiang-sheng-hsu-npb-player",
           "title": "徐翔聖 球員官網",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "官方頁",
           "summary": "開啟 Tokyo Yakult Swallows 官方球員頁。",
           "url": "https://npb.jp/bis/players/53255159.html",
@@ -2792,7 +2914,7 @@
         {
           "id": "hsiang-sheng-hsu-npb-news",
           "title": "徐翔聖 相關新聞",
-          "date": "2026-05-01",
+          "date": "2026-05-03",
           "tag": "新聞追蹤",
           "summary": "已建立 徐翔聖 的 NPB / 官方新聞入口。",
           "url": "https://www.yakult-swallows.co.jp/",
