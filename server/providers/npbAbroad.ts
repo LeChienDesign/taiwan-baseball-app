@@ -758,14 +758,13 @@ async function buildFightersOfficialSupplement(
     return { recentGames: [], news: [] };
   }
 
-    const playerPageHtml = await fetchText(sourceUrl);
+  const playerPageHtml = await fetchText(sourceUrl);
+  const detailUrlMatch = playerPageHtml.match(
+    /https:\/\/www\.fighters\.co\.jp\/team\/player\/detail\/\d+_\d+\.html/
+  );
 
-    const detailUrlMatch = playerPageHtml.match(
-      /https:\/\/www\.fighters\.co\.jp\/team\/player\/detail\/\d+_\d+\.html/
-    );
-
-    const detailUrl = detailUrlMatch?.[0] ?? sourceUrl;
-    const html = await fetchText(detailUrl);
+  const detailUrl = detailUrlMatch?.[0] ?? sourceUrl;
+  const html = await fetchText(detailUrl);
 
   const configMatch = html.match(/var result_by_game = (\{[\s\S]*?\});/);
   if (!configMatch) {
@@ -777,6 +776,30 @@ async function buildFightersOfficialSupplement(
     config = JSON.parse(configMatch[1]);
   } catch {
     return { recentGames: [], news: [] };
+  }
+
+  const news: AbroadNewsItem[] = [
+    {
+      id: `${player.id}-fighters-official`,
+      title: `${player.name ?? player.id} Fighters 官方頁`,
+      date: requestedDate,
+      tag: '官方頁',
+      summary: `已同步 ${registry.officialTeam ?? 'Fighters'} 官方球員頁。`,
+      url: detailUrl,
+      source: 'Fighters Official',
+    },
+  ];
+
+  if (String(config.archive_year) !== requestedDate.slice(0, 4)) {
+    return {
+      recentGames: [],
+      news: [
+        {
+          ...news[0],
+          summary: `目前僅提供 ${config.archive_year} 年度逐場資料，未納入 recentGames。`,
+        },
+      ],
+    };
   }
 
   const body = new URLSearchParams({
@@ -798,20 +821,8 @@ async function buildFightersOfficialSupplement(
   });
 
   const gameHtml = await res.text();
-
-    const gameLogDateBase = `${config.archive_year ?? requestedDate.slice(0, 4)}-01-01`;
-    const recentGames = extractFightersGameRows(gameHtml, gameLogDateBase, maxGames);
-  const news: AbroadNewsItem[] = [
-    {
-      id: `${player.id}-fighters-official`,
-      title: `${player.name ?? player.id} Fighters 官方頁`,
-      date: requestedDate,
-      tag: '官方頁',
-      summary: `已同步 ${registry.officialTeam ?? 'Fighters'} 官方球員頁。`,
-      url: detailUrl,
-      source: 'Fighters Official',
-    },
-  ];
+  const gameLogDateBase = `${config.archive_year ?? requestedDate.slice(0, 4)}-01-01`;
+  const recentGames = extractFightersGameRows(gameHtml, gameLogDateBase, maxGames);
 
   return {
     recentGames,
