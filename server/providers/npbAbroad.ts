@@ -687,7 +687,53 @@ async function buildRakutenOfficialSupplement(
     recentNote: top.length > 0 ? 'Rakuten 官方頁補充來源' : undefined,
   };
 }
+function isFightersPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+  const joined = `${player.team ?? ''} ${registry.officialTeam ?? ''}`.toLowerCase();
 
+  return (
+    joined.includes('fighters') ||
+    joined.includes('nippon-ham') ||
+    joined.includes('hokkaido') ||
+    joined.includes('日本ハム') ||
+    joined.includes('ファイターズ')
+  );
+}
+
+async function buildFightersOfficialSupplement(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string
+): Promise<OfficialSupplement> {
+  const sourceUrl = registry.officialPlayerUrl ?? registry.officialNewsUrl;
+
+  if (!sourceUrl) {
+    return { recentGames: [], news: [] };
+  }
+
+  return {
+    recentGames: [
+      {
+        date: requestedDate,
+        opponent: 'Fighters 官方頁',
+        result: '官網更新',
+        detail1: `${player.name ?? player.id} 官方資料同步`,
+        detail2: 'Fighters 官方頁補充來源',
+      },
+    ],
+    news: [
+      {
+        id: `${player.id}-fighters-official`,
+        title: `${player.name ?? player.id} Fighters 官方頁`,
+        date: requestedDate,
+        tag: '官方頁',
+        summary: `已同步 ${registry.officialTeam ?? 'Hokkaido Nippon-Ham Fighters'} 官方球員頁。`,
+        url: sourceUrl,
+        source: 'Fighters Official',
+      },
+    ],
+    recentNote: 'Fighters 官方頁補充來源',
+  };
+}
 function buildJapaneseGameUrl(url: string) {
   return url.replace('/bis/eng/', '/bis/');
 }
@@ -987,16 +1033,25 @@ async function buildSingleNpbPatch(
 
   let officialSupplement: OfficialSupplement | null = null;
 
-    if (recentGames.length === 0 && isRakutenPlayer(player, registry)) {
-      debugPlayerLog(player.id, 'score pages miss, trying Rakuten official supplement');
-      officialSupplement = await buildRakutenOfficialSupplement(
-        player,
-        registry,
-        requestedDate,
-        maxGames
-      );
+    if (recentGames.length === 0) {
+      if (isRakutenPlayer(player, registry)) {
+        debugPlayerLog(player.id, 'score pages miss, trying Rakuten official supplement');
+        officialSupplement = await buildRakutenOfficialSupplement(
+          player,
+          registry,
+          requestedDate,
+          maxGames
+        );
+      } else if (isFightersPlayer(player, registry)) {
+        debugPlayerLog(player.id, 'score pages miss, trying Fighters official supplement');
+        officialSupplement = await buildFightersOfficialSupplement(
+          player,
+          registry,
+          requestedDate
+        );
+      }
 
-      if (officialSupplement.recentGames.length > 0) {
+      if (officialSupplement?.recentGames.length) {
         const existingRecentGames = recentGames.length > 0 ? recentGames : player.recentGames ?? [];
 
         recentGames =
