@@ -100,45 +100,39 @@ const NPB_PLAYER_ALIASES: Record<
     type?: 'pitcher' | 'hitter';
   }
 > = {
-  'ruei-yang-gu-lin': {
-    aliases: ['Ruei-Yang Gu Lin', 'Gu Lin', '古林睿煬'],
-    type: 'pitcher',
-  },
-  'yi-lei-sun': {
-    aliases: ['Yi-Lei Sun', '孫易磊'],
-    type: 'pitcher',
-  },
-  'chun-wei-chang': {
-    aliases: ['Chun-Wei Chang', '張峻瑋'],
-    type: 'pitcher',
-  },
-  'an-ko-lin': {
-    aliases: ['An-Ko Lin', '林安可'],
-    type: 'hitter',
-  },
-  'jo-hsi-hsu': {
-    aliases: ['Jo-Hsi Hsu', '徐若熙'],
-    type: 'pitcher',
-  },
-    'chia-hao-sung': {
-      aliases: [
-        'Chia-Hao Sung',
-        'Sung Chia-Hao',
-        '宋家豪',
-        '宋 家豪',
-        '宋　家豪',
-      ],
+    'ruei-yang-gu-lin': {
+      aliases: ['Ruei-Yang Gu Lin', 'Gu Lin', '古林睿煬', '古林 睿煬', 'ぐーりん・るぇやん'],
       type: 'pitcher',
     },
-  'chia-cheng-lin': {
-    aliases: ['Lyle Lin', 'Chia-Cheng Lin', '林家正', 'ライル・リン'],
-    type: 'hitter',
-  },
-  'hsiang-sheng-hsu': {
-    aliases: ['Hsiang-Sheng Hsu', '徐翔聖'],
-    type: 'pitcher',
-  },
-};
+    'yi-lei-sun': {
+      aliases: ['Yi-Lei Sun', '孫易磊', '孫 易磊', 'すん・いーれい'],
+      type: 'pitcher',
+    },
+    'chun-wei-chang': {
+      aliases: ['Chun-Wei Chang', '張峻瑋'],
+      type: 'pitcher',
+    },
+    'an-ko-lin': {
+      aliases: ['An-Ko Lin', '林安可', 'りん・あんこー'],
+      type: 'hitter',
+    },
+    'jo-hsi-hsu': {
+      aliases: ['Jo-Hsi Hsu', '徐若熙', 'しゅー・るおしー'],
+      type: 'pitcher',
+    },
+    'chia-hao-sung': {
+      aliases: ['Chia-Hao Sung', 'Sung Chia-Hao', '宋家豪', '宋　家豪'],
+      type: 'pitcher',
+    },
+    'chia-cheng-lin': {
+      aliases: ['Lyle Lin', 'Chia-Cheng Lin', '林家正', 'ライル・リン'],
+      type: 'hitter',
+    },
+    'hsiang-sheng-hsu': {
+      aliases: ['Hsiang-Sheng Hsu', '徐翔聖'],
+      type: 'pitcher',
+    },
+  };
 
 const htmlCache = new Map<string, string | null>();
 const recentGameLinksCache = new Map<string, NpbGameLink[]>();
@@ -993,21 +987,26 @@ async function buildSingleNpbPatch(
 
   let officialSupplement: OfficialSupplement | null = null;
 
-  if (recentGames.length === 0 && isRakutenPlayer(player, registry)) {
-    debugPlayerLog(player.id, 'score pages miss, trying Rakuten official supplement');
-    officialSupplement = await buildRakutenOfficialSupplement(
-      player,
-      registry,
-      requestedDate,
-      maxGames
-    );
+    if (recentGames.length === 0 && isRakutenPlayer(player, registry)) {
+      debugPlayerLog(player.id, 'score pages miss, trying Rakuten official supplement');
+      officialSupplement = await buildRakutenOfficialSupplement(
+        player,
+        registry,
+        requestedDate,
+        maxGames
+      );
 
-    if (officialSupplement.recentGames.length > 0) {
-      recentGames = officialSupplement.recentGames;
+      if (officialSupplement.recentGames.length > 0) {
+        const existingRecentGames = recentGames.length > 0 ? recentGames : player.recentGames ?? [];
+
+        recentGames =
+          existingRecentGames.length >= officialSupplement.recentGames.length
+            ? existingRecentGames
+            : officialSupplement.recentGames;
+      }
     }
-  }
 
-  debugPlayerLog(player.id, 'final recentGames count =', recentGames.length);
+    debugPlayerLog(player.id, 'final recentGames count =', recentGames.length);
 
   const news = sortNewsItems(
     dedupeNewsItems([
