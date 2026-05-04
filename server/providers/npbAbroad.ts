@@ -699,11 +699,58 @@ function isFightersPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntr
     joined.includes('ファイターズ')
   );
 }
+function extractFightersGameRows(html: string, requestedDate: string, maxGames: number) {
+  const year = requestedDate.slice(0, 4);
+  const rows = [...html.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].slice(1);
 
+  function cleanCell(value: string) {
+    return decodeHtml(
+      value
+        .replace(/<br\s*\/?>/gi, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\s+/g, ' ')
+        .replace(/&nbsp;/g, '')
+        .trim()
+    );
+  }
+
+  return rows
+    .map((row) => {
+      const cells = [...row[1].matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/g)].map((m) =>
+        cleanCell(m[1])
+      );
+
+      if (cells.length < 15) return null;
+
+      const dateText = cells[0].match(/(\d{2})\/(\d{2})/);
+      if (!dateText) return null;
+
+      const date = `${year}-${dateText[1]}-${dateText[2]}`;
+      const appearance = cells[3] || '登板';
+      const ip = cells[5] || '—';
+      const era = cells[6] || '—';
+      const er = cells[7] || '0';
+      const r = cells[8] || '0';
+      const so = cells[9] || '0';
+      const bb = cells[10] || '0';
+      const h = cells[13] || '0';
+
+      return {
+        date,
+        opponent: 'Fighters 官方逐場',
+        result: cells[2] || '官網紀錄',
+        detail1: `${appearance} / IP ${ip} / SO ${so} / BB ${bb}`,
+        detail2: `H ${h} / R ${r} / ER ${er} / ERA ${era}`,
+      };
+    })
+    .filter((item): item is Record<string, any> => !!item)
+    .slice(0, maxGames);
+}
 async function buildFightersOfficialSupplement(
   player: AbroadPlayerLike,
   registry: AbroadRegistryEntry,
-  requestedDate: string
+  requestedDate: string,
+  maxGames: number
 ): Promise<OfficialSupplement> {
   const sourceUrl = registry.officialPlayerUrl ?? registry.officialNewsUrl;
 
@@ -711,28 +758,65 @@ async function buildFightersOfficialSupplement(
     return { recentGames: [], news: [] };
   }
 
+    const playerPageHtml = await fetchText(sourceUrl);
+
+    const detailUrlMatch = playerPageHtml.match(
+      /https:\/\/www\.fighters\.co\.jp\/team\/player\/detail\/\d+_\d+\.html/
+    );
+
+    const detailUrl = detailUrlMatch?.[0] ?? sourceUrl;
+    const html = await fetchText(detailUrl);
+
+  const configMatch = html.match(/var result_by_game = (\{[\s\S]*?\});/);
+  if (!configMatch) {
+    return { recentGames: [], news: [] };
+  }
+
+  let config: any;
+  try {
+    config = JSON.parse(configMatch[1]);
+  } catch {
+    return { recentGames: [], news: [] };
+  }
+
+  const body = new URLSearchParams({
+    action: 'player_result_by_game',
+    bis_code: config.bis_code,
+    year: config.archive_year ?? requestedDate.slice(0, 4),
+    lang: config.lang ?? 'jp',
+    nonce: config.nonce,
+    is_pitcher: config.is_pitcher ?? '1',
+  });
+
+  const res = await fetch(config.ajax_url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'x-requested-with': 'XMLHttpRequest',
+    },
+    body,
+  });
+
+  const gameHtml = await res.text();
+
+    const gameLogDateBase = `${config.archive_year ?? requestedDate.slice(0, 4)}-01-01`;
+    const recentGames = extractFightersGameRows(gameHtml, gameLogDateBase, maxGames);
+  const news: AbroadNewsItem[] = [
+    {
+      id: `${player.id}-fighters-official`,
+      title: `${player.name ?? player.id} Fighters 官方頁`,
+      date: requestedDate,
+      tag: '官方頁',
+      summary: `已同步 ${registry.officialTeam ?? 'Fighters'} 官方球員頁。`,
+      url: detailUrl,
+      source: 'Fighters Official',
+    },
+  ];
+
   return {
-    recentGames: [
-      {
-        date: requestedDate,
-        opponent: 'Fighters 官方頁',
-        result: '官網更新',
-        detail1: `${player.name ?? player.id} 官方資料同步`,
-        detail2: 'Fighters 官方頁補充來源',
-      },
-    ],
-    news: [
-      {
-        id: `${player.id}-fighters-official`,
-        title: `${player.name ?? player.id} Fighters 官方頁`,
-        date: requestedDate,
-        tag: '官方頁',
-        summary: `已同步 ${registry.officialTeam ?? 'Hokkaido Nippon-Ham Fighters'} 官方球員頁。`,
-        url: sourceUrl,
-        source: 'Fighters Official',
-      },
-    ],
-    recentNote: 'Fighters 官方頁補充來源',
+    recentGames,
+    news,
+    recentNote: recentGames.length > 0 ? 'Fighters 官方逐場紀錄' : undefined,
   };
 }
 function buildJapaneseGameUrl(url: string) {
