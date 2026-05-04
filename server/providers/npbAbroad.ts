@@ -687,6 +687,7 @@ async function buildRakutenOfficialSupplement(
     recentNote: top.length > 0 ? 'Rakuten 官方頁補充來源' : undefined,
   };
 }
+
 function isFightersPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
   const joined = `${player.team ?? ''} ${registry.officialTeam ?? ''}`.toLowerCase();
 
