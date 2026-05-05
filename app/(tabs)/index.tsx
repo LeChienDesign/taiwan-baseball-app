@@ -21,7 +21,7 @@ import AppEmptyState from '../../components/AppEmptyState';
 
 import { fetchMlbGamesByDate } from '../../lib/mlb';
 import { fetchCpblMajorGamesByDate } from '../../lib/cpbl-real';
-import { fetchNpbGamesByDate } from '../../lib/npb-real';
+import { fetchNpbGamesByDate } from '../../lib/npb';
 import { fetchKboGamesByDate } from '../../lib/kbo-real';
 
 type TeamCardInfo = {
@@ -191,6 +191,7 @@ export default function HomePage() {
   });
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showAllLiveGames, setShowAllLiveGames] = useState(false);
 
   const loadHomeData = useCallback(async (options?: { silent?: boolean }) => {
     try {
@@ -270,16 +271,20 @@ export default function HomePage() {
         .map((item) => String(item.game.id))
     );
 
-    const withoutLive = featuredGames.filter(
-      (item) => !liveIds.has(String(item.game.id))
+    const withoutLiveOrFinal = featuredGames.filter(
+      (item) =>
+        item.game.status !== 'FINAL' && !liveIds.has(String(item.game.id))
     );
 
-    return withoutLive.slice(0, 4);
+    return withoutLiveOrFinal.slice(0, 4);
   }, [featuredGames]);
 
   const liveGames = useMemo(() => {
     return sortLiveGames(featuredGames.filter((item) => item.game.status === 'LIVE'));
   }, [featuredGames]);
+
+  const visibleLiveGames = showAllLiveGames ? liveGames : liveGames.slice(0, 6);
+  const hasMoreLiveGames = liveGames.length > 6;
 
   const totalGamesToday =
     leagueStats.CPBL.total +
@@ -372,7 +377,7 @@ export default function HomePage() {
               <Text style={styles.sectionTitle}>🔴 目前比賽中</Text>
             </View>
 
-            {liveGames.slice(0, 3).map((item, index) => (
+            {visibleLiveGames.map((item, index) => (
               <View key={`live-${item.league}-${item.game.id}-${index}`} style={styles.featuredWrap}>
                 <TouchableOpacity activeOpacity={0.9} onPress={() => openLeague(item.league)}>
                   <ScoreboardCard
@@ -391,6 +396,18 @@ export default function HomePage() {
                 </TouchableOpacity>
               </View>
             ))}
+
+            {hasMoreLiveGames && (
+              <TouchableOpacity
+                style={styles.expandLiveButton}
+                activeOpacity={0.85}
+                onPress={() => setShowAllLiveGames((value) => !value)}
+              >
+                <Text style={styles.expandLiveButtonText}>
+                  {showAllLiveGames ? '收合比賽中' : `展開全部 ${liveGames.length} 場 LIVE`}
+                </Text>
+              </TouchableOpacity>
+            )}
           </>
         )}
 
@@ -611,6 +628,22 @@ const styles = StyleSheet.create({
 
   featuredWrap: {
     marginBottom: 10,
+  },
+  expandLiveButton: {
+    backgroundColor: '#172033',
+    borderWidth: 1,
+    borderColor: '#334155',
+    borderRadius: 18,
+    paddingVertical: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+    marginBottom: 16,
+  },
+  expandLiveButtonText: {
+    color: '#dbeafe',
+    fontSize: 11,
+    fontWeight: '900',
   },
   // removed: leagueTagRow, leagueTag, leagueTagText
 

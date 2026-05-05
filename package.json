@@ -10,7 +10,8 @@
     "lint": "expo lint",
     "export:abroad-seed": "tsx scripts/export-abroad-seed.ts",
     "fetch:abroad-live": "tsx server/fetch-abroad-data.ts",
-    "fetch:events-mlb": "tsx server/fetch-live-baseball-data.ts"
+    "fetch:events-mlb": "tsx server/fetch-live-baseball-data.ts",
+    "fetch:events-npb": "tsx server/fetch-npb-live-data.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

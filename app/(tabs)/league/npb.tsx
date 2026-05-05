@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import LeagueCalendarPage from '../../../components/LeagueCalendarPage';
-import { fetchNpbGamesByDate } from '../../../lib/npb-real';
+import { fetchNpbGamesByDate } from '../../../lib/npb';
 
 export default function NPBPage() {
   const { date } = useLocalSearchParams<{ date?: string }>();
