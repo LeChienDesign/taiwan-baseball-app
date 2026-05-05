@@ -108,6 +108,25 @@ function getGameTimeValue(game: ScoreboardGame) {
   return parseTimeValue(game.footerRight);
 }
 
+function getLiveInningValue(game: ScoreboardGame) {
+  const text = `${game.footerLeft ?? ''} ${game.footerRight ?? ''}`;
+  const match = text.match(/(\d{1,2})\s*(?:局|回|th|st|nd|rd)/i);
+  if (!match) return 0;
+  return Number(match[1]) || 0;
+}
+
+function sortLiveGames(items: FeaturedItem[]) {
+  return [...items].sort((a, b) => {
+    const inningDiff = getLiveInningValue(b.game) - getLiveInningValue(a.game);
+    if (inningDiff !== 0) return inningDiff;
+
+    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
+    if (leagueDiff !== 0) return leagueDiff;
+
+    return String(a.game.id).localeCompare(String(b.game.id));
+  });
+}
+
 function hasMeaningfulGameContent(game: ScoreboardGame) {
   const hasVenue = !!String(game.venue || '').trim();
   const hasTime = !!String(game.footerRight || '').trim();
@@ -222,6 +241,10 @@ export default function HomePage() {
     return filtered.slice(0, 4);
   }, [featuredGames, leagueFilter]);
 
+  const liveGames = useMemo(() => {
+    return sortLiveGames(featuredGames.filter((item) => item.game.status === 'LIVE'));
+  }, [featuredGames]);
+
   const totalGamesToday =
     leagueStats.CPBL.total +
     leagueStats.MLB.total +
@@ -301,6 +324,40 @@ export default function HomePage() {
             <Text style={styles.summaryMiniText}>KBO {leagueStats.KBO.total} 場</Text>
           </View>
         </View>
+
+        {liveGames.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>🔴 目前比賽中</Text>
+            </View>
+
+            {liveGames.slice(0, 3).map((item, index) => (
+              <View key={`live-${item.league}-${item.game.id}-${index}`} style={styles.featuredWrap}>
+                <View style={styles.leagueTagRow}>
+                  <View style={styles.leagueTag}>
+                    <Text style={styles.leagueTagText}>{item.league}</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity activeOpacity={0.9} onPress={() => openLeague(item.league)}>
+                  <ScoreboardCard
+                    status={item.game.status}
+                    venue={item.game.venue}
+                    awayTeam={item.game.awayTeam}
+                    homeTeam={item.game.homeTeam}
+                    awayScore={item.game.awayScore}
+                    homeScore={item.game.homeScore}
+                    innings={item.game.innings}
+                    awayLine={item.game.awayLine}
+                    homeLine={item.game.homeLine}
+                    footerLeft={item.game.footerLeft}
+                    footerRight={item.game.footerRight}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </>
+        )}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>今日焦點賽事</Text>
