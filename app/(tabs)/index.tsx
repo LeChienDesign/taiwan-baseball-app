@@ -192,9 +192,11 @@ export default function HomePage() {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const loadHomeData = useCallback(async () => {
+  const loadHomeData = useCallback(async (options?: { silent?: boolean }) => {
     try {
-      setLoading(true);
+      if (!options?.silent) {
+        setLoading(true);
+      }
 
       const [cpblGames, mlbGames, npbGames, kboGames] = await Promise.all([
         fetchCpblMajorGamesByDate(todayKey).catch(() => []),
@@ -219,7 +221,9 @@ export default function HomePage() {
 
       setFeaturedGames(sortFeatured(merged));
     } finally {
-      setLoading(false);
+      if (!options?.silent) {
+        setLoading(false);
+      }
       setRefreshing(false);
     }
   }, [todayKey]);
@@ -288,6 +292,18 @@ export default function HomePage() {
     leagueStats.MLB.live +
     leagueStats.NPB.live +
     leagueStats.KBO.live;
+
+  useEffect(() => {
+    if (totalLiveToday <= 0) return;
+
+    const timer = setInterval(() => {
+      loadHomeData({ silent: true });
+    }, 30000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [loadHomeData, totalLiveToday]);
 
   function openLeague(league: LeagueKey) {
     router.push(buildLeagueHref(league, todayKey));

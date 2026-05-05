@@ -86,6 +86,12 @@ export default function ScoreboardCard({
 }: ScoreboardCardProps) {
   const isScheduled = status === 'SCHEDULED';
   const livePulse = useRef(new Animated.Value(1)).current;
+  const awayScorePulse = useRef(new Animated.Value(1)).current;
+  const homeScorePulse = useRef(new Animated.Value(1)).current;
+  const awayFlash = useRef(new Animated.Value(0)).current;
+  const homeFlash = useRef(new Animated.Value(0)).current;
+  const previousAwayScore = useRef(awayScore);
+  const previousHomeScore = useRef(homeScore);
 
   const awayWin = status === 'FINAL' && awayScore > homeScore;
   const homeWin = status === 'FINAL' && homeScore > awayScore;
@@ -122,6 +128,50 @@ export default function ScoreboardCard({
       livePulse.setValue(1);
     };
   }, [livePulse, status]);
+
+  useEffect(() => {
+    if (previousAwayScore.current !== awayScore) {
+      awayScorePulse.setValue(1.22);
+      awayFlash.setValue(1);
+
+      Animated.parallel([
+        Animated.spring(awayScorePulse, {
+          toValue: 1,
+          friction: 5,
+          tension: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(awayFlash, {
+          toValue: 0,
+          duration: 260,
+          useNativeDriver: false,
+        }),
+      ]).start();
+
+      previousAwayScore.current = awayScore;
+    }
+
+    if (previousHomeScore.current !== homeScore) {
+      homeScorePulse.setValue(1.22);
+      homeFlash.setValue(1);
+
+      Animated.parallel([
+        Animated.spring(homeScorePulse, {
+          toValue: 1,
+          friction: 5,
+          tension: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(homeFlash, {
+          toValue: 0,
+          duration: 260,
+          useNativeDriver: false,
+        }),
+      ]).start();
+
+      previousHomeScore.current = homeScore;
+    }
+  }, [awayFlash, awayScore, awayScorePulse, homeFlash, homeScore, homeScorePulse]);
 
   const awayInningsRaw = normalizeInnings(awayLine?.innings);
   const homeInningsRaw = normalizeInnings(homeLine?.innings);
@@ -169,7 +219,21 @@ export default function ScoreboardCard({
           ) : (
             <>
               <View style={styles.scoreLine}>
-                <Text style={[styles.bigScore, awayWin && styles.winnerScore]}>{awayScore}</Text>
+                <Animated.Text
+                  style={[
+                    styles.bigScore,
+                    awayWin && styles.winnerScore,
+                    {
+                      transform: [{ scale: awayScorePulse }],
+                      color: awayFlash.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [awayWin ? '#facc15' : '#ffffff', '#facc15'],
+                      }),
+                    },
+                  ]}
+                >
+                  {awayScore}
+                </Animated.Text>
 
                 <View style={styles.statusPillWrap}>
                   {status === 'LIVE' ? (
@@ -189,7 +253,21 @@ export default function ScoreboardCard({
                   )}
                 </View>
 
-                <Text style={[styles.bigScore, homeWin && styles.winnerScore]}>{homeScore}</Text>
+                <Animated.Text
+                  style={[
+                    styles.bigScore,
+                    homeWin && styles.winnerScore,
+                    {
+                      transform: [{ scale: homeScorePulse }],
+                      color: homeFlash.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [homeWin ? '#facc15' : '#ffffff', '#facc15'],
+                      }),
+                    },
+                  ]}
+                >
+                  {homeScore}
+                </Animated.Text>
               </View>
             </>
           )}
