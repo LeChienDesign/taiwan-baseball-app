@@ -90,7 +90,6 @@ export default function ScoreboardCard({
   const awayWin = status === 'FINAL' && awayScore > homeScore;
   const homeWin = status === 'FINAL' && homeScore > awayScore;
   const footerVenue = venue && venue !== '—' ? venue : '';
-  const liveLabel = status === 'LIVE' ? '比賽中' : '';
   const liveDetail = status === 'LIVE' ? footerLeft || footerRight : footerRight;
 
   useEffect(() => {
@@ -178,7 +177,6 @@ export default function ScoreboardCard({
                       <Animated.View style={{ transform: [{ scale: livePulse }] }}>
                         <View style={styles.liveDot} />
                       </Animated.View>
-                      <Text style={styles.statusText}>{liveLabel}</Text>
                     </View>
                   ) : status === 'FINAL' ? (
                     <View style={[styles.statusPill, styles.statusPillFinal]}>
@@ -353,11 +351,10 @@ const styles = StyleSheet.create({
     color: '#facc15',
   },
   liveDot: {
-    width: 6,
-    height: 6,
+    width: 7,
+    height: 7,
     borderRadius: 999,
     backgroundColor: '#ef4444',
-    marginRight: 4,
   },
   statusPillWrap: {
     width: 42,
@@ -376,6 +373,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statusPillLive: {
+    minWidth: 22,
+    width: 22,
+    paddingHorizontal: 0,
     backgroundColor: '#3b1016',
     borderColor: '#ef4444',
     shadowColor: '#ef4444',
