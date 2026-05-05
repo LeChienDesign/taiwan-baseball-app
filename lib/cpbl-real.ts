@@ -1,10 +1,6 @@
 import cpblMajor2026 from '../data/cpbl-major-2026.json';
 import type { ScoreboardGame } from './mlb';
 import { CPBL_TEAM_LOGOS } from '../constants/cpblTeamLogos';
-import {
-  fetchCpblOfficialStatusByGame,
-  applyCpblOfficialStatus,
-} from './cpbl-live';
 
 type CpblRow = {
   idEvent: string;
@@ -291,40 +287,7 @@ export async function fetchCpblMajorGamesByDate(date: string): Promise<Scoreboar
   const recordMap = buildTeamRecordsUntilDate(rows, date);
 
   const sameDayRows = rows.filter((row) => formatDateOnly(row.strTimestamp) === date);
-  const baseGames = sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
-
-  const mergedGames = await Promise.all(
-    sameDayRows.map(async (row, index) => {
-      const baseGame = baseGames[index];
-
-      if (!row.gameSno || !row.kindCode || !row.year) {
-        return baseGame;
-      }
-
-      try {
-        console.log(
-          'CPBL live params =',
-          row.idEvent,
-          row.gameSno,
-          row.kindCode,
-          row.year
-        );
-
-        const official = await fetchCpblOfficialStatusByGame({
-          gameSno: row.gameSno,
-          kindCode: row.kindCode,
-          year: row.year,
-        });
-
-        return applyCpblOfficialStatus(baseGame, official);
-      } catch (error) {
-        console.warn(`CPBL live merge failed for ${row.idEvent}:`, error);
-        return baseGame;
-      }
-    })
-  );
-
-  return mergedGames;
+  return sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
 }
 
 export async function fetchCpblMinorGamesByDate(_date: string): Promise<ScoreboardGame[]> {

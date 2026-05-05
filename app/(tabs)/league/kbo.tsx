@@ -1,7 +1,9 @@
+import { useLocalSearchParams } from 'expo-router';
 import LeagueCalendarPage from '../../../components/LeagueCalendarPage';
 import { fetchKboGamesByDate } from '../../../lib/kbo-real';
 
 export default function KBOPage() {
+  const { date } = useLocalSearchParams<{ date?: string }>();
   return (
     <LeagueCalendarPage
       logo={require('../../../assets/league/kbo.png')}
@@ -9,6 +11,7 @@ export default function KBOPage() {
       leagueSubtitle="每日賽事與比分"
       backHref="/events/pro"
       fetchGamesByDate={fetchKboGamesByDate}
+      initialDate={typeof date === 'string' ? date : undefined}
     />
   );
 }

@@ -150,6 +150,13 @@ function buildLeagueStat(games: ScoreboardGame[]) {
   };
 }
 
+function buildLeagueHref(league: LeagueKey, date: string) {
+  if (league === 'CPBL') return `/league/cpbl-major?date=${date}`;
+  if (league === 'MLB') return `/league/mlb?date=${date}`;
+  if (league === 'NPB') return `/league/npb?date=${date}`;
+  return `/league/kbo?date=${date}`;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const todayKey = useMemo(() => getTodayDateKey(), []);
@@ -228,43 +235,16 @@ export default function HomePage() {
     leagueStats.KBO.live;
 
   function openLeague(league: LeagueKey) {
-    if (league === 'CPBL') {
-      router.push('/league/cpbl-major');
-      return;
-    }
-    if (league === 'MLB') {
-      router.push('/league/mlb');
-      return;
-    }
-    if (league === 'NPB') {
-      router.push('/league/npb');
-      return;
-    }
-    if (league === 'KBO') {
-      router.push('/league/kbo');
-      return;
-    }
+    router.push(buildLeagueHref(league, todayKey));
   }
 
   function handleSeeMore() {
-    if (leagueFilter === 'CPBL') {
-      router.push('/league/cpbl-major');
-      return;
-    }
-    if (leagueFilter === 'MLB') {
-      router.push('/league/mlb');
-      return;
-    }
-    if (leagueFilter === 'NPB') {
-      router.push('/league/npb');
-      return;
-    }
-    if (leagueFilter === 'KBO') {
-      router.push('/league/kbo');
+    if (leagueFilter !== 'ALL') {
+      router.push(buildLeagueHref(leagueFilter, todayKey));
       return;
     }
 
-    router.push('/events/pro');
+    router.push(`/events/pro?date=${todayKey}`);
   }
 
   const filterOptions: { key: LeagueFilter; label: string }[] = [
@@ -409,7 +389,7 @@ export default function HomePage() {
           <TouchableOpacity
             style={styles.leagueCard}
             activeOpacity={0.88}
-            onPress={() => router.push('/league/cpbl-major')}
+            onPress={() => openLeague('CPBL')}
           >
             <View style={styles.badgesWrap}>
               <View style={styles.totalBadge}>
@@ -431,7 +411,7 @@ export default function HomePage() {
           <TouchableOpacity
             style={styles.leagueCard}
             activeOpacity={0.88}
-            onPress={() => router.push('/league/npb')}
+            onPress={() => openLeague('NPB')}
           >
             <View style={styles.badgesWrap}>
               <View style={styles.totalBadge}>
@@ -453,7 +433,7 @@ export default function HomePage() {
           <TouchableOpacity
             style={styles.leagueCard}
             activeOpacity={0.88}
-            onPress={() => router.push('/league/mlb')}
+            onPress={() => openLeague('MLB')}
           >
             <View style={styles.badgesWrap}>
               <View style={styles.totalBadge}>
@@ -475,7 +455,7 @@ export default function HomePage() {
           <TouchableOpacity
             style={styles.leagueCard}
             activeOpacity={0.88}
-            onPress={() => router.push('/league/kbo')}
+            onPress={() => openLeague('KBO')}
           >
             <View style={styles.badgesWrap}>
               <View style={styles.totalBadge}>

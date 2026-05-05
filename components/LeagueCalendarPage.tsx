@@ -78,9 +78,14 @@ export default function LeagueCalendarPage({
   initialDate,
 }: LeagueCalendarPageProps) {
   const now = new Date();
-  const [displayYear, setDisplayYear] = useState(now.getFullYear());
-  const [displayMonth, setDisplayMonth] = useState(now.getMonth() + 1);
-  const [selectedDay, setSelectedDay] = useState<number | null>(now.getDate());
+  const initialDateParts = initialDate?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const initialYear = initialDateParts ? Number(initialDateParts[1]) : now.getFullYear();
+  const initialMonth = initialDateParts ? Number(initialDateParts[2]) : now.getMonth() + 1;
+  const initialDay = initialDateParts ? Number(initialDateParts[3]) : now.getDate();
+
+  const [displayYear, setDisplayYear] = useState(initialYear);
+  const [displayMonth, setDisplayMonth] = useState(initialMonth);
+  const [selectedDay, setSelectedDay] = useState<number | null>(initialDay);
 
   const [realGames, setRealGames] = useState<any[]>([]);
   const [loadingGames, setLoadingGames] = useState(false);
@@ -168,7 +173,7 @@ export default function LeagueCalendarPage({
     if (selectedDay != null) {
       loadGamesForDay(displayYear, displayMonth, selectedDay);
     }
-  }, []);
+  }, [displayYear, displayMonth, selectedDay]);
 
   const goPrevMonth = () => {
     if (displayMonth === 1) {
