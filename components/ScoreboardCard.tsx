@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
 
 type TeamInfo = {
   name: string;
@@ -85,10 +85,44 @@ export default function ScoreboardCard({
   footerRight,
 }: ScoreboardCardProps) {
   const isScheduled = status === 'SCHEDULED';
+  const livePulse = useRef(new Animated.Value(1)).current;
 
   const awayWin = status === 'FINAL' && awayScore > homeScore;
   const homeWin = status === 'FINAL' && homeScore > awayScore;
   const footerVenue = venue && venue !== '—' ? venue : '';
+  const liveLabel = status === 'LIVE' ? '比賽中' : '';
+  const liveDetail = status === 'LIVE' ? footerLeft || footerRight : footerRight;
+
+  useEffect(() => {
+    if (status !== 'LIVE') {
+      livePulse.setValue(1);
+      return;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(livePulse, {
+          toValue: 1.45,
+          duration: 620,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(livePulse, {
+          toValue: 1,
+          duration: 620,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+      livePulse.setValue(1);
+    };
+  }, [livePulse, status]);
 
   const awayInningsRaw = normalizeInnings(awayLine?.innings);
   const homeInningsRaw = normalizeInnings(homeLine?.innings);
@@ -141,8 +175,10 @@ export default function ScoreboardCard({
                 <View style={styles.statusPillWrap}>
                   {status === 'LIVE' ? (
                     <View style={[styles.statusPill, styles.statusPillLive]}>
-                      <View style={styles.liveDot} />
-                      <Text style={styles.statusText}>{footerLeft || 'LIVE'}</Text>
+                      <Animated.View style={{ transform: [{ scale: livePulse }] }}>
+                        <View style={styles.liveDot} />
+                      </Animated.View>
+                      <Text style={styles.statusText}>{liveLabel}</Text>
                     </View>
                   ) : status === 'FINAL' ? (
                     <View style={[styles.statusPill, styles.statusPillFinal]}>
@@ -186,7 +222,7 @@ export default function ScoreboardCard({
           <Text style={styles.inningHeader}>E</Text>
         </View>
 
-        <View style={styles.scoreRow}>
+        <View style={[styles.scoreRow, awayWin && styles.scoreRowWinner]}>
           <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
           {safeAwayLine.innings.map((v, idx) => (
             <Text key={`a-${idx}`} style={styles.scoreCell}>
@@ -198,7 +234,7 @@ export default function ScoreboardCard({
           <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
         </View>
 
-        <View style={styles.scoreRow}>
+        <View style={[styles.scoreRow, homeWin && styles.scoreRowWinner]}>
           <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
           {safeHomeLine.innings.map((v, idx) => (
             <Text key={`b-${idx}`} style={styles.scoreCell}>
@@ -217,7 +253,7 @@ export default function ScoreboardCard({
             {!!footerVenue && <Text style={styles.footerLeft} numberOfLines={1}>{footerVenue}</Text>}
           </View>
           <View style={styles.footerRightWrap}>
-            {!!footerRight && <Text style={styles.footerRight}>{footerRight}</Text>}
+            {!!liveDetail && <Text style={styles.footerRight}>{liveDetail}</Text>}
           </View>
         </View>
       )}
@@ -422,6 +458,11 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     borderRadius: 8,
     backgroundColor: 'rgba(255,255,255,0.025)',
+  },
+  scoreRowWinner: {
+    backgroundColor: 'rgba(250,204,21,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(250,204,21,0.22)',
   },
   teamCodeCellText: {
     width: 50,
