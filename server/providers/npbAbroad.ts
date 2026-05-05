@@ -88,7 +88,7 @@ type OfficialSupplement = {
 const NPB_BASE = 'https://npb.jp';
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_LINKS_PER_PLAYER = 30;
-const FALLBACK_LINKS_PER_PLAYER = 12;
+const FALLBACK_LINKS_PER_PLAYER = 80;
 
 const DEBUG_ABROAD_TIMING = process.env.DEBUG_ABROAD_TIMING === '1';
 const DEBUG_PLAYER_ID = process.env.DEBUG_PLAYER_ID?.trim();
@@ -429,7 +429,7 @@ function getTeamKeywords(player: AbroadPlayerLike, registry: AbroadRegistryEntry
   const joined = rawNames.join(' | ').toLowerCase();
 
   if (joined.includes('fighters')) {
-    ['fighters', 'nippon-ham', 'hokkaido', '日本ハム'].forEach((k) => keywords.add(k));
+    ['fighters', 'nippon-ham', 'hokkaido', '日本ハム', '日本火腿', 'f-'].forEach((k) => keywords.add(k));
   }
   if (joined.includes('hawks')) {
     ['hawks', 'softbank', 'fukuoka', 'ソフトバンク'].forEach((k) => keywords.add(k));
@@ -834,6 +834,22 @@ function buildJapaneseGameUrl(url: string) {
   return url.replace('/bis/eng/', '/bis/');
 }
 
+function buildNpbScoreBoxUrl(item: NpbGameLink) {
+  const match = item.url.match(/\/bis\/eng\/(\d{4})\/games\/[sf]?s?(\d{8})\d*\.html/i);
+  if (!match) return null;
+
+  const year = match[1];
+  const ymd = match[2];
+  const monthDay = ymd.slice(4, 8);
+  const context = `${item.contextText ?? ''} ${item.url}`.toLowerCase();
+
+  if (!context.includes('fighters') && !context.includes('nippon-ham') && !context.includes('hokkaido') && !context.includes('日本ハム') && !context.includes('日本火腿')) {
+    return null;
+  }
+
+  return `${NPB_BASE}/scores/${year}/${monthDay}/f-b-08/box.html`;
+}
+
 function extractTitle(html: string) {
   const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
   return compactWhitespace(decodeHtml(titleMatch?.[1] ?? ''));
@@ -928,7 +944,74 @@ function normalizeLineForDisplay(line: string) {
       .trim()
   );
 }
+function extractNpbBoxCellsForAlias(html: string, aliases: string[]) {
+  const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let match: RegExpExecArray | null = null;
 
+  while ((match = rowRegex.exec(html))) {
+    const rowHtml = match[1];
+    const rowText = normalizeLooseText(stripHtml(rowHtml));
+
+    const aliasHit = aliases.some((alias) => rowText.includes(normalizeLooseText(alias)));
+    if (!aliasHit) continue;
+
+    const cells = [...rowHtml.matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/gi)]
+      .map((cell) =>
+        compactWhitespace(
+          decodeHtml(
+            cell[1]
+              .replace(/<br\s*\/?>/gi, ' ')
+              .replace(/<[^>]+>/g, ' ')
+          )
+        )
+      )
+      .filter(Boolean);
+
+    const firstCell = cells[0] ?? '';
+    const secondCell = cells[1] ?? '';
+    const hasNumericPitchingStats = cells.slice(1, 13).filter((cell) => /^\d+(?:\/\d+)?$/.test(cell)).length >= 8;
+    const isSummaryRow =
+      firstCell.includes('HR') ||
+      firstCell.includes('TEAM') ||
+      firstCell.includes('合計') ||
+      firstCell.includes('計') ||
+      secondCell.includes('off RY.Gu Lin');
+
+    if (cells.length >= 13 && hasNumericPitchingStats && !isSummaryRow) {
+      return cells;
+    }
+  }
+
+  return null;
+}
+
+function buildPitcherRecentGameFromBoxCells(
+  meta: ReturnType<typeof extractGameMeta>,
+  cells: string[]
+) {
+    const name = cells[0] ?? '—';
+    const pitchCount = cells[1] ?? '—';
+    const batters = cells[2] ?? '—';
+    const ip = cells[3] ?? '—';
+    const hits = cells[4] ?? '0';
+    const hr = cells[5] ?? '0';
+    const bb = cells[6] ?? '0';
+    const hbp = cells[7] ?? '0';
+    const so = cells[8] ?? '0';
+    const balk = cells[9] ?? '0';
+    const wildPitch = cells[10] ?? '0';
+    const runs = cells[11] ?? '0';
+    const earnedRuns = cells[12] ?? '0';
+    
+  return {
+      
+    date: meta.date,
+    opponent: meta.away === '—' && meta.home === '—' ? '—' : `${meta.away} vs ${meta.home}`,
+    result: '登板',
+      detail1: `IP ${ip} / SO ${so} / BB ${bb}`,
+      detail2: `NP ${pitchCount} / H ${hits} / HR ${hr} / R ${runs} / ER ${earnedRuns}`,
+  };
+}
 function buildPitcherRecentGame(meta: ReturnType<typeof extractGameMeta>, line: string) {
   const normalized = normalizeLineForDisplay(line);
 
@@ -952,7 +1035,6 @@ function buildHitterRecentGame(meta: ReturnType<typeof extractGameMeta>, line: s
     detail2: 'NPB 官方比分頁',
   };
 }
-
 async function findEntryFromGamePage(
   player: AbroadPlayerLike,
   item: NpbGameLink,
@@ -967,6 +1049,7 @@ async function findEntryFromGamePage(
 
   const meta = extractGameMeta(html, item.date);
   let activeMeta = meta;
+  let activeHtml = html;
   let matchedAlias = findMatchingAlias(activeMeta.text, aliases);
 
   if (!matchedAlias) {
@@ -982,8 +1065,28 @@ async function findEntryFromGamePage(
 
         if (jpAlias) {
           activeMeta = jpMeta;
+          activeHtml = jpHtml;
           matchedAlias = jpAlias;
           debugPlayerLog(player.id, `matched alias on jp page = ${matchedAlias}`);
+        }
+      }
+    }
+  }
+
+  if (!matchedAlias && configuredType === 'pitcher') {
+    const scoreBoxUrl = buildNpbScoreBoxUrl(item);
+    if (scoreBoxUrl) {
+      debugPlayerLog(player.id, 'trying score box page =', scoreBoxUrl);
+      const boxHtml = await timeAsync(`player:${player.id}:fetchScoreBox`, () => fetchText(scoreBoxUrl));
+      if (boxHtml) {
+        const boxMeta = extractGameMeta(boxHtml, item.date);
+        const boxAlias = findMatchingAlias(boxMeta.text, aliases);
+        if (boxAlias) {
+          const boxCells = extractNpbBoxCellsForAlias(boxHtml, aliases);
+          if (boxCells) {
+            debugPlayerLog(player.id, 'box cells =', boxCells);
+            return buildPitcherRecentGameFromBoxCells(boxMeta, boxCells);
+          }
         }
       }
     }
@@ -992,6 +1095,14 @@ async function findEntryFromGamePage(
   if (!matchedAlias) {
     debugPlayerLog(player.id, 'skip: alias not found in game page');
     return null;
+  }
+
+  if (configuredType === 'pitcher') {
+    const boxCells = extractNpbBoxCellsForAlias(activeHtml, aliases);
+    if (boxCells) {
+      debugPlayerLog(player.id, 'box cells =', boxCells);
+      return buildPitcherRecentGameFromBoxCells(activeMeta, boxCells);
+    }
   }
 
   const hitLines = collectContextLines(activeMeta.text, aliases);
@@ -1010,7 +1121,6 @@ async function findEntryFromGamePage(
     ? buildPitcherRecentGame(activeMeta, targetLine)
     : buildHitterRecentGame(activeMeta, targetLine);
 }
-
 async function buildRecentGamesFromOfficialScores(
   player: AbroadPlayerLike,
   registry: AbroadRegistryEntry,
@@ -1143,7 +1253,8 @@ async function buildSingleNpbPatch(
         officialSupplement = await buildFightersOfficialSupplement(
           player,
           registry,
-          requestedDate
+          requestedDate,
+          maxGames
         );
       }
 
