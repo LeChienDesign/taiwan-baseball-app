@@ -86,6 +86,10 @@ export default function ScoreboardCard({
 }: ScoreboardCardProps) {
   const isScheduled = status === 'SCHEDULED';
 
+  const awayWin = status === 'FINAL' && awayScore > homeScore;
+  const homeWin = status === 'FINAL' && homeScore > awayScore;
+  const footerVenue = venue && venue !== '—' ? venue : '';
+
   const awayInningsRaw = normalizeInnings(awayLine?.innings);
   const homeInningsRaw = normalizeInnings(homeLine?.innings);
   const inningHeaders = buildInningHeaders(innings, awayInningsRaw, homeInningsRaw);
@@ -113,7 +117,7 @@ export default function ScoreboardCard({
     <View style={styles.card}>
       <View style={styles.topRow}>
         <View style={styles.sideTeam}>
-          <Text style={styles.teamName}>{awayTeam.name}</Text>
+          <Text style={[styles.teamName, awayWin && styles.winnerText]}>{awayTeam.name}</Text>
           {!!awayTeam.record && <Text style={styles.teamRecord}>{awayTeam.record}</Text>}
         </View>
 
@@ -123,35 +127,36 @@ export default function ScoreboardCard({
           {isScheduled ? (
             <>
               <View style={styles.scheduledWrap}>
-                <Text style={styles.scheduledLabel}>SCHEDULED</Text>
+                <View style={styles.scheduledPill}>
+                  <Text style={styles.scheduledLabel}>SCHEDULED</Text>
+                </View>
                 <Text style={styles.scheduledTime}>{footerRight || '--:--'}</Text>
               </View>
-              <Text style={styles.venueText} numberOfLines={1}>
-                {venue || '—'}
-              </Text>
             </>
           ) : (
             <>
               <View style={styles.scoreLine}>
-                <Text style={styles.bigScore}>{awayScore}</Text>
+                <Text style={[styles.bigScore, awayWin && styles.winnerScore]}>{awayScore}</Text>
 
-                {status === 'LIVE' ? (
-                  <View style={styles.liveWrap}>
-                    <View style={styles.liveDot} />
-                    <Text style={styles.statusText}>{footerLeft || 'LIVE'}</Text>
-                  </View>
-                ) : status === 'FINAL' ? (
-                  <Text style={styles.statusText}>FINAL</Text>
-                ) : (
-                  <Text style={styles.statusText}>SCH</Text>
-                )}
+                <View style={styles.statusPillWrap}>
+                  {status === 'LIVE' ? (
+                    <View style={[styles.statusPill, styles.statusPillLive]}>
+                      <View style={styles.liveDot} />
+                      <Text style={styles.statusText}>{footerLeft || 'LIVE'}</Text>
+                    </View>
+                  ) : status === 'FINAL' ? (
+                    <View style={[styles.statusPill, styles.statusPillFinal]}>
+                      <Text style={styles.statusText}>FINAL</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.statusPill}>
+                      <Text style={styles.statusText}>SCH</Text>
+                    </View>
+                  )}
+                </View>
 
-                <Text style={styles.bigScore}>{homeScore}</Text>
+                <Text style={[styles.bigScore, homeWin && styles.winnerScore]}>{homeScore}</Text>
               </View>
-
-              <Text style={styles.venueText} numberOfLines={1}>
-                {venue || '—'}
-              </Text>
             </>
           )}
         </View>
@@ -159,7 +164,7 @@ export default function ScoreboardCard({
         <TeamLogo team={homeTeam} />
 
         <View style={[styles.sideTeam, styles.sideTeamRight]}>
-          <Text style={[styles.teamName, styles.teamNameRight]}>{homeTeam.name}</Text>
+          <Text style={[styles.teamName, styles.teamNameRight, homeWin && styles.winnerText]}>{homeTeam.name}</Text>
           {!!homeTeam.record && (
             <Text style={[styles.teamRecord, styles.teamRecordRight]}>{homeTeam.record}</Text>
           )}
@@ -206,10 +211,10 @@ export default function ScoreboardCard({
         </View>
       </View>
 
-      {(footerLeft || footerRight) && !isScheduled && (
+      {(footerLeft || footerRight || footerVenue) && !isScheduled && (
         <View style={styles.footerRow}>
           <View style={styles.footerLeftWrap}>
-            {!!footerLeft && <Text style={styles.footerLeft}>{footerLeft}</Text>}
+            {!!footerVenue && <Text style={styles.footerLeft} numberOfLines={1}>{footerVenue}</Text>}
           </View>
           <View style={styles.footerRightWrap}>
             {!!footerRight && <Text style={styles.footerRight}>{footerRight}</Text>}
@@ -223,37 +228,45 @@ export default function ScoreboardCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#071226',
-    borderRadius: 24,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#1b2940',
-    padding: 10,
+    borderColor: '#20304a',
+    paddingTop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 8,
     marginBottom: 12,
+    shadowColor: '#000000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   topRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   sideTeam: {
-    width: 60,
-    minHeight: 38,
-    justifyContent: 'flex-start',
+    width: 62,
+    minHeight: 42,
+    justifyContent: 'center',
   },
   sideTeamRight: {
     alignItems: 'flex-end',
   },
   teamName: {
     color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
+    fontSize: 9,
+    fontWeight: '600',
     marginBottom: 2,
-    lineHeight: 10,
+    lineHeight: 11,
   },
-  teamNameRight: {
-    textAlign: 'right',
+  winnerText: {
+    color: '#f8fafc',
+    fontWeight: '900',
   },
   teamRecord: {
-    color: '#a8b3c7',
-    fontSize: 9,
+    color: '#8ea0bb',
+    fontSize: 8,
     fontWeight: '500',
     lineHeight: 10,
   },
@@ -261,16 +274,18 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   teamLogo: {
-    width: 35,
-    height: 38,
-    marginHorizontal: 15,
+    width: 38,
+    height: 40,
+    marginHorizontal: 12,
   },
   teamLogoFallback: {
-    width: 35,
-    height: 38,
-    marginHorizontal: 15,
-    borderRadius: 10,
+    width: 38,
+    height: 40,
+    marginHorizontal: 12,
+    borderRadius: 12,
     backgroundColor: '#0f1a2e',
+    borderWidth: 1,
+    borderColor: '#22314b',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -292,16 +307,14 @@ const styles = StyleSheet.create({
   },
   bigScore: {
     color: '#ffffff',
-    fontSize: 24,
-    fontWeight: '600',
-    width: 50,
+    fontSize: 28,
+    fontWeight: '800',
+    width: 48,
     textAlign: 'center',
+    letterSpacing: -0.8,
   },
-  liveWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 4,
+  winnerScore: {
+    color: '#facc15',
   },
   liveDot: {
     width: 6,
@@ -310,43 +323,84 @@ const styles = StyleSheet.create({
     backgroundColor: '#ef4444',
     marginRight: 4,
   },
+  statusPillWrap: {
+    width: 42,
+    alignItems: 'center',
+  },
+  statusPill: {
+    minWidth: 38,
+    height: 18,
+    borderRadius: 999,
+    paddingHorizontal: 6,
+    backgroundColor: '#1e293b',
+    borderWidth: 1,
+    borderColor: '#334155',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusPillLive: {
+    backgroundColor: '#3b1016',
+    borderColor: '#ef4444',
+    shadowColor: '#ef4444',
+    shadowOpacity: 0.55,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 3,
+  },
+  statusPillFinal: {
+    backgroundColor: '#172033',
+    borderColor: '#475569',
+  },
   statusText: {
     color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
-    letterSpacing: 0.5,
-    marginHorizontal: 0,
+    fontSize: 7,
+    fontWeight: '800',
+    letterSpacing: 0.6,
     textAlign: 'center',
   },
   scheduledWrap: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  scheduledPill: {
+    paddingHorizontal: 8,
+    height: 18,
+    borderRadius: 999,
+    backgroundColor: '#172033',
+    borderWidth: 1,
+    borderColor: '#334155',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 3,
+  },
   scheduledLabel: {
-    color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
-    letterSpacing: 1,
-    marginBottom: 2,
+    color: '#dbeafe',
+    fontSize: 7,
+    fontWeight: '800',
+    letterSpacing: 0.8,
   },
   scheduledTime: {
     color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '800',
     textAlign: 'center',
-  },
-  venueText: {
-    color: '#9aa7bf',
-    fontSize: 8,
-    marginTop: 2,
-    textAlign: 'center',
+    letterSpacing: -0.4,
   },
   divider: {
     height: 1,
-    backgroundColor: '#1a2740',
-    marginVertical: 2,
+    backgroundColor: '#1f2d45',
+    marginTop: 8,
+    marginBottom: 5,
   },
-  lineTable: {},
+  lineTable: {
+    backgroundColor: '#08172a',
+    borderRadius: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#12233a',
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -355,9 +409,9 @@ const styles = StyleSheet.create({
   inningHeader: {
     width: 28,
     textAlign: 'center',
-    color: '#8f9bb0',
-    fontSize: 11,
-    fontWeight: '500',
+    color: '#8091aa',
+    fontSize: 10,
+    fontWeight: '800',
   },
   teamCodeCell: {
     width: 50,
@@ -366,31 +420,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 1,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.025)',
   },
   teamCodeCellText: {
     width: 50,
     color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '900',
   },
   scoreCell: {
     width: 28.5,
     textAlign: 'center',
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '300',
+    color: '#e8eef8',
+    fontSize: 11,
+    fontWeight: '500',
   },
   scoreCellBold: {
     width: 25,
     textAlign: 'center',
     color: '#ffffff',
-    fontSize: 10,
-    fontWeight: '400',
+    fontSize: 11,
+    fontWeight: '900',
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 3,
+    alignItems: 'center',
+    marginTop: 7,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#16243a',
   },
   footerLeftWrap: {
     flex: 1,
@@ -401,15 +461,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   footerLeft: {
-    color: '#d7e0ee',
+    color: '#8ea0bb',
     fontSize: 9,
-    fontWeight: '200',
-    lineHeight: 10,
+    fontWeight: '500',
+    lineHeight: 11,
   },
   footerRight: {
-    color: '#d7e0ee',
+    color: '#dbeafe',
     fontSize: 9,
-    fontWeight: '300',
+    fontWeight: '700',
     textAlign: 'right',
   },
 });
