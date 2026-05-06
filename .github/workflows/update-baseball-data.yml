@@ -71,6 +71,31 @@ jobs:
         continue-on-error: true
         run: npm run fetch:events-cpbl ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
 
+      - name: Debug CPBL latest snapshot
+        if: always()
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const file = 'server/data/eventsCenter.cpbl.json';
+          if (!fs.existsSync(file)) {
+            console.log('CPBL snapshot missing');
+            process.exit(0);
+          }
+          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const date = '${{ steps.resolve_dates.outputs.taipei_today }}';
+          console.log('CPBL updatedAt:', data.updatedAt);
+          console.log('CPBL date:', date);
+          console.log((data.gamesByDate?.[date] || []).map((game) => ({
+            away: game.awayTeam?.name,
+            home: game.homeTeam?.name,
+            status: game.status,
+            score: `${game.awayScore}-${game.homeScore}`,
+            footerRight: game.footerRight,
+            awayLine: game.awayLine?.innings,
+            homeLine: game.homeLine?.innings,
+          })));
+          NODE
+
       - name: Fetch NPB events center data
         id: fetch_events_npb
         continue-on-error: true
