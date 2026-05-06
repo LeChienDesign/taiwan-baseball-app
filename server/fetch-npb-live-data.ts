@@ -54,8 +54,97 @@ function toDateString(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const NPB_KNOWN_SCHEDULE_OVERRIDES: Record<string, Array<[string, string, string, string, string]>> = {
+  '2026-05-04': [
+    ['Yomiuri', 'Yakult', '讀賣巨人', '養樂多燕子', '17:00'],
+    ['DeNA', 'Hiroshima', '橫濱DeNA灣星', '廣島東洋鯉魚', '14:00'],
+    ['Chunichi', 'Hanshin', '中日龍', '阪神虎', '13:30'],
+    ['Rakuten', 'Nippon-Ham', '東北樂天金鷲', '北海道日本火腿鬥士', '17:00'],
+    ['Seibu', 'SoftBank', '埼玉西武獅', '福岡軟銀鷹', '17:00'],
+    ['ORIX', 'Lotte', '歐力士猛牛', '千葉羅德海洋', '17:00'],
+  ],
+  '2026-05-05': [
+    ['Yomiuri', 'Yakult', '讀賣巨人', '養樂多燕子', '13:00'],
+    ['DeNA', 'Hiroshima', '橫濱DeNA灣星', '廣島東洋鯉魚', '13:00'],
+    ['Chunichi', 'Hanshin', '中日龍', '阪神虎', '13:00'],
+    ['Rakuten', 'Nippon-Ham', '東北樂天金鷲', '北海道日本火腿鬥士', '13:00'],
+    ['Seibu', 'SoftBank', '埼玉西武獅', '福岡軟銀鷹', '13:00'],
+    ['ORIX', 'Lotte', '歐力士猛牛', '千葉羅德海洋', '13:00'],
+  ],
+};
+
+const NPB_LOGO_KEY_MAP: Record<string, string> = {
+  Yomiuri: 'yomiuri-giants',
+  Yakult: 'yakult-swallows',
+  DeNA: 'dena-baystars',
+  Hiroshima: 'hiroshima-carp',
+  Chunichi: 'chunichi-dragons',
+  Hanshin: 'hanshin-tigers',
+  Rakuten: 'rakuten-eagles',
+  'Nippon-Ham': 'nippon-ham-fighters',
+  Seibu: 'seibu-lions',
+  SoftBank: 'softbank-hawks',
+  ORIX: 'orix-buffaloes',
+  Lotte: 'lotte-marines',
+};
+
+function buildKnownNpbScheduleFallback(date: string): NpbGame[] {
+  const schedule = NPB_KNOWN_SCHEDULE_OVERRIDES[date];
+  if (!schedule) return [];
+
+  return schedule.map(([awayKey, homeKey, awayName, homeName, time], index) => {
+    const awayTeam = {
+      name: awayName,
+      short: awayKey.slice(0, 4).toUpperCase(),
+      record: '',
+      logoKey: NPB_LOGO_KEY_MAP[awayKey],
+    };
+    const homeTeam = {
+      name: homeName,
+      short: homeKey.slice(0, 4).toUpperCase(),
+      record: '',
+      logoKey: NPB_LOGO_KEY_MAP[homeKey],
+    };
+
+    return {
+      id: `npb-${date}-known-${index + 1}`,
+      source: 'npb-official',
+      league: 'NPB',
+      date,
+      gamePk: index + 1,
+      status: 'SCHEDULED',
+      statusText: 'Scheduled',
+      venue: '待更新',
+      awayTeam,
+      homeTeam,
+      awayScore: 0,
+      homeScore: 0,
+      innings: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      awayLine: {
+        team: awayTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: 0,
+        h: 0,
+        e: 0,
+      },
+      homeLine: {
+        team: homeTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: 0,
+        h: 0,
+        e: 0,
+      },
+      footerLeft: 'Scheduled',
+      footerRight: time,
+      gameDate: date,
+      officialUrl: `https://npb.jp/bis/eng/2026/games/gm${date.replace(/-/g, '')}.html`,
+    } as NpbGame;
+  });
 }
 
 async function readExistingPayload(outputPath: string) {
@@ -90,7 +179,8 @@ async function main() {
   ) {
     const date = toDateString(cursor);
     const payload = await fetchNpbScoreboardByDate(date);
-    const games = payload.games ?? [];
+    const providerGames = payload.games ?? [];
+    const games = providerGames.length > 0 ? providerGames : buildKnownNpbScheduleFallback(date);
 
     gamesByDate[date] = games;
 

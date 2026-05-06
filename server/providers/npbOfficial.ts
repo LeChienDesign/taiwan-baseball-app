@@ -167,6 +167,46 @@ function normalizeNpbGameTaiwanDisplayTime(game: NpbScoreboardGame): NpbScoreboa
   };
 }
 
+function getNpbScoreDateFromOfficialUrl(url?: string) {
+  const match = String(url || '').match(/\/scores\/(\d{4})\/(\d{2})(\d{2})\//);
+
+  if (!match) {
+    return '';
+  }
+
+  return `${match[1]}-${match[2]}-${match[3]}`;
+}
+
+function officialGameMatchesRequestedDate(
+  game: NpbScoreboardGame,
+  requestedDate: string
+) {
+  const officialDate = getNpbScoreDateFromOfficialUrl(game.officialUrl);
+
+  if (!officialDate) {
+    return true;
+  }
+
+  return officialDate === requestedDate;
+}
+
+function getNpbDailyGamesUrl(date: string) {
+  const compactDate = date.replace(/-/g, '');
+  return `${NPB_BASE}/bis/eng/${date.slice(0, 4)}/games/gm${compactDate}.html`;
+}
+
+async function fetchGamesFromHtmlUrl(url: string, requestedDate: string) {
+  const html = await fetchText(url);
+
+  if (!html) {
+    return [] as NpbScoreboardGame[];
+  }
+
+  return extractHeaderScoreGames(html, requestedDate).filter((game) =>
+    officialGameMatchesRequestedDate(game, requestedDate)
+  );
+}
+
 function formatDateInTimeZone(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
@@ -418,12 +458,12 @@ function extractHeaderScoreGames(html: string, date: string) {
 
 function buildFallbackScheduledGames(date: string): NpbScoreboardGame[] {
   const teams: Array<[string, string, string]> = [
-    ['Yomiuri', 'Yakult', '13:00'],
-    ['DeNA', 'Hiroshima', '13:00'],
-    ['Chunichi', 'Hanshin', '13:00'],
-    ['Rakuten', 'Nippon-Ham', '13:00'],
-    ['Seibu', 'SoftBank', '13:00'],
-    ['ORIX', 'Lotte', '13:00'],
+    ['Yomiuri', 'Yakult', '14:00'],
+    ['DeNA', 'Hiroshima', '14:00'],
+    ['Chunichi', 'Hanshin', '14:00'],
+    ['Rakuten', 'Nippon-Ham', '14:00'],
+    ['Seibu', 'SoftBank', '14:00'],
+    ['ORIX', 'Lotte', '14:00'],
   ];
 
   return teams.map(([away, home, time], index) => {
@@ -469,25 +509,26 @@ function buildFallbackScheduledGames(date: string): NpbScoreboardGame[] {
 export async function fetchNpbScoreboardByDate(date: string) {
   const requestedDate = toDateOnly(date);
   const todayTokyo = formatDateInTimeZone(new Date(), 'Asia/Tokyo');
-  const html = await fetchText(NPB_BASE);
 
-  if (html) {
-    const games = extractHeaderScoreGames(html, requestedDate);
+  const gamesFromHome = await fetchGamesFromHtmlUrl(NPB_BASE, requestedDate);
+  const games =
+    gamesFromHome.length > 0
+      ? gamesFromHome
+      : await fetchGamesFromHtmlUrl(getNpbDailyGamesUrl(requestedDate), requestedDate);
 
-    if (games.length > 0) {
-      const enrichedGames = (await Promise.all(games.map(enrichGameWithLineScore))).map(
-        normalizeNpbGameTaiwanDisplayTime
-      );
+  if (games.length > 0) {
+    const enrichedGames = (await Promise.all(games.map(enrichGameWithLineScore))).map(
+      normalizeNpbGameTaiwanDisplayTime
+    );
 
-      return {
-        updatedAt: new Date().toISOString(),
-        date: requestedDate,
-        games: enrichedGames,
-        eventsCenter: {
-          npb: enrichedGames,
-        },
-      };
-    }
+    return {
+      updatedAt: new Date().toISOString(),
+      date: requestedDate,
+      games: enrichedGames,
+      eventsCenter: {
+        npb: enrichedGames,
+      },
+    };
   }
 
   const fallbackGames = requestedDate === todayTokyo ? buildFallbackScheduledGames(requestedDate) : [];
