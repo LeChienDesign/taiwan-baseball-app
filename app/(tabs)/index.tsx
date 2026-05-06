@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Image,
   ActivityIndicator,
+  Image,
+  Animated,
+  Easing,
+  AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,9 +21,9 @@ import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
 
 import { fetchMlbGamesByDate } from '../../lib/mlb';
-import { fetchCpblMajorGamesByDate } from '../../lib/cpbl-real';
-import { fetchNpbGamesByDate } from '../../lib/npb-real';
-import { fetchKboGamesByDate } from '../../lib/kbo-real';
+import { fetchCpblMajorGamesByDate } from '../../lib/cpbl';
+import { fetchNpbGamesByDate } from '../../lib/npb';
+import { fetchKboGamesByDate } from '../../lib/kbo';
 
 type TeamCardInfo = {
   name: string;
@@ -54,10 +57,11 @@ type ScoreboardGame = {
   };
   footerLeft?: string;
   footerRight?: string;
+  gameDate?: string;
+  date?: string;
 };
 
 type LeagueKey = 'CPBL' | 'MLB' | 'NPB' | 'KBO';
-type LeagueFilter = 'ALL' | LeagueKey;
 
 type FeaturedItem = {
   league: LeagueKey;
@@ -72,12 +76,135 @@ type LeagueStats = Record<
   }
 >;
 
-function getTodayDateKey() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
+const AUTO_REFRESH_LIVE_MS = 30000;
+const AUTO_REFRESH_GAMES_MS = 60000;
+
+function toDateKey(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+function getTodayDateKey() {
+  return toDateKey(new Date());
+}
+
+function getPreviousDateKey(dateKey: string) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() - 1);
+  return toDateKey(date);
+}
+
+function getGameDateKey(game: any) {
+  const value = game?.gameDate || game?.date || game?.startDate || game?.startTime || '';
+  return String(value).slice(0, 10);
+}
+
+function getMlbDateKeyForTaipei(todayKey: string) {
+  const taipeiHour = new Date().getHours();
+
+  // MLB games shown in Taiwan morning/afternoon usually still belong to the previous US calendar date.
+  return taipeiHour < 18 ? getPreviousDateKey(todayKey) : todayKey;
+}
+
+function mergeGamesById(games: ScoreboardGame[]) {
+  const map = new Map<string, ScoreboardGame>();
+
+  for (const game of games) {
+    map.set(String(game.id), game);
+  }
+
+  return Array.from(map.values());
+}
+
+function getLiveGamesOnly(games: ScoreboardGame[]) {
+  return games.filter((game) => game.status === 'LIVE');
+}
+
+function normalizeHomeGameStatus(game: any, todayKeyForLeague: string): ScoreboardGame['status'] {
+  const raw = String(game?.status ?? game?.statusText ?? game?.footerLeft ?? '').toUpperCase();
+  const footerRaw = `${game?.footerLeft ?? ''} ${game?.footerRight ?? ''}`;
+  const footer = footerRaw.toUpperCase();
+  const gameDate = getGameDateKey(game);
+  const isPastGameDate = Boolean(gameDate && gameDate < todayKeyForLeague);
+  const isPostponed = raw.includes('POSTPONED') || raw.includes('延賽') || footer.includes('延賽');
+  const hasScore = Number(game?.awayScore ?? 0) > 0 || Number(game?.homeScore ?? 0) > 0;
+  const hasLineScore =
+    Array.isArray(game?.awayLine?.innings) &&
+    Array.isArray(game?.homeLine?.innings) &&
+    (game.awayLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-') ||
+      game.homeLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-'));
+  const explicitFinal =
+    raw === 'FINAL' ||
+    raw.includes('FINAL') ||
+    raw.includes('GAME_OVER') ||
+    raw.includes('GAME OVER') ||
+    raw.includes('COMPLETED') ||
+    raw.includes('CLOSED') ||
+    raw.includes('結束') ||
+    raw.includes('比賽結束') ||
+    raw.includes('試合終了') ||
+    raw.includes('終了') ||
+    raw.includes('已完賽') ||
+    footer.includes('FINAL') ||
+    footer.includes('GAME_OVER') ||
+    footer.includes('GAME OVER') ||
+    footer.includes('比賽結束') ||
+    footer.includes('試合終了') ||
+    footer.includes('終了');
+  const explicitLive =
+    raw === 'LIVE' ||
+    raw.includes('LIVE') ||
+    raw.includes('比賽中') ||
+    raw.includes('比賽進行中') ||
+    raw.includes('IN PROGRESS') ||
+    raw.includes('IN_PROGRESS') ||
+    raw.includes('PROGRESS') ||
+    raw.includes('PLAYING') ||
+    raw.includes('경기중') ||
+    footer.includes('LIVE') ||
+    footer.includes('比賽中') ||
+    footer.includes('경기중');
+  const inningLikeLive =
+    footer.includes('局') ||
+    footer.includes('回') ||
+    footer.includes('회') ||
+    /\b(?:TOP|BOT|BOTTOM)\s*\d+/i.test(footerRaw) ||
+    /\d+\s*(?:ST|ND|RD|TH)/i.test(footerRaw);
+
+  if (explicitFinal) {
+    return 'FINAL';
+  }
+
+  if (explicitLive) {
+    return 'LIVE';
+  }
+
+  // Home is grouped by Taiwan date. After Taiwan 23:59, prior-date games should leave home
+  // unless they are explicitly marked LIVE by the provider. This also prevents finals like
+  // "11局 延長賽" from being treated as live just because the footer contains "局".
+  if (isPastGameDate && !isPostponed) {
+    return 'FINAL';
+  }
+
+  if (inningLikeLive && !isPastGameDate) {
+    return 'LIVE';
+  }
+
+  if (!isPastGameDate && !isPostponed && (hasScore || hasLineScore)) {
+    return 'LIVE';
+  }
+
+  return 'SCHEDULED';
+}
+
+function normalizeHomeGames(games: ScoreboardGame[], todayKeyForLeague: string) {
+  return games.map((game: any) => ({
+    ...game,
+    status: normalizeHomeGameStatus(game, todayKeyForLeague),
+  })) as ScoreboardGame[];
 }
 
 function getLeagueOrder(league: LeagueKey) {
@@ -108,6 +235,28 @@ function getGameTimeValue(game: ScoreboardGame) {
   return parseTimeValue(game.footerRight);
 }
 
+function getLiveInningValue(game: ScoreboardGame) {
+  const text = `${game.footerLeft ?? ''} ${game.footerRight ?? ''}`;
+  const match = text.match(/(\d{1,2})\s*(?:局|回|th|st|nd|rd)/i);
+  if (!match) return 0;
+  return Number(match[1]) || 0;
+}
+
+function sortLiveGames(items: FeaturedItem[]) {
+  return [...items].sort((a, b) => {
+    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
+    if (leagueDiff !== 0) return leagueDiff;
+
+    const inningDiff = getLiveInningValue(b.game) - getLiveInningValue(a.game);
+    if (inningDiff !== 0) return inningDiff;
+
+    const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
+    if (timeDiff !== 0) return timeDiff;
+
+    return String(a.game.id).localeCompare(String(b.game.id));
+  });
+}
+
 function hasMeaningfulGameContent(game: ScoreboardGame) {
   const hasVenue = !!String(game.venue || '').trim();
   const hasTime = !!String(game.footerRight || '').trim();
@@ -128,34 +277,48 @@ function sortFeatured(items: FeaturedItem[]) {
     const statusDiff = getStatusOrder(a.game.status) - getStatusOrder(b.game.status);
     if (statusDiff !== 0) return statusDiff;
 
-    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
-    if (leagueDiff !== 0) return leagueDiff;
-
     const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
     if (timeDiff !== 0) return timeDiff;
+
+    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
+    if (leagueDiff !== 0) return leagueDiff;
 
     return String(a.game.id).localeCompare(String(b.game.id));
   });
 }
 
 function buildFeaturedItems(league: LeagueKey, games: ScoreboardGame[]) {
-  return games.filter(hasMeaningfulGameContent).map((game) => ({ league, game }));
+  return games
+    .filter((game) => game.status !== 'FINAL')
+    .filter(hasMeaningfulGameContent)
+    .map((game) => ({ league, game }));
 }
 
 function buildLeagueStat(games: ScoreboardGame[]) {
-  const meaningful = games.filter(hasMeaningfulGameContent);
+  const meaningful = games
+    .filter((game) => game.status !== 'FINAL')
+    .filter(hasMeaningfulGameContent);
+
   return {
     total: meaningful.length,
     live: meaningful.filter((g) => g.status === 'LIVE').length,
   };
 }
 
+function buildLeagueHref(league: LeagueKey, date: string) {
+  if (league === 'CPBL') return `/league/cpbl-major?date=${date}`;
+  if (league === 'MLB') return `/league/mlb?date=${date}`;
+  if (league === 'NPB') return `/league/npb?date=${date}`;
+  return `/league/kbo?date=${date}`;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const todayKey = useMemo(() => getTodayDateKey(), []);
+  const mlbTodayKey = useMemo(() => getMlbDateKeyForTaipei(todayKey), [todayKey]);
+  const logoPulse = useRef(new Animated.Value(1)).current;
 
   const [featuredGames, setFeaturedGames] = useState<FeaturedItem[]>([]);
-  const [leagueFilter, setLeagueFilter] = useState<LeagueFilter>('ALL');
   const [leagueStats, setLeagueStats] = useState<LeagueStats>({
     CPBL: { total: 0, live: 0 },
     MLB: { total: 0, live: 0 },
@@ -164,42 +327,87 @@ export default function HomePage() {
   });
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showAllLiveGames, setShowAllLiveGames] = useState(false);
 
-  const loadHomeData = useCallback(async () => {
+  const loadHomeData = useCallback(async (options?: { silent?: boolean }) => {
     try {
-      setLoading(true);
+      if (!options?.silent) {
+        setLoading(true);
+      }
 
-      const [cpblGames, mlbGames, npbGames, kboGames] = await Promise.all([
+      const [cpblGames, mlbGamesByMlbDate, mlbGamesByTaipeiDate, npbGames, kboGames] = await Promise.all([
         fetchCpblMajorGamesByDate(todayKey).catch(() => []),
-        fetchMlbGamesByDate(todayKey).catch(() => []),
+        fetchMlbGamesByDate(mlbTodayKey).catch(() => []),
+        mlbTodayKey === todayKey ? Promise.resolve([]) : fetchMlbGamesByDate(todayKey).catch(() => []),
         fetchNpbGamesByDate(todayKey).catch(() => []),
         fetchKboGamesByDate(todayKey).catch(() => []),
       ]);
 
+      const mlbExtraTaipeiGames = getLiveGamesOnly(
+        normalizeHomeGames(mlbGamesByTaipeiDate as ScoreboardGame[], todayKey)
+      );
+      const mlbGames = mergeGamesById([
+        ...(mlbGamesByMlbDate as ScoreboardGame[]),
+        ...mlbExtraTaipeiGames,
+      ]);
+
+      const normalizedCpblGames = normalizeHomeGames(cpblGames as ScoreboardGame[], todayKey);
+      const normalizedMlbGames = normalizeHomeGames(mlbGames as ScoreboardGame[], todayKey);
+      const normalizedNpbGames = normalizeHomeGames(npbGames as ScoreboardGame[], todayKey);
+      const normalizedKboGames = normalizeHomeGames(kboGames as ScoreboardGame[], todayKey);
+
       setLeagueStats({
-        CPBL: buildLeagueStat(cpblGames as ScoreboardGame[]),
-        MLB: buildLeagueStat(mlbGames as ScoreboardGame[]),
-        NPB: buildLeagueStat(npbGames as ScoreboardGame[]),
-        KBO: buildLeagueStat(kboGames as ScoreboardGame[]),
+        CPBL: buildLeagueStat(normalizedCpblGames),
+        MLB: buildLeagueStat(normalizedMlbGames),
+        NPB: buildLeagueStat(normalizedNpbGames),
+        KBO: buildLeagueStat(normalizedKboGames),
       });
 
       const merged = [
-        ...buildFeaturedItems('CPBL', cpblGames as ScoreboardGame[]),
-        ...buildFeaturedItems('MLB', mlbGames as ScoreboardGame[]),
-        ...buildFeaturedItems('NPB', npbGames as ScoreboardGame[]),
-        ...buildFeaturedItems('KBO', kboGames as ScoreboardGame[]),
+        ...buildFeaturedItems('CPBL', normalizedCpblGames),
+        ...buildFeaturedItems('MLB', normalizedMlbGames),
+        ...buildFeaturedItems('NPB', normalizedNpbGames),
+        ...buildFeaturedItems('KBO', normalizedKboGames),
       ];
 
       setFeaturedGames(sortFeatured(merged));
     } finally {
-      setLoading(false);
+      if (!options?.silent) {
+        setLoading(false);
+      }
       setRefreshing(false);
     }
-  }, [todayKey]);
+  }, [mlbTodayKey, todayKey]);
 
   useEffect(() => {
     loadHomeData();
   }, [loadHomeData]);
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoPulse, {
+          toValue: 1.04,
+          duration: 1200,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoPulse, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+      logoPulse.setValue(1);
+    };
+  }, [logoPulse]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -207,13 +415,26 @@ export default function HomePage() {
   }, [loadHomeData]);
 
   const displayedGames = useMemo(() => {
-    const filtered =
-      leagueFilter === 'ALL'
-        ? featuredGames
-        : featuredGames.filter((item) => item.league === leagueFilter);
+    const liveIds = new Set(
+      featuredGames
+        .filter((item) => item.game.status === 'LIVE')
+        .map((item) => String(item.game.id))
+    );
 
-    return filtered.slice(0, 4);
-  }, [featuredGames, leagueFilter]);
+    const withoutLiveOrFinal = featuredGames.filter(
+      (item) =>
+        item.game.status !== 'FINAL' && !liveIds.has(String(item.game.id))
+    );
+
+    return withoutLiveOrFinal.slice(0, 4);
+  }, [featuredGames]);
+
+  const liveGames = useMemo(() => {
+    return sortLiveGames(featuredGames.filter((item) => item.game.status === 'LIVE'));
+  }, [featuredGames]);
+
+  const visibleLiveGames = showAllLiveGames ? liveGames : liveGames.slice(0, 6);
+  const hasMoreLiveGames = liveGames.length > 6;
 
   const totalGamesToday =
     leagueStats.CPBL.total +
@@ -227,53 +448,41 @@ export default function HomePage() {
     leagueStats.NPB.live +
     leagueStats.KBO.live;
 
+  const hasAutoRefreshTarget = totalGamesToday > 0 || totalLiveToday > 0;
+  const autoRefreshMs = totalLiveToday > 0 ? AUTO_REFRESH_LIVE_MS : AUTO_REFRESH_GAMES_MS;
+
+  useEffect(() => {
+    if (!hasAutoRefreshTarget) return;
+
+    const timer = setInterval(() => {
+      loadHomeData({ silent: true });
+    }, autoRefreshMs);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [autoRefreshMs, hasAutoRefreshTarget, loadHomeData]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        loadHomeData({ silent: true });
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [loadHomeData]);
+
   function openLeague(league: LeagueKey) {
-    if (league === 'CPBL') {
-      router.push('/league/cpbl-major');
-      return;
-    }
-    if (league === 'MLB') {
-      router.push('/league/mlb');
-      return;
-    }
-    if (league === 'NPB') {
-      router.push('/league/npb');
-      return;
-    }
-    if (league === 'KBO') {
-      router.push('/league/kbo');
-      return;
-    }
+    router.push(buildLeagueHref(league, league === 'MLB' ? mlbTodayKey : todayKey));
   }
 
   function handleSeeMore() {
-    if (leagueFilter === 'CPBL') {
-      router.push('/league/cpbl-major');
-      return;
-    }
-    if (leagueFilter === 'MLB') {
-      router.push('/league/mlb');
-      return;
-    }
-    if (leagueFilter === 'NPB') {
-      router.push('/league/npb');
-      return;
-    }
-    if (leagueFilter === 'KBO') {
-      router.push('/league/kbo');
-      return;
-    }
-
-    router.push('/events/pro');
+    router.push(`/events/pro?date=${todayKey}`);
   }
 
-  const filterOptions: { key: LeagueFilter; label: string }[] = [
-    { key: 'ALL', label: '全部' },
-    { key: 'CPBL', label: 'CPBL' },
-    { key: 'MLB', label: 'MLB' },
-    { key: 'NPB', label: 'NPB' },
-    { key: 'KBO', label: 'KBO' },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -283,19 +492,24 @@ export default function HomePage() {
       >
         <View style={styles.heroCard}>
           <View style={styles.heroTopRow}>
-            <Image
-              source={require('../../assets/icon.png')}
-              style={styles.heroLogo}
-              resizeMode="contain"
-            />
+            <Animated.View style={[styles.brandLogoGlow, { transform: [{ scale: logoPulse }] }]}>
+              <Image
+                source={require('../../assets/brand/yaren-one-logo.png')}
+                style={styles.brandLogo}
+                resizeMode="contain"
+              />
+            </Animated.View>
             <View style={styles.heroTextWrap}>
-              <Text style={styles.heroTitle}>Taiwan Baseball Hub</Text>
-              <Text style={styles.heroSubtitle}>台灣棒球總入口</Text>
+              <Text style={styles.heroEyebrow}>BASEBALL CONTROL ROOM</Text>
+              <Text style={styles.heroTitle}>野人1號</Text>
+              <Text style={styles.heroSubtitle}>台灣棒球即時情報站</Text>
             </View>
           </View>
 
+          <View style={styles.heroDivider} />
+
           <Text style={styles.heroDesc}>
-            從中職、日職、韓職到美職，一個首頁整合每日賽程、焦點比賽與聯盟入口。
+            整合 CPBL、MLB、NPB、KBO 每日賽程、比賽中戰況與旅外球員動態。
           </Text>
         </View>
 
@@ -307,7 +521,9 @@ export default function HomePage() {
               <Text style={styles.summaryPillText}>今日總場次 {totalGamesToday}</Text>
             </View>
             <View style={[styles.summaryPill, styles.summaryPillLive]}>
-              <Text style={styles.summaryPillText}>LIVE {totalLiveToday}</Text>
+              <Text style={styles.summaryPillText}>
+                LIVE {totalLiveToday}{hasAutoRefreshTarget ? ` · ${autoRefreshMs / 1000}s 自動更新` : ''}
+              </Text>
             </View>
           </View>
 
@@ -322,6 +538,46 @@ export default function HomePage() {
           </View>
         </View>
 
+        {liveGames.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>🔴 目前比賽中</Text>
+            </View>
+
+            {visibleLiveGames.map((item, index) => (
+              <View key={`live-${item.league}-${item.game.id}-${index}`} style={styles.featuredWrap}>
+                <TouchableOpacity activeOpacity={0.9} onPress={() => openLeague(item.league)}>
+                  <ScoreboardCard
+                    status={item.game.status}
+                    venue={item.game.venue}
+                    awayTeam={item.game.awayTeam}
+                    homeTeam={item.game.homeTeam}
+                    awayScore={item.game.awayScore}
+                    homeScore={item.game.homeScore}
+                    innings={item.game.innings}
+                    awayLine={item.game.awayLine}
+                    homeLine={item.game.homeLine}
+                    footerLeft={item.game.footerLeft}
+                    footerRight={item.game.footerRight}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            {hasMoreLiveGames && (
+              <TouchableOpacity
+                style={styles.expandLiveButton}
+                activeOpacity={0.85}
+                onPress={() => setShowAllLiveGames((value) => !value)}
+              >
+                <Text style={styles.expandLiveButtonText}>
+                  {showAllLiveGames ? '收合比賽中' : `展開全部 ${liveGames.length} 場 LIVE`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </>
+        )}
+
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>今日焦點賽事</Text>
 
@@ -333,38 +589,10 @@ export default function HomePage() {
             >
               <Text style={styles.seeMoreButtonText}>查看更多</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.refreshButton}
-              activeOpacity={0.85}
-              onPress={onRefresh}
-            >
-              <Text style={styles.refreshButtonText}>更新</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterRow}
-        >
-          {filterOptions.map((option) => {
-            const active = leagueFilter === option.key;
-            return (
-              <TouchableOpacity
-                key={option.key}
-                activeOpacity={0.85}
-                onPress={() => setLeagueFilter(option.key)}
-                style={[styles.filterChip, active && styles.filterChipActive]}
-              >
-                <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>
-                  {option.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+
 
         {loading ? (
           <AppLoadingState text="載入今日焦點中…" />
@@ -378,12 +606,6 @@ export default function HomePage() {
         ) : (
           displayedGames.map((item, index) => (
             <View key={`${item.league}-${item.game.id}-${index}`} style={styles.featuredWrap}>
-              <View style={styles.leagueTagRow}>
-                <View style={styles.leagueTag}>
-                  <Text style={styles.leagueTagText}>{item.league}</Text>
-                </View>
-              </View>
-
               <TouchableOpacity activeOpacity={0.9} onPress={() => openLeague(item.league)}>
                 <ScoreboardCard
                   status={item.game.status}
@@ -403,97 +625,6 @@ export default function HomePage() {
           ))
         )}
 
-        <Text style={styles.sectionTitle}>聯盟入口</Text>
-
-        <View style={styles.leagueGrid}>
-          <TouchableOpacity
-            style={styles.leagueCard}
-            activeOpacity={0.88}
-            onPress={() => router.push('/league/cpbl-major')}
-          >
-            <View style={styles.badgesWrap}>
-              <View style={styles.totalBadge}>
-                <Text style={styles.totalBadgeText}>{leagueStats.CPBL.total}</Text>
-              </View>
-              <View style={styles.liveBadge}>
-                <Text style={styles.liveBadgeText}>LIVE {leagueStats.CPBL.live}</Text>
-              </View>
-            </View>
-            <Image
-              source={require('../../assets/league/cpbl.png')}
-              style={styles.leagueLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.leagueCardTitle}>CPBL</Text>
-            <Text style={styles.leagueCardSubtitle}>中華職棒</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.leagueCard}
-            activeOpacity={0.88}
-            onPress={() => router.push('/league/npb')}
-          >
-            <View style={styles.badgesWrap}>
-              <View style={styles.totalBadge}>
-                <Text style={styles.totalBadgeText}>{leagueStats.NPB.total}</Text>
-              </View>
-              <View style={styles.liveBadge}>
-                <Text style={styles.liveBadgeText}>LIVE {leagueStats.NPB.live}</Text>
-              </View>
-            </View>
-            <Image
-              source={require('../../assets/league/npb.png')}
-              style={styles.leagueLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.leagueCardTitle}>NPB</Text>
-            <Text style={styles.leagueCardSubtitle}>日本職棒</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.leagueCard}
-            activeOpacity={0.88}
-            onPress={() => router.push('/league/mlb')}
-          >
-            <View style={styles.badgesWrap}>
-              <View style={styles.totalBadge}>
-                <Text style={styles.totalBadgeText}>{leagueStats.MLB.total}</Text>
-              </View>
-              <View style={styles.liveBadge}>
-                <Text style={styles.liveBadgeText}>LIVE {leagueStats.MLB.live}</Text>
-              </View>
-            </View>
-            <Image
-              source={require('../../assets/league/mlb.png')}
-              style={styles.leagueLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.leagueCardTitle}>MLB</Text>
-            <Text style={styles.leagueCardSubtitle}>美國職棒</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.leagueCard}
-            activeOpacity={0.88}
-            onPress={() => router.push('/league/kbo')}
-          >
-            <View style={styles.badgesWrap}>
-              <View style={styles.totalBadge}>
-                <Text style={styles.totalBadgeText}>{leagueStats.KBO.total}</Text>
-              </View>
-              <View style={styles.liveBadge}>
-                <Text style={styles.liveBadgeText}>LIVE {leagueStats.KBO.live}</Text>
-              </View>
-            </View>
-            <Image
-              source={require('../../assets/league/kbo.png')}
-              style={styles.leagueLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.leagueCardTitle}>KBO</Text>
-            <Text style={styles.leagueCardSubtitle}>韓國職棒</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -511,55 +642,83 @@ const styles = StyleSheet.create({
   },
 
   heroCard: {
-    backgroundColor: '#020f24',
-    borderRadius: 28,
+    backgroundColor: '#071226',
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#283352',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 14,
-    marginBottom: 18,
+    borderColor: '#20304a',
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 12,
+    marginBottom: 16,
+    shadowColor: '#000000',
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   heroTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  heroLogo: {
-    width: 54,
-    height: 54,
-    marginRight: 10,
   },
   heroTextWrap: {
     flex: 1,
   },
+  brandLogoGlow: {
+    width: 92,
+    height: 92,
+    marginRight: 12,
+    borderRadius: 28,
+    shadowColor: '#f97316',
+    shadowOpacity: 0.34,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 6,
+  },
+  brandLogo: {
+    width: '100%',
+    height: '100%',
+  },
+  heroEyebrow: {
+    color: '#60a5fa',
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    marginBottom: 4,
+  },
   heroTitle: {
     color: '#ffffff',
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: '900',
-    lineHeight: 28,
+    lineHeight: 33,
+    letterSpacing: -0.7,
   },
   heroSubtitle: {
     color: '#aab6ca',
     fontSize: 11,
-    fontWeight: '700',
-    marginTop: 4,
+    fontWeight: '800',
+    marginTop: 3,
+  },
+  heroDivider: {
+    height: 1,
+    backgroundColor: '#1f2d45',
+    marginTop: 12,
+    marginBottom: 10,
   },
   heroDesc: {
-    color: '#d7e0ee',
+    color: '#c7d2e5',
     fontSize: 11,
-    fontWeight: '400',
+    fontWeight: '600',
     lineHeight: 17,
   },
 
   summaryCard: {
-    backgroundColor: '#071536',
+    backgroundColor: '#071226',
     borderWidth: 1,
-    borderColor: '#26314d',
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 18,
+    borderColor: '#20304a',
+    borderRadius: 22,
+    paddingHorizontal: 12,
+    paddingVertical: 11,
+    marginBottom: 16,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -567,16 +726,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   summaryPill: {
-    backgroundColor: '#22304a',
+    backgroundColor: '#172033',
     borderWidth: 1,
-    borderColor: '#41506e',
+    borderColor: '#334155',
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   summaryPillLive: {
-    backgroundColor: '#7f1d1d',
-    borderColor: '#b91c1c',
+    backgroundColor: '#3b1016',
+    borderColor: '#ef4444',
   },
   summaryPillText: {
     color: '#ffffff',
@@ -632,134 +791,27 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '800',
   },
-  refreshButton: {
-    backgroundColor: '#313c5b',
-    borderRadius: 20,
-    minWidth: 74,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  refreshButtonText: {
-    color: '#e6ebf5',
-    fontSize: 11,
-    fontWeight: '800',
-  },
-
-  filterRow: {
-    paddingBottom: 12,
-    gap: 8,
-  },
-  filterChip: {
-    backgroundColor: '#22304a',
-    borderWidth: 1,
-    borderColor: '#41506e',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  filterChipActive: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#72a9ff',
-  },
-  filterChipText: {
-    color: '#dce6f7',
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  filterChipTextActive: {
-    color: '#ffffff',
-  },
+  // removed: refreshButton, refreshButtonText, filterRow, filterChip, filterChipActive, filterChipText, filterChipTextActive
 
   featuredWrap: {
     marginBottom: 10,
   },
-  leagueTagRow: {
-    flexDirection: 'row',
-    marginBottom: 6,
-  },
-  leagueTag: {
-    backgroundColor: '#22304a',
+  expandLiveButton: {
+    backgroundColor: '#172033',
     borderWidth: 1,
-    borderColor: '#41506e',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderColor: '#334155',
+    borderRadius: 18,
+    paddingVertical: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+    marginBottom: 16,
   },
-  leagueTagText: {
-    color: '#dce6f7',
-    fontSize: 10,
-    fontWeight: '800',
+  expandLiveButtonText: {
+    color: '#dbeafe',
+    fontSize: 11,
+    fontWeight: '900',
   },
+  // removed: leagueTagRow, leagueTag, leagueTagText
 
-  leagueGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 18,
-  },
-  leagueCard: {
-    width: '48.3%',
-    backgroundColor: '#121b34',
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#283352',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    marginBottom: 10,
-    position: 'relative',
-  },
-  badgesWrap: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  totalBadge: {
-    minWidth: 24,
-    height: 24,
-    paddingHorizontal: 6,
-    borderRadius: 999,
-    backgroundColor: '#3b82f6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  totalBadgeText: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: '900',
-  },
-  liveBadge: {
-    minWidth: 46,
-    height: 20,
-    paddingHorizontal: 7,
-    borderRadius: 999,
-    backgroundColor: '#7f1d1d',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  liveBadgeText: {
-    color: '#ffffff',
-    fontSize: 9,
-    fontWeight: '900',
-  },
-  leagueLogo: {
-    width: 44,
-    height: 44,
-    marginBottom: 8,
-  },
-  leagueCardTitle: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '900',
-    marginBottom: 2,
-  },
-  leagueCardSubtitle: {
-    color: '#aab6ca',
-    fontSize: 10,
-    fontWeight: '700',
-  },
 });

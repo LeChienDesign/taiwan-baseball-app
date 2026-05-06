@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
 
 type TeamInfo = {
   name: string;
@@ -17,7 +17,7 @@ type LineScoreRow = {
 };
 
 type ScoreboardCardProps = {
-  status: 'FINAL' | 'LIVE' | 'SCHEDULED';
+  status: 'FINAL' | 'LIVE' | 'SCHEDULED' | string;
   venue?: string;
   awayTeam: TeamInfo;
   homeTeam: TeamInfo;
@@ -59,6 +59,24 @@ function padLine(values: (number | string)[], targetLength: number) {
   return [...values, ...Array.from({ length: targetLength - values.length }, () => '-')];
 }
 
+function normalizeStatus(status: ScoreboardCardProps['status']) {
+  const raw = String(status || '').toUpperCase();
+
+  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
+  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
+  return 'SCHEDULED';
+}
+
+function getStatusLabel(status: string, footerLeft?: string, footerRight?: string) {
+  if (status === 'LIVE') return footerLeft || footerRight || 'LIVE';
+  if (status === 'FINAL') return 'FINAL';
+  return footerRight || 'SCHEDULED';
+}
+
+function hasLineScoreData(awayInnings: (number | string)[], homeInnings: (number | string)[]) {
+  return awayInnings.some((v) => v !== '-') || homeInnings.some((v) => v !== '-');
+}
+
 function TeamLogo({ team }: { team: TeamInfo }) {
   if (team.logo) {
     return <Image source={team.logo} style={styles.teamLogo} resizeMode="contain" />;
@@ -84,7 +102,98 @@ export default function ScoreboardCard({
   footerLeft,
   footerRight,
 }: ScoreboardCardProps) {
-  const isScheduled = status === 'SCHEDULED';
+  const normalizedStatus = normalizeStatus(status);
+  const isScheduled = normalizedStatus === 'SCHEDULED';
+  const isLive = normalizedStatus === 'LIVE';
+  const isFinal = normalizedStatus === 'FINAL';
+  const livePulse = useRef(new Animated.Value(1)).current;
+  const awayScorePulse = useRef(new Animated.Value(1)).current;
+  const homeScorePulse = useRef(new Animated.Value(1)).current;
+  const awayFlash = useRef(new Animated.Value(0)).current;
+  const homeFlash = useRef(new Animated.Value(0)).current;
+  const previousAwayScore = useRef(awayScore);
+  const previousHomeScore = useRef(homeScore);
+
+  const awayWin = isFinal && awayScore > homeScore;
+  const homeWin = isFinal && homeScore > awayScore;
+  const footerVenue = venue && venue !== '—' ? venue : '';
+  const statusLabel = getStatusLabel(normalizedStatus, footerLeft, footerRight);
+  const liveDetail = isLive ? statusLabel : footerRight;
+
+  useEffect(() => {
+    if (!isLive) {
+      livePulse.setValue(1);
+      return;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(livePulse, {
+          toValue: 1.45,
+          duration: 620,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(livePulse, {
+          toValue: 1,
+          duration: 620,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+      livePulse.setValue(1);
+    };
+  }, [isLive, livePulse]);
+
+  useEffect(() => {
+    if (previousAwayScore.current !== awayScore) {
+      awayScorePulse.setValue(1.22);
+      awayFlash.setValue(1);
+
+      Animated.parallel([
+        Animated.spring(awayScorePulse, {
+          toValue: 1,
+          friction: 5,
+          tension: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(awayFlash, {
+          toValue: 0,
+          duration: 260,
+          useNativeDriver: false,
+        }),
+      ]).start();
+
+      previousAwayScore.current = awayScore;
+    }
+
+    if (previousHomeScore.current !== homeScore) {
+      homeScorePulse.setValue(1.22);
+      homeFlash.setValue(1);
+
+      Animated.parallel([
+        Animated.spring(homeScorePulse, {
+          toValue: 1,
+          friction: 5,
+          tension: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(homeFlash, {
+          toValue: 0,
+          duration: 260,
+          useNativeDriver: false,
+        }),
+      ]).start();
+
+      previousHomeScore.current = homeScore;
+    }
+  }, [awayFlash, awayScore, awayScorePulse, homeFlash, homeScore, homeScorePulse]);
 
   const awayInningsRaw = normalizeInnings(awayLine?.innings);
   const homeInningsRaw = normalizeInnings(homeLine?.innings);
@@ -92,6 +201,8 @@ export default function ScoreboardCard({
 
   const awayInnings = padLine(awayInningsRaw, inningHeaders.length);
   const homeInnings = padLine(homeInningsRaw, inningHeaders.length);
+
+  const shouldShowLineScore = hasLineScoreData(awayInningsRaw, homeInningsRaw) || !isScheduled;
 
   const safeAwayLine = {
     team: awayLine?.team || getTeamShort(awayTeam),
@@ -113,7 +224,7 @@ export default function ScoreboardCard({
     <View style={styles.card}>
       <View style={styles.topRow}>
         <View style={styles.sideTeam}>
-          <Text style={styles.teamName}>{awayTeam.name}</Text>
+          <Text style={[styles.teamName, awayWin && styles.winnerText]}>{awayTeam.name}</Text>
           {!!awayTeam.record && <Text style={styles.teamRecord}>{awayTeam.record}</Text>}
         </View>
 
@@ -123,35 +234,66 @@ export default function ScoreboardCard({
           {isScheduled ? (
             <>
               <View style={styles.scheduledWrap}>
-                <Text style={styles.scheduledLabel}>SCHEDULED</Text>
+                <View style={styles.scheduledPill}>
+                  <Text style={styles.scheduledLabel}>SCHEDULED</Text>
+                </View>
                 <Text style={styles.scheduledTime}>{footerRight || '--:--'}</Text>
               </View>
-              <Text style={styles.venueText} numberOfLines={1}>
-                {venue || '—'}
-              </Text>
             </>
           ) : (
             <>
               <View style={styles.scoreLine}>
-                <Text style={styles.bigScore}>{awayScore}</Text>
+                <Animated.Text
+                  style={[
+                    styles.bigScore,
+                    awayWin && styles.winnerScore,
+                    {
+                      transform: [{ scale: awayScorePulse }],
+                      color: awayFlash.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [awayWin ? '#facc15' : '#ffffff', '#facc15'],
+                      }),
+                    },
+                  ]}
+                >
+                  {awayScore}
+                </Animated.Text>
 
-                {status === 'LIVE' ? (
-                  <View style={styles.liveWrap}>
-                    <View style={styles.liveDot} />
-                    <Text style={styles.statusText}>{footerLeft || 'LIVE'}</Text>
-                  </View>
-                ) : status === 'FINAL' ? (
-                  <Text style={styles.statusText}>FINAL</Text>
-                ) : (
-                  <Text style={styles.statusText}>SCH</Text>
-                )}
+                <View style={styles.statusPillWrap}>
+                  {isLive ? (
+                    <View style={[styles.statusPill, styles.statusPillLive]}>
+                      <Animated.View style={{ transform: [{ scale: livePulse }] }}>
+                        <View style={styles.liveDot} />
+                      </Animated.View>
+                      <Text style={styles.statusTextLive}>LIVE</Text>
+                    </View>
+                  ) : isFinal ? (
+                    <View style={[styles.statusPill, styles.statusPillFinal]}>
+                      <Text style={styles.statusText}>FINAL</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.statusPill}>
+                      <Text style={styles.statusText}>SCH</Text>
+                    </View>
+                  )}
+                </View>
 
-                <Text style={styles.bigScore}>{homeScore}</Text>
+                <Animated.Text
+                  style={[
+                    styles.bigScore,
+                    homeWin && styles.winnerScore,
+                    {
+                      transform: [{ scale: homeScorePulse }],
+                      color: homeFlash.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [homeWin ? '#facc15' : '#ffffff', '#facc15'],
+                      }),
+                    },
+                  ]}
+                >
+                  {homeScore}
+                </Animated.Text>
               </View>
-
-              <Text style={styles.venueText} numberOfLines={1}>
-                {venue || '—'}
-              </Text>
             </>
           )}
         </View>
@@ -159,60 +301,70 @@ export default function ScoreboardCard({
         <TeamLogo team={homeTeam} />
 
         <View style={[styles.sideTeam, styles.sideTeamRight]}>
-          <Text style={[styles.teamName, styles.teamNameRight]}>{homeTeam.name}</Text>
+          <Text style={[styles.teamName, styles.teamNameRight, homeWin && styles.winnerText]}>{homeTeam.name}</Text>
           {!!homeTeam.record && (
             <Text style={[styles.teamRecord, styles.teamRecordRight]}>{homeTeam.record}</Text>
           )}
         </View>
       </View>
 
-      <View style={styles.divider} />
+      {shouldShowLineScore && (
+        <>
+          <View style={styles.divider} />
 
-      <View style={styles.lineTable}>
-        <View style={styles.headerRow}>
-          <View style={styles.teamCodeCell} />
-          {inningHeaders.map((inning) => (
-            <Text key={`h-${inning}`} style={styles.inningHeader}>
-              {inning}
+          <View style={styles.statusMetaRow}>
+            <Text style={styles.statusMetaText} numberOfLines={1}>
+              {isLive ? statusLabel : isFinal ? '比賽結束' : statusLabel}
             </Text>
-          ))}
-          <Text style={styles.inningHeader}>R</Text>
-          <Text style={styles.inningHeader}>H</Text>
-          <Text style={styles.inningHeader}>E</Text>
-        </View>
+          </View>
 
-        <View style={styles.scoreRow}>
-          <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
-          {safeAwayLine.innings.map((v, idx) => (
-            <Text key={`a-${idx}`} style={styles.scoreCell}>
-              {v}
-            </Text>
-          ))}
-          <Text style={styles.scoreCellBold}>{safeAwayLine.r}</Text>
-          <Text style={styles.scoreCellBold}>{safeAwayLine.h}</Text>
-          <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
-        </View>
+          <View style={styles.lineTable}>
+            <View style={styles.headerRow}>
+              <View style={styles.teamCodeCell} />
+              {inningHeaders.map((inning) => (
+                <Text key={`h-${inning}`} style={styles.inningHeader}>
+                  {inning}
+                </Text>
+              ))}
+              <Text style={styles.inningHeader}>R</Text>
+              <Text style={styles.inningHeader}>H</Text>
+              <Text style={styles.inningHeader}>E</Text>
+            </View>
 
-        <View style={styles.scoreRow}>
-          <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
-          {safeHomeLine.innings.map((v, idx) => (
-            <Text key={`b-${idx}`} style={styles.scoreCell}>
-              {v}
-            </Text>
-          ))}
-          <Text style={styles.scoreCellBold}>{safeHomeLine.r}</Text>
-          <Text style={styles.scoreCellBold}>{safeHomeLine.h}</Text>
-          <Text style={styles.scoreCellBold}>{safeHomeLine.e}</Text>
-        </View>
-      </View>
+            <View style={[styles.scoreRow, awayWin && styles.scoreRowWinner]}>
+              <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
+              {safeAwayLine.innings.map((v, idx) => (
+                <Text key={`a-${idx}`} style={styles.scoreCell}>
+                  {v}
+                </Text>
+              ))}
+              <Text style={styles.scoreCellBold}>{safeAwayLine.r}</Text>
+              <Text style={styles.scoreCellBold}>{safeAwayLine.h}</Text>
+              <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
+            </View>
 
-      {(footerLeft || footerRight) && !isScheduled && (
+            <View style={[styles.scoreRow, homeWin && styles.scoreRowWinner]}>
+              <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
+              {safeHomeLine.innings.map((v, idx) => (
+                <Text key={`b-${idx}`} style={styles.scoreCell}>
+                  {v}
+                </Text>
+              ))}
+              <Text style={styles.scoreCellBold}>{safeHomeLine.r}</Text>
+              <Text style={styles.scoreCellBold}>{safeHomeLine.h}</Text>
+              <Text style={styles.scoreCellBold}>{safeHomeLine.e}</Text>
+            </View>
+          </View>
+        </>
+      )}
+
+      {(footerLeft || footerRight || footerVenue) && !isScheduled && (
         <View style={styles.footerRow}>
           <View style={styles.footerLeftWrap}>
-            {!!footerLeft && <Text style={styles.footerLeft}>{footerLeft}</Text>}
+            {!!footerVenue && <Text style={styles.footerLeft} numberOfLines={1}>{footerVenue}</Text>}
           </View>
           <View style={styles.footerRightWrap}>
-            {!!footerRight && <Text style={styles.footerRight}>{footerRight}</Text>}
+            {!!liveDetail && <Text style={styles.footerRight}>{liveDetail}</Text>}
           </View>
         </View>
       )}
@@ -223,37 +375,45 @@ export default function ScoreboardCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#071226',
-    borderRadius: 24,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#1b2940',
-    padding: 10,
+    borderColor: '#20304a',
+    paddingTop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 8,
     marginBottom: 12,
+    shadowColor: '#000000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
   topRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   sideTeam: {
-    width: 60,
-    minHeight: 38,
-    justifyContent: 'flex-start',
+    width: 62,
+    minHeight: 42,
+    justifyContent: 'center',
   },
   sideTeamRight: {
     alignItems: 'flex-end',
   },
   teamName: {
     color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
+    fontSize: 9,
+    fontWeight: '600',
     marginBottom: 2,
-    lineHeight: 10,
+    lineHeight: 11,
   },
-  teamNameRight: {
-    textAlign: 'right',
+  winnerText: {
+    color: '#f8fafc',
+    fontWeight: '900',
   },
   teamRecord: {
-    color: '#a8b3c7',
-    fontSize: 9,
+    color: '#8ea0bb',
+    fontSize: 8,
     fontWeight: '500',
     lineHeight: 10,
   },
@@ -261,16 +421,18 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   teamLogo: {
-    width: 35,
-    height: 38,
-    marginHorizontal: 15,
+    width: 38,
+    height: 40,
+    marginHorizontal: 12,
   },
   teamLogoFallback: {
-    width: 35,
-    height: 38,
-    marginHorizontal: 15,
-    borderRadius: 10,
+    width: 38,
+    height: 40,
+    marginHorizontal: 12,
+    borderRadius: 12,
     backgroundColor: '#0f1a2e',
+    borderWidth: 1,
+    borderColor: '#22314b',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -292,61 +454,120 @@ const styles = StyleSheet.create({
   },
   bigScore: {
     color: '#ffffff',
-    fontSize: 24,
-    fontWeight: '600',
-    width: 50,
+    fontSize: 28,
+    fontWeight: '800',
+    width: 48,
     textAlign: 'center',
+    letterSpacing: -0.8,
   },
-  liveWrap: {
+  winnerScore: {
+    color: '#facc15',
+  },
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 999,
+    backgroundColor: '#ef4444',
+  },
+  statusPillWrap: {
+    width: 48,
+    alignItems: 'center',
+  },
+  statusPill: {
+    minWidth: 38,
+    height: 18,
+    borderRadius: 999,
+    paddingHorizontal: 6,
+    backgroundColor: '#1e293b',
+    borderWidth: 1,
+    borderColor: '#334155',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 4,
   },
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 999,
-    backgroundColor: '#ef4444',
-    marginRight: 4,
+  statusPillLive: {
+    minWidth: 42,
+    paddingHorizontal: 6,
+    backgroundColor: '#3b1016',
+    borderColor: '#ef4444',
+    shadowColor: '#ef4444',
+    shadowOpacity: 0.55,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 3,
+    gap: 4,
+  },
+  statusPillFinal: {
+    backgroundColor: '#172033',
+    borderColor: '#475569',
   },
   statusText: {
     color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
-    letterSpacing: 0.5,
-    marginHorizontal: 0,
+    fontSize: 7,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+    textAlign: 'center',
+  },
+  statusTextLive: {
+    color: '#ffffff',
+    fontSize: 7,
+    fontWeight: '900',
+    letterSpacing: 0.4,
     textAlign: 'center',
   },
   scheduledWrap: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  scheduledPill: {
+    paddingHorizontal: 8,
+    height: 18,
+    borderRadius: 999,
+    backgroundColor: '#172033',
+    borderWidth: 1,
+    borderColor: '#334155',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 3,
+  },
   scheduledLabel: {
-    color: '#ffffff',
-    fontSize: 8,
-    fontWeight: '300',
-    letterSpacing: 1,
-    marginBottom: 2,
+    color: '#dbeafe',
+    fontSize: 7,
+    fontWeight: '800',
+    letterSpacing: 0.8,
   },
   scheduledTime: {
     color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '800',
     textAlign: 'center',
-  },
-  venueText: {
-    color: '#9aa7bf',
-    fontSize: 8,
-    marginTop: 2,
-    textAlign: 'center',
+    letterSpacing: -0.4,
   },
   divider: {
     height: 1,
-    backgroundColor: '#1a2740',
-    marginVertical: 2,
+    backgroundColor: '#1f2d45',
+    marginTop: 8,
+    marginBottom: 5,
   },
-  lineTable: {},
+  statusMetaRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  statusMetaText: {
+    color: '#dbeafe',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  lineTable: {
+    backgroundColor: '#08172a',
+    borderRadius: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#12233a',
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -355,9 +576,9 @@ const styles = StyleSheet.create({
   inningHeader: {
     width: 28,
     textAlign: 'center',
-    color: '#8f9bb0',
-    fontSize: 11,
-    fontWeight: '500',
+    color: '#8091aa',
+    fontSize: 10,
+    fontWeight: '800',
   },
   teamCodeCell: {
     width: 50,
@@ -366,31 +587,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 1,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.025)',
+  },
+  scoreRowWinner: {
+    backgroundColor: 'rgba(250,204,21,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(250,204,21,0.22)',
   },
   teamCodeCellText: {
     width: 50,
     color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '900',
   },
   scoreCell: {
     width: 28.5,
     textAlign: 'center',
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '300',
+    color: '#e8eef8',
+    fontSize: 11,
+    fontWeight: '500',
   },
   scoreCellBold: {
     width: 25,
     textAlign: 'center',
     color: '#ffffff',
-    fontSize: 10,
-    fontWeight: '400',
+    fontSize: 11,
+    fontWeight: '900',
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 3,
+    alignItems: 'center',
+    marginTop: 7,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#16243a',
   },
   footerLeftWrap: {
     flex: 1,
@@ -401,15 +633,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   footerLeft: {
-    color: '#d7e0ee',
+    color: '#8ea0bb',
     fontSize: 9,
-    fontWeight: '200',
-    lineHeight: 10,
+    fontWeight: '500',
+    lineHeight: 11,
   },
   footerRight: {
-    color: '#d7e0ee',
+    color: '#dbeafe',
     fontSize: 9,
-    fontWeight: '300',
+    fontWeight: '700',
     textAlign: 'right',
   },
 });

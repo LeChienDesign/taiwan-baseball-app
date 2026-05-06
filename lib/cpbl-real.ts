@@ -1,10 +1,7 @@
 import cpblMajor2026 from '../data/cpbl-major-2026.json';
+import localCpblPayload from '../server/data/eventsCenter.cpbl.json';
 import type { ScoreboardGame } from './mlb';
 import { CPBL_TEAM_LOGOS } from '../constants/cpblTeamLogos';
-import {
-  fetchCpblOfficialStatusByGame,
-  applyCpblOfficialStatus,
-} from './cpbl-live';
 
 type CpblRow = {
   idEvent: string;
@@ -82,6 +79,10 @@ function normalizeTeamName(name: string) {
     'Rakuten Monkeys': '樂天桃猿',
     'TSG Hawks': '台鋼雄鷹',
     'Uni-President Lions': '統一7-ELEVEn獅',
+    'Uni-Lions': '統一7-ELEVEn獅',
+    'Uni Lions': '統一7-ELEVEn獅',
+    '統一獅': '統一7-ELEVEn獅',
+    '統一7-ELEVEN獅': '統一7-ELEVEn獅',
     'Wei Chuan Dragons': '味全龍',
 
     '中信兄弟': '中信兄弟',
@@ -125,6 +126,161 @@ function buildEmptyLine(team: string) {
   };
 }
 
+function normalizeGameDate(value: any) {
+  if (!value) return '';
+  return String(value).slice(0, 10);
+}
+
+function getTodayKey() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  return year && month && day ? `${year}-${month}-${day}` : new Date().toISOString().slice(0, 10);
+}
+
+function getGameTime(game: any) {
+  return (
+    game?.gameTime ||
+    game?.displayTime ||
+    game?.DisplayTime ||
+    game?.startTime ||
+    game?.footerRight ||
+    ''
+  );
+}
+
+function getTeamNameForCorrection(team: any) {
+  return normalizeTeamName(team?.name || team || '');
+}
+
+function getKnownCpblFinalCorrection(game: any) {
+  const gameDate = normalizeGameDate(game?.gameDate || game?.date || game?.strTimestamp);
+  const awayName = getTeamNameForCorrection(game?.awayTeam || game?.away);
+  const homeName = getTeamNameForCorrection(game?.homeTeam || game?.home);
+
+  if (gameDate === '2026-05-05' && awayName === '中信兄弟' && homeName === '味全龍') {
+    return {
+      status: 'FINAL' as const,
+      awayScore: 3,
+      homeScore: 5,
+      footerLeft: 'FINAL',
+      footerRight: '11局 延長賽',
+      innings: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    };
+  }
+
+  return null;
+}
+
+function normalizeLiveStatus(game: any, homeScore: number, awayScore: number) {
+  const statusText = String(game?.footerLeft || game?.footerRight || game?.statusText || game?.Status || '');
+  const status = normalizeStatus(game?.status || statusText, homeScore, awayScore);
+  const gameDate = normalizeGameDate(game?.gameDate || game?.date || game?.strTimestamp);
+  const today = getTodayKey();
+
+  if (statusText.includes('延賽') || statusText.includes('取消比賽')) {
+    return 'POSTPONED';
+  }
+
+  if (status === 'LIVE' && gameDate && gameDate < today && homeScore != null && awayScore != null) {
+    return 'FINAL';
+  }
+
+  return status;
+}
+
+function normalizeLineScore(line: any, teamShort: string, score: number) {
+  return {
+    team: line?.team || teamShort,
+    innings: normalizeInningLine(line?.innings),
+    r: line?.r ?? score ?? '',
+    h: line?.h ?? '',
+    e: line?.e ?? '',
+  };
+}
+
+function normalizeLiveGame(game: any): ScoreboardGame {
+  const awayName = normalizeTeamName(game?.awayTeam?.name || game?.awayTeam || game?.away || '客隊');
+  const homeName = normalizeTeamName(game?.homeTeam?.name || game?.homeTeam || game?.home || '主隊');
+  const awayShort = game?.awayTeam?.short || mapTeamShort(awayName);
+  const homeShort = game?.homeTeam?.short || mapTeamShort(homeName);
+
+  const correction = getKnownCpblFinalCorrection(game);
+  const awayScore = correction?.awayScore ?? parseScore(game?.awayScore) ?? 0;
+  const homeScore = correction?.homeScore ?? parseScore(game?.homeScore) ?? 0;
+  const status = correction?.status ?? normalizeLiveStatus(game, homeScore, awayScore);
+  const gameTime = getGameTime(game);
+
+  return {
+    ...game,
+    id: game?.id || game?.gamePk || game?.gameSno || `${awayName}-${homeName}-${game?.gameDate || ''}`,
+    awayTeam: {
+      ...(game?.awayTeam || {}),
+      name: awayName,
+      short: awayShort,
+      logo: getTeamLogo(awayName),
+    },
+    homeTeam: {
+      ...(game?.homeTeam || {}),
+      name: homeName,
+      short: homeShort,
+      logo: getTeamLogo(homeName),
+    },
+    awayScore,
+    homeScore,
+    status,
+    venue: game?.venue || '',
+    innings: correction?.innings || game?.innings || [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    awayLine:
+      status === 'SCHEDULED' || status === 'POSTPONED'
+        ? buildEmptyLine(awayShort)
+        : normalizeLineScore(game?.awayLine, awayShort, awayScore),
+    homeLine:
+      status === 'SCHEDULED' || status === 'POSTPONED'
+        ? buildEmptyLine(homeShort)
+        : normalizeLineScore(game?.homeLine, homeShort, homeScore),
+    footerLeft:
+      correction?.footerLeft ||
+      (status === 'FINAL'
+        ? 'FINAL'
+        : status === 'POSTPONED'
+          ? '延賽'
+          : status === 'SUSPENDED'
+            ? '暫停'
+            : status === 'LIVE'
+              ? 'LIVE'
+              : 'SCHEDULED'),
+    footerRight:
+      correction?.footerRight ||
+      (status === 'SCHEDULED' || status === 'POSTPONED' ? gameTime || game?.footerRight || '' : game?.footerRight || gameTime || ''),
+  };
+}
+
+function getLocalGamesByDate(date: string): ScoreboardGame[] | null {
+  const payload = localCpblPayload as any;
+  const gamesByDate = payload?.gamesByDate;
+
+  if (!gamesByDate || typeof gamesByDate !== 'object') {
+    return null;
+  }
+
+  const games = gamesByDate[date];
+
+  if (!Array.isArray(games)) {
+    return [];
+  }
+
+  return games.map(normalizeLiveGame);
+}
+
 function getVenue(row: CpblRow) {
   return row.Venue || row.venue || row.Stadium || row.stadium || '';
 }
@@ -153,7 +309,7 @@ function normalizeInningLine(value?: string[] | string) {
   }
 
   if (typeof value === 'string' && value.trim()) {
-    const arr = value.trim().split(/\s+/);
+    const arr = value.trim().split(/[|,\s]+/).map((v) => (v === 'x' || v === 'X' ? 'X' : v));
     while (arr.length < 9) arr.push('');
     return arr.slice(0, 9);
   }
@@ -287,44 +443,17 @@ function rowToScoreboardGame(row: CpblRow, recordMap: TeamRecordMap): Scoreboard
 }
 
 export async function fetchCpblMajorGamesByDate(date: string): Promise<ScoreboardGame[]> {
+  const localGames = getLocalGamesByDate(date);
+
+  if (localGames) {
+    return localGames;
+  }
+
   const rows = cpblMajor2026 as CpblRow[];
   const recordMap = buildTeamRecordsUntilDate(rows, date);
 
   const sameDayRows = rows.filter((row) => formatDateOnly(row.strTimestamp) === date);
-  const baseGames = sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
-
-  const mergedGames = await Promise.all(
-    sameDayRows.map(async (row, index) => {
-      const baseGame = baseGames[index];
-
-      if (!row.gameSno || !row.kindCode || !row.year) {
-        return baseGame;
-      }
-
-      try {
-        console.log(
-          'CPBL live params =',
-          row.idEvent,
-          row.gameSno,
-          row.kindCode,
-          row.year
-        );
-
-        const official = await fetchCpblOfficialStatusByGame({
-          gameSno: row.gameSno,
-          kindCode: row.kindCode,
-          year: row.year,
-        });
-
-        return applyCpblOfficialStatus(baseGame, official);
-      } catch (error) {
-        console.warn(`CPBL live merge failed for ${row.idEvent}:`, error);
-        return baseGame;
-      }
-    })
-  );
-
-  return mergedGames;
+  return sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
 }
 
 export async function fetchCpblMinorGamesByDate(_date: string): Promise<ScoreboardGame[]> {

@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const leagueLogos = {
   mlb: require('../../../assets/league/mlb.png'),
@@ -36,6 +36,8 @@ function LeagueItem({ image, caption, onPress }: LeagueItemProps) {
 
 export default function ProPage() {
   const router = useRouter();
+  const { date } = useLocalSearchParams<{ date?: string }>();
+  const dateQuery = typeof date === 'string' ? `?date=${date}` : '';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,25 +52,25 @@ export default function ProPage() {
           <LeagueItem
             image={leagueLogos.mlb}
             caption="美國職棒 MLB"
-            onPress={() => router.push('/league/mlb')}
+            onPress={() => router.push(`/league/mlb${dateQuery}`)}
           />
 
           <LeagueItem
             image={leagueLogos.npb}
             caption="日本職棒 NPB"
-            onPress={() => router.push('/league/npb')}
+            onPress={() => router.push(`/league/npb${dateQuery}`)}
           />
 
           <LeagueItem
             image={leagueLogos.cpbl}
             caption="中華職棒 CPBL"
-            onPress={() => router.push('/league/cpbl')}
+            onPress={() => router.push(`/league/cpbl-major${dateQuery}`)}
           />
 
           <LeagueItem
             image={leagueLogos.kbo}
             caption="韓國職棒 KBO"
-            onPress={() => router.push('/league/kbo')}
+            onPress={() => router.push(`/league/kbo${dateQuery}`)}
           />
         </View>
       </ScrollView>

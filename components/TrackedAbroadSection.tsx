@@ -81,19 +81,19 @@ export default function TrackedAbroadSection() {
 
             <View style={styles.info}>
               <View style={styles.topRow}>
-                <Text style={styles.name}>{player.name}</Text>
+                <Text style={styles.name} numberOfLines={1}>{player.name}</Text>
                 <StatusBadge status={player.status} />
               </View>
 
-              <Text style={styles.meta}>
+              <Text style={styles.meta} numberOfLines={1}>
                 {player.team}・{player.league} {player.level}
               </Text>
 
-              <Text style={styles.line1}>{player.line1}</Text>
-              <Text style={styles.line2}>{player.line2}</Text>
+              <Text style={styles.line1} numberOfLines={1}>{player.line1}</Text>
+              <Text style={styles.line2} numberOfLines={1}>{player.line2}</Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={18} color="#7f95b4" />
+            <Ionicons name="chevron-forward" size={16} color="#7f95b4" />
           </TouchableOpacity>
         ))}
       </View>
@@ -121,48 +121,52 @@ function StatusBadge({ status }: { status: PlayerStatus }) {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 22,
-    paddingHorizontal: 18,
+    marginTop: 12,
+    paddingHorizontal: 0,
   },
   headerRow: {
-    marginBottom: 12,
+    marginBottom: 7,
+    paddingHorizontal: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   sectionTitle: {
-    color: '#f8fbff',
-    fontSize: 18,
-    fontWeight: '800',
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '900',
+    letterSpacing: -0.3,
   },
   sectionAction: {
-    color: '#60a5fa',
-    fontSize: 12,
-    fontWeight: '700',
+    color: '#93c5fd',
+    fontSize: 11,
+    fontWeight: '800',
   },
   listWrap: {
-    gap: 12,
+    gap: 10,
   },
   card: {
     borderRadius: 20,
-    backgroundColor: '#111b2a',
+    backgroundColor: '#071226',
     borderWidth: 1,
-    borderColor: '#1b2940',
-    padding: 14,
+    borderColor: '#20304a',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    minHeight: 84,
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarText: {
-    color: '#09111f',
-    fontSize: 20,
+    color: '#071226',
+    fontSize: 16,
     fontWeight: '900',
   },
   info: {
@@ -176,27 +180,29 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   name: {
-    color: '#f8fbff',
-    fontSize: 16,
-    fontWeight: '800',
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '900',
+    flex: 1,
   },
   meta: {
-    marginTop: 6,
-    color: '#8da2c0',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  line1: {
-    marginTop: 8,
-    color: '#dbe7ff',
-    fontSize: 13,
+    marginTop: 4,
+    color: '#8ea0bb',
+    fontSize: 11,
     fontWeight: '700',
   },
-  line2: {
+  line1: {
     marginTop: 5,
-    color: '#8da2c0',
+    color: '#dbeafe',
     fontSize: 12,
-    lineHeight: 18,
+    fontWeight: '800',
+  },
+  line2: {
+    marginTop: 3,
+    color: '#8ea0bb',
+    fontSize: 11,
+    fontWeight: '600',
+    lineHeight: 14,
   },
   badge: {
     borderRadius: 999,
@@ -205,7 +211,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   badgeText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 9,
+    fontWeight: '900',
   },
 });

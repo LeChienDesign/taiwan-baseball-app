@@ -1,4 +1,6 @@
 import { abroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
+import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
 
 type AbroadNewsItem = {
   id: string;
@@ -74,10 +76,22 @@ type NpbGameLink = {
   url: string;
   date: string;
   isFarm: boolean;
+  contextText?: string;
+};
+
+type OfficialSupplement = {
+  recentGames: Array<Record<string, any>>;
+  news: AbroadNewsItem[];
+  recentNote?: string;
 };
 
 const NPB_BASE = 'https://npb.jp';
 const REQUEST_TIMEOUT_MS = 15000;
+const MAX_LINKS_PER_PLAYER = 30;
+const FALLBACK_LINKS_PER_PLAYER = 80;
+
+const DEBUG_ABROAD_TIMING = process.env.DEBUG_ABROAD_TIMING === '1';
+const DEBUG_PLAYER_ID = process.env.DEBUG_PLAYER_ID?.trim();
 
 const NPB_PLAYER_ALIASES: Record<
   string,
@@ -86,43 +100,75 @@ const NPB_PLAYER_ALIASES: Record<
     type?: 'pitcher' | 'hitter';
   }
 > = {
-  'ruei-yang-gu-lin': {
-    aliases: ['Ruei-Yang Gu Lin', 'Gu Lin', '古林睿煬'],
-    type: 'pitcher',
-  },
-  'yi-lei-sun': {
-    aliases: ['Yi-Lei Sun', '孫易磊'],
-    type: 'pitcher',
-  },
-  'chun-wei-chang': {
-    aliases: ['Chun-Wei Chang', '張峻瑋'],
-    type: 'pitcher',
-  },
-  'an-ko-lin': {
-    aliases: ['An-Ko Lin', '林安可'],
-    type: 'hitter',
-  },
-  'jo-hsi-hsu': {
-    aliases: ['Jo-Hsi Hsu', '徐若熙'],
-    type: 'pitcher',
-  },
-  'chia-hao-sung': {
-    aliases: ['Chia-Hao Sung', 'Sung Chia-Hao', '宋家豪'],
-    type: 'pitcher',
-  },
-  'chia-cheng-lin': {
-    aliases: ['Lyle Lin', 'Chia-Cheng Lin', '林家正', 'ライル・リン'],
-    type: 'hitter',
-  },
-  'hsiang-sheng-hsu': {
-    aliases: ['Hsiang-Sheng Hsu', '徐翔聖'],
-    type: 'pitcher',
-  },
-};
+    'ruei-yang-gu-lin': {
+      aliases: ['Ruei-Yang Gu Lin', 'Gu Lin', '古林睿煬', '古林 睿煬', 'ぐーりん・るぇやん'],
+      type: 'pitcher',
+    },
+    'yi-lei-sun': {
+      aliases: ['Yi-Lei Sun', '孫易磊', '孫 易磊', 'すん・いーれい'],
+      type: 'pitcher',
+    },
+    'chun-wei-chang': {
+      aliases: ['Chun-Wei Chang', '張峻瑋'],
+      type: 'pitcher',
+    },
+    'an-ko-lin': {
+      aliases: ['An-Ko Lin', '林安可', 'りん・あんこー'],
+      type: 'hitter',
+    },
+    'jo-hsi-hsu': {
+      aliases: ['Jo-Hsi Hsu', '徐若熙', 'しゅー・るおしー'],
+      type: 'pitcher',
+    },
+    'chia-hao-sung': {
+      aliases: ['Chia-Hao Sung', 'Sung Chia-Hao', '宋家豪', '宋　家豪'],
+      type: 'pitcher',
+    },
+    'chia-cheng-lin': {
+      aliases: ['Lyle Lin', 'Chia-Cheng Lin', '林家正', 'ライル・リン'],
+      type: 'hitter',
+    },
+    'hsiang-sheng-hsu': {
+      aliases: ['Hsiang-Sheng Hsu', '徐翔聖'],
+      type: 'pitcher',
+    },
+  };
 
 const htmlCache = new Map<string, string | null>();
 const recentGameLinksCache = new Map<string, NpbGameLink[]>();
 
+function debugLog(...args: any[]) {
+  if (DEBUG_ABROAD_TIMING) {
+    console.log('[npb-debug]', ...args);
+  }
+}
+
+function debugPlayerLog(playerId: string, ...args: any[]) {
+  if (!DEBUG_ABROAD_TIMING) return;
+  if (DEBUG_PLAYER_ID && DEBUG_PLAYER_ID !== playerId) return;
+  console.log(`[npb-debug:${playerId}]`, ...args);
+}
+
+async function timeAsync<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const startedAt = Date.now();
+  debugLog(`${label} start`);
+  try {
+    const result = await fn();
+    const elapsed = Date.now() - startedAt;
+    debugLog(`${label} done in ${elapsed}ms`);
+    return result;
+  } catch (error) {
+    const elapsed = Date.now() - startedAt;
+    debugLog(`${label} failed in ${elapsed}ms`);
+    throw error;
+  }
+}
+function normalizeLooseText(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[\s\u3000]+/g, '')
+    .trim();
+}
 function normalizeText(value?: string) {
   return String(value ?? '').trim().toLowerCase();
 }
@@ -134,28 +180,11 @@ function toDateOnly(value?: string) {
   return parsed.toISOString().slice(0, 10);
 }
 
-function toDisplayDate(value?: string) {
-  if (!value) return '—';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toISOString().slice(0, 10);
-}
-
 function addDays(dateString: string, days: number) {
   const parsed = new Date(dateString);
   if (Number.isNaN(parsed.getTime())) return dateString;
   parsed.setDate(parsed.getDate() + days);
   return parsed.toISOString().slice(0, 10);
-}
-
-function isTrackedNpbPlayer(player: AbroadPlayerLike) {
-  const registry = abroadRegistry[player.id];
-  if (registry?.provider === 'npb') return true;
-  return normalizeText(player.league) === 'npb';
-}
-
-function hasRecentGames(player: AbroadPlayerLike) {
-  return Array.isArray(player.recentGames) && player.recentGames.length > 0;
 }
 
 async function fetchText(url: string): Promise<string | null> {
@@ -220,6 +249,16 @@ function compactWhitespace(input: string) {
   return input.replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
 }
 
+function isTrackedNpbPlayer(player: AbroadPlayerLike) {
+  const registry = abroadRegistry[player.id];
+  if (registry?.provider === 'npb') return true;
+  return normalizeText(player.league) === 'npb';
+}
+
+function hasRecentGames(player: AbroadPlayerLike) {
+  return Array.isArray(player.recentGames) && player.recentGames.length > 0;
+}
+
 function buildFallbackNews(
   player: AbroadPlayerLike,
   registry: AbroadRegistryEntry,
@@ -271,11 +310,7 @@ function buildFallbackNews(
     });
   }
 
-  return items.sort((a, b) => {
-    const aTime = Date.parse(a.date || '');
-    const bTime = Date.parse(b.date || '');
-    return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
-  });
+  return sortNewsItems(dedupeNewsItems(items));
 }
 
 function buildCalendarUrls(requestedDate: string) {
@@ -292,12 +327,10 @@ function buildCalendarUrls(requestedDate: string) {
 
   const urls = new Set<string>();
 
-  // Regular season calendar
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/`);
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/index_${monthToken}.html`);
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/index_${prevToken}.html`);
 
-  // Farm calendar
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/index_farm.html`);
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/index_farm_${monthToken}.html`);
   urls.add(`${NPB_BASE}/bis/eng/${season}/calendar/index_farm_${prevToken}.html`);
@@ -317,18 +350,25 @@ function extractGameLinksFromCalendarHtml(html: string) {
     const date = `${dateRaw.slice(0, 4)}-${dateRaw.slice(4, 6)}-${dateRaw.slice(6, 8)}`;
     const isFarm = slug.startsWith('f');
 
+    const start = Math.max(0, (match.index ?? 0) - 320);
+    const end = Math.min(html.length, regex.lastIndex + 320);
+    const contextHtml = html.slice(start, end);
+    const contextText = compactWhitespace(stripHtml(contextHtml));
+
     results.push({
       url: `${NPB_BASE}${relative}`,
       date,
       isFarm,
+      contextText,
     });
   }
 
-  const map = new Map<string, NpbGameLink>();
+  const deduped = new Map<string, NpbGameLink>();
   for (const item of results) {
-    map.set(item.url, item);
+    deduped.set(item.url, item);
   }
-  return Array.from(map.values());
+
+  return Array.from(deduped.values());
 }
 
 async function fetchRecentGameLinks(requestedDate: string, daysBack: number) {
@@ -338,8 +378,8 @@ async function fetchRecentGameLinks(requestedDate: string, daysBack: number) {
 
   const startDate = addDays(requestedDate, -daysBack);
   const urls = buildCalendarUrls(requestedDate);
-
   const htmlList = await Promise.all(urls.map((url) => fetchText(url)));
+
   const merged = new Map<string, NpbGameLink>();
 
   for (const html of htmlList) {
@@ -361,6 +401,77 @@ async function fetchRecentGameLinks(requestedDate: string, daysBack: number) {
   return sorted;
 }
 
+function tokenizeTeamName(value?: string) {
+  const normalized = String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\u3040-\u30ff\u3400-\u9fff\- ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!normalized) return [];
+
+  return normalized
+    .split(' ')
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 2);
+}
+
+function getTeamKeywords(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+  const rawNames = [player.team, registry.officialTeam].filter((v): v is string => !!v && !!v.trim());
+  const keywords = new Set<string>();
+
+  for (const name of rawNames) {
+    for (const token of tokenizeTeamName(name)) {
+      keywords.add(token);
+    }
+  }
+
+  const joined = rawNames.join(' | ').toLowerCase();
+
+  if (joined.includes('fighters')) {
+    ['fighters', 'nippon-ham', 'hokkaido', '日本ハム', '日本火腿', 'f-'].forEach((k) => keywords.add(k));
+  }
+  if (joined.includes('hawks')) {
+    ['hawks', 'softbank', 'fukuoka', 'ソフトバンク'].forEach((k) => keywords.add(k));
+  }
+  if (joined.includes('lions')) {
+    ['lions', 'seibu', 'saitama', '西武'].forEach((k) => keywords.add(k));
+  }
+  if (joined.includes('eagles')) {
+    ['eagles', 'rakuten', 'tohoku', '楽天'].forEach((k) => keywords.add(k));
+  }
+  if (joined.includes('swallows')) {
+    ['swallows', 'yakult', 'tokyo', 'ヤクルト'].forEach((k) => keywords.add(k));
+  }
+
+  return Array.from(keywords).filter(Boolean);
+}
+
+function filterLinksByTeamKeywords(
+  playerId: string,
+  links: NpbGameLink[],
+  teamKeywords: string[]
+) {
+  if (teamKeywords.length === 0) {
+    debugPlayerLog(playerId, 'team keywords empty, filtered links = 0');
+    return [];
+  }
+
+  const filtered = links.filter((item) => {
+    const hay = `${item.contextText ?? ''} ${item.url}`.toLowerCase();
+    return teamKeywords.some((keyword) => hay.includes(keyword.toLowerCase()));
+  });
+
+  debugPlayerLog(
+    playerId,
+    'team keywords =',
+    teamKeywords,
+    `filtered links = ${filtered.length}/${links.length}`
+  );
+
+  return filtered;
+}
+
 function getAliasesForPlayer(player: AbroadPlayerLike) {
   const configured = NPB_PLAYER_ALIASES[player.id]?.aliases ?? [];
   const dynamic = [player.enName, player.name].filter((v): v is string => !!v && !!v.trim());
@@ -370,6 +481,373 @@ function getAliasesForPlayer(player: AbroadPlayerLike) {
 
 function getConfiguredType(player: AbroadPlayerLike) {
   return NPB_PLAYER_ALIASES[player.id]?.type ?? player.type ?? 'pitcher';
+}
+
+function dedupeNewsItems(items: AbroadNewsItem[]) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    const key = `${item.title}|${item.date}|${item.url ?? ''}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function sortNewsItems(items: AbroadNewsItem[]) {
+  return [...items].sort((a, b) => {
+    const aTime = Date.parse(a.date || '');
+    const bTime = Date.parse(b.date || '');
+    return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
+  });
+}
+
+function isRakutenPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+  const joined = `${player.team ?? ''} ${registry.officialTeam ?? ''}`.toLowerCase();
+
+  return (
+    joined.includes('rakuten') ||
+    joined.includes('eagles') ||
+    joined.includes('tohoku') ||
+    joined.includes('楽天')
+  );
+}
+
+function absoluteUrl(baseUrl: string, href?: string) {
+  if (!href) return undefined;
+  if (/^https?:\/\//i.test(href)) return href;
+  if (href.startsWith('/')) {
+    const base = new URL(baseUrl);
+    return `${base.origin}${href}`;
+  }
+  return new URL(href, baseUrl).toString();
+}
+
+function extractDateFromText(text: string, fallbackDate: string) {
+  const normalized = compactWhitespace(text);
+
+  const ymdSlash = normalized.match(/\b(20\d{2})[\/.-](\d{1,2})[\/.-](\d{1,2})\b/);
+  if (ymdSlash) {
+    const yyyy = ymdSlash[1];
+    const mm = String(Number(ymdSlash[2])).padStart(2, '0');
+    const dd = String(Number(ymdSlash[3])).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const jp = normalized.match(/\b(20\d{2})年(\d{1,2})月(\d{1,2})日/);
+  if (jp) {
+    const yyyy = jp[1];
+    const mm = String(Number(jp[2])).padStart(2, '0');
+    const dd = String(Number(jp[3])).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  return fallbackDate;
+}
+
+function extractRakutenArticleCandidates(
+  html: string,
+  baseUrl: string,
+  aliases: string[],
+  fallbackDate: string,
+  playerId: string
+) {
+  const results: Array<{
+    title: string;
+    url?: string;
+    date: string;
+    summary: string;
+  }> = [];
+
+  const anchorRegex = /<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = anchorRegex.exec(html))) {
+    const href = match[1];
+    const anchorHtml = match[2];
+    const title = compactWhitespace(stripHtml(anchorHtml));
+    if (!title || title.length < 6) continue;
+
+    const start = Math.max(0, (match.index ?? 0) - 500);
+    const end = Math.min(html.length, (match.index ?? 0) + 1200);
+    const contextHtml = html.slice(start, end);
+    const contextText = compactWhitespace(stripHtml(contextHtml));
+      const normalizedContext = normalizeLooseText(contextText);
+      const aliasHit = aliases.some((alias) =>
+        normalizedContext.includes(normalizeLooseText(alias))
+      );
+    if (!aliasHit) continue;
+
+    const date = extractDateFromText(contextText, fallbackDate);
+    const url = absoluteUrl(baseUrl, href);
+
+    results.push({
+      title,
+      url,
+      date,
+      summary: contextText.slice(0, 160),
+    });
+  }
+
+  debugPlayerLog(playerId, `rakuten article candidates = ${results.length}`);
+  return results;
+}
+
+async function buildRakutenOfficialSupplement(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string,
+  maxGames: number
+): Promise<OfficialSupplement> {
+  const aliases = getAliasesForPlayer(player);
+  const sources = [registry.officialPlayerUrl, registry.officialNewsUrl].filter(
+    (v): v is string => !!v
+  );
+
+  if (sources.length === 0) {
+    return { recentGames: [], news: [] };
+  }
+
+  debugPlayerLog(player.id, 'rakuten supplement sources =', sources);
+
+  const htmlResults = await Promise.all(
+    sources.map((url) => timeAsync(`player:${player.id}:rakuten:${url}`, () => fetchText(url)))
+  );
+    if (DEBUG_PLAYER_ID === 'chia-hao-sung') {
+        const { writeFile } = await import('node:fs/promises');
+        const path = await import('node:path');
+
+        await writeFile(
+          path.resolve(process.cwd(), 'server/data/rakuten-player-page.html'),
+          htmlResults[0] ?? '',
+          'utf8'
+        );
+
+        await writeFile(
+          path.resolve(process.cwd(), 'server/data/rakuten-home-page.html'),
+          htmlResults[1] ?? '',
+          'utf8'
+        );
+      }
+  const candidates: Array<{
+    title: string;
+    url?: string;
+    date: string;
+    summary: string;
+  }> = [];
+
+  htmlResults.forEach((html, index) => {
+    if (!html) return;
+    candidates.push(
+      ...extractRakutenArticleCandidates(
+        html,
+        sources[index],
+        aliases,
+        requestedDate,
+        player.id
+      )
+    );
+  });
+
+  const deduped = new Map<string, { title: string; url?: string; date: string; summary: string }>();
+  for (const item of candidates) {
+    const key = `${item.title}|${item.date}|${item.url ?? ''}`.toLowerCase();
+    deduped.set(key, item);
+  }
+
+  const sorted = Array.from(deduped.values()).sort((a, b) => {
+    const aTime = Date.parse(a.date || '');
+    const bTime = Date.parse(b.date || '');
+    return (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime);
+  });
+
+  const top = sorted.slice(0, maxGames);
+
+  const news: AbroadNewsItem[] = top.map((item, index) => ({
+    id: `${player.id}-rakuten-official-${index}`,
+    title: item.title,
+    date: item.date,
+    tag: '官網追蹤',
+    summary: item.summary,
+    url: item.url,
+    source: 'Rakuten Eagles',
+  }));
+
+  const recentGames = top.map((item) => ({
+    date: item.date,
+    opponent: 'Rakuten 官方頁',
+    result: '官網更新',
+    detail1: item.title,
+    detail2: 'Rakuten 官方頁補充來源',
+  }));
+
+  return {
+    recentGames,
+    news,
+    recentNote: top.length > 0 ? 'Rakuten 官方頁補充來源' : undefined,
+  };
+}
+
+function isFightersPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+  const joined = `${player.team ?? ''} ${registry.officialTeam ?? ''}`.toLowerCase();
+
+  return (
+    joined.includes('fighters') ||
+    joined.includes('nippon-ham') ||
+    joined.includes('hokkaido') ||
+    joined.includes('日本ハム') ||
+    joined.includes('ファイターズ')
+  );
+}
+function extractFightersGameRows(html: string, requestedDate: string, maxGames: number) {
+  const year = requestedDate.slice(0, 4);
+  const rows = [...html.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].slice(1);
+
+  function cleanCell(value: string) {
+    return decodeHtml(
+      value
+        .replace(/<br\s*\/?>/gi, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\s+/g, ' ')
+        .replace(/&nbsp;/g, '')
+        .trim()
+    );
+  }
+
+  return rows
+    .map((row) => {
+      const cells = [...row[1].matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/g)].map((m) =>
+        cleanCell(m[1])
+      );
+
+      if (cells.length < 15) return null;
+
+      const dateText = cells[0].match(/(\d{2})\/(\d{2})/);
+      if (!dateText) return null;
+
+      const date = `${year}-${dateText[1]}-${dateText[2]}`;
+      const appearance = cells[3] || '登板';
+      const ip = cells[5] || '—';
+      const era = cells[6] || '—';
+      const er = cells[7] || '0';
+      const r = cells[8] || '0';
+      const so = cells[9] || '0';
+      const bb = cells[10] || '0';
+      const h = cells[13] || '0';
+
+      return {
+        date,
+        opponent: 'Fighters 官方逐場',
+        result: cells[2] || '官網紀錄',
+        detail1: `${appearance} / IP ${ip} / SO ${so} / BB ${bb}`,
+        detail2: `H ${h} / R ${r} / ER ${er} / ERA ${era}`,
+      };
+    })
+    .filter((item): item is Record<string, any> => !!item)
+    .slice(0, maxGames);
+}
+async function buildFightersOfficialSupplement(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string,
+  maxGames: number
+): Promise<OfficialSupplement> {
+  const sourceUrl = registry.officialPlayerUrl ?? registry.officialNewsUrl;
+
+  if (!sourceUrl) {
+    return { recentGames: [], news: [] };
+  }
+
+  const playerPageHtml = await fetchText(sourceUrl);
+  const detailUrlMatch = playerPageHtml.match(
+    /https:\/\/www\.fighters\.co\.jp\/team\/player\/detail\/\d+_\d+\.html/
+  );
+
+  const detailUrl = detailUrlMatch?.[0] ?? sourceUrl;
+  const html = await fetchText(detailUrl);
+
+  const configMatch = html.match(/var result_by_game = (\{[\s\S]*?\});/);
+  if (!configMatch) {
+    return { recentGames: [], news: [] };
+  }
+
+  let config: any;
+  try {
+    config = JSON.parse(configMatch[1]);
+  } catch {
+    return { recentGames: [], news: [] };
+  }
+
+  const news: AbroadNewsItem[] = [
+    {
+      id: `${player.id}-fighters-official`,
+      title: `${player.name ?? player.id} Fighters 官方頁`,
+      date: requestedDate,
+      tag: '官方頁',
+      summary: `已同步 ${registry.officialTeam ?? 'Fighters'} 官方球員頁。`,
+      url: detailUrl,
+      source: 'Fighters Official',
+    },
+  ];
+
+  if (String(config.archive_year) !== requestedDate.slice(0, 4)) {
+    return {
+      recentGames: [],
+      news: [
+        {
+          ...news[0],
+          summary: `目前僅提供 ${config.archive_year} 年度逐場資料，未納入 recentGames。`,
+        },
+      ],
+    };
+  }
+
+  const body = new URLSearchParams({
+    action: 'player_result_by_game',
+    bis_code: config.bis_code,
+    year: config.archive_year ?? requestedDate.slice(0, 4),
+    lang: config.lang ?? 'jp',
+    nonce: config.nonce,
+    is_pitcher: config.is_pitcher ?? '1',
+  });
+
+  const res = await fetch(config.ajax_url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'x-requested-with': 'XMLHttpRequest',
+    },
+    body,
+  });
+
+  const gameHtml = await res.text();
+  const gameLogDateBase = `${config.archive_year ?? requestedDate.slice(0, 4)}-01-01`;
+  const recentGames = extractFightersGameRows(gameHtml, gameLogDateBase, maxGames);
+
+  return {
+    recentGames,
+    news,
+    recentNote: recentGames.length > 0 ? 'Fighters 官方逐場紀錄' : undefined,
+  };
+}
+function buildJapaneseGameUrl(url: string) {
+  return url.replace('/bis/eng/', '/bis/');
+}
+
+function buildNpbScoreBoxUrl(item: NpbGameLink) {
+  const match = item.url.match(/\/bis\/eng\/(\d{4})\/games\/[sf]?s?(\d{8})\d*\.html/i);
+  if (!match) return null;
+
+  const year = match[1];
+  const ymd = match[2];
+  const monthDay = ymd.slice(4, 8);
+  const context = `${item.contextText ?? ''} ${item.url}`.toLowerCase();
+
+  if (!context.includes('fighters') && !context.includes('nippon-ham') && !context.includes('hokkaido') && !context.includes('日本ハム') && !context.includes('日本火腿')) {
+    return null;
+  }
+
+  return `${NPB_BASE}/scores/${year}/${monthDay}/f-b-08/box.html`;
 }
 
 function extractTitle(html: string) {
@@ -428,12 +906,12 @@ function extractGameMeta(html: string, fallbackDate: string) {
 }
 
 function findMatchingAlias(text: string, aliases: string[]) {
-  const lowered = text.toLowerCase();
+  const normalizedHay = normalizeLooseText(text);
 
   for (const alias of aliases) {
-    const needle = alias.toLowerCase().trim();
+    const needle = normalizeLooseText(alias);
     if (!needle) continue;
-    if (lowered.includes(needle)) return alias;
+    if (normalizedHay.includes(needle)) return alias;
   }
 
   return null;
@@ -466,7 +944,74 @@ function normalizeLineForDisplay(line: string) {
       .trim()
   );
 }
+function extractNpbBoxCellsForAlias(html: string, aliases: string[]) {
+  const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let match: RegExpExecArray | null = null;
 
+  while ((match = rowRegex.exec(html))) {
+    const rowHtml = match[1];
+    const rowText = normalizeLooseText(stripHtml(rowHtml));
+
+    const aliasHit = aliases.some((alias) => rowText.includes(normalizeLooseText(alias)));
+    if (!aliasHit) continue;
+
+    const cells = [...rowHtml.matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/gi)]
+      .map((cell) =>
+        compactWhitespace(
+          decodeHtml(
+            cell[1]
+              .replace(/<br\s*\/?>/gi, ' ')
+              .replace(/<[^>]+>/g, ' ')
+          )
+        )
+      )
+      .filter(Boolean);
+
+    const firstCell = cells[0] ?? '';
+    const secondCell = cells[1] ?? '';
+    const hasNumericPitchingStats = cells.slice(1, 13).filter((cell) => /^\d+(?:\/\d+)?$/.test(cell)).length >= 8;
+    const isSummaryRow =
+      firstCell.includes('HR') ||
+      firstCell.includes('TEAM') ||
+      firstCell.includes('合計') ||
+      firstCell.includes('計') ||
+      secondCell.includes('off RY.Gu Lin');
+
+    if (cells.length >= 13 && hasNumericPitchingStats && !isSummaryRow) {
+      return cells;
+    }
+  }
+
+  return null;
+}
+
+function buildPitcherRecentGameFromBoxCells(
+  meta: ReturnType<typeof extractGameMeta>,
+  cells: string[]
+) {
+    const name = cells[0] ?? '—';
+    const pitchCount = cells[1] ?? '—';
+    const batters = cells[2] ?? '—';
+    const ip = cells[3] ?? '—';
+    const hits = cells[4] ?? '0';
+    const hr = cells[5] ?? '0';
+    const bb = cells[6] ?? '0';
+    const hbp = cells[7] ?? '0';
+    const so = cells[8] ?? '0';
+    const balk = cells[9] ?? '0';
+    const wildPitch = cells[10] ?? '0';
+    const runs = cells[11] ?? '0';
+    const earnedRuns = cells[12] ?? '0';
+    
+  return {
+      
+    date: meta.date,
+    opponent: meta.away === '—' && meta.home === '—' ? '—' : `${meta.away} vs ${meta.home}`,
+    result: '登板',
+      detail1: `IP ${ip} / SO ${so} / BB ${bb}`,
+      detail2: `NP ${pitchCount} / H ${hits} / HR ${hr} / R ${runs} / ER ${earnedRuns}`,
+  };
+}
 function buildPitcherRecentGame(meta: ReturnType<typeof extractGameMeta>, line: string) {
   const normalized = normalizeLineForDisplay(line);
 
@@ -490,9 +1035,95 @@ function buildHitterRecentGame(meta: ReturnType<typeof extractGameMeta>, line: s
     detail2: 'NPB 官方比分頁',
   };
 }
+async function findEntryFromGamePage(
+  player: AbroadPlayerLike,
+  item: NpbGameLink,
+  aliases: string[],
+  configuredType: 'pitcher' | 'hitter'
+) {
+  const html = await timeAsync(`player:${player.id}:fetchGamePage`, () => fetchText(item.url));
+  if (!html) {
+    debugPlayerLog(player.id, 'skip: no english html');
+    return null;
+  }
 
+  const meta = extractGameMeta(html, item.date);
+  let activeMeta = meta;
+  let activeHtml = html;
+  let matchedAlias = findMatchingAlias(activeMeta.text, aliases);
+
+  if (!matchedAlias) {
+    const jpUrl = buildJapaneseGameUrl(item.url);
+
+    if (jpUrl !== item.url) {
+      debugPlayerLog(player.id, 'english page miss, trying jp page =', jpUrl);
+
+      const jpHtml = await timeAsync(`player:${player.id}:fetchGamePageJp`, () => fetchText(jpUrl));
+      if (jpHtml) {
+        const jpMeta = extractGameMeta(jpHtml, item.date);
+        const jpAlias = findMatchingAlias(jpMeta.text, aliases);
+
+        if (jpAlias) {
+          activeMeta = jpMeta;
+          activeHtml = jpHtml;
+          matchedAlias = jpAlias;
+          debugPlayerLog(player.id, `matched alias on jp page = ${matchedAlias}`);
+        }
+      }
+    }
+  }
+
+  if (!matchedAlias && configuredType === 'pitcher') {
+    const scoreBoxUrl = buildNpbScoreBoxUrl(item);
+    if (scoreBoxUrl) {
+      debugPlayerLog(player.id, 'trying score box page =', scoreBoxUrl);
+      const boxHtml = await timeAsync(`player:${player.id}:fetchScoreBox`, () => fetchText(scoreBoxUrl));
+      if (boxHtml) {
+        const boxMeta = extractGameMeta(boxHtml, item.date);
+        const boxAlias = findMatchingAlias(boxMeta.text, aliases);
+        if (boxAlias) {
+          const boxCells = extractNpbBoxCellsForAlias(boxHtml, aliases);
+          if (boxCells) {
+            debugPlayerLog(player.id, 'box cells =', boxCells);
+            return buildPitcherRecentGameFromBoxCells(boxMeta, boxCells);
+          }
+        }
+      }
+    }
+  }
+
+  if (!matchedAlias) {
+    debugPlayerLog(player.id, 'skip: alias not found in game page');
+    return null;
+  }
+
+  if (configuredType === 'pitcher') {
+    const boxCells = extractNpbBoxCellsForAlias(activeHtml, aliases);
+    if (boxCells) {
+      debugPlayerLog(player.id, 'box cells =', boxCells);
+      return buildPitcherRecentGameFromBoxCells(activeMeta, boxCells);
+    }
+  }
+
+  const hitLines = collectContextLines(activeMeta.text, aliases);
+  const targetLine =
+    hitLines.find((line) => line.toLowerCase().includes(matchedAlias!.toLowerCase())) ??
+    hitLines[0];
+
+  if (!targetLine) {
+    debugPlayerLog(player.id, 'skip: no target line');
+    return null;
+  }
+
+  debugPlayerLog(player.id, 'target line =', targetLine);
+
+  return configuredType === 'pitcher'
+    ? buildPitcherRecentGame(activeMeta, targetLine)
+    : buildHitterRecentGame(activeMeta, targetLine);
+}
 async function buildRecentGamesFromOfficialScores(
   player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
   requestedDate: string,
   daysBack: number,
   maxGames: number
@@ -500,36 +1131,66 @@ async function buildRecentGamesFromOfficialScores(
   const aliases = getAliasesForPlayer(player);
   const configuredType = getConfiguredType(player);
 
-  if (aliases.length === 0) return [];
-
-  const links = await fetchRecentGameLinks(requestedDate, daysBack);
-  const results: Array<Record<string, any>> = [];
-
-  for (const item of links) {
-    if (results.length >= maxGames) break;
-
-    const html = await fetchText(item.url);
-    if (!html) continue;
-
-    const meta = extractGameMeta(html, item.date);
-    const matchedAlias = findMatchingAlias(meta.text, aliases);
-    if (!matchedAlias) continue;
-
-    const hitLines = collectContextLines(meta.text, aliases);
-    const targetLine =
-      hitLines.find((line) => line.toLowerCase().includes(matchedAlias.toLowerCase())) ??
-      hitLines[0];
-
-    if (!targetLine) continue;
-
-    const entry =
-      configuredType === 'pitcher'
-        ? buildPitcherRecentGame(meta, targetLine)
-        : buildHitterRecentGame(meta, targetLine);
-
-    results.push(entry);
+  if (aliases.length === 0) {
+    debugPlayerLog(player.id, 'no aliases configured');
+    return [];
   }
 
+  debugPlayerLog(player.id, 'aliases =', aliases, 'type =', configuredType);
+
+  const allLinks = await timeAsync(`player:${player.id}:calendarLinks`, () =>
+    fetchRecentGameLinks(requestedDate, daysBack)
+  );
+
+  debugPlayerLog(player.id, `calendar links found = ${allLinks.length}`);
+
+  const teamKeywords = getTeamKeywords(player, registry);
+  const filteredLinks = filterLinksByTeamKeywords(player.id, allLinks, teamKeywords);
+  const prioritizedFilteredLinks =
+    filteredLinks.length > 0
+      ? [
+          ...filteredLinks.filter((item) => item.isFarm),
+          ...filteredLinks.filter((item) => !item.isFarm),
+        ]
+      : [];
+
+  const fallbackLinks = allLinks.slice(0, FALLBACK_LINKS_PER_PLAYER);
+  const linksToScan =
+    prioritizedFilteredLinks.length > 0
+      ? prioritizedFilteredLinks.slice(0, MAX_LINKS_PER_PLAYER)
+      : fallbackLinks;
+
+  debugPlayerLog(
+    player.id,
+    `links to scan after limit = ${linksToScan.length}/${
+      prioritizedFilteredLinks.length || fallbackLinks.length
+    }`
+  );
+
+  if (prioritizedFilteredLinks.length === 0) {
+    debugPlayerLog(
+      player.id,
+      `team filter miss, fallback to latest ${fallbackLinks.length} links only`
+    );
+  }
+
+  const results: Array<Record<string, any>> = [];
+
+  for (const item of linksToScan) {
+    if (results.length >= maxGames) break;
+
+    debugPlayerLog(
+      player.id,
+      `checking game: date=${item.date} farm=${item.isFarm} url=${item.url}`
+    );
+
+    const entry = await findEntryFromGamePage(player, item, aliases, configuredType);
+    if (entry) {
+      results.push(entry);
+    }
+  }
+
+  debugPlayerLog(player.id, `recent games built = ${results.length}`);
   return results;
 }
 
@@ -545,7 +1206,6 @@ function buildOfficialUrlsPatch(player: AbroadPlayerLike, registry: AbroadRegist
     team: registry.officialTeam ?? player.team,
     league: 'NPB',
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
-    news: buildFallbackNews(player, registry, toDateOnly()),
     teamMeta: {
       ...(player.teamMeta ?? {}),
       code: registry.officialTeamCode ?? player.teamMeta?.code,
@@ -565,15 +1225,63 @@ async function buildSingleNpbPatch(
   maxGames: number
 ): Promise<AbroadPatch> {
   const basePatch = buildOfficialUrlsPatch(player, registry);
-  const recentGames = hasRecentGames(player)
+
+  debugPlayerLog(player.id, 'buildSingleNpbPatch start', {
+    team: player.team,
+    recentGames: player.recentGames?.length ?? 0,
+    officialPlayerUrl: registry.officialPlayerUrl,
+    officialNewsUrl: registry.officialNewsUrl,
+  });
+
+  let recentGames = hasRecentGames(player)
     ? player.recentGames ?? []
-    : await buildRecentGamesFromOfficialScores(player, requestedDate, daysBack, maxGames);
+    : await buildRecentGamesFromOfficialScores(player, registry, requestedDate, daysBack, maxGames);
+
+  let officialSupplement: OfficialSupplement | null = null;
+
+    if (recentGames.length === 0) {
+      if (isRakutenPlayer(player, registry)) {
+        debugPlayerLog(player.id, 'score pages miss, trying Rakuten official supplement');
+        officialSupplement = await buildRakutenOfficialSupplement(
+          player,
+          registry,
+          requestedDate,
+          maxGames
+        );
+      } else if (isFightersPlayer(player, registry)) {
+        debugPlayerLog(player.id, 'score pages miss, trying Fighters official supplement');
+        officialSupplement = await buildFightersOfficialSupplement(
+          player,
+          registry,
+          requestedDate,
+          maxGames
+        );
+      }
+
+      if (officialSupplement?.recentGames.length) {
+        const existingRecentGames = recentGames.length > 0 ? recentGames : player.recentGames ?? [];
+
+        recentGames =
+          existingRecentGames.length >= officialSupplement.recentGames.length
+            ? existingRecentGames
+            : officialSupplement.recentGames;
+      }
+    }
+
+    debugPlayerLog(player.id, 'final recentGames count =', recentGames.length);
+
+  const news = sortNewsItems(
+    dedupeNewsItems([
+      ...(officialSupplement?.news ?? []),
+      ...buildFallbackNews(player, registry, requestedDate),
+    ])
+  );
 
   return {
     ...basePatch,
     recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
-    recentNote: inferRecentNote(recentGames),
-    news: buildFallbackNews(player, registry, requestedDate),
+    recentNote: officialSupplement?.recentNote ?? inferRecentNote(recentGames),
+    news,
   };
 }
 
@@ -589,16 +1297,13 @@ export async function buildNpbAbroadPatches(
 
   for (const player of players) {
     if (!isTrackedNpbPlayer(player)) continue;
+    if (DEBUG_PLAYER_ID && player.id !== DEBUG_PLAYER_ID) continue;
 
     const registry = abroadRegistry[player.id];
     if (!registry || registry.provider !== 'npb') continue;
 
-    patches[player.id] = await buildSingleNpbPatch(
-      player,
-      registry,
-      requestedDate,
-      daysBack,
-      maxGames
+    patches[player.id] = await timeAsync(`player:${player.id}`, () =>
+      buildSingleNpbPatch(player, registry, requestedDate, daysBack, maxGames)
     );
   }
 

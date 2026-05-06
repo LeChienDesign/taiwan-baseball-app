@@ -1,0 +1,545 @@
+type TeamCardInfo = {
+  name: string;
+  short: string;
+  record: string;
+  logoKey?: string;
+};
+
+type LineScoreRow = {
+  team: string;
+  innings: (number | string)[];
+  r: number;
+  h: number;
+  e: number;
+};
+
+export type NpbScoreboardGame = {
+  id: string;
+  source: 'npb-official';
+  league: 'NPB';
+  date: string;
+  gamePk: number;
+  status: 'SCHEDULED' | 'LIVE' | 'FINAL';
+  statusText?: string;
+  venue: string;
+  awayTeam: TeamCardInfo;
+  homeTeam: TeamCardInfo;
+  awayScore: number;
+  homeScore: number;
+  innings: number[];
+  awayLine: LineScoreRow;
+  homeLine: LineScoreRow;
+  footerLeft: string;
+  footerRight: string;
+  gameDate: string;
+  officialUrl?: string;
+};
+
+const NPB_BASE = 'https://npb.jp';
+const REQUEST_TIMEOUT_MS = 15000;
+
+const TEAM_SHORT_MAP: Record<string, string> = {
+  Yomiuri: 'YOM',
+  Yakult: 'YAK',
+  DeNA: 'DB',
+  Hiroshima: 'CARP',
+  Chunichi: 'CHU',
+  Hanshin: 'HAN',
+  Rakuten: 'E',
+  'Nippon-Ham': 'F',
+  Seibu: 'L',
+  SoftBank: 'H',
+  ORIX: 'B',
+  Lotte: 'M',
+};
+
+const TEAM_LOGO_KEY_MAP: Record<string, string> = {
+  Yomiuri: 'yomiuri-giants',
+  Yakult: 'yakult-swallows',
+  DeNA: 'dena-baystars',
+  Hiroshima: 'hiroshima-carp',
+  Chunichi: 'chunichi-dragons',
+  Hanshin: 'hanshin-tigers',
+  Rakuten: 'rakuten-eagles',
+  'Nippon-Ham': 'nippon-ham-fighters',
+  Seibu: 'seibu-lions',
+  SoftBank: 'softbank-hawks',
+  ORIX: 'orix-buffaloes',
+  Lotte: 'lotte-marines',
+};
+
+const TEAM_DISPLAY_NAME_MAP: Record<string, string> = {
+  Yomiuri: '讀賣巨人',
+  Yakult: '養樂多燕子',
+  DeNA: '橫濱DeNA灣星',
+  Hiroshima: '廣島東洋鯉魚',
+  Chunichi: '中日龍',
+  Hanshin: '阪神虎',
+  Rakuten: '東北樂天金鷲',
+  'Nippon-Ham': '北海道日本火腿鬥士',
+  Seibu: '埼玉西武獅',
+  SoftBank: '福岡軟銀鷹',
+  ORIX: '歐力士猛牛',
+  Lotte: '千葉羅德海洋',
+};
+
+const JP_TEAM_NAME_MAP: Record<string, string> = {
+  読売ジャイアンツ: 'Yomiuri',
+  東京ヤクルトスワローズ: 'Yakult',
+  横浜DeNAベイスターズ: 'DeNA',
+  広島東洋カープ: 'Hiroshima',
+  中日ドラゴンズ: 'Chunichi',
+  阪神タイガース: 'Hanshin',
+  東北楽天ゴールデンイーグルス: 'Rakuten',
+  北海道日本ハムファイターズ: 'Nippon-Ham',
+  埼玉西武ライオンズ: 'Seibu',
+  福岡ソフトバンクホークス: 'SoftBank',
+  オリックス・バファローズ: 'ORIX',
+  千葉ロッテマリーンズ: 'Lotte',
+};
+
+function decodeHtml(input: string) {
+  return input
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+function stripHtml(html: string) {
+  return decodeHtml(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\r/g, '')
+  );
+}
+
+function compactWhitespace(value: string) {
+  return value.replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
+}
+
+function cleanCell(value: string) {
+  return compactWhitespace(stripHtml(value));
+}
+
+function stripFullWidthSpaces(value: string) {
+  return value.replace(/　/g, ' ').trim();
+}
+
+function isClockText(value: any) {
+  return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
+}
+
+function convertJapanTimeToTaiwanTime(value: any) {
+  const text = String(value ?? '').trim();
+
+  if (!isClockText(text)) {
+    return value;
+  }
+
+  const [hourText, minuteText] = text.split(':');
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return value;
+  }
+
+  const taiwanHour = (hour + 23) % 24;
+  return `${String(taiwanHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function normalizeNpbGameTaiwanDisplayTime(game: NpbScoreboardGame): NpbScoreboardGame {
+  if (game.status !== 'SCHEDULED') {
+    return game;
+  }
+
+  return {
+    ...game,
+    footerRight: isClockText(game.footerRight)
+      ? convertJapanTimeToTaiwanTime(game.footerRight)
+      : game.footerRight,
+  };
+}
+
+function getNpbScoreDateFromOfficialUrl(url?: string) {
+  const match = String(url || '').match(/\/scores\/(\d{4})\/(\d{2})(\d{2})\//);
+
+  if (!match) {
+    return '';
+  }
+
+  return `${match[1]}-${match[2]}-${match[3]}`;
+}
+
+function officialGameMatchesRequestedDate(
+  game: NpbScoreboardGame,
+  requestedDate: string
+) {
+  const officialDate = getNpbScoreDateFromOfficialUrl(game.officialUrl);
+
+  if (!officialDate) {
+    return true;
+  }
+
+  return officialDate === requestedDate;
+}
+
+function getNpbDailyGamesUrl(date: string) {
+  const compactDate = date.replace(/-/g, '');
+  return `${NPB_BASE}/bis/eng/${date.slice(0, 4)}/games/gm${compactDate}.html`;
+}
+
+async function fetchGamesFromHtmlUrl(url: string, requestedDate: string) {
+  const html = await fetchText(url);
+
+  if (!html) {
+    return [] as NpbScoreboardGame[];
+  }
+
+  return extractHeaderScoreGames(html, requestedDate).filter((game) =>
+    officialGameMatchesRequestedDate(game, requestedDate)
+  );
+}
+
+function formatDateInTimeZone(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  return year && month && day ? `${year}-${month}-${day}` : date.toISOString().slice(0, 10);
+}
+
+function toDateOnly(value: string) {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value.slice(0, 10);
+  return parsed.toISOString().slice(0, 10);
+}
+
+function safeShort(name: string) {
+  return TEAM_SHORT_MAP[name] ?? name.slice(0, 4).toUpperCase();
+}
+
+function buildTeamInfo(name: string): TeamCardInfo {
+  return {
+    name: TEAM_DISPLAY_NAME_MAP[name] ?? name,
+    short: safeShort(name),
+    record: '',
+    logoKey: TEAM_LOGO_KEY_MAP[name],
+  };
+}
+
+async function fetchText(url: string): Promise<string | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0',
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) return null;
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
+
+function findMatchingBrace(html: string, startIndex: number) {
+  const nextScoreBox = html.indexOf('<div class="score_box">', startIndex + 1);
+  if (nextScoreBox >= 0) return nextScoreBox;
+
+  const scoreWrapEnd = html.indexOf('<div id="header_nav">', startIndex);
+  return scoreWrapEnd >= 0 ? scoreWrapEnd : html.length;
+}
+
+function extractImgAltByClass(block: string, className: string) {
+  const imgTags = block.match(/<img[^>]*>/gi) ?? [];
+
+  for (const imgTag of imgTags) {
+    if (!imgTag.includes(className)) continue;
+    return decodeHtml(imgTag.match(/alt="([^"]+)"/i)?.[1] ?? '');
+  }
+
+  return '';
+}
+
+function extractTableCells(rowHtml: string) {
+  return [...rowHtml.matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/gi)]
+    .map((cell) => cleanCell(cell[1]))
+    .filter(Boolean);
+}
+
+function looksLikeLineScoreRow(cells: string[]) {
+  if (cells.length < 8) return false;
+
+  // 排除表頭列：1 2 3 ... R H E
+  const lastThree = cells.slice(-3);
+  const hasNumericTotals = lastThree.every((cell) => /^\d+$/.test(cell));
+  if (!hasNumericTotals) return false;
+
+  const inningCells = cells.slice(1, -3);
+  const numericLikeCount = inningCells.filter(
+    (cell) => /^\d+$/.test(cell) || cell === '-' || cell === 'X'
+  ).length;
+
+  return numericLikeCount >= 5;
+}
+
+function parseLineScoreRowsFromDetailHtml(
+  html: string,
+  awayShort: string,
+  homeShort: string,
+  awayScore: number,
+  homeScore: number
+) {
+  const rows = [...html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)]
+    .map((row) => extractTableCells(row[1]))
+    .filter(looksLikeLineScoreRow);
+
+  if (rows.length < 2) return null;
+
+  const awayCells = rows[0];
+  const homeCells = rows[1];
+  const inningLength = Math.max(9, awayCells.length - 4, homeCells.length - 4);
+  const innings = Array.from({ length: inningLength }, (_, index) => index + 1);
+
+  const normalizeInningValue = (value: string) => {
+    if (!value || value === '&nbsp;') return '-';
+    return value;
+  };
+
+  const buildLine = (cells: string[], team: string, fallbackScore: number): LineScoreRow => {
+    const rawInnings = cells.slice(1, -3).map(normalizeInningValue);
+    const [r, h, e] = cells.slice(-3);
+
+    return {
+      team,
+      innings:
+        rawInnings.length > 0
+          ? [...rawInnings, ...Array.from({ length: Math.max(0, inningLength - rawInnings.length) }, () => '-')]
+          : Array.from({ length: inningLength }, () => '-'),
+      r: Number(r) || fallbackScore,
+      h: Number(h) || 0,
+      e: Number(e) || 0,
+    };
+  };
+
+  return {
+    innings,
+    awayLine: buildLine(awayCells, awayShort, awayScore),
+    homeLine: buildLine(homeCells, homeShort, homeScore),
+  };
+}
+
+async function enrichGameWithLineScore(game: NpbScoreboardGame) {
+  if (!game.officialUrl) return game;
+
+  const html = await fetchText(game.officialUrl);
+  if (!html) return game;
+
+  const lineScore = parseLineScoreRowsFromDetailHtml(
+    html,
+    game.awayLine.team,
+    game.homeLine.team,
+    game.awayScore,
+    game.homeScore
+  );
+
+  if (!lineScore) return game;
+
+  return {
+    ...game,
+    innings: lineScore.innings,
+    awayLine: lineScore.awayLine,
+    homeLine: lineScore.homeLine,
+  };
+}
+
+function extractHeaderScoreGames(html: string, date: string) {
+  const games: NpbScoreboardGame[] = [];
+  const seen = new Set<string>();
+  const scoreBoxRegex = /<div class="score_box">/gi;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = scoreBoxRegex.exec(html))) {
+    const start = match.index;
+    const end = findMatchingBrace(html, start);
+    const block = html.slice(start, end);
+
+    if (!block.includes('/scores/') || !block.includes('class="score"')) continue;
+
+    const href = block.match(/href="(\/scores\/[^"]+\/)"/i)?.[1] ?? '';
+    const awayAlt = extractImgAltByClass(block, 'logo_left');
+    const homeAlt = extractImgAltByClass(block, 'logo_right');
+    const away = JP_TEAM_NAME_MAP[awayAlt];
+    const home = JP_TEAM_NAME_MAP[homeAlt];
+
+    if (!href || !away || !home) continue;
+
+    const key = `${away}-${home}-${href}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const scoreText = cleanCell(block.match(/<div class="score">([\s\S]*?)<\/div>/i)?.[1] ?? '');
+    const stateText = cleanCell(block.match(/<div class="state">([\s\S]*?)<\/div>/i)?.[1] ?? '');
+    const scoreMatch = scoreText.match(/(\d+)\s*-\s*(\d+)/);
+    const awayScore = scoreMatch ? Number(scoreMatch[1]) : 0;
+    const homeScore = scoreMatch ? Number(scoreMatch[2]) : 0;
+    const venueMatch = stateText.match(/（([^）]+)）/);
+    const inningMatch = stateText.match(/(\d+回[表裏])/);
+    const timeMatch = stateText.match(/\b(\d{1,2}:\d{2})\b/);
+    const isFinal = stateText.includes('終了') || stateText.includes('試合終了');
+    const isLive = !!scoreMatch && !!inningMatch && !isFinal;
+    const status = isFinal ? 'FINAL' : isLive ? 'LIVE' : 'SCHEDULED';
+    const taiwanDisplayTime = convertJapanTimeToTaiwanTime(timeMatch?.[1] ?? '');
+    const awayTeam = buildTeamInfo(away);
+    const homeTeam = buildTeamInfo(home);
+    const innings = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    games.push({
+      id: `npb-${date}-${games.length + 1}`,
+      source: 'npb-official',
+      league: 'NPB',
+      date,
+      gamePk: games.length + 1,
+      status,
+      statusText: status === 'LIVE' ? 'Live' : status === 'FINAL' ? 'Final' : 'Scheduled',
+      venue: stripFullWidthSpaces(venueMatch?.[1] ?? '待更新'),
+      awayTeam,
+      homeTeam,
+      awayScore,
+      homeScore,
+      innings,
+      awayLine: {
+        team: awayTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: awayScore,
+        h: 0,
+        e: 0,
+      },
+      homeLine: {
+        team: homeTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: homeScore,
+        h: 0,
+        e: 0,
+      },
+      footerLeft: status === 'LIVE' ? 'Live' : status === 'FINAL' ? 'Final' : 'Scheduled',
+      footerRight:
+        status === 'SCHEDULED' && taiwanDisplayTime
+          ? taiwanDisplayTime
+          : inningMatch?.[1] ?? (stateText.replace(/（[^）]+）/g, '').trim() || '待更新'),
+      gameDate: date,
+      officialUrl: `${NPB_BASE}${href}`,
+    });
+  }
+
+  return games.slice(0, 6);
+}
+
+function buildFallbackScheduledGames(date: string): NpbScoreboardGame[] {
+  const teams: Array<[string, string, string]> = [
+    ['Yomiuri', 'Yakult', '14:00'],
+    ['DeNA', 'Hiroshima', '14:00'],
+    ['Chunichi', 'Hanshin', '14:00'],
+    ['Rakuten', 'Nippon-Ham', '14:00'],
+    ['Seibu', 'SoftBank', '14:00'],
+    ['ORIX', 'Lotte', '14:00'],
+  ];
+
+  return teams.map(([away, home, time], index) => {
+    const awayTeam = buildTeamInfo(away);
+    const homeTeam = buildTeamInfo(home);
+
+    return {
+      id: `npb-${date}-fallback-${index + 1}`,
+      source: 'npb-official',
+      league: 'NPB',
+      date,
+      gamePk: index + 1,
+      status: 'SCHEDULED',
+      statusText: 'Scheduled',
+      venue: '待更新',
+      awayTeam,
+      homeTeam,
+      awayScore: 0,
+      homeScore: 0,
+      innings: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      awayLine: {
+        team: awayTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: 0,
+        h: 0,
+        e: 0,
+      },
+      homeLine: {
+        team: homeTeam.short,
+        innings: Array.from({ length: 9 }, () => '-'),
+        r: 0,
+        h: 0,
+        e: 0,
+      },
+      footerLeft: 'Scheduled',
+      footerRight: time,
+      gameDate: date,
+      officialUrl: NPB_BASE,
+    };
+  });
+}
+
+export async function fetchNpbScoreboardByDate(date: string) {
+  const requestedDate = toDateOnly(date);
+  const todayTokyo = formatDateInTimeZone(new Date(), 'Asia/Tokyo');
+
+  const gamesFromHome = await fetchGamesFromHtmlUrl(NPB_BASE, requestedDate);
+  const games =
+    gamesFromHome.length > 0
+      ? gamesFromHome
+      : await fetchGamesFromHtmlUrl(getNpbDailyGamesUrl(requestedDate), requestedDate);
+
+  if (games.length > 0) {
+    const enrichedGames = (await Promise.all(games.map(enrichGameWithLineScore))).map(
+      normalizeNpbGameTaiwanDisplayTime
+    );
+
+    return {
+      updatedAt: new Date().toISOString(),
+      date: requestedDate,
+      games: enrichedGames,
+      eventsCenter: {
+        npb: enrichedGames,
+      },
+    };
+  }
+
+  const fallbackGames = requestedDate === todayTokyo ? buildFallbackScheduledGames(requestedDate) : [];
+  const normalizedFallbackGames = fallbackGames.map(normalizeNpbGameTaiwanDisplayTime);
+
+  return {
+    updatedAt: new Date().toISOString(),
+    date: requestedDate,
+    games: normalizedFallbackGames,
+    eventsCenter: {
+      npb: normalizedFallbackGames,
+    },
+  };
+}

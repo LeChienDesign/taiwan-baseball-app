@@ -2,7 +2,7 @@ name: Update Baseball Data
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -42,27 +42,70 @@ jobs:
         continue-on-error: true
         run: npm run fetch:abroad-live
 
+      - name: Resolve event dates
+        id: resolve_dates
+        shell: bash
+        run: |
+          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
+          TAIPEI_HOUR=$(TZ=Asia/Taipei date +%H)
+
+          if [ "$TAIPEI_HOUR" -lt 18 ]; then
+            MLB_DATE=$(TZ=Asia/Taipei date -d "yesterday" +%F)
+          else
+            MLB_DATE="$TAIPEI_TODAY"
+          fi
+
+          echo "taipei_today=$TAIPEI_TODAY" >> "$GITHUB_OUTPUT"
+          echo "mlb_date=$MLB_DATE" >> "$GITHUB_OUTPUT"
+
+          echo "Taipei today: $TAIPEI_TODAY"
+          echo "MLB date: $MLB_DATE"
+
       - name: Fetch MLB events center data
-        id: fetch_events
+        id: fetch_events_mlb
         continue-on-error: true
-        run: npm run fetch:events-mlb
+        run: npm run fetch:events-mlb ${{ steps.resolve_dates.outputs.mlb_date }} ${{ steps.resolve_dates.outputs.mlb_date }}
+
+      - name: Fetch CPBL events center data
+        id: fetch_events_cpbl
+        continue-on-error: true
+        run: npm run fetch:events-cpbl ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
+
+      - name: Fetch NPB events center data
+        id: fetch_events_npb
+        continue-on-error: true
+        run: npm run fetch:events-npb ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
+
+      - name: Fetch KBO events center data
+        id: fetch_events_kbo
+        continue-on-error: true
+        run: npm run fetch:events-kbo ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
 
       - name: Verify generated files
         id: verify_files
         if: >
           steps.export_seed.outcome == 'success' &&
           steps.fetch_abroad.outcome == 'success' &&
-          steps.fetch_events.outcome == 'success'
+          steps.fetch_events_mlb.outcome == 'success' &&
+          steps.fetch_events_cpbl.outcome == 'success' &&
+          steps.fetch_events_npb.outcome == 'success' &&
+          steps.fetch_events_kbo.outcome == 'success'
         run: |
           test -f server/data/abroadPlayers.seed.json
           test -f server/data/abroadPlayers.live.json
           test -f server/data/eventsCenter.mlb.json
+          test -f server/data/eventsCenter.cpbl.json
+          test -f server/data/eventsCenter.npb.json
+          test -f server/data/eventsCenter.kbo.json
 
       - name: Commit updated data
         if: >
           steps.export_seed.outcome == 'success' &&
           steps.fetch_abroad.outcome == 'success' &&
-          steps.fetch_events.outcome == 'success' &&
+          steps.fetch_events_mlb.outcome == 'success' &&
+          steps.fetch_events_cpbl.outcome == 'success' &&
+          steps.fetch_events_npb.outcome == 'success' &&
+          steps.fetch_events_kbo.outcome == 'success' &&
           steps.verify_files.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
@@ -71,6 +114,9 @@ jobs:
           git add server/data/abroadPlayers.seed.json
           git add server/data/abroadPlayers.live.json
           git add server/data/eventsCenter.mlb.json
+          git add server/data/eventsCenter.cpbl.json
+          git add server/data/eventsCenter.npb.json
+          git add server/data/eventsCenter.kbo.json
 
           if git diff --cached --quiet; then
             echo "No data changes to commit."
@@ -89,7 +135,11 @@ jobs:
           echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
           echo "| export:abroad-seed | ${{ steps.export_seed.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| fetch:abroad-live | ${{ steps.fetch_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-mlb | ${{ steps.fetch_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| resolve dates | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-mlb | ${{ steps.fetch_events_mlb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-cpbl | ${{ steps.fetch_events_cpbl.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-npb | ${{ steps.fetch_events_npb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-kbo | ${{ steps.fetch_events_kbo.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| verify files | ${{ steps.verify_files.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
@@ -101,15 +151,30 @@ jobs:
             echo "- fetch:abroad-live failed" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-          if [ "${{ steps.fetch_events.outcome }}" != "success" ]; then
+          if [ "${{ steps.fetch_events_mlb.outcome }}" != "success" ]; then
             echo "- fetch:events-mlb failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [ "${{ steps.fetch_events_cpbl.outcome }}" != "success" ]; then
+            echo "- fetch:events-cpbl failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [ "${{ steps.fetch_events_npb.outcome }}" != "success" ]; then
+            echo "- fetch:events-npb failed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [ "${{ steps.fetch_events_kbo.outcome }}" != "success" ]; then
+            echo "- fetch:events-kbo failed" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Fail job if any update step failed
         if: >
           steps.export_seed.outcome != 'success' ||
           steps.fetch_abroad.outcome != 'success' ||
-          steps.fetch_events.outcome != 'success'
+          steps.fetch_events_mlb.outcome != 'success' ||
+          steps.fetch_events_cpbl.outcome != 'success' ||
+          steps.fetch_events_npb.outcome != 'success' ||
+          steps.fetch_events_kbo.outcome != 'success'
         run: |
           echo "One or more update steps failed."
           exit 1
