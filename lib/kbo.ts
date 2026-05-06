@@ -1,5 +1,9 @@
-import snapshot from '../server/data/eventsCenter.kbo.json';
 import { fetchKboGamesByDate as fallback } from './kbo-real';
+
+const KBO_REMOTE_EVENTS_URL =
+  'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.kbo.json';
+
+const snapshot = require('../server/data/eventsCenter.kbo.json');
 
 function getCanonicalKboTeamName(name: string) {
   const value = String(name ?? '').toLowerCase();
@@ -52,8 +56,8 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
-function getSnapshotGamesByDate(date: string) {
-  const payload = snapshot as any;
+function getSnapshotGamesByDate(snapshotPayload: any, date: string) {
+  const payload = snapshotPayload as any;
   const gamesByDate = payload?.gamesByDate;
 
   if (gamesByDate && typeof gamesByDate === 'object') {
@@ -62,7 +66,9 @@ function getSnapshotGamesByDate(date: string) {
   }
 
   return Array.isArray(payload?.games)
-    ? payload.games.filter((game: any) => game.date === date)
+    ? payload.games.filter(
+        (game: any) => game.date === date || game.gameDate === date,
+      )
     : [];
 }
 
@@ -70,12 +76,32 @@ export async function fetchKboGamesByDate(date: string) {
   const fallbackGames = await fallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
 
-  const games = getSnapshotGamesByDate(date).map((g: any) =>
-    attachFallbackLogos(g, logoMap)
+  try {
+    const response = await fetch(
+      `${KBO_REMOTE_EVENTS_URL}?t=${Date.now()}`,
+    );
+
+    if (response.ok) {
+      const remoteSnapshot = await response.json();
+
+      const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date).map(
+        (g: any) => attachFallbackLogos(g, logoMap),
+      );
+
+      if (remoteGames.length > 0) {
+        return remoteGames;
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load remote KBO snapshot', error);
+  }
+
+  const localGames = getSnapshotGamesByDate(snapshot, date).map((g: any) =>
+    attachFallbackLogos(g, logoMap),
   );
 
-  if (games.length > 0) {
-    return games;
+  if (localGames.length > 0) {
+    return localGames;
   }
 
   return fallbackGames;
