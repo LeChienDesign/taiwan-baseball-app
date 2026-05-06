@@ -68,6 +68,26 @@ type CpblTeamInfo = {
   logoKey: string;
 };
 
+type CpblLiveGameDetail = {
+  GameSno?: number;
+  KindCode?: string;
+  Year?: number;
+  PreExeDate?: string;
+  GameDateTimeS?: string;
+  GameDateTimeE?: string;
+  VisitingTeamName?: string;
+  HomeTeamName?: string;
+  GameStatus?: number;
+  GameStatusChi?: string;
+  VisitingTotalScore?: number | null;
+  HomeTotalScore?: number | null;
+  FieldAbbe?: string;
+  VisitingScoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>;
+  HomeScoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>;
+  VisitingTeamData?: { HittingCnt?: number; ErrorCnt?: number };
+  HomeTeamData?: { HittingCnt?: number; ErrorCnt?: number };
+};
+
 const TEAM_MAP: Record<string, CpblTeamInfo> = {
   'CTBC Brothers': {
     name: '中信兄弟',
@@ -75,7 +95,7 @@ const TEAM_MAP: Record<string, CpblTeamInfo> = {
     logoKey: 'ctbc-brothers',
   },
   'Uni-President Lions': {
-    name: '統一獅',
+    name: '統一7-ELEVEn獅',
     short: '統一',
     logoKey: 'uni-lions',
   },
@@ -117,7 +137,7 @@ const OFFICIAL_GAME_META_MAP: Record<string, { gameSno: string; kindCode: string
 };
 
 const MANUAL_LIVE_LINE_SCORE_MAP: Record<string, {
-  status: 'LIVE';
+  status: 'LIVE' | 'FINAL';
   statusText: string;
   footerLeft: string;
   footerRight: string;
@@ -127,22 +147,42 @@ const MANUAL_LIVE_LINE_SCORE_MAP: Record<string, {
   homeLine: { innings: string[]; r: number; h: number; e: number };
 }> = {
   '2026-05-05|CTBC Brothers|Wei Chuan Dragons': {
-    status: 'LIVE',
-    statusText: '比賽中',
-    footerLeft: 'LIVE',
-    footerRight: '9局下',
+    status: 'FINAL',
+    statusText: '比賽結束',
+    footerLeft: 'FINAL',
+    footerRight: '11局 延長賽',
     awayScore: 3,
-    homeScore: 3,
+    homeScore: 5,
     awayLine: {
-      innings: ['1', '0', '0', '0', '0', '0', '0', '2', ''],
+      innings: ['1', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0'],
       r: 3,
-      h: 10,
+      h: 11,
       e: 0,
     },
     homeLine: {
-      innings: ['1', '0', '2', '0', '0', '0', '0', '0', ''],
+      innings: ['1', '0', '2', '0', '0', '0', '0', '0', '0', '0', '2'],
+      r: 5,
+      h: 8,
+      e: 0,
+    },
+  },
+  '2026-05-05|中信兄弟|味全龍': {
+    status: 'FINAL',
+    statusText: '比賽結束',
+    footerLeft: 'FINAL',
+    footerRight: '11局 延長賽',
+    awayScore: 3,
+    homeScore: 5,
+    awayLine: {
+      innings: ['1', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0'],
       r: 3,
-      h: 7,
+      h: 11,
+      e: 0,
+    },
+    homeLine: {
+      innings: ['1', '0', '2', '0', '0', '0', '0', '0', '0', '0', '2'],
+      r: 5,
+      h: 8,
       e: 0,
     },
   },
@@ -151,6 +191,14 @@ const MANUAL_LIVE_LINE_SCORE_MAP: Record<string, {
 function getManualLiveLineScore(seed?: CpblSeedGame) {
   if (!seed) return undefined;
   const key = `${normalizeDate(seed.strTimestamp)}|${seed['Away Team']}|${seed['Home Team']}`;
+  return MANUAL_LIVE_LINE_SCORE_MAP[key];
+}
+
+function getManualLiveLineScoreForGame(seed: CpblSeedGame | undefined, game: CpblEventsCenterGame) {
+  const seedScore = getManualLiveLineScore(seed);
+  if (seedScore) return seedScore;
+
+  const key = `${game.gameDate}|${game.awayTeam.name}|${game.homeTeam.name}`;
   return MANUAL_LIVE_LINE_SCORE_MAP[key];
 }
 
@@ -178,6 +226,225 @@ function buildOfficialLiveUrl(seed?: CpblSeedGame, fallbackUrl?: string) {
   return `https://www.cpbl.com.tw/box/live?gameSno=${meta.gameSno}&kindCode=${meta.kindCode}&year=${meta.year}`;
 }
 
+function getAntiForgeryToken(html: string) {
+  return (
+    html.match(/name="__RequestVerificationToken"[^>]*value="([^"]+)"/)?.[1] ||
+    html.match(/value="([^"]+)"[^>]*name="__RequestVerificationToken"/)?.[1] ||
+    ''
+  );
+}
+
+function normalizeOfficialTeamName(name?: string) {
+  const value = String(name || '').trim();
+
+  if (value.includes('中信') || value.includes('兄弟')) return 'CTBC Brothers';
+  if (value.includes('統一') || value.includes('7-ELEVEn') || value.includes('獅')) return 'Uni-President Lions';
+  if (value.includes('樂天') || value.includes('桃猿')) return 'Rakuten Monkeys';
+  if (value.includes('味全') || value.includes('龍')) return 'Wei Chuan Dragons';
+  if (value.includes('富邦') || value.includes('悍將')) return 'Fubon Guardians';
+  if (value.includes('台鋼') || value.includes('雄鷹')) return 'TSG Hawks';
+
+  return value;
+}
+
+function makeLiveDetailKey(date: string, awayTeam?: string, homeTeam?: string) {
+  return `${normalizeDate(date)}|${normalizeOfficialTeamName(awayTeam)}|${normalizeOfficialTeamName(homeTeam)}`;
+}
+
+function getOfficialDetailDate(detail: CpblLiveGameDetail) {
+  return normalizeDate(
+    detail.PreExeDate ||
+      (detail as any).GameDateTimeS ||
+      (detail as any).GameDateTimeE ||
+      ''
+  );
+}
+
+function makeLiveDetailKeyFromDetail(detail: CpblLiveGameDetail) {
+  return makeLiveDetailKey(
+    getOfficialDetailDate(detail),
+    detail.VisitingTeamName,
+    detail.HomeTeamName
+  );
+}
+
+function mergeLiveDetails(base: CpblLiveGameDetail, patch: CpblLiveGameDetail): CpblLiveGameDetail {
+  return {
+    ...base,
+    ...patch,
+    PreExeDate: patch.PreExeDate || base.PreExeDate,
+    GameDateTimeS: patch.GameDateTimeS || base.GameDateTimeS,
+    GameDateTimeE: patch.GameDateTimeE || base.GameDateTimeE,
+    VisitingTeamName: patch.VisitingTeamName || base.VisitingTeamName,
+    HomeTeamName: patch.HomeTeamName || base.HomeTeamName,
+    VisitingScoreboards: patch.VisitingScoreboards?.length ? patch.VisitingScoreboards : base.VisitingScoreboards,
+    HomeScoreboards: patch.HomeScoreboards?.length ? patch.HomeScoreboards : base.HomeScoreboards,
+    VisitingTeamData: patch.VisitingTeamData || base.VisitingTeamData,
+    HomeTeamData: patch.HomeTeamData || base.HomeTeamData,
+  };
+}
+
+function isOfficialPostponed(game: CpblLiveGameDetail) {
+  const label = String(game.GameStatusChi || '');
+  return label.includes('延賽') || label.includes('取消比賽') || game.GameStatus === 6;
+}
+
+function normalizeOfficialGameStatus(game: CpblLiveGameDetail): CpblEventsCenterGame['status'] {
+  const label = String(game.GameStatusChi || '');
+
+  if (label.includes('比賽結束') || game.GameStatus === 3) return 'FINAL';
+  if (label.includes('比賽中') || game.GameStatus === 2 || game.GameStatus === 8) return 'LIVE';
+  return 'SCHEDULED';
+}
+
+function normalizeOfficialStatusText(game: CpblLiveGameDetail) {
+  const label = String(game.GameStatusChi || '');
+  if (label) return label;
+  return getStatusText(normalizeOfficialGameStatus(game));
+}
+
+function scoreboardsToInnings(scoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>) {
+  if (!Array.isArray(scoreboards)) return [];
+
+  return scoreboards
+    .slice()
+    .sort((a, b) => Number(a.InningSeq ?? 0) - Number(b.InningSeq ?? 0))
+    .map((item) => String(item.ScoreCnt ?? 0));
+}
+
+function getOfficialHits(teamData?: { HittingCnt?: number }) {
+  const value = Number(teamData?.HittingCnt ?? 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function getOfficialErrors(teamData?: { ErrorCnt?: number }) {
+  const value = Number(teamData?.ErrorCnt ?? 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function applyOfficialLiveDetail(game: CpblEventsCenterGame, detail: CpblLiveGameDetail): CpblEventsCenterGame {
+  const status = normalizeOfficialGameStatus(detail);
+  const awayScore = toNumber(String(detail.VisitingTotalScore ?? game.awayScore));
+  const homeScore = toNumber(String(detail.HomeTotalScore ?? game.homeScore));
+  const awayInnings = scoreboardsToInnings(detail.VisitingScoreboards);
+  const homeInnings = scoreboardsToInnings(detail.HomeScoreboards);
+  const maxInnings = Math.max(awayInnings.length, homeInnings.length);
+
+  return {
+    ...game,
+    status,
+    statusText: normalizeOfficialStatusText(detail),
+    awayScore,
+    homeScore,
+    awayLine: {
+      ...game.awayLine,
+      innings: awayInnings.length ? awayInnings : game.awayLine.innings,
+      r: awayScore,
+      h: getOfficialHits(detail.VisitingTeamData) || game.awayLine.h,
+      e: getOfficialErrors(detail.VisitingTeamData),
+    },
+    homeLine: {
+      ...game.homeLine,
+      innings: homeInnings.length ? homeInnings : game.homeLine.innings,
+      r: homeScore,
+      h: getOfficialHits(detail.HomeTeamData) || game.homeLine.h,
+      e: getOfficialErrors(detail.HomeTeamData),
+    },
+    footerLeft: status === 'FINAL' ? 'FINAL' : status === 'LIVE' ? 'LIVE' : isOfficialPostponed(detail) ? '延賽' : game.footerLeft,
+    footerRight:
+      isOfficialPostponed(detail)
+        ? '延賽'
+        : status === 'FINAL'
+          ? maxInnings > 9
+            ? `${maxInnings}局 延長賽`
+            : 'Final'
+          : status === 'LIVE'
+            ? 'LIVE'
+            : game.footerRight,
+    venue: detail.FieldAbbe || game.venue,
+  };
+}
+
+function applyManualLiveLineScore(game: CpblEventsCenterGame, manualLiveLineScore: NonNullable<ReturnType<typeof getManualLiveLineScore>>): CpblEventsCenterGame {
+  return {
+    ...game,
+    status: manualLiveLineScore.status,
+    statusText: manualLiveLineScore.statusText,
+    awayScore: manualLiveLineScore.awayScore,
+    homeScore: manualLiveLineScore.homeScore,
+    awayLine: {
+      ...game.awayLine,
+      ...manualLiveLineScore.awayLine,
+    },
+    homeLine: {
+      ...game.homeLine,
+      ...manualLiveLineScore.homeLine,
+    },
+    footerLeft: manualLiveLineScore.footerLeft,
+    footerRight: manualLiveLineScore.footerRight,
+  };
+}
+
+async function fetchOfficialLiveDetails(seed: CpblSeedGame): Promise<Map<string, CpblLiveGameDetail>> {
+  const meta = getOfficialGameMeta(seed);
+  if (!meta) return new Map();
+
+  const url = `https://www.cpbl.com.tw/box?gameSno=${meta.gameSno}&kindCode=${meta.kindCode}&year=${meta.year}`;
+  const html = await fetchText(url);
+  const token = getAntiForgeryToken(html);
+
+  const body = new URLSearchParams({
+    __RequestVerificationToken: token,
+    GameSno: meta.gameSno,
+    KindCode: meta.kindCode,
+    Year: meta.year,
+    PrevOrNext: '',
+    PresentStatus: '',
+  });
+
+  const res = await fetch('https://www.cpbl.com.tw/box/getlive', {
+    method: 'POST',
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest',
+      Referer: url,
+    },
+    body,
+  });
+
+  const payload = await res.json();
+  const details = JSON.parse(payload.GameDetailJson || '[]') as CpblLiveGameDetail[];
+  const current = payload.CurtGameDetailJson
+    ? (JSON.parse(payload.CurtGameDetailJson) as CpblLiveGameDetail)
+    : null;
+
+  const map = new Map<string, CpblLiveGameDetail>();
+  const gameSnoMap = new Map<number, CpblLiveGameDetail>();
+
+  for (const detail of details) {
+    const key = makeLiveDetailKeyFromDetail(detail);
+    map.set(key, detail);
+
+    if (detail.GameSno != null) {
+      gameSnoMap.set(Number(detail.GameSno), detail);
+    }
+  }
+
+  if (current) {
+    const currentGameSno = Number(current.GameSno ?? meta.gameSno);
+    const base = gameSnoMap.get(currentGameSno);
+    const merged = base ? mergeLiveDetails(base, current) : current;
+    const key =
+      makeLiveDetailKeyFromDetail(merged) ||
+      makeLiveDetailKey(seed.strTimestamp || '', seed['Away Team'], seed['Home Team']);
+
+    map.set(key, merged);
+  }
+
+  return map;
+}
+
 function getTeamInfo(teamName?: string): CpblTeamInfo {
   const key = String(teamName || '').trim();
 
@@ -198,6 +465,54 @@ function toNumber(value?: string) {
 function normalizeDate(value?: string) {
   if (!value) return '';
   return String(value).slice(0, 10);
+}
+
+function getTodayKey() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  return year && month && day ? `${year}-${month}-${day}` : new Date().toISOString().slice(0, 10);
+}
+
+function hasCompletedBoxScore(game: CpblSeedGame) {
+  return Boolean(
+    parseInningLine(game['Away Inning Line']).length ||
+      parseInningLine(game['Home Inning Line']).length ||
+      game['Away Hits'] ||
+      game['Home Hits'] ||
+      game['Away Errors'] ||
+      game['Home Errors'] ||
+      Number(game['Away Score']) > 0 ||
+      Number(game['Home Score']) > 0
+  );
+}
+
+function normalizeSeedStatus(game: CpblSeedGame, status: CpblEventsCenterGame['status']) {
+  const gameDate = normalizeDate(game.strTimestamp);
+  const today = getTodayKey();
+  const statusText = String(game.Status || '');
+
+  if (statusText.includes('延賽') || statusText.includes('取消比賽')) {
+    return 'SCHEDULED';
+  }
+
+  if (status === 'SCHEDULED' && gameDate && gameDate < today && hasCompletedBoxScore(game)) {
+    return 'FINAL';
+  }
+
+  if (status === 'LIVE' && gameDate && gameDate < today) {
+    return 'FINAL';
+  }
+
+  return status;
 }
 
 function parseInningLine(value?: string) {
@@ -269,6 +584,10 @@ function getStatusText(status: CpblEventsCenterGame['status']) {
 function getFooterLeft(game: CpblSeedGame, status: CpblEventsCenterGame['status']) {
   if (status === 'FINAL') return 'FINAL';
   if (status === 'LIVE') return 'LIVE';
+  if (String(game.Status || '').includes('延賽') || String(game.DisplayTime || '').includes('延賽')) {
+    return '延賽';
+  }
+
   return game.DisplayTime || '';
 }
 
@@ -299,7 +618,7 @@ function readSeedGames(): CpblSeedGame[] {
 function convertSeedGame(game: CpblSeedGame): CpblEventsCenterGame {
   const awayTeam = getTeamInfo(game['Away Team']);
   const homeTeam = getTeamInfo(game['Home Team']);
-  const status = normalizeStatus(game.Status);
+  const status = normalizeSeedStatus(game, normalizeStatus(game.Status));
   const awayScore = toNumber(game['Away Score']);
   const homeScore = toNumber(game['Home Score']);
   const awayInnings = parseInningLine(game['Away Inning Line']);
@@ -330,7 +649,14 @@ function convertSeedGame(game: CpblSeedGame): CpblEventsCenterGame {
       e: toNumber(game['Home Errors']),
     },
     footerLeft: getFooterLeft(game, status),
-    footerRight: status === 'LIVE' ? 'LIVE' : '',
+    footerRight:
+      status === 'LIVE'
+        ? 'LIVE'
+        : status === 'SCHEDULED'
+          ? String(game.Status || '').includes('延賽') || String(game.DisplayTime || '').includes('延賽')
+            ? '延賽'
+            : game.DisplayTime || ''
+          : '',
     venue: game.Venue || '',
     officialLiveUrl: game.officialLiveUrl || undefined,
   };
@@ -339,35 +665,47 @@ function convertSeedGame(game: CpblSeedGame): CpblEventsCenterGame {
 export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEventsCenterGame[]> {
   const targetDate = normalizeDate(date);
   const seedGames = readSeedGames();
-
   const sameDaySeedGames = seedGames.filter((game) => normalizeDate(game.strTimestamp) === targetDate);
   const games = sameDaySeedGames.map(convertSeedGame);
+  const officialLiveDetails = new Map<string, CpblLiveGameDetail>();
+
+  for (const seed of sameDaySeedGames) {
+    try {
+      const details = await fetchOfficialLiveDetails(seed);
+      for (const [key, value] of details) {
+        officialLiveDetails.set(key, value);
+      }
+    } catch (error) {
+      console.warn('[CPBL] getlive fetch failed', error);
+    }
+  }
 
   const enhanced = await Promise.all(
     games.map(async (g, index) => {
       const seed = sameDaySeedGames[index];
       const officialMeta = getOfficialGameMeta(seed);
       const officialLiveUrl = buildOfficialLiveUrl(seed, g.officialLiveUrl);
-      const manualLiveLineScore = getManualLiveLineScore(seed);
+      const liveDetail = officialLiveDetails.get(
+        makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team'])
+      );
+      const manualLiveLineScore = getManualLiveLineScoreForGame(seed, g);
+
+      if (liveDetail) {
+        const officialGame = applyOfficialLiveDetail(g, liveDetail);
+        const correctedGame = manualLiveLineScore
+          ? applyManualLiveLineScore(officialGame, manualLiveLineScore)
+          : officialGame;
+
+        return {
+          ...correctedGame,
+          officialLiveUrl,
+        };
+      }
 
       if (manualLiveLineScore) {
         return {
-          ...g,
+          ...applyManualLiveLineScore(g, manualLiveLineScore),
           officialLiveUrl,
-          status: manualLiveLineScore.status,
-          statusText: manualLiveLineScore.statusText,
-          awayScore: manualLiveLineScore.awayScore,
-          homeScore: manualLiveLineScore.homeScore,
-          awayLine: {
-            ...g.awayLine,
-            ...manualLiveLineScore.awayLine,
-          },
-          homeLine: {
-            ...g.homeLine,
-            ...manualLiveLineScore.homeLine,
-          },
-          footerLeft: manualLiveLineScore.footerLeft,
-          footerRight: manualLiveLineScore.footerRight,
         };
       }
 
