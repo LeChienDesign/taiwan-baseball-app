@@ -1,5 +1,9 @@
-import npbLiveSnapshot from '../server/data/eventsCenter.npb.json';
 import { fetchNpbGamesByDate as fetchFallback } from './npb-real';
+
+const NPB_REMOTE_EVENTS_URL =
+  'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.npb.json';
+
+const npbLiveSnapshot = require('../server/data/eventsCenter.npb.json');
 
 function isUsableNpbLiveGame(game: any) {
   const awayName = String(game?.awayTeam?.name ?? '').trim();
@@ -104,8 +108,7 @@ function normalizeNpbTaiwanDisplayTime(game: any) {
   };
 }
 
-function getSnapshotGamesByDate(date: string) {
-  const snapshot = npbLiveSnapshot as any;
+function getSnapshotGamesByDate(snapshot: any, date: string) {
   const gamesByDate = snapshot?.gamesByDate;
 
   if (gamesByDate && typeof gamesByDate === 'object') {
@@ -114,7 +117,7 @@ function getSnapshotGamesByDate(date: string) {
   }
 
   return Array.isArray(snapshot?.games)
-    ? snapshot.games.filter((game: any) => game.date === date)
+    ? snapshot.games.filter((game: any) => game.date === date || game.gameDate === date)
     : [];
 }
 
@@ -122,13 +125,34 @@ export async function fetchNpbGamesByDate(date: string) {
   const fallbackGames = await fetchFallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
 
-  const liveGames = getSnapshotGamesByDate(date)
+  try {
+    const response = await fetch(
+      `${NPB_REMOTE_EVENTS_URL}?t=${Date.now()}`,
+    );
+
+    if (response.ok) {
+      const remoteSnapshot = await response.json();
+
+      const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date)
+        .filter((game: any) => isUsableNpbLiveGame(game))
+        .map((game: any) => attachFallbackLogos(game, logoMap))
+        .map(normalizeNpbTaiwanDisplayTime);
+
+      if (remoteGames.length > 0) {
+        return remoteGames;
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load remote NPB snapshot', error);
+  }
+
+  const localGames = getSnapshotGamesByDate(npbLiveSnapshot, date)
     .filter((game: any) => isUsableNpbLiveGame(game))
     .map((game: any) => attachFallbackLogos(game, logoMap))
     .map(normalizeNpbTaiwanDisplayTime);
 
-  if (liveGames.length > 0) {
-    return liveGames;
+  if (localGames.length > 0) {
+    return localGames;
   }
 
   return fallbackGames.map(normalizeNpbTaiwanDisplayTime);
