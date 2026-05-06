@@ -68,6 +68,21 @@ const TEAM_LOGO_KEY_MAP: Record<string, string> = {
   Lotte: 'lotte-marines',
 };
 
+const TEAM_DISPLAY_NAME_MAP: Record<string, string> = {
+  Yomiuri: '讀賣巨人',
+  Yakult: '養樂多燕子',
+  DeNA: '橫濱DeNA灣星',
+  Hiroshima: '廣島東洋鯉魚',
+  Chunichi: '中日龍',
+  Hanshin: '阪神虎',
+  Rakuten: '東北樂天金鷲',
+  'Nippon-Ham': '北海道日本火腿鬥士',
+  Seibu: '埼玉西武獅',
+  SoftBank: '福岡軟銀鷹',
+  ORIX: '歐力士猛牛',
+  Lotte: '千葉羅德海洋',
+};
+
 const JP_TEAM_NAME_MAP: Record<string, string> = {
   読売ジャイアンツ: 'Yomiuri',
   東京ヤクルトスワローズ: 'Yakult',
@@ -143,7 +158,7 @@ function safeShort(name: string) {
 
 function buildTeamInfo(name: string): TeamCardInfo {
   return {
-    name,
+    name: TEAM_DISPLAY_NAME_MAP[name] ?? name,
     short: safeShort(name),
     record: '',
     logoKey: TEAM_LOGO_KEY_MAP[name],
@@ -189,6 +204,98 @@ function extractImgAltByClass(block: string, className: string) {
   }
 
   return '';
+}
+
+function extractTableCells(rowHtml: string) {
+  return [...rowHtml.matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/gi)]
+    .map((cell) => cleanCell(cell[1]))
+    .filter(Boolean);
+}
+
+function looksLikeLineScoreRow(cells: string[]) {
+  if (cells.length < 8) return false;
+
+  // 排除表頭列：1 2 3 ... R H E
+  const lastThree = cells.slice(-3);
+  const hasNumericTotals = lastThree.every((cell) => /^\d+$/.test(cell));
+  if (!hasNumericTotals) return false;
+
+  const inningCells = cells.slice(1, -3);
+  const numericLikeCount = inningCells.filter(
+    (cell) => /^\d+$/.test(cell) || cell === '-' || cell === 'X'
+  ).length;
+
+  return numericLikeCount >= 5;
+}
+
+function parseLineScoreRowsFromDetailHtml(
+  html: string,
+  awayShort: string,
+  homeShort: string,
+  awayScore: number,
+  homeScore: number
+) {
+  const rows = [...html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)]
+    .map((row) => extractTableCells(row[1]))
+    .filter(looksLikeLineScoreRow);
+
+  if (rows.length < 2) return null;
+
+  const awayCells = rows[0];
+  const homeCells = rows[1];
+  const inningLength = Math.max(9, awayCells.length - 4, homeCells.length - 4);
+  const innings = Array.from({ length: inningLength }, (_, index) => index + 1);
+
+  const normalizeInningValue = (value: string) => {
+    if (!value || value === '&nbsp;') return '-';
+    return value;
+  };
+
+  const buildLine = (cells: string[], team: string, fallbackScore: number): LineScoreRow => {
+    const rawInnings = cells.slice(1, -3).map(normalizeInningValue);
+    const [r, h, e] = cells.slice(-3);
+
+    return {
+      team,
+      innings:
+        rawInnings.length > 0
+          ? [...rawInnings, ...Array.from({ length: Math.max(0, inningLength - rawInnings.length) }, () => '-')]
+          : Array.from({ length: inningLength }, () => '-'),
+      r: Number(r) || fallbackScore,
+      h: Number(h) || 0,
+      e: Number(e) || 0,
+    };
+  };
+
+  return {
+    innings,
+    awayLine: buildLine(awayCells, awayShort, awayScore),
+    homeLine: buildLine(homeCells, homeShort, homeScore),
+  };
+}
+
+async function enrichGameWithLineScore(game: NpbScoreboardGame) {
+  if (!game.officialUrl) return game;
+
+  const html = await fetchText(game.officialUrl);
+  if (!html) return game;
+
+  const lineScore = parseLineScoreRowsFromDetailHtml(
+    html,
+    game.awayLine.team,
+    game.homeLine.team,
+    game.awayScore,
+    game.homeScore
+  );
+
+  if (!lineScore) return game;
+
+  return {
+    ...game,
+    innings: lineScore.innings,
+    awayLine: lineScore.awayLine,
+    homeLine: lineScore.homeLine,
+  };
 }
 
 function extractHeaderScoreGames(html: string, date: string) {
@@ -327,12 +434,14 @@ export async function fetchNpbScoreboardByDate(date: string) {
     const games = extractHeaderScoreGames(html, requestedDate);
 
     if (games.length > 0) {
+      const enrichedGames = await Promise.all(games.map(enrichGameWithLineScore));
+
       return {
         updatedAt: new Date().toISOString(),
         date: requestedDate,
-        games,
+        games: enrichedGames,
         eventsCenter: {
-          npb: games,
+          npb: enrichedGames,
         },
       };
     }

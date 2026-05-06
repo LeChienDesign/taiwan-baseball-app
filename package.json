@@ -11,7 +11,12 @@
     "export:abroad-seed": "tsx scripts/export-abroad-seed.ts",
     "fetch:abroad-live": "tsx server/fetch-abroad-data.ts",
     "fetch:events-mlb": "tsx server/fetch-live-baseball-data.ts",
-    "fetch:events-npb": "tsx server/fetch-npb-live-data.ts"
+    "fetch:events-npb": "tsx server/fetch-npb-live-data.ts",
+    "fetch:events-kbo": "tsx server/fetch-kbo-live-data.ts",
+    "fetch:events-cpbl": "tsx server/fetch-cpbl-live-data.ts",
+    "fetch:events-all": "npm run fetch:events-mlb && npm run fetch:events-npb && npm run fetch:events-kbo && npm run fetch:events-cpbl",
+    "watch:events": "while true; do npm run fetch:events-all; sleep 60; done",
+    "watch:events:30": "while true; do npm run fetch:events-all; sleep 30; done"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

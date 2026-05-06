@@ -1,27 +1,42 @@
-import { createMockLeagueFetcher } from './mockLeague';
+import snapshot from '../server/data/eventsCenter.cpbl.json';
+import {
+  fetchCpblMajorGamesByDate as fetchCpblMajorFallback,
+  fetchCpblMinorGamesByDate,
+} from './cpbl-real';
+import { CPBL_TEAM_LOGOS } from '../constants/cpblTeamLogos';
 
-export const fetchCpblMajorGamesByDate = createMockLeagueFetcher({
-  leagueCode: 'CPBL-1',
-  leagueLogo: require('../assets/league/cpbl.png'),
-  teams: [
-    { name: 'CTBC Brothers', short: 'CTB', logo: require('../assets/league/cpbl.png'), record: '4-2' },
-    { name: 'Uni-Lions', short: 'ULN', logo: require('../assets/league/cpbl.png'), record: '5-1' },
-    { name: 'Rakuten Monkeys', short: 'RKM', logo: require('../assets/league/cpbl.png'), record: '3-3' },
-    { name: 'Wei Chuan Dragons', short: 'WCD', logo: require('../assets/league/cpbl.png'), record: '2-4' },
-    { name: 'Fubon Guardians', short: 'FBG', logo: require('../assets/league/cpbl.png'), record: '1-5' },
-    { name: 'TSG Hawks', short: 'TSG', logo: require('../assets/league/cpbl.png'), record: '3-3' },
-  ],
-});
+function getTeamLogo(name?: string) {
+  if (!name) return require('../assets/league/cpbl.png');
+  return CPBL_TEAM_LOGOS[name] ?? require('../assets/league/cpbl.png');
+}
 
-export const fetchCpblMinorGamesByDate = createMockLeagueFetcher({
-  leagueCode: 'CPBL-2',
-  leagueLogo: require('../assets/league/cpbl.png'),
-  teams: [
-    { name: 'Brothers Farm', short: 'BRF', logo: require('../assets/league/cpbl.png'), record: '4-2' },
-    { name: 'Lions Farm', short: 'LIF', logo: require('../assets/league/cpbl.png'), record: '3-3' },
-    { name: 'Monkeys Farm', short: 'MKF', logo: require('../assets/league/cpbl.png'), record: '2-4' },
-    { name: 'Dragons Farm', short: 'DRF', logo: require('../assets/league/cpbl.png'), record: '5-1' },
-    { name: 'Guardians Farm', short: 'GDF', logo: require('../assets/league/cpbl.png'), record: '1-5' },
-    { name: 'Hawks Farm', short: 'HKF', logo: require('../assets/league/cpbl.png'), record: '3-3' },
-  ],
-});
+function attachCpblLogos(game: any) {
+  return {
+    ...game,
+    awayTeam: {
+      ...game.awayTeam,
+      record: game.awayTeam?.record ?? '',
+      logo: game.awayTeam?.logo ?? getTeamLogo(game.awayTeam?.name),
+    },
+    homeTeam: {
+      ...game.homeTeam,
+      record: game.homeTeam?.record ?? '',
+      logo: game.homeTeam?.logo ?? getTeamLogo(game.homeTeam?.name),
+    },
+    innings: game.innings ?? [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  };
+}
+
+export async function fetchCpblMajorGamesByDate(date: string) {
+  const games = ((snapshot as any).games || [])
+    .filter((game: any) => game.gameDate === date || game.date === date)
+    .map(attachCpblLogos);
+
+  if (games.length > 0) {
+    return games;
+  }
+
+  return fetchCpblMajorFallback(date);
+}
+
+export { fetchCpblMinorGamesByDate };

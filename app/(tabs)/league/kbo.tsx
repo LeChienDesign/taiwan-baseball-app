@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import LeagueCalendarPage from '../../../components/LeagueCalendarPage';
-import { fetchKboGamesByDate } from '../../../lib/kbo-real';
+import { fetchKboGamesByDate } from '../../../lib/kbo';
 
 export default function KBOPage() {
   const { date } = useLocalSearchParams<{ date?: string }>();

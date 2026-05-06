@@ -12,6 +12,7 @@ function detectOfficialStatus(text: string) {
 
   if (
     raw.includes('延賽') ||
+    raw.includes('取消比賽') ||
     raw.includes('Postponed') ||
     raw.includes('Rain Out')
   ) {
@@ -37,8 +38,12 @@ function detectOfficialStatus(text: string) {
 
   if (
     raw.includes('比賽中') ||
+    raw.includes('文字轉播') ||
+    raw.includes('成績看板') ||
     raw.includes('Live') ||
-    raw.includes('scoreboard')
+    raw.includes('LIVE') ||
+    raw.includes('scoreboard') ||
+    raw.includes('SCOREBOARD')
   ) {
     return { status: 'LIVE' as const, label: '比賽中' };
   }
@@ -64,11 +69,11 @@ function normalizeHtml(html: string) {
 }
 
 function extractStatusText(clean: string) {
-  return (
-    clean.match(
-      /(比賽結束|終場|延賽|保留比賽|取消比賽|比賽尚未開始|比賽中|scoreboard|FINAL|Final|Live|Postponed|Suspended|Scheduled|Preview)/
-    )?.[1] ?? ''
-  );
+  const direct = clean.match(
+    /(比賽結束|終場|延賽|保留比賽|取消比賽|比賽尚未開始|比賽中|文字轉播|成績看板|SCOREBOARD|scoreboard|FINAL|Final|Live|LIVE|Postponed|Suspended|Scheduled|Preview)/
+  )?.[1];
+
+  return direct ?? clean;
 }
 
 function makeBrowserHeaders(referer: string) {
@@ -111,23 +116,31 @@ export async function fetchCpblOfficialStatusByGame(params: {
 
   console.log('CPBL live url =', primaryUrl);
 
-  let html = '';
-  let usedUrl = primaryUrl;
+  let detected = { status: 'SCHEDULED' as const, label: '' };
 
   try {
-    html = await fetchText(primaryUrl, 'https://en.cpbl.com.tw/box');
+    const html = await fetchText(primaryUrl, 'https://en.cpbl.com.tw/box');
+    const clean = normalizeHtml(html);
+    const statusText = extractStatusText(clean);
+    detected = detectOfficialStatus(statusText);
+
+    console.log('CPBL parsed statusText =', statusText.slice(0, 120), 'for', primaryUrl);
   } catch (primaryError) {
     console.warn('CPBL primary live fetch failed, trying fallback:', primaryError);
-    usedUrl = fallbackUrl;
-    html = await fetchText(fallbackUrl, 'https://www.cpbl.com.tw/box');
   }
 
-  const clean = normalizeHtml(html);
-  const statusText = extractStatusText(clean);
+  if (detected.status === 'SCHEDULED') {
+    try {
+      const html = await fetchText(fallbackUrl, 'https://www.cpbl.com.tw/box');
+      const clean = normalizeHtml(html);
+      const statusText = extractStatusText(clean);
+      detected = detectOfficialStatus(statusText);
 
-  console.log('CPBL parsed statusText =', statusText, 'for', usedUrl);
-
-  const detected = detectOfficialStatus(statusText);
+      console.log('CPBL parsed fallback statusText =', statusText.slice(0, 120), 'for', fallbackUrl);
+    } catch (fallbackError) {
+      console.warn('CPBL fallback live fetch failed:', fallbackError);
+    }
+  }
 
   return {
     status: detected.status,
