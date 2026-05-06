@@ -10,6 +10,7 @@ import {
   Image,
   Animated,
   Easing,
+  AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -20,9 +21,9 @@ import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
 
 import { fetchMlbGamesByDate } from '../../lib/mlb';
-import { fetchCpblMajorGamesByDate } from '../../lib/cpbl-real';
+import { fetchCpblMajorGamesByDate } from '../../lib/cpbl';
 import { fetchNpbGamesByDate } from '../../lib/npb';
-import { fetchKboGamesByDate } from '../../lib/kbo-real';
+import { fetchKboGamesByDate } from '../../lib/kbo';
 
 type TeamCardInfo = {
   name: string;
@@ -73,12 +74,42 @@ type LeagueStats = Record<
   }
 >;
 
-function getTodayDateKey() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
+const AUTO_REFRESH_LIVE_MS = 30000;
+const AUTO_REFRESH_GAMES_MS = 60000;
+
+function toDateKey(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+function getTodayDateKey() {
+  return toDateKey(new Date());
+}
+
+function getPreviousDateKey(dateKey: string) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() - 1);
+  return toDateKey(date);
+}
+
+function getMlbDateKeyForTaipei(todayKey: string) {
+  const taipeiHour = new Date().getHours();
+
+  // MLB games shown in Taiwan morning/afternoon usually still belong to the previous US calendar date.
+  return taipeiHour < 18 ? getPreviousDateKey(todayKey) : todayKey;
+}
+
+function mergeGamesById(games: ScoreboardGame[]) {
+  const map = new Map<string, ScoreboardGame>();
+
+  for (const game of games) {
+    map.set(String(game.id), game);
+  }
+
+  return Array.from(map.values());
 }
 
 function getLeagueOrder(league: LeagueKey) {
@@ -159,11 +190,17 @@ function sortFeatured(items: FeaturedItem[]) {
 }
 
 function buildFeaturedItems(league: LeagueKey, games: ScoreboardGame[]) {
-  return games.filter(hasMeaningfulGameContent).map((game) => ({ league, game }));
+  return games
+    .filter((game) => game.status !== 'FINAL')
+    .filter(hasMeaningfulGameContent)
+    .map((game) => ({ league, game }));
 }
 
 function buildLeagueStat(games: ScoreboardGame[]) {
-  const meaningful = games.filter(hasMeaningfulGameContent);
+  const meaningful = games
+    .filter((game) => game.status !== 'FINAL')
+    .filter(hasMeaningfulGameContent);
+
   return {
     total: meaningful.length,
     live: meaningful.filter((g) => g.status === 'LIVE').length,
@@ -180,6 +217,7 @@ function buildLeagueHref(league: LeagueKey, date: string) {
 export default function HomePage() {
   const router = useRouter();
   const todayKey = useMemo(() => getTodayDateKey(), []);
+  const mlbTodayKey = useMemo(() => getMlbDateKeyForTaipei(todayKey), [todayKey]);
   const logoPulse = useRef(new Animated.Value(1)).current;
 
   const [featuredGames, setFeaturedGames] = useState<FeaturedItem[]>([]);
@@ -199,11 +237,17 @@ export default function HomePage() {
         setLoading(true);
       }
 
-      const [cpblGames, mlbGames, npbGames, kboGames] = await Promise.all([
+      const [cpblGames, mlbGamesByMlbDate, mlbGamesByTaipeiDate, npbGames, kboGames] = await Promise.all([
         fetchCpblMajorGamesByDate(todayKey).catch(() => []),
-        fetchMlbGamesByDate(todayKey).catch(() => []),
+        fetchMlbGamesByDate(mlbTodayKey).catch(() => []),
+        mlbTodayKey === todayKey ? Promise.resolve([]) : fetchMlbGamesByDate(todayKey).catch(() => []),
         fetchNpbGamesByDate(todayKey).catch(() => []),
         fetchKboGamesByDate(todayKey).catch(() => []),
+      ]);
+
+      const mlbGames = mergeGamesById([
+        ...(mlbGamesByMlbDate as ScoreboardGame[]),
+        ...(mlbGamesByTaipeiDate as ScoreboardGame[]),
       ]);
 
       setLeagueStats({
@@ -227,7 +271,7 @@ export default function HomePage() {
       }
       setRefreshing(false);
     }
-  }, [todayKey]);
+  }, [mlbTodayKey, todayKey]);
 
   useEffect(() => {
     loadHomeData();
@@ -298,20 +342,35 @@ export default function HomePage() {
     leagueStats.NPB.live +
     leagueStats.KBO.live;
 
+  const hasAutoRefreshTarget = totalGamesToday > 0 || totalLiveToday > 0;
+  const autoRefreshMs = totalLiveToday > 0 ? AUTO_REFRESH_LIVE_MS : AUTO_REFRESH_GAMES_MS;
+
   useEffect(() => {
-    if (totalLiveToday <= 0) return;
+    if (!hasAutoRefreshTarget) return;
 
     const timer = setInterval(() => {
       loadHomeData({ silent: true });
-    }, 30000);
+    }, autoRefreshMs);
 
     return () => {
       clearInterval(timer);
     };
-  }, [loadHomeData, totalLiveToday]);
+  }, [autoRefreshMs, hasAutoRefreshTarget, loadHomeData]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        loadHomeData({ silent: true });
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [loadHomeData]);
 
   function openLeague(league: LeagueKey) {
-    router.push(buildLeagueHref(league, todayKey));
+    router.push(buildLeagueHref(league, league === 'MLB' ? mlbTodayKey : todayKey));
   }
 
   function handleSeeMore() {
@@ -356,7 +415,9 @@ export default function HomePage() {
               <Text style={styles.summaryPillText}>今日總場次 {totalGamesToday}</Text>
             </View>
             <View style={[styles.summaryPill, styles.summaryPillLive]}>
-              <Text style={styles.summaryPillText}>LIVE {totalLiveToday}</Text>
+              <Text style={styles.summaryPillText}>
+                LIVE {totalLiveToday}{hasAutoRefreshTarget ? ` · ${autoRefreshMs / 1000}s 自動更新` : ''}
+              </Text>
             </View>
           </View>
 

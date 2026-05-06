@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ type DayMeta = {
   hasScheduled: boolean;
   hasLive: boolean;
   hasFinal: boolean;
+  preview: string;
 };
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
@@ -46,6 +47,35 @@ function monthTitleText(year: number, month: number) {
 
 function makeDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function normalizeStatus(status: any) {
+  const raw = String(status || '').toUpperCase();
+
+  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
+  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
+  return 'SCHEDULED';
+}
+
+function getDayPreview(games: any[]) {
+  if (!games.length) return '';
+
+  const liveGame = games.find((game) => normalizeStatus(game.status) === 'LIVE');
+  if (liveGame) return 'LIVE';
+
+  const finalGame = games.find((game) => normalizeStatus(game.status) === 'FINAL');
+  if (finalGame) return `${finalGame.awayScore ?? 0}-${finalGame.homeScore ?? 0}`;
+
+  const firstGame = games[0];
+  return firstGame?.footerRight || firstGame?.gameTime || '賽程';
+}
+
+function hasLiveGame(games: any[]) {
+  return games.some((game) => normalizeStatus(game.status) === 'LIVE');
+}
+
+function makeMonthCacheKey(year: number, month: number) {
+  return `${year}-${String(month).padStart(2, '0')}`;
 }
 
 function buildMonthCells(year: number, month: number): CalendarCell[] {
@@ -93,6 +123,9 @@ export default function LeagueCalendarPage({
 
   const [monthMeta, setMonthMeta] = useState<Record<number, DayMeta>>({});
   const [loadingMonthCounts, setLoadingMonthCounts] = useState(false);
+  const monthMetaCacheRef = useRef<Record<string, Record<number, DayMeta>>>({});
+  const monthLoadingRef = useRef<Record<string, boolean>>({});
+  const latestSelectedDateRef = useRef<string | null>(null);
 
   const cells = useMemo(
     () => buildMonthCells(displayYear, displayMonth),
@@ -104,76 +137,149 @@ export default function LeagueCalendarPage({
 
   const today = now.getDate(); 
 
-  const loadGamesForDay = async (year: number, month: number, day: number) => {
-    const dateKey = makeDateKey(year, month, day);
+  const loadGamesForDay = useCallback(
+    async (year: number, month: number, day: number, options?: { silent?: boolean }) => {
+      const dateKey = makeDateKey(year, month, day);
+      latestSelectedDateRef.current = dateKey;
 
-    try {
-      setLoadingGames(true);
-      setGamesError(null);
-      const games = await fetchGamesByDate(dateKey);
-      setRealGames(games);
-    } catch (error: any) {
-      setGamesError(error?.message ?? '載入失敗');
-      setRealGames([]);
-    } finally {
-      setLoadingGames(false);
-    }
-  };
+      try {
+        if (!options?.silent) {
+          setLoadingGames(true);
+        }
+        setGamesError(null);
+        const games = await fetchGamesByDate(dateKey);
 
-  const loadMonthCounts = async (year: number, month: number) => {
-    try {
-      setLoadingMonthCounts(true);
+        if (latestSelectedDateRef.current !== dateKey) {
+          return;
+        }
 
-      const totalDays = daysInMonth(year, month);
-      const entries = await Promise.all(
-        Array.from({ length: totalDays }, async (_, index) => {
-          const day = index + 1;
-          const dateKey = makeDateKey(year, month, day);
+        setRealGames(games);
 
-          try {
-            const games = await fetchGamesByDate(dateKey);
+        const nextMeta: DayMeta = {
+          count: games.length,
+          hasScheduled: games.some((g) => normalizeStatus(g.status) === 'SCHEDULED'),
+          hasLive: games.some((g) => normalizeStatus(g.status) === 'LIVE'),
+          hasFinal: games.some((g) => normalizeStatus(g.status) === 'FINAL'),
+          preview: getDayPreview(games),
+        };
 
-            const meta: DayMeta = {
-              count: games.length,
-              hasScheduled: games.some((g) => g.status === 'SCHEDULED'),
-              hasLive: games.some((g) => g.status === 'LIVE'),
-              hasFinal: games.some((g) => g.status === 'FINAL'),
-            };
+        const cacheKey = makeMonthCacheKey(year, month);
+        monthMetaCacheRef.current[cacheKey] = {
+          ...(monthMetaCacheRef.current[cacheKey] ?? {}),
+          [day]: nextMeta,
+        };
 
-            return [day, meta] as const;
-          } catch {
-            return [
-              day,
-              {
-                count: 0,
-                hasScheduled: false,
-                hasLive: false,
-                hasFinal: false,
-              },
-            ] as const;
-          }
-        })
-      );
+        if (year === displayYear && month === displayMonth) {
+          setMonthMeta((current) => ({ ...current, [day]: nextMeta }));
+        }
+      } catch (error: any) {
+        if (latestSelectedDateRef.current !== dateKey) {
+          return;
+        }
 
-      const nextMeta: Record<number, DayMeta> = {};
-      for (const [day, meta] of entries) {
-        nextMeta[day] = meta;
+        setGamesError(error?.message ?? '載入失敗');
+        setRealGames([]);
+      } finally {
+        if (!options?.silent && latestSelectedDateRef.current === dateKey) {
+          setLoadingGames(false);
+        }
       }
-      setMonthMeta(nextMeta);
-    } finally {
-      setLoadingMonthCounts(false);
-    }
-  };
+    },
+    [displayMonth, displayYear, fetchGamesByDate]
+  );
+
+  const loadMonthCounts = useCallback(
+    async (year: number, month: number) => {
+      const cacheKey = makeMonthCacheKey(year, month);
+      const cachedMeta = monthMetaCacheRef.current[cacheKey];
+
+      if (cachedMeta) {
+        setMonthMeta(cachedMeta);
+        return;
+      }
+
+      if (monthLoadingRef.current[cacheKey]) {
+        return;
+      }
+
+      try {
+        monthLoadingRef.current[cacheKey] = true;
+        setLoadingMonthCounts(true);
+
+        const totalDays = daysInMonth(year, month);
+        const entries = await Promise.all(
+          Array.from({ length: totalDays }, async (_, index) => {
+            const day = index + 1;
+            const dateKey = makeDateKey(year, month, day);
+
+            try {
+              const games = await fetchGamesByDate(dateKey);
+
+              const meta: DayMeta = {
+                count: games.length,
+                hasScheduled: games.some((g) => normalizeStatus(g.status) === 'SCHEDULED'),
+                hasLive: games.some((g) => normalizeStatus(g.status) === 'LIVE'),
+                hasFinal: games.some((g) => normalizeStatus(g.status) === 'FINAL'),
+                preview: getDayPreview(games),
+              };
+
+              return [day, meta] as const;
+            } catch {
+              return [
+                day,
+                {
+                  count: 0,
+                  hasScheduled: false,
+                  hasLive: false,
+                  hasFinal: false,
+                  preview: '',
+                },
+              ] as const;
+            }
+          })
+        );
+
+        const nextMeta: Record<number, DayMeta> = {};
+        for (const [day, meta] of entries) {
+          nextMeta[day] = meta;
+        }
+
+        monthMetaCacheRef.current[cacheKey] = nextMeta;
+
+        if (year === displayYear && month === displayMonth) {
+          setMonthMeta(nextMeta);
+        }
+      } finally {
+        monthLoadingRef.current[cacheKey] = false;
+        setLoadingMonthCounts(false);
+      }
+    },
+    [displayMonth, displayYear, fetchGamesByDate]
+  );
 
   useEffect(() => {
     loadMonthCounts(displayYear, displayMonth);
-  }, [displayYear, displayMonth]);
+  }, [displayYear, displayMonth, loadMonthCounts]);
 
   useEffect(() => {
     if (selectedDay != null) {
       loadGamesForDay(displayYear, displayMonth, selectedDay);
+    } else {
+      latestSelectedDateRef.current = null;
     }
-  }, [displayYear, displayMonth, selectedDay]);
+  }, [displayYear, displayMonth, selectedDay, loadGamesForDay]);
+
+  useEffect(() => {
+    if (selectedDay == null || !hasLiveGame(realGames)) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      loadGamesForDay(displayYear, displayMonth, selectedDay, { silent: true });
+    }, 30000);
+
+    return () => clearInterval(timer);
+  }, [displayYear, displayMonth, selectedDay, realGames, loadGamesForDay]);
 
   const goPrevMonth = () => {
     if (displayMonth === 1) {
@@ -181,11 +287,13 @@ export default function LeagueCalendarPage({
       setDisplayMonth(12);
       setSelectedDay(null);
       setRealGames([]);
+      latestSelectedDateRef.current = null;
       return;
     }
     setDisplayMonth((m) => m - 1);
     setSelectedDay(null);
     setRealGames([]);
+    latestSelectedDateRef.current = null;
   };
 
   const goNextMonth = () => {
@@ -194,11 +302,13 @@ export default function LeagueCalendarPage({
       setDisplayMonth(1);
       setSelectedDay(null);
       setRealGames([]);
+      latestSelectedDateRef.current = null;
       return;
     }
     setDisplayMonth((m) => m + 1);
     setSelectedDay(null);
     setRealGames([]);
+    latestSelectedDateRef.current = null;
   };
 
   return (
@@ -259,15 +369,18 @@ export default function LeagueCalendarPage({
                       hasScheduled: false,
                       hasLive: false,
                       hasFinal: false,
+                      preview: '',
                     }
                   : monthMeta[item.day] ?? {
                       count: 0,
                       hasScheduled: false,
                       hasLive: false,
                       hasFinal: false,
+                      preview: '',
                     };
 
               const count = meta.count;
+              const preview = meta.preview;
               const isOnlyFinal =
                 meta.count > 0 && !meta.hasScheduled && !meta.hasLive && meta.hasFinal;
               const hasUpcomingOrLive = meta.hasScheduled || meta.hasLive;
@@ -279,7 +392,6 @@ export default function LeagueCalendarPage({
                   onPress={() => {
                     if (item.day === '') return;
                     setSelectedDay(item.day);
-                    loadGamesForDay(displayYear, displayMonth, item.day);
                   }}
                   style={[
                     styles.dayCell,
@@ -305,8 +417,23 @@ export default function LeagueCalendarPage({
                               highlight && styles.eventDotToday,
                               isOnlyFinal && styles.eventDotFinalOnly,
                               hasUpcomingOrLive && styles.eventDotActive,
+                              meta.hasLive && styles.eventDotLive,
                             ]}
                           />
+
+                          {!!preview && (
+                            <Text
+                              style={[
+                                styles.dayPreviewText,
+                                meta.hasLive && styles.dayPreviewLive,
+                                isOnlyFinal && styles.dayPreviewFinal,
+                              ]}
+                              numberOfLines={1}
+                            >
+                              {preview}
+                            </Text>
+                          )}
+
                           {count > 1 ? (
                             <View
                               style={[
@@ -522,8 +649,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 2,
   },
+  dayPreviewText: {
+    color: '#dbeafe',
+    fontSize: 8,
+    lineHeight: 10,
+    fontWeight: '800',
+    marginTop: 4,
+    maxWidth: 42,
+    textAlign: 'center',
+  },
+  dayPreviewLive: {
+    color: '#fecaca',
+    letterSpacing: 0.2,
+  },
+  dayPreviewFinal: {
+    color: '#cbd5e1',
+  },
   eventIndicatorWrap: {
-    marginTop: 6,
+    marginTop: 4,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 18,
@@ -536,6 +679,9 @@ const styles = StyleSheet.create({
   },
   eventDotActive: {
     backgroundColor: '#60a5fa',
+  },
+  eventDotLive: {
+    backgroundColor: '#ef4444',
   },
   eventDotToday: {
     backgroundColor: '#fbbf24',

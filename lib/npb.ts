@@ -1,5 +1,5 @@
 import npbLiveSnapshot from '../server/data/eventsCenter.npb.json';
-import { fetchNpbGamesByDate as fetchFallback } from './npb';
+import { fetchNpbGamesByDate as fetchFallback } from './npb-real';
 
 function isUsableNpbLiveGame(game: any) {
   const awayName = String(game?.awayTeam?.name ?? '').trim();
@@ -65,12 +65,26 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
+function getSnapshotGamesByDate(date: string) {
+  const snapshot = npbLiveSnapshot as any;
+  const gamesByDate = snapshot?.gamesByDate;
+
+  if (gamesByDate && typeof gamesByDate === 'object') {
+    const games = gamesByDate[date];
+    return Array.isArray(games) ? games : [];
+  }
+
+  return Array.isArray(snapshot?.games)
+    ? snapshot.games.filter((game: any) => game.date === date)
+    : [];
+}
+
 export async function fetchNpbGamesByDate(date: string) {
   const fallbackGames = await fetchFallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
 
-  const liveGames = ((npbLiveSnapshot as any).games || [])
-    .filter((game: any) => game.date === date && isUsableNpbLiveGame(game))
+  const liveGames = getSnapshotGamesByDate(date)
+    .filter((game: any) => isUsableNpbLiveGame(game))
     .map((game: any) => attachFallbackLogos(game, logoMap));
 
   if (liveGames.length > 0) {

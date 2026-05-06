@@ -105,7 +105,30 @@ function getLocalGames(): ScoreboardGame[] {
   return [];
 }
 
+function getLocalGamesByDate(date: string): ScoreboardGame[] | null {
+  const payload = localMlbPayload as any;
+  const gamesByDate = payload?.gamesByDate;
+
+  if (!gamesByDate || typeof gamesByDate !== 'object') {
+    return null;
+  }
+
+  const games = gamesByDate[date];
+
+  if (!Array.isArray(games)) {
+    return [];
+  }
+
+  return games.map(normalizeGame);
+}
+
 export async function fetchMlbGamesByDate(date: string): Promise<ScoreboardGame[]> {
+  const gamesFromDateMap = getLocalGamesByDate(date);
+
+  if (gamesFromDateMap) {
+    return gamesFromDateMap;
+  }
+
   const games = getLocalGames();
 
   return games.filter((game) => {

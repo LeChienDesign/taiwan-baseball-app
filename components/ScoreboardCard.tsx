@@ -17,7 +17,7 @@ type LineScoreRow = {
 };
 
 type ScoreboardCardProps = {
-  status: 'FINAL' | 'LIVE' | 'SCHEDULED';
+  status: 'FINAL' | 'LIVE' | 'SCHEDULED' | string;
   venue?: string;
   awayTeam: TeamInfo;
   homeTeam: TeamInfo;
@@ -59,6 +59,24 @@ function padLine(values: (number | string)[], targetLength: number) {
   return [...values, ...Array.from({ length: targetLength - values.length }, () => '-')];
 }
 
+function normalizeStatus(status: ScoreboardCardProps['status']) {
+  const raw = String(status || '').toUpperCase();
+
+  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
+  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
+  return 'SCHEDULED';
+}
+
+function getStatusLabel(status: string, footerLeft?: string, footerRight?: string) {
+  if (status === 'LIVE') return footerLeft || footerRight || 'LIVE';
+  if (status === 'FINAL') return 'FINAL';
+  return footerRight || 'SCHEDULED';
+}
+
+function hasLineScoreData(awayInnings: (number | string)[], homeInnings: (number | string)[]) {
+  return awayInnings.some((v) => v !== '-') || homeInnings.some((v) => v !== '-');
+}
+
 function TeamLogo({ team }: { team: TeamInfo }) {
   if (team.logo) {
     return <Image source={team.logo} style={styles.teamLogo} resizeMode="contain" />;
@@ -84,7 +102,10 @@ export default function ScoreboardCard({
   footerLeft,
   footerRight,
 }: ScoreboardCardProps) {
-  const isScheduled = status === 'SCHEDULED';
+  const normalizedStatus = normalizeStatus(status);
+  const isScheduled = normalizedStatus === 'SCHEDULED';
+  const isLive = normalizedStatus === 'LIVE';
+  const isFinal = normalizedStatus === 'FINAL';
   const livePulse = useRef(new Animated.Value(1)).current;
   const awayScorePulse = useRef(new Animated.Value(1)).current;
   const homeScorePulse = useRef(new Animated.Value(1)).current;
@@ -93,13 +114,14 @@ export default function ScoreboardCard({
   const previousAwayScore = useRef(awayScore);
   const previousHomeScore = useRef(homeScore);
 
-  const awayWin = status === 'FINAL' && awayScore > homeScore;
-  const homeWin = status === 'FINAL' && homeScore > awayScore;
+  const awayWin = isFinal && awayScore > homeScore;
+  const homeWin = isFinal && homeScore > awayScore;
   const footerVenue = venue && venue !== '—' ? venue : '';
-  const liveDetail = status === 'LIVE' ? footerLeft || footerRight : footerRight;
+  const statusLabel = getStatusLabel(normalizedStatus, footerLeft, footerRight);
+  const liveDetail = isLive ? statusLabel : footerRight;
 
   useEffect(() => {
-    if (status !== 'LIVE') {
+    if (!isLive) {
       livePulse.setValue(1);
       return;
     }
@@ -127,7 +149,7 @@ export default function ScoreboardCard({
       loop.stop();
       livePulse.setValue(1);
     };
-  }, [livePulse, status]);
+  }, [isLive, livePulse]);
 
   useEffect(() => {
     if (previousAwayScore.current !== awayScore) {
@@ -179,6 +201,8 @@ export default function ScoreboardCard({
 
   const awayInnings = padLine(awayInningsRaw, inningHeaders.length);
   const homeInnings = padLine(homeInningsRaw, inningHeaders.length);
+
+  const shouldShowLineScore = hasLineScoreData(awayInningsRaw, homeInningsRaw) || !isScheduled;
 
   const safeAwayLine = {
     team: awayLine?.team || getTeamShort(awayTeam),
@@ -236,13 +260,14 @@ export default function ScoreboardCard({
                 </Animated.Text>
 
                 <View style={styles.statusPillWrap}>
-                  {status === 'LIVE' ? (
+                  {isLive ? (
                     <View style={[styles.statusPill, styles.statusPillLive]}>
                       <Animated.View style={{ transform: [{ scale: livePulse }] }}>
                         <View style={styles.liveDot} />
                       </Animated.View>
+                      <Text style={styles.statusTextLive}>LIVE</Text>
                     </View>
-                  ) : status === 'FINAL' ? (
+                  ) : isFinal ? (
                     <View style={[styles.statusPill, styles.statusPillFinal]}>
                       <Text style={styles.statusText}>FINAL</Text>
                     </View>
@@ -283,45 +308,55 @@ export default function ScoreboardCard({
         </View>
       </View>
 
-      <View style={styles.divider} />
+      {shouldShowLineScore && (
+        <>
+          <View style={styles.divider} />
 
-      <View style={styles.lineTable}>
-        <View style={styles.headerRow}>
-          <View style={styles.teamCodeCell} />
-          {inningHeaders.map((inning) => (
-            <Text key={`h-${inning}`} style={styles.inningHeader}>
-              {inning}
+          <View style={styles.statusMetaRow}>
+            <Text style={styles.statusMetaText} numberOfLines={1}>
+              {isLive ? statusLabel : isFinal ? '比賽結束' : statusLabel}
             </Text>
-          ))}
-          <Text style={styles.inningHeader}>R</Text>
-          <Text style={styles.inningHeader}>H</Text>
-          <Text style={styles.inningHeader}>E</Text>
-        </View>
+          </View>
 
-        <View style={[styles.scoreRow, awayWin && styles.scoreRowWinner]}>
-          <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
-          {safeAwayLine.innings.map((v, idx) => (
-            <Text key={`a-${idx}`} style={styles.scoreCell}>
-              {v}
-            </Text>
-          ))}
-          <Text style={styles.scoreCellBold}>{safeAwayLine.r}</Text>
-          <Text style={styles.scoreCellBold}>{safeAwayLine.h}</Text>
-          <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
-        </View>
+          <View style={styles.lineTable}>
+            <View style={styles.headerRow}>
+              <View style={styles.teamCodeCell} />
+              {inningHeaders.map((inning) => (
+                <Text key={`h-${inning}`} style={styles.inningHeader}>
+                  {inning}
+                </Text>
+              ))}
+              <Text style={styles.inningHeader}>R</Text>
+              <Text style={styles.inningHeader}>H</Text>
+              <Text style={styles.inningHeader}>E</Text>
+            </View>
 
-        <View style={[styles.scoreRow, homeWin && styles.scoreRowWinner]}>
-          <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
-          {safeHomeLine.innings.map((v, idx) => (
-            <Text key={`b-${idx}`} style={styles.scoreCell}>
-              {v}
-            </Text>
-          ))}
-          <Text style={styles.scoreCellBold}>{safeHomeLine.r}</Text>
-          <Text style={styles.scoreCellBold}>{safeHomeLine.h}</Text>
-          <Text style={styles.scoreCellBold}>{safeHomeLine.e}</Text>
-        </View>
-      </View>
+            <View style={[styles.scoreRow, awayWin && styles.scoreRowWinner]}>
+              <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
+              {safeAwayLine.innings.map((v, idx) => (
+                <Text key={`a-${idx}`} style={styles.scoreCell}>
+                  {v}
+                </Text>
+              ))}
+              <Text style={styles.scoreCellBold}>{safeAwayLine.r}</Text>
+              <Text style={styles.scoreCellBold}>{safeAwayLine.h}</Text>
+              <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
+            </View>
+
+            <View style={[styles.scoreRow, homeWin && styles.scoreRowWinner]}>
+              <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
+              {safeHomeLine.innings.map((v, idx) => (
+                <Text key={`b-${idx}`} style={styles.scoreCell}>
+                  {v}
+                </Text>
+              ))}
+              <Text style={styles.scoreCellBold}>{safeHomeLine.r}</Text>
+              <Text style={styles.scoreCellBold}>{safeHomeLine.h}</Text>
+              <Text style={styles.scoreCellBold}>{safeHomeLine.e}</Text>
+            </View>
+          </View>
+        </>
+      )}
 
       {(footerLeft || footerRight || footerVenue) && !isScheduled && (
         <View style={styles.footerRow}>
@@ -435,7 +470,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ef4444',
   },
   statusPillWrap: {
-    width: 42,
+    width: 48,
     alignItems: 'center',
   },
   statusPill: {
@@ -451,9 +486,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statusPillLive: {
-    minWidth: 22,
-    width: 22,
-    paddingHorizontal: 0,
+    minWidth: 42,
+    paddingHorizontal: 6,
     backgroundColor: '#3b1016',
     borderColor: '#ef4444',
     shadowColor: '#ef4444',
@@ -461,6 +495,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 0 },
     elevation: 3,
+    gap: 4,
   },
   statusPillFinal: {
     backgroundColor: '#172033',
@@ -471,6 +506,13 @@ const styles = StyleSheet.create({
     fontSize: 7,
     fontWeight: '800',
     letterSpacing: 0.6,
+    textAlign: 'center',
+  },
+  statusTextLive: {
+    color: '#ffffff',
+    fontSize: 7,
+    fontWeight: '900',
+    letterSpacing: 0.4,
     textAlign: 'center',
   },
   scheduledWrap: {
@@ -506,6 +548,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#1f2d45',
     marginTop: 8,
     marginBottom: 5,
+  },
+  statusMetaRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  statusMetaText: {
+    color: '#dbeafe',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
   lineTable: {
     backgroundColor: '#08172a',
