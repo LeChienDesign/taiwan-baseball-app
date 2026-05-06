@@ -1,6 +1,10 @@
 import { getMlbTeamLogo } from '../constants/mlbTeamLogos';
 
-import localMlbPayload from '../server/data/eventsCenter.mlb.json';
+
+const MLB_REMOTE_EVENTS_URL =
+  'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json';
+
+const localMlbPayload = require('../server/data/eventsCenter.mlb.json');
 
 export type TeamCardInfo = {
   name: string;
@@ -123,6 +127,40 @@ function getLocalGamesByDate(date: string): ScoreboardGame[] | null {
 }
 
 export async function fetchMlbGamesByDate(date: string): Promise<ScoreboardGame[]> {
+  try {
+    const response = await fetch(
+      `${MLB_REMOTE_EVENTS_URL}?t=${Date.now()}`,
+    );
+
+    if (response.ok) {
+      const remotePayload = await response.json();
+      const gamesByDate = remotePayload?.gamesByDate;
+
+      if (gamesByDate && typeof gamesByDate === 'object') {
+        const remoteGames = gamesByDate[date];
+
+        if (Array.isArray(remoteGames)) {
+          return remoteGames.map(normalizeGame);
+        }
+      }
+
+      const remoteGames = Array.isArray(remotePayload?.games)
+        ? remotePayload.games.map(normalizeGame)
+        : [];
+
+      const filteredRemoteGames = remoteGames.filter((game: ScoreboardGame) => {
+        const key = getDateKey(game.gameDate);
+        return key === date;
+      });
+
+      if (filteredRemoteGames.length > 0) {
+        return filteredRemoteGames;
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load remote MLB snapshot', error);
+  }
+
   const gamesFromDateMap = getLocalGamesByDate(date);
 
   if (gamesFromDateMap) {
