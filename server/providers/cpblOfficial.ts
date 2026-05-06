@@ -84,8 +84,19 @@ type CpblLiveGameDetail = {
   FieldAbbe?: string;
   VisitingScoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>;
   HomeScoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>;
+  VisitingScore?: unknown;
+  HomeScore?: unknown;
   VisitingTeamData?: { HittingCnt?: number; ErrorCnt?: number };
   HomeTeamData?: { HittingCnt?: number; ErrorCnt?: number };
+};
+
+type CpblScoreboardItem = {
+  GameSno?: number;
+  VisitingHomeType?: string | number;
+  InningSeq?: number;
+  ScoreCnt?: number;
+  HittingCnt?: number;
+  ErrorCnt?: number;
 };
 
 const TEAM_MAP: Record<string, CpblTeamInfo> = {
@@ -134,7 +145,65 @@ const OFFICIAL_GAME_META_MAP: Record<string, { gameSno: string; kindCode: string
     kindCode: 'A',
     year: '2026',
   },
+  '2026-05-06|TSG Hawks|Uni-President Lions': {
+    gameSno: '84',
+    kindCode: 'A',
+    year: '2026',
+  },
+  '2026-05-06|CTBC Brothers|Wei Chuan Dragons': {
+    gameSno: '83',
+    kindCode: 'A',
+    year: '2026',
+  },
 };
+
+let computedOfficialGameMetaMapCache: Record<string, { gameSno: string; kindCode: string; year: string }> | null = null;
+
+function getSeedOfficialMetaKey(seed: CpblSeedGame) {
+  return `${normalizeDate(seed.strTimestamp)}|${seed['Away Team']}|${seed['Home Team']}`;
+}
+
+function buildComputedOfficialGameMetaMap() {
+  if (computedOfficialGameMetaMapCache) {
+    return computedOfficialGameMetaMapCache;
+  }
+
+  const seeds = readSeedGames()
+    .filter((game) => normalizeDate(game.strTimestamp))
+    .filter((game) => game['Away Team'] && game['Home Team'])
+    .sort((a, b) => {
+      const timeDiff = String(a.strTimestamp || '').localeCompare(String(b.strTimestamp || ''));
+      if (timeDiff !== 0) return timeDiff;
+      return `${a['Away Team']}|${a['Home Team']}`.localeCompare(`${b['Away Team']}|${b['Home Team']}`);
+    });
+
+  const anchorKey = '2026-05-05|Rakuten Monkeys|Fubon Guardians';
+  const anchorGameSno = 80;
+  const anchorIndex = seeds.findIndex((game) => getSeedOfficialMetaKey(game) === anchorKey);
+  const map: Record<string, { gameSno: string; kindCode: string; year: string }> = {};
+
+  if (anchorIndex < 0) {
+    computedOfficialGameMetaMapCache = map;
+    return map;
+  }
+
+  seeds.forEach((game, index) => {
+    const computedGameSno = anchorGameSno + (index - anchorIndex);
+
+    if (computedGameSno <= 0) {
+      return;
+    }
+
+    map[getSeedOfficialMetaKey(game)] = {
+      gameSno: String(computedGameSno),
+      kindCode: 'A',
+      year: '2026',
+    };
+  });
+
+  computedOfficialGameMetaMapCache = map;
+  return map;
+}
 
 const MANUAL_LIVE_LINE_SCORE_MAP: Record<string, {
   status: 'LIVE' | 'FINAL';
@@ -207,14 +276,14 @@ function getOfficialGameMeta(seed?: CpblSeedGame) {
 
   if (seed.gameSno && seed.kindCode && seed.year) {
     return {
-      gameSno: seed.gameSno,
-      kindCode: seed.kindCode,
-      year: seed.year,
+      gameSno: String(seed.gameSno),
+      kindCode: String(seed.kindCode),
+      year: String(seed.year),
     };
   }
 
-  const key = `${normalizeDate(seed.strTimestamp)}|${seed['Away Team']}|${seed['Home Team']}`;
-  return OFFICIAL_GAME_META_MAP[key];
+  const key = getSeedOfficialMetaKey(seed);
+  return OFFICIAL_GAME_META_MAP[key] ?? buildComputedOfficialGameMetaMap()[key];
 }
 
 function buildOfficialLiveUrl(seed?: CpblSeedGame, fallbackUrl?: string) {
@@ -284,6 +353,74 @@ function mergeLiveDetails(base: CpblLiveGameDetail, patch: CpblLiveGameDetail): 
   };
 }
 
+function splitScoreboardsByTeam(scoreboards: CpblScoreboardItem[], gameSno?: number) {
+  const filtered = scoreboards.filter((item) => {
+    if (gameSno == null || item.GameSno == null) return true;
+    return Number(item.GameSno) === Number(gameSno);
+  });
+
+  const visiting = filtered
+    .filter((item) => String(item.VisitingHomeType) === '1')
+    .map((item) => ({
+      InningSeq: Number(item.InningSeq ?? 0),
+      ScoreCnt: Number(item.ScoreCnt ?? 0),
+    }));
+
+  const home = filtered
+    .filter((item) => String(item.VisitingHomeType) === '2')
+    .map((item) => ({
+      InningSeq: Number(item.InningSeq ?? 0),
+      ScoreCnt: Number(item.ScoreCnt ?? 0),
+    }));
+
+  const visitingHits = filtered
+    .filter((item) => String(item.VisitingHomeType) === '1')
+    .reduce((sum, item) => sum + Number(item.HittingCnt ?? 0), 0);
+  const homeHits = filtered
+    .filter((item) => String(item.VisitingHomeType) === '2')
+    .reduce((sum, item) => sum + Number(item.HittingCnt ?? 0), 0);
+  const visitingErrors = filtered
+    .filter((item) => String(item.VisitingHomeType) === '1')
+    .reduce((sum, item) => sum + Number(item.ErrorCnt ?? 0), 0);
+  const homeErrors = filtered
+    .filter((item) => String(item.VisitingHomeType) === '2')
+    .reduce((sum, item) => sum + Number(item.ErrorCnt ?? 0), 0);
+
+  return {
+    visiting,
+    home,
+    visitingTeamData: visiting.length
+      ? {
+          HittingCnt: visitingHits,
+          ErrorCnt: visitingErrors,
+        }
+      : undefined,
+    homeTeamData: home.length
+      ? {
+          HittingCnt: homeHits,
+          ErrorCnt: homeErrors,
+        }
+      : undefined,
+  };
+}
+
+function mergeScoreboardJsonIntoDetail(
+  detail: CpblLiveGameDetail,
+  scoreboards: CpblScoreboardItem[]
+): CpblLiveGameDetail {
+  const split = splitScoreboardsByTeam(scoreboards, detail.GameSno);
+
+  return {
+    ...detail,
+    VisitingScoreboards: detail.VisitingScoreboards?.length
+      ? detail.VisitingScoreboards
+      : split.visiting,
+    HomeScoreboards: detail.HomeScoreboards?.length ? detail.HomeScoreboards : split.home,
+    VisitingTeamData: detail.VisitingTeamData || split.visitingTeamData,
+    HomeTeamData: detail.HomeTeamData || split.homeTeamData,
+  };
+}
+
 function isOfficialPostponed(game: CpblLiveGameDetail) {
   const label = String(game.GameStatusChi || '');
   return label.includes('延賽') || label.includes('取消比賽') || game.GameStatus === 6;
@@ -303,13 +440,57 @@ function normalizeOfficialStatusText(game: CpblLiveGameDetail) {
   return getStatusText(normalizeOfficialGameStatus(game));
 }
 
-function scoreboardsToInnings(scoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }>) {
+function normalizeInningScoreValue(value: unknown) {
+  const text = String(value ?? '').trim();
+  if (!text || text === '-' || text.toLowerCase() === 'null' || text.toLowerCase() === 'undefined') {
+    return '';
+  }
+  return text;
+}
+
+function scoreboardsToInnings(scoreboards?: Array<{ InningSeq?: number; ScoreCnt?: number }> | null) {
   if (!Array.isArray(scoreboards)) return [];
 
   return scoreboards
     .slice()
     .sort((a, b) => Number(a.InningSeq ?? 0) - Number(b.InningSeq ?? 0))
-    .map((item) => String(item.ScoreCnt ?? 0));
+    .map((item) => normalizeInningScoreValue(item.ScoreCnt));
+}
+
+function scoreLineToInnings(value: unknown) {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (item && typeof item === 'object' && 'ScoreCnt' in item) {
+          return normalizeInningScoreValue((item as any).ScoreCnt);
+        }
+        return normalizeInningScoreValue(item);
+      })
+      .filter(Boolean);
+  }
+
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([key]) => /inning|seq|score|cnt|\d+/i.test(key))
+      .sort(([a], [b]) => Number(a.replace(/\D/g, '')) - Number(b.replace(/\D/g, '')));
+
+    return entries.map(([, score]) => normalizeInningScoreValue(score)).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    return value
+      .split(/[|,\s]+/)
+      .map(normalizeInningScoreValue)
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function getOfficialInningLine(scoreboards: CpblLiveGameDetail['VisitingScoreboards'], scoreLine: unknown) {
+  const fromScoreboards = scoreboardsToInnings(scoreboards);
+  if (fromScoreboards.length > 0) return fromScoreboards;
+  return scoreLineToInnings(scoreLine);
 }
 
 function getOfficialHits(teamData?: { HittingCnt?: number }) {
@@ -326,8 +507,8 @@ function applyOfficialLiveDetail(game: CpblEventsCenterGame, detail: CpblLiveGam
   const status = normalizeOfficialGameStatus(detail);
   const awayScore = toNumber(String(detail.VisitingTotalScore ?? game.awayScore));
   const homeScore = toNumber(String(detail.HomeTotalScore ?? game.homeScore));
-  const awayInnings = scoreboardsToInnings(detail.VisitingScoreboards);
-  const homeInnings = scoreboardsToInnings(detail.HomeScoreboards);
+  const awayInnings = getOfficialInningLine(detail.VisitingScoreboards, detail.VisitingScore);
+  const homeInnings = getOfficialInningLine(detail.HomeScoreboards, detail.HomeScore);
   const maxInnings = Math.max(awayInnings.length, homeInnings.length);
 
   return {
@@ -415,6 +596,7 @@ async function fetchOfficialLiveDetails(seed: CpblSeedGame): Promise<Map<string,
 
   const payload = await res.json();
   const details = JSON.parse(payload.GameDetailJson || '[]') as CpblLiveGameDetail[];
+  const scoreboards = JSON.parse(payload.ScoreboardJson || '[]') as CpblScoreboardItem[];
   const current = payload.CurtGameDetailJson
     ? (JSON.parse(payload.CurtGameDetailJson) as CpblLiveGameDetail)
     : null;
@@ -423,18 +605,26 @@ async function fetchOfficialLiveDetails(seed: CpblSeedGame): Promise<Map<string,
   const gameSnoMap = new Map<number, CpblLiveGameDetail>();
 
   for (const detail of details) {
-    const key = makeLiveDetailKeyFromDetail(detail);
-    map.set(key, detail);
+    const enhancedDetail = mergeScoreboardJsonIntoDetail(detail, scoreboards);
+    const key = makeLiveDetailKeyFromDetail(enhancedDetail);
+    map.set(key, enhancedDetail);
 
-    if (detail.GameSno != null) {
-      gameSnoMap.set(Number(detail.GameSno), detail);
+    if (enhancedDetail.GameSno != null) {
+      gameSnoMap.set(Number(enhancedDetail.GameSno), enhancedDetail);
     }
   }
 
   if (current) {
     const currentGameSno = Number(current.GameSno ?? meta.gameSno);
+    const enhancedCurrent = mergeScoreboardJsonIntoDetail(
+      {
+        ...current,
+        GameSno: currentGameSno,
+      },
+      scoreboards
+    );
     const base = gameSnoMap.get(currentGameSno);
-    const merged = base ? mergeLiveDetails(base, current) : current;
+    const merged = base ? mergeLiveDetails(base, enhancedCurrent) : enhancedCurrent;
     const key =
       makeLiveDetailKeyFromDetail(merged) ||
       makeLiveDetailKey(seed.strTimestamp || '', seed['Away Team'], seed['Home Team']);
@@ -668,12 +858,24 @@ export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEv
   const sameDaySeedGames = seedGames.filter((game) => normalizeDate(game.strTimestamp) === targetDate);
   const games = sameDaySeedGames.map(convertSeedGame);
   const officialLiveDetails = new Map<string, CpblLiveGameDetail>();
+  const officialLiveDetailsByGameSno = new Map<string, CpblLiveGameDetail>();
 
   for (const seed of sameDaySeedGames) {
     try {
       const details = await fetchOfficialLiveDetails(seed);
       for (const [key, value] of details) {
-        officialLiveDetails.set(key, value);
+        const existing = officialLiveDetails.get(key);
+        const mergedValue = existing ? mergeLiveDetails(existing, value) : value;
+        officialLiveDetails.set(key, mergedValue);
+
+        if (mergedValue.GameSno != null) {
+          const gameSnoKey = String(Number(mergedValue.GameSno));
+          const existingByGameSno = officialLiveDetailsByGameSno.get(gameSnoKey);
+          officialLiveDetailsByGameSno.set(
+            gameSnoKey,
+            existingByGameSno ? mergeLiveDetails(existingByGameSno, mergedValue) : mergedValue
+          );
+        }
       }
     } catch (error) {
       console.warn('[CPBL] getlive fetch failed', error);
@@ -685,9 +887,11 @@ export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEv
       const seed = sameDaySeedGames[index];
       const officialMeta = getOfficialGameMeta(seed);
       const officialLiveUrl = buildOfficialLiveUrl(seed, g.officialLiveUrl);
-      const liveDetail = officialLiveDetails.get(
-        makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team'])
-      );
+      const liveDetail =
+        (officialMeta?.gameSno
+          ? officialLiveDetailsByGameSno.get(String(Number(officialMeta.gameSno)))
+          : undefined) ||
+        officialLiveDetails.get(makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team']));
       const manualLiveLineScore = getManualLiveLineScoreForGame(seed, g);
 
       if (liveDetail) {

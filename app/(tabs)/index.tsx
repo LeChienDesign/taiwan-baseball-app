@@ -57,6 +57,8 @@ type ScoreboardGame = {
   };
   footerLeft?: string;
   footerRight?: string;
+  gameDate?: string;
+  date?: string;
 };
 
 type LeagueKey = 'CPBL' | 'MLB' | 'NPB' | 'KBO';
@@ -95,6 +97,11 @@ function getPreviousDateKey(dateKey: string) {
   return toDateKey(date);
 }
 
+function getGameDateKey(game: any) {
+  const value = game?.gameDate || game?.date || game?.startDate || game?.startTime || '';
+  return String(value).slice(0, 10);
+}
+
 function getMlbDateKeyForTaipei(todayKey: string) {
   const taipeiHour = new Date().getHours();
 
@@ -114,6 +121,90 @@ function mergeGamesById(games: ScoreboardGame[]) {
 
 function getLiveGamesOnly(games: ScoreboardGame[]) {
   return games.filter((game) => game.status === 'LIVE');
+}
+
+function normalizeHomeGameStatus(game: any, todayKeyForLeague: string): ScoreboardGame['status'] {
+  const raw = String(game?.status ?? game?.statusText ?? game?.footerLeft ?? '').toUpperCase();
+  const footerRaw = `${game?.footerLeft ?? ''} ${game?.footerRight ?? ''}`;
+  const footer = footerRaw.toUpperCase();
+  const gameDate = getGameDateKey(game);
+  const isPastGameDate = Boolean(gameDate && gameDate < todayKeyForLeague);
+  const isPostponed = raw.includes('POSTPONED') || raw.includes('延賽') || footer.includes('延賽');
+  const hasScore = Number(game?.awayScore ?? 0) > 0 || Number(game?.homeScore ?? 0) > 0;
+  const hasLineScore =
+    Array.isArray(game?.awayLine?.innings) &&
+    Array.isArray(game?.homeLine?.innings) &&
+    (game.awayLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-') ||
+      game.homeLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-'));
+  const explicitFinal =
+    raw === 'FINAL' ||
+    raw.includes('FINAL') ||
+    raw.includes('GAME_OVER') ||
+    raw.includes('GAME OVER') ||
+    raw.includes('COMPLETED') ||
+    raw.includes('CLOSED') ||
+    raw.includes('結束') ||
+    raw.includes('比賽結束') ||
+    raw.includes('試合終了') ||
+    raw.includes('終了') ||
+    raw.includes('已完賽') ||
+    footer.includes('FINAL') ||
+    footer.includes('GAME_OVER') ||
+    footer.includes('GAME OVER') ||
+    footer.includes('比賽結束') ||
+    footer.includes('試合終了') ||
+    footer.includes('終了');
+  const explicitLive =
+    raw === 'LIVE' ||
+    raw.includes('LIVE') ||
+    raw.includes('比賽中') ||
+    raw.includes('比賽進行中') ||
+    raw.includes('IN PROGRESS') ||
+    raw.includes('IN_PROGRESS') ||
+    raw.includes('PROGRESS') ||
+    raw.includes('PLAYING') ||
+    raw.includes('경기중') ||
+    footer.includes('LIVE') ||
+    footer.includes('比賽中') ||
+    footer.includes('경기중');
+  const inningLikeLive =
+    footer.includes('局') ||
+    footer.includes('回') ||
+    footer.includes('회') ||
+    /\b(?:TOP|BOT|BOTTOM)\s*\d+/i.test(footerRaw) ||
+    /\d+\s*(?:ST|ND|RD|TH)/i.test(footerRaw);
+
+  if (explicitFinal) {
+    return 'FINAL';
+  }
+
+  if (explicitLive) {
+    return 'LIVE';
+  }
+
+  // Home is grouped by Taiwan date. After Taiwan 23:59, prior-date games should leave home
+  // unless they are explicitly marked LIVE by the provider. This also prevents finals like
+  // "11局 延長賽" from being treated as live just because the footer contains "局".
+  if (isPastGameDate && !isPostponed) {
+    return 'FINAL';
+  }
+
+  if (inningLikeLive && !isPastGameDate) {
+    return 'LIVE';
+  }
+
+  if (!isPastGameDate && !isPostponed && (hasScore || hasLineScore)) {
+    return 'LIVE';
+  }
+
+  return 'SCHEDULED';
+}
+
+function normalizeHomeGames(games: ScoreboardGame[], todayKeyForLeague: string) {
+  return games.map((game: any) => ({
+    ...game,
+    status: normalizeHomeGameStatus(game, todayKeyForLeague),
+  })) as ScoreboardGame[];
 }
 
 function getLeagueOrder(league: LeagueKey) {
@@ -153,11 +244,14 @@ function getLiveInningValue(game: ScoreboardGame) {
 
 function sortLiveGames(items: FeaturedItem[]) {
   return [...items].sort((a, b) => {
+    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
+    if (leagueDiff !== 0) return leagueDiff;
+
     const inningDiff = getLiveInningValue(b.game) - getLiveInningValue(a.game);
     if (inningDiff !== 0) return inningDiff;
 
-    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
-    if (leagueDiff !== 0) return leagueDiff;
+    const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
+    if (timeDiff !== 0) return timeDiff;
 
     return String(a.game.id).localeCompare(String(b.game.id));
   });
@@ -183,11 +277,11 @@ function sortFeatured(items: FeaturedItem[]) {
     const statusDiff = getStatusOrder(a.game.status) - getStatusOrder(b.game.status);
     if (statusDiff !== 0) return statusDiff;
 
-    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
-    if (leagueDiff !== 0) return leagueDiff;
-
     const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
     if (timeDiff !== 0) return timeDiff;
+
+    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
+    if (leagueDiff !== 0) return leagueDiff;
 
     return String(a.game.id).localeCompare(String(b.game.id));
   });
@@ -249,24 +343,31 @@ export default function HomePage() {
         fetchKboGamesByDate(todayKey).catch(() => []),
       ]);
 
-      const mlbExtraTaipeiGames = getLiveGamesOnly(mlbGamesByTaipeiDate as ScoreboardGame[]);
+      const mlbExtraTaipeiGames = getLiveGamesOnly(
+        normalizeHomeGames(mlbGamesByTaipeiDate as ScoreboardGame[], todayKey)
+      );
       const mlbGames = mergeGamesById([
         ...(mlbGamesByMlbDate as ScoreboardGame[]),
         ...mlbExtraTaipeiGames,
       ]);
 
+      const normalizedCpblGames = normalizeHomeGames(cpblGames as ScoreboardGame[], todayKey);
+      const normalizedMlbGames = normalizeHomeGames(mlbGames as ScoreboardGame[], todayKey);
+      const normalizedNpbGames = normalizeHomeGames(npbGames as ScoreboardGame[], todayKey);
+      const normalizedKboGames = normalizeHomeGames(kboGames as ScoreboardGame[], todayKey);
+
       setLeagueStats({
-        CPBL: buildLeagueStat(cpblGames as ScoreboardGame[]),
-        MLB: buildLeagueStat(mlbGames as ScoreboardGame[]),
-        NPB: buildLeagueStat(npbGames as ScoreboardGame[]),
-        KBO: buildLeagueStat(kboGames as ScoreboardGame[]),
+        CPBL: buildLeagueStat(normalizedCpblGames),
+        MLB: buildLeagueStat(normalizedMlbGames),
+        NPB: buildLeagueStat(normalizedNpbGames),
+        KBO: buildLeagueStat(normalizedKboGames),
       });
 
       const merged = [
-        ...buildFeaturedItems('CPBL', cpblGames as ScoreboardGame[]),
-        ...buildFeaturedItems('MLB', mlbGames as ScoreboardGame[]),
-        ...buildFeaturedItems('NPB', npbGames as ScoreboardGame[]),
-        ...buildFeaturedItems('KBO', kboGames as ScoreboardGame[]),
+        ...buildFeaturedItems('CPBL', normalizedCpblGames),
+        ...buildFeaturedItems('MLB', normalizedMlbGames),
+        ...buildFeaturedItems('NPB', normalizedNpbGames),
+        ...buildFeaturedItems('KBO', normalizedKboGames),
       ];
 
       setFeaturedGames(sortFeatured(merged));
