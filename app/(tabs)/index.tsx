@@ -112,6 +112,10 @@ function mergeGamesById(games: ScoreboardGame[]) {
   return Array.from(map.values());
 }
 
+function getLiveGamesOnly(games: ScoreboardGame[]) {
+  return games.filter((game) => game.status === 'LIVE');
+}
+
 function getLeagueOrder(league: LeagueKey) {
   const order: Record<LeagueKey, number> = {
     CPBL: 1,
@@ -245,9 +249,10 @@ export default function HomePage() {
         fetchKboGamesByDate(todayKey).catch(() => []),
       ]);
 
+      const mlbExtraTaipeiGames = getLiveGamesOnly(mlbGamesByTaipeiDate as ScoreboardGame[]);
       const mlbGames = mergeGamesById([
         ...(mlbGamesByMlbDate as ScoreboardGame[]),
-        ...(mlbGamesByTaipeiDate as ScoreboardGame[]),
+        ...mlbExtraTaipeiGames,
       ]);
 
       setLeagueStats({

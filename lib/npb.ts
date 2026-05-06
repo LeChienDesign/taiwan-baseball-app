@@ -65,6 +65,45 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
+function isClockText(value: any) {
+  return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
+}
+
+function convertJapanTimeToTaiwanTime(value: any) {
+  const text = String(value ?? '').trim();
+
+  if (!isClockText(text)) {
+    return value;
+  }
+
+  const [hourText, minuteText] = text.split(':');
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return value;
+  }
+
+  const taiwanHour = (hour + 23) % 24;
+  return `${String(taiwanHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function normalizeNpbTaiwanDisplayTime(game: any) {
+  const status = String(game?.status ?? '').toUpperCase();
+  const shouldConvertTime = status === 'SCHEDULED' || status === 'PRE' || status === 'PREGAME' || status === '';
+
+  if (!shouldConvertTime) {
+    return game;
+  }
+
+  return {
+    ...game,
+    gameTime: isClockText(game?.gameTime) ? convertJapanTimeToTaiwanTime(game.gameTime) : game?.gameTime,
+    displayTime: isClockText(game?.displayTime) ? convertJapanTimeToTaiwanTime(game.displayTime) : game?.displayTime,
+    footerRight: isClockText(game?.footerRight) ? convertJapanTimeToTaiwanTime(game.footerRight) : game?.footerRight,
+  };
+}
+
 function getSnapshotGamesByDate(date: string) {
   const snapshot = npbLiveSnapshot as any;
   const gamesByDate = snapshot?.gamesByDate;
@@ -85,11 +124,12 @@ export async function fetchNpbGamesByDate(date: string) {
 
   const liveGames = getSnapshotGamesByDate(date)
     .filter((game: any) => isUsableNpbLiveGame(game))
-    .map((game: any) => attachFallbackLogos(game, logoMap));
+    .map((game: any) => attachFallbackLogos(game, logoMap))
+    .map(normalizeNpbTaiwanDisplayTime);
 
   if (liveGames.length > 0) {
     return liveGames;
   }
 
-  return fallbackGames;
+  return fallbackGames.map(normalizeNpbTaiwanDisplayTime);
 }

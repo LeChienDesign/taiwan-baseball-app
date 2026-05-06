@@ -131,6 +131,42 @@ function stripFullWidthSpaces(value: string) {
   return value.replace(/　/g, ' ').trim();
 }
 
+function isClockText(value: any) {
+  return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
+}
+
+function convertJapanTimeToTaiwanTime(value: any) {
+  const text = String(value ?? '').trim();
+
+  if (!isClockText(text)) {
+    return value;
+  }
+
+  const [hourText, minuteText] = text.split(':');
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return value;
+  }
+
+  const taiwanHour = (hour + 23) % 24;
+  return `${String(taiwanHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function normalizeNpbGameTaiwanDisplayTime(game: NpbScoreboardGame): NpbScoreboardGame {
+  if (game.status !== 'SCHEDULED') {
+    return game;
+  }
+
+  return {
+    ...game,
+    footerRight: isClockText(game.footerRight)
+      ? convertJapanTimeToTaiwanTime(game.footerRight)
+      : game.footerRight,
+  };
+}
+
 function formatDateInTimeZone(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
@@ -330,9 +366,11 @@ function extractHeaderScoreGames(html: string, date: string) {
     const homeScore = scoreMatch ? Number(scoreMatch[2]) : 0;
     const venueMatch = stateText.match(/（([^）]+)）/);
     const inningMatch = stateText.match(/(\d+回[表裏])/);
+    const timeMatch = stateText.match(/\b(\d{1,2}:\d{2})\b/);
     const isFinal = stateText.includes('終了') || stateText.includes('試合終了');
     const isLive = !!scoreMatch && !!inningMatch && !isFinal;
     const status = isFinal ? 'FINAL' : isLive ? 'LIVE' : 'SCHEDULED';
+    const taiwanDisplayTime = convertJapanTimeToTaiwanTime(timeMatch?.[1] ?? '');
     const awayTeam = buildTeamInfo(away);
     const homeTeam = buildTeamInfo(home);
     const innings = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -366,7 +404,10 @@ function extractHeaderScoreGames(html: string, date: string) {
         e: 0,
       },
       footerLeft: status === 'LIVE' ? 'Live' : status === 'FINAL' ? 'Final' : 'Scheduled',
-      footerRight: inningMatch?.[1] ?? (stateText.replace(/（[^）]+）/g, '').trim() || '待更新'),
+      footerRight:
+        status === 'SCHEDULED' && taiwanDisplayTime
+          ? taiwanDisplayTime
+          : inningMatch?.[1] ?? (stateText.replace(/（[^）]+）/g, '').trim() || '待更新'),
       gameDate: date,
       officialUrl: `${NPB_BASE}${href}`,
     });
@@ -377,12 +418,12 @@ function extractHeaderScoreGames(html: string, date: string) {
 
 function buildFallbackScheduledGames(date: string): NpbScoreboardGame[] {
   const teams: Array<[string, string, string]> = [
-    ['Yomiuri', 'Yakult', '14:00'],
-    ['DeNA', 'Hiroshima', '14:00'],
-    ['Chunichi', 'Hanshin', '14:00'],
-    ['Rakuten', 'Nippon-Ham', '14:00'],
-    ['Seibu', 'SoftBank', '14:00'],
-    ['ORIX', 'Lotte', '14:00'],
+    ['Yomiuri', 'Yakult', '13:00'],
+    ['DeNA', 'Hiroshima', '13:00'],
+    ['Chunichi', 'Hanshin', '13:00'],
+    ['Rakuten', 'Nippon-Ham', '13:00'],
+    ['Seibu', 'SoftBank', '13:00'],
+    ['ORIX', 'Lotte', '13:00'],
   ];
 
   return teams.map(([away, home, time], index) => {
@@ -434,7 +475,9 @@ export async function fetchNpbScoreboardByDate(date: string) {
     const games = extractHeaderScoreGames(html, requestedDate);
 
     if (games.length > 0) {
-      const enrichedGames = await Promise.all(games.map(enrichGameWithLineScore));
+      const enrichedGames = (await Promise.all(games.map(enrichGameWithLineScore))).map(
+        normalizeNpbGameTaiwanDisplayTime
+      );
 
       return {
         updatedAt: new Date().toISOString(),
@@ -448,13 +491,14 @@ export async function fetchNpbScoreboardByDate(date: string) {
   }
 
   const fallbackGames = requestedDate === todayTokyo ? buildFallbackScheduledGames(requestedDate) : [];
+  const normalizedFallbackGames = fallbackGames.map(normalizeNpbGameTaiwanDisplayTime);
 
   return {
     updatedAt: new Date().toISOString(),
     date: requestedDate,
-    games: fallbackGames,
+    games: normalizedFallbackGames,
     eventsCenter: {
-      npb: fallbackGames,
+      npb: normalizedFallbackGames,
     },
   };
 }
