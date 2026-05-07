@@ -321,6 +321,11 @@ export default function AbroadPlayerDetailScreen() {
             <View style={styles.heroInfo}>
               <View style={styles.nameRow}>
                 <Text style={styles.playerName}>{player.name}</Text>
+                {player.age ? (
+                  <View style={styles.ageBadge}>
+                    <Text style={styles.ageBadgeText}>{player.age}歲</Text>
+                  </View>
+                ) : null}
                 <View style={styles.statusBadge}>
                   <Text style={styles.statusBadgeText}>{player.status ?? '待命'}</Text>
                 </View>
@@ -333,7 +338,6 @@ export default function AbroadPlayerDetailScreen() {
             </View>
           </View>
 
-          <Text style={styles.introText}>{player.intro ?? '尚無球員介紹。'}</Text>
 
           <View style={styles.heroActions}>
             <TouchableOpacity
@@ -362,55 +366,6 @@ export default function AbroadPlayerDetailScreen() {
           </View>
         </View>
 
-        <View style={styles.navRow}>
-          <TouchableOpacity
-            style={[styles.navCard, !prevPlayer && styles.navCardDisabled]}
-            activeOpacity={0.88}
-            disabled={!prevPlayer}
-            onPress={() => prevPlayer && router.replace(`/abroad/${prevPlayer.id}`)}
-          >
-            <Text style={styles.navLabel}>上一位球員</Text>
-            <Text style={styles.navName}>{prevPlayer?.name ?? '已經是第一位'}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.navCard, !nextPlayer && styles.navCardDisabled]}
-            activeOpacity={0.88}
-            disabled={!nextPlayer}
-            onPress={() => nextPlayer && router.replace(`/abroad/${nextPlayer.id}`)}
-          >
-            <Text style={styles.navLabel}>下一位球員</Text>
-            <Text style={styles.navName}>{nextPlayer?.name ?? '已經是最後一位'}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Section title="重點追蹤">
-          <View style={styles.gridRow}>
-            <MiniCard
-              title="角色焦點"
-              value={player.line1 ?? '待更新'}
-              subValue={player.line2 ?? '—'}
-              accent
-            />
-            <MiniCard
-              title="官方隊別"
-              value={player.team ?? '—'}
-              subValue={player.teamMeta?.code ?? player.teamMeta?.abbreviation ?? '—'}
-            />
-            <MiniCard
-              title="下場同步"
-              value={player.nextGame?.status ?? player.status ?? '待更新'}
-              subValue={player.nextGame?.date ?? '—'}
-            />
-          </View>
-
-          {player.recentNote ? (
-            <View style={styles.noteBox}>
-              <Text style={styles.noteTitle}>{player.name}專屬觀察</Text>
-              <Text style={styles.noteText}>{player.recentNote}</Text>
-            </View>
-          ) : null}
-        </Section>
 
         <Section
           title="近期觀察"
@@ -432,27 +387,10 @@ export default function AbroadPlayerDetailScreen() {
               </Text>
             ) : null}
 
-            <Text style={styles.infoText}>
-              {player.recentNote ??
-                '目前以官方球員頁、近期賽程與新聞作為同步基準，後續可再補近 5 場與角色變動。'}
-            </Text>
           </View>
         </Section>
 
-        <Section title="總覽">
-          <View style={styles.tableCard}>
-            <TableRow label="目前狀態" value={player.status ?? '待命'} />
-            <TableRow label="所屬球隊" value={`${player.team ?? '—'} / ${player.level ?? '—'}`} />
-            <TableRow
-              label="官方縮寫"
-              value={player.teamMeta?.code ?? player.teamMeta?.abbreviation ?? '—'}
-            />
-            <TableRow label="守備 / 角色" value={player.position ?? '—'} />
-            <TableRow label="投打習慣" value={formatHandLine(player)} />
-            <TableRow label="年齡" value={player.age ? `${player.age} 歲` : '—'} />
-            <TableRow label="個人摘要" value={player.intro ?? '—'} multiline />
-          </View>
-        </Section>
+
 
         <Section title="比賽紀錄整理" rightText={recentGames.length ? '近期追蹤' : undefined}>
           {recentGames.length > 0 ? (
@@ -511,6 +449,56 @@ export default function AbroadPlayerDetailScreen() {
             </View>
           )}
         </Section>
+
+        <View style={styles.navRow}>
+          <TouchableOpacity
+            style={[styles.navCard, !prevPlayer && styles.navCardDisabled]}
+            activeOpacity={0.88}
+            disabled={!prevPlayer}
+            onPress={() => prevPlayer && router.replace(`/abroad/${prevPlayer.id}`)}
+          >
+            <Text style={styles.navLabel}>上一位球員</Text>
+            <Text style={styles.navName}>{prevPlayer?.name ?? '已經是第一位'}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.navCard, !nextPlayer && styles.navCardDisabled]}
+            activeOpacity={0.88}
+            disabled={!nextPlayer}
+            onPress={() => nextPlayer && router.replace(`/abroad/${nextPlayer.id}`)}
+          >
+            <Text style={styles.navLabel}>下一位球員</Text>
+            <Text style={styles.navName}>{nextPlayer?.name ?? '已經是最後一位'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Section title="重點追蹤">
+          <View style={styles.gridRow}>
+            <MiniCard
+              title="角色焦點"
+              value={player.line1 ?? '待更新'}
+              subValue={player.line2 ?? '—'}
+              accent
+            />
+            <MiniCard
+              title="官方隊別"
+              value={player.team ?? '—'}
+              subValue={player.teamMeta?.code ?? player.teamMeta?.abbreviation ?? '—'}
+            />
+            <MiniCard
+              title="下場同步"
+              value={player.nextGame?.status ?? player.status ?? '待更新'}
+              subValue={player.nextGame?.date ?? '—'}
+            />
+          </View>
+
+          {player.recentNote ? (
+            <View style={styles.noteBox}>
+              <Text style={styles.noteTitle}>{player.name}專屬觀察</Text>
+              <Text style={styles.noteText}>{player.recentNote}</Text>
+            </View>
+          ) : null}
+        </Section>
       </ScrollView>
     </SafeAreaView>
   );
@@ -562,22 +550,6 @@ function MiniCard({
   );
 }
 
-function TableRow({
-  label,
-  value,
-  multiline,
-}: {
-  label: string;
-  value: string;
-  multiline?: boolean;
-}) {
-  return (
-    <View style={[styles.tableRow, multiline && styles.tableRowMulti]}>
-      <Text style={styles.tableLabel}>{label}</Text>
-      <Text style={[styles.tableValue, multiline && styles.tableValueMulti]}>{value}</Text>
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -685,6 +657,20 @@ const styles = StyleSheet.create({
   },
   statusBadgeText: {
     color: '#ffe59a',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  ageBadge: {
+    marginLeft: 10,
+    borderRadius: 999,
+    backgroundColor: '#12294a',
+    borderWidth: 1,
+    borderColor: '#2457a7',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  ageBadgeText: {
+    color: '#bfdbfe',
     fontSize: 12,
     fontWeight: '900',
   },
@@ -863,41 +849,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 
-  tableCard: {
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#1c2d47',
-    backgroundColor: '#101a29',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#18263a',
-    paddingVertical: 14,
-  },
-  tableRowMulti: {
-    alignItems: 'flex-start',
-  },
-  tableLabel: {
-    width: 110,
-    color: '#8fa5c3',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  tableValue: {
-    flex: 1,
-    color: '#f5f9ff',
-    fontSize: 14,
-    fontWeight: '800',
-    textAlign: 'right',
-  },
-  tableValueMulti: {
-    textAlign: 'left',
-    lineHeight: 26,
-  },
 
   gameCard: {
     borderRadius: 20,

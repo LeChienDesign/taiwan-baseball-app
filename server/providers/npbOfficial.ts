@@ -456,59 +456,8 @@ function extractHeaderScoreGames(html: string, date: string) {
   return games.slice(0, 6);
 }
 
-function buildFallbackScheduledGames(date: string): NpbScoreboardGame[] {
-  const teams: Array<[string, string, string]> = [
-    ['Yomiuri', 'Yakult', '14:00'],
-    ['DeNA', 'Hiroshima', '14:00'],
-    ['Chunichi', 'Hanshin', '14:00'],
-    ['Rakuten', 'Nippon-Ham', '14:00'],
-    ['Seibu', 'SoftBank', '14:00'],
-    ['ORIX', 'Lotte', '14:00'],
-  ];
-
-  return teams.map(([away, home, time], index) => {
-    const awayTeam = buildTeamInfo(away);
-    const homeTeam = buildTeamInfo(home);
-
-    return {
-      id: `npb-${date}-fallback-${index + 1}`,
-      source: 'npb-official',
-      league: 'NPB',
-      date,
-      gamePk: index + 1,
-      status: 'SCHEDULED',
-      statusText: 'Scheduled',
-      venue: '待更新',
-      awayTeam,
-      homeTeam,
-      awayScore: 0,
-      homeScore: 0,
-      innings: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      awayLine: {
-        team: awayTeam.short,
-        innings: Array.from({ length: 9 }, () => '-'),
-        r: 0,
-        h: 0,
-        e: 0,
-      },
-      homeLine: {
-        team: homeTeam.short,
-        innings: Array.from({ length: 9 }, () => '-'),
-        r: 0,
-        h: 0,
-        e: 0,
-      },
-      footerLeft: 'Scheduled',
-      footerRight: time,
-      gameDate: date,
-      officialUrl: NPB_BASE,
-    };
-  });
-}
-
 export async function fetchNpbScoreboardByDate(date: string) {
   const requestedDate = toDateOnly(date);
-  const todayTokyo = formatDateInTimeZone(new Date(), 'Asia/Tokyo');
 
   const gamesFromHome = await fetchGamesFromHtmlUrl(NPB_BASE, requestedDate);
   const games =
@@ -531,15 +480,12 @@ export async function fetchNpbScoreboardByDate(date: string) {
     };
   }
 
-  const fallbackGames = requestedDate === todayTokyo ? buildFallbackScheduledGames(requestedDate) : [];
-  const normalizedFallbackGames = fallbackGames.map(normalizeNpbGameTaiwanDisplayTime);
-
   return {
     updatedAt: new Date().toISOString(),
     date: requestedDate,
-    games: normalizedFallbackGames,
+    games: [],
     eventsCenter: {
-      npb: normalizedFallbackGames,
+      npb: [],
     },
   };
 }

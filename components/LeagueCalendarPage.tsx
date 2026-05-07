@@ -16,7 +16,7 @@ type LeagueCalendarPageProps = {
   leagueTitle: string;
   leagueSubtitle: string;
   backHref: string;
-  fetchGamesByDate: (date: string) => Promise<any[]>;
+  fetchGamesByDate: (date: string, options?: { localOnly?: boolean }) => Promise<any[]>;
   initialDate?: string;
 };
 type CalendarCell = {
@@ -32,6 +32,7 @@ type DayMeta = {
 };
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
+
 
 function daysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
@@ -213,7 +214,7 @@ export default function LeagueCalendarPage({
             const dateKey = makeDateKey(year, month, day);
 
             try {
-              const games = await fetchGamesByDate(dateKey);
+              const games = await fetchGamesByDate(dateKey, { localOnly: true });
 
               const meta: DayMeta = {
                 count: games.length,

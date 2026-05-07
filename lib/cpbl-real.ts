@@ -442,7 +442,10 @@ function rowToScoreboardGame(row: CpblRow, recordMap: TeamRecordMap): Scoreboard
   };
 }
 
-export async function fetchCpblMajorGamesByDate(date: string): Promise<ScoreboardGame[]> {
+export async function fetchCpblMajorGamesByDate(
+  date: string,
+  _options?: { localOnly?: boolean }
+): Promise<ScoreboardGame[]> {
   const localGames = getLocalGamesByDate(date);
 
   if (localGames) {
@@ -456,6 +459,9 @@ export async function fetchCpblMajorGamesByDate(date: string): Promise<Scoreboar
   return sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
 }
 
-export async function fetchCpblMinorGamesByDate(_date: string): Promise<ScoreboardGame[]> {
+export async function fetchCpblMinorGamesByDate(
+  _date: string,
+  _options?: { localOnly?: boolean }
+): Promise<ScoreboardGame[]> {
   return [];
 }

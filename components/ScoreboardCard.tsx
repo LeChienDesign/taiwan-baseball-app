@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
 
 type TeamInfo = {
@@ -34,6 +34,12 @@ function getTeamShort(team: TeamInfo) {
   if (team.short && team.short.trim()) return team.short;
   if (team.name && team.name.trim()) return team.name.slice(0, 3).toUpperCase();
   return 'TEAM';
+}
+
+function getImageSource(logo: any) {
+  if (!logo) return null;
+  if (typeof logo === 'string') return { uri: logo };
+  return logo;
 }
 
 function normalizeInnings(source: unknown): (number | string)[] {
@@ -78,8 +84,18 @@ function hasLineScoreData(awayInnings: (number | string)[], homeInnings: (number
 }
 
 function TeamLogo({ team }: { team: TeamInfo }) {
-  if (team.logo) {
-    return <Image source={team.logo} style={styles.teamLogo} resizeMode="contain" />;
+  const [hasImageError, setHasImageError] = useState(false);
+  const imageSource = hasImageError ? null : getImageSource(team.logo);
+
+  if (imageSource) {
+    return (
+      <Image
+        source={imageSource}
+        style={styles.teamLogo}
+        resizeMode="contain"
+        onError={() => setHasImageError(true)}
+      />
+    );
   }
 
   return (

@@ -343,6 +343,13 @@ function inferPlayerType(
   return 'pitcher';
 }
 
+function deriveLeagueLevel(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+  if (player.level) return player.level;
+  if (registry.league === 'MLB') return 'MLB / 40-man';
+  if (registry.league === 'MiLB') return 'MiLB';
+  return player.league ?? registry.league;
+}
+
 function parsePitcherGameLogs(gameLogResponse: any) {
   const group = getSplitGroup(gameLogResponse, 'pitching', 'gameLog');
   const splits = Array.isArray(group?.splits) ? group.splits : [];
@@ -358,8 +365,8 @@ function parsePitcherGameLogs(gameLogResponse: any) {
         date: toDisplayDate(split?.date),
         opponent: split?.opponent?.name ?? '—',
         result: Number(stat?.gamesStarted ?? 0) > 0 ? '先發' : '登板',
-        detail1: `${stat?.inningsPitched ?? '—'}局 / ${stat?.earnedRuns ?? 0}ER / ${stat?.strikeOuts ?? 0}K / ${stat?.baseOnBalls ?? 0}BB`,
-        detail2: `H ${stat?.hits ?? 0} / 用球 ${stat?.numberOfPitches ?? stat?.pitchesThrown ?? '—'}`,
+        detail1: `${stat?.inningsPitched ?? '—'}局 / 責失${stat?.earnedRuns ?? 0} / 三振${stat?.strikeOuts ?? 0} / 保送${stat?.baseOnBalls ?? 0}`,
+        detail2: `被安打${stat?.hits ?? 0} / 用球數${stat?.numberOfPitches ?? stat?.pitchesThrown ?? '—'}`,
       };
     });
 }
@@ -379,10 +386,34 @@ function parseHitterGameLogs(gameLogResponse: any) {
         date: toDisplayDate(split?.date),
         opponent: split?.opponent?.name ?? '—',
         result: Number(stat?.gamesPlayed ?? 0) > 0 ? '出賽' : '待命',
-        detail1: `${stat?.atBats ?? 0}AB / ${stat?.hits ?? 0}H / ${stat?.rbi ?? 0}RBI`,
-        detail2: `HR ${stat?.homeRuns ?? 0} / BB ${stat?.baseOnBalls ?? 0} / SO ${stat?.strikeOuts ?? 0}`,
+        detail1: `${stat?.atBats ?? 0}打數 / ${stat?.hits ?? 0}安打 / ${stat?.rbi ?? 0}打點`,
+        detail2: `全壘打${stat?.homeRuns ?? 0} / 保送${stat?.baseOnBalls ?? 0} / 三振${stat?.strikeOuts ?? 0}`,
       };
     });
+}
+
+function localizeRecentGameDetails(games?: Array<Record<string, any>>) {
+  if (!Array.isArray(games)) return games;
+
+  return games.map((game) => {
+    const detail1 = String(game.detail1 ?? '');
+    const detail2 = String(game.detail2 ?? '');
+
+    return {
+      ...game,
+      detail1: detail1
+        .replace(/(\d+)AB/g, '$1打數')
+        .replace(/(\d+)H/g, '$1安打')
+        .replace(/(\d+)RBI/g, '$1打點')
+        .replace(/(\d+(?:\.\d+)?)局 \/ (\d+)ER \/ (\d+)K \/ (\d+)BB/g, '$1局 / 責失$2 / 三振$3 / 保送$4'),
+      detail2: detail2
+        .replace(/HR (\d+)/g, '全壘打$1')
+        .replace(/BB (\d+)/g, '保送$1')
+        .replace(/SO (\d+)/g, '三振$1')
+        .replace(/H (\d+)/g, '被安打$1')
+        .replace(/用球 (\d+)/g, '用球數$1'),
+    };
+  });
 }
 
 function parseTransactions(transactionsResponse: any) {
@@ -412,6 +443,15 @@ function deriveStatusFromData(input: {
   transactions?: any[];
 }) {
   const { player, personId, todaySchedule = [], upcomingSchedule = [], transactions = [] } = input;
+
+  const currentStatus = normalizeText(player.status);
+  if (
+    currentStatus.includes('傷') ||
+    currentStatus.includes('injured') ||
+    currentStatus.includes('il')
+  ) {
+    return '傷兵';
+  }
 
   const latestTransactionText = transactions
     .map((tx) =>
@@ -556,6 +596,7 @@ async function buildSingleMlbPatch(
         leagueGroup: registry.league === 'MLB' ? 'MLB' : 'MiLB',
       },
       officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
+      level: deriveLeagueLevel(player, registry),
       news: buildFallbackNews(player, registry, requestedDate),
     };
   }
@@ -597,10 +638,10 @@ async function buildSingleMlbPatch(
     inferredType === 'hitter'
       ? recentHittingGames.length
         ? recentHittingGames
-        : player.recentGames ?? []
+        : localizeRecentGameDetails(player.recentGames) ?? []
       : recentPitchingGames.length
       ? recentPitchingGames
-      : player.recentGames ?? [];
+      : localizeRecentGameDetails(player.recentGames) ?? [];
 
   const allUpcomingGames = [...todaySchedule, ...upcomingSchedule].filter(Boolean);
   const nextGame = buildNextGame(allUpcomingGames, personId);
@@ -623,6 +664,7 @@ async function buildSingleMlbPatch(
   return {
     team: person?.currentTeam?.name ?? registry.officialTeam ?? player.team,
     league: registry.league,
+    level: deriveLeagueLevel(player, registry),
     position: officialPosition,
     bats: person?.batSide?.code ?? player.bats,
     throws: person?.pitchHand?.code ?? player.throws,

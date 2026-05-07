@@ -218,11 +218,13 @@ export const abroadRegistry = {
     id: 'hao-yu-lee',
     name: '李灝宇',
     enName: 'Hao-Yu Lee',
+    league: 'MLB',
     officialTeam: 'Detroit Tigers',
     officialTeamCode: 'DET',
     officialOrgUrl: 'https://www.mlb.com/tigers',
     personId: 701678,
     teamLogoKey: 'tigers',
+    notes: '2026-04-17 recalled by Detroit Tigers from Toledo Mud Hens.',
   }),
 
   'chen-zhong-ao-zhuang': mlbEntry({

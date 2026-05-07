@@ -1,6 +1,5 @@
 import { getMlbTeamLogo } from '../constants/mlbTeamLogos';
 
-
 const MLB_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json';
 
@@ -16,9 +15,9 @@ export type TeamCardInfo = {
 export type LineScoreRow = {
   team: string;
   innings: (number | string)[];
-  r: number;
-  h: number;
-  e: number;
+  r: number | string;
+  h: number | string;
+  e: number | string;
 };
 
 export type ScoreboardGame = {
@@ -40,7 +39,57 @@ export type ScoreboardGame = {
 
 function getDateKey(value?: string) {
   if (!value) return '';
-  return value.slice(0, 10);
+
+  try {
+    return new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Asia/Taipei',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date(value));
+  } catch {
+    return value.slice(0, 10);
+  }
+}
+
+function getTodayKeyTaipei() {
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
+function getSnapshotGames(payload: any): ScoreboardGame[] {
+  const gamesByDate = payload?.gamesByDate;
+
+  if (gamesByDate && typeof gamesByDate === 'object') {
+    return Object.values(gamesByDate)
+      .flatMap((games: any) => (Array.isArray(games) ? games : []))
+      .map(normalizeGame);
+  }
+
+  if (Array.isArray(payload)) {
+    return payload.map(normalizeGame);
+  }
+
+  if (Array.isArray(payload?.games)) {
+    return payload.games.map(normalizeGame);
+  }
+
+  if (Array.isArray(payload?.eventsCenter?.mlb)) {
+    return payload.eventsCenter.mlb.map(normalizeGame);
+  }
+
+  return [];
+}
+
+function getLocalGamesForDate(date: string): ScoreboardGame[] {
+  return getSnapshotGames(localMlbPayload).filter((game) => {
+    const key = getDateKey(game.gameDate);
+    return key === date;
+  });
 }
 
 function normalizeStatus(value?: string): 'SCHEDULED' | 'LIVE' | 'FINAL' {
@@ -51,10 +100,16 @@ function normalizeStatus(value?: string): 'SCHEDULED' | 'LIVE' | 'FINAL' {
 }
 
 function normalizeGame(game: any): ScoreboardGame {
+  const status = normalizeStatus(game.status);
+  const gameTaipeiDate = getDateKey(game.gameDate);
+  const todayTaipei = getTodayKeyTaipei();
+  const safeStatus =
+    status === 'LIVE' && gameTaipeiDate && gameTaipeiDate < todayTaipei ? 'FINAL' : status;
+
   return {
     id: String(game.id ?? `mlb-${game.gamePk}`),
     gamePk: Number(game.gamePk ?? 0),
-    status: normalizeStatus(game.status),
+    status: safeStatus,
     venue: game.venue ?? '待更新',
     awayTeam: {
       name: game.awayTeam?.name ?? 'Away',
@@ -91,64 +146,27 @@ function normalizeGame(game: any): ScoreboardGame {
   };
 }
 
-function getLocalGames(): ScoreboardGame[] {
-  const payload = localMlbPayload as any;
+export async function fetchMlbGamesByDate(
+  date: string,
+  options?: { localOnly?: boolean }
+): Promise<ScoreboardGame[]> {
+  const todayTaipei = getTodayKeyTaipei();
+  if (options?.localOnly) {
+    return getLocalGamesForDate(date);
+  }
+  const shouldFetchRemote = date === todayTaipei;
 
-  if (Array.isArray(payload)) {
-    return payload.map(normalizeGame);
+  if (!shouldFetchRemote) {
+    return getLocalGamesForDate(date);
   }
 
-  if (Array.isArray(payload.games)) {
-    return payload.games.map(normalizeGame);
-  }
-
-  if (Array.isArray(payload.eventsCenter?.mlb)) {
-    return payload.eventsCenter.mlb.map(normalizeGame);
-  }
-
-  return [];
-}
-
-function getLocalGamesByDate(date: string): ScoreboardGame[] | null {
-  const payload = localMlbPayload as any;
-  const gamesByDate = payload?.gamesByDate;
-
-  if (!gamesByDate || typeof gamesByDate !== 'object') {
-    return null;
-  }
-
-  const games = gamesByDate[date];
-
-  if (!Array.isArray(games)) {
-    return [];
-  }
-
-  return games.map(normalizeGame);
-}
-
-export async function fetchMlbGamesByDate(date: string): Promise<ScoreboardGame[]> {
   try {
-    const response = await fetch(
-      `${MLB_REMOTE_EVENTS_URL}?t=${Date.now()}`,
-    );
+    const response = await fetch(`${MLB_REMOTE_EVENTS_URL}?t=${Date.now()}`);
 
     if (response.ok) {
       const remotePayload = await response.json();
-      const gamesByDate = remotePayload?.gamesByDate;
 
-      if (gamesByDate && typeof gamesByDate === 'object') {
-        const remoteGames = gamesByDate[date];
-
-        if (Array.isArray(remoteGames)) {
-          return remoteGames.map(normalizeGame);
-        }
-      }
-
-      const remoteGames = Array.isArray(remotePayload?.games)
-        ? remotePayload.games.map(normalizeGame)
-        : [];
-
-      const filteredRemoteGames = remoteGames.filter((game: ScoreboardGame) => {
+      const filteredRemoteGames = getSnapshotGames(remotePayload).filter((game) => {
         const key = getDateKey(game.gameDate);
         return key === date;
       });
@@ -161,16 +179,5 @@ export async function fetchMlbGamesByDate(date: string): Promise<ScoreboardGame[
     console.warn('Failed to load remote MLB snapshot', error);
   }
 
-  const gamesFromDateMap = getLocalGamesByDate(date);
-
-  if (gamesFromDateMap) {
-    return gamesFromDateMap;
-  }
-
-  const games = getLocalGames();
-
-  return games.filter((game) => {
-    const key = getDateKey(game.gameDate);
-    return key === date;
-  });
+  return getLocalGamesForDate(date);
 }

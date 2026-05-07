@@ -8,6 +8,10 @@ import {
 } from 'react-native';
 import { getTeamLogoSource } from '../constants/teamLogos';
 
+const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
+  黃仲翔: require('../assets/abroad/huang-chung-hsiang.png'),
+};
+
 type Props = {
   name: string;
   team?: string | null;
@@ -57,6 +61,10 @@ export default function AbroadPlayerAvatar({
     });
   }, [logoKey, team, league, level, teamCode]);
 
+  const localPlayerPhoto = useMemo<ImageSourcePropType | null>(() => {
+    return LOCAL_PLAYER_PHOTOS[name] ?? null;
+  }, [name]);
+
   const showRemotePhoto = isRemoteUrl(photoUri) && !remoteFailed;
 
   const radius = borderRadius ?? Math.round(size * 0.24);
@@ -67,6 +75,23 @@ export default function AbroadPlayerAvatar({
         source={{ uri: photoUri! }}
         resizeMode="cover"
         onError={() => setRemoteFailed(true)}
+        style={[
+          styles.avatar,
+          {
+            width: size,
+            height: size,
+            borderRadius: radius,
+          },
+        ]}
+      />
+    );
+  }
+
+  if (localPlayerPhoto) {
+    return (
+      <Image
+        source={localPlayerPhoto}
+        resizeMode="cover"
         style={[
           styles.avatar,
           {

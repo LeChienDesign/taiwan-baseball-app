@@ -5,6 +5,15 @@ const KBO_REMOTE_EVENTS_URL =
 
 const snapshot = require('../server/data/eventsCenter.kbo.json');
 
+function getTodayKeyTaipei() {
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
 function getCanonicalKboTeamName(name: string) {
   const value = String(name ?? '').toLowerCase();
 
@@ -72,9 +81,23 @@ function getSnapshotGamesByDate(snapshotPayload: any, date: string) {
     : [];
 }
 
-export async function fetchKboGamesByDate(date: string) {
+export async function fetchKboGamesByDate(date: string, options?: { localOnly?: boolean }) {
   const fallbackGames = await fallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
+  const todayTaipei = getTodayKeyTaipei();
+  const shouldFetchRemote = date === todayTaipei;
+
+  const localGames = getSnapshotGamesByDate(snapshot, date).map((g: any) =>
+    attachFallbackLogos(g, logoMap),
+  );
+
+  if (options?.localOnly || !shouldFetchRemote) {
+    if (localGames.length > 0) {
+      return localGames;
+    }
+
+    return fallbackGames;
+  }
 
   try {
     const response = await fetch(
@@ -95,10 +118,6 @@ export async function fetchKboGamesByDate(date: string) {
   } catch (error) {
     console.warn('Failed to load remote KBO snapshot', error);
   }
-
-  const localGames = getSnapshotGamesByDate(snapshot, date).map((g: any) =>
-    attachFallbackLogos(g, logoMap),
-  );
 
   if (localGames.length > 0) {
     return localGames;

@@ -106,13 +106,15 @@ function StatusBadge({ status }: { status: PlayerStatus }) {
     今日出賽: { bg: '#0b2a4d', color: '#60a5fa' },
     預告先發: { bg: '#3a2306', color: '#fbbf24' },
     已完賽: { bg: '#0b2f1f', color: '#34d399' },
+    大聯盟出賽: { bg: '#0b2f1f', color: '#86efac' },
     傷兵: { bg: '#3b1111', color: '#f87171' },
     待命: { bg: '#1c2435', color: '#94a3b8' },
   };
+  const badge = map[status] ?? map['待命'];
 
   return (
-    <View style={[styles.badge, { backgroundColor: map[status].bg }]}>
-      <Text style={[styles.badgeText, { color: map[status].color }]}>
+    <View style={[styles.badge, { backgroundColor: badge.bg }]}>
+      <Text style={[styles.badgeText, { color: badge.color }]}>
         {status}
       </Text>
     </View>
