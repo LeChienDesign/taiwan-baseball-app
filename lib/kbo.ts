@@ -76,6 +76,21 @@ function applyKboManualOverrides(games: any[]) {
   return applyGameManualOverrides(games, kboManualSnapshot);
 }
 
+function getSnapshotUpdatedAtMs(snapshotPayload: any) {
+  const timestamp = snapshotPayload?.updatedAt;
+  if (!timestamp) return 0;
+
+  const parsed = Date.parse(String(timestamp));
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function chooseNewerSnapshot(firstSnapshot: any, secondSnapshot: any) {
+  const firstUpdatedAt = getSnapshotUpdatedAtMs(firstSnapshot);
+  const secondUpdatedAt = getSnapshotUpdatedAtMs(secondSnapshot);
+
+  return firstUpdatedAt >= secondUpdatedAt ? firstSnapshot : secondSnapshot;
+}
+
 function getSnapshotGamesByDate(snapshotPayload: any, date: string) {
   const payload = snapshotPayload as any;
   const gamesByDate = payload?.gamesByDate;
@@ -114,7 +129,13 @@ async function getRemoteKboSnapshot() {
   return remoteKboSnapshotCache;
 }
 
-export async function fetchKboGamesByDate(date: string, options?: { localOnly?: boolean }) {
+export async function fetchKboGamesByDate(
+  date: string,
+  options?: {
+    localOnly?: boolean;
+    payload?: any;
+  }
+) {
   const fallbackGames = await fallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
   const todayTaipei = getTodayKeyTaipei();
@@ -132,10 +153,22 @@ export async function fetchKboGamesByDate(date: string, options?: { localOnly?: 
     return applyKboManualOverrides(fallbackGames);
   }
 
+  if (options?.payload) {
+    const preferredSnapshot = chooseNewerSnapshot(options.payload, snapshot);
+    const payloadGames = getSnapshotGamesByDate(preferredSnapshot, date).map(
+      (g: any) => attachFallbackLogos(g, logoMap),
+    );
+
+    if (payloadGames.length > 0) {
+      return applyKboManualOverrides(payloadGames);
+    }
+  }
+
   try {
     const remoteSnapshot = await getRemoteKboSnapshot();
+    const preferredSnapshot = chooseNewerSnapshot(remoteSnapshot, snapshot);
 
-    const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date).map(
+    const remoteGames = getSnapshotGamesByDate(preferredSnapshot, date).map(
       (g: any) => attachFallbackLogos(g, logoMap),
     );
 

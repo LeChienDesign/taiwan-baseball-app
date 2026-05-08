@@ -177,7 +177,7 @@ export default function ScoreboardCard({
           toValue: 1,
           friction: 5,
           tension: 120,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(awayFlash, {
           toValue: 0,
@@ -198,7 +198,7 @@ export default function ScoreboardCard({
           toValue: 1,
           friction: 5,
           tension: 120,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(homeFlash, {
           toValue: 0,
