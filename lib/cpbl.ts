@@ -8,6 +8,7 @@ const CPBL_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.cpbl.json';
 
 const localSnapshot = require('../server/data/eventsCenter.cpbl.json');
+const cpblManualSnapshot = require('../server/data/manual/cpbl.manual.json');
 
 let remoteCpblSnapshotCache: any = null;
 let remoteCpblSnapshotFetchedAt = 0;
@@ -56,6 +57,50 @@ function attachCpblLogos(game: any) {
   };
 }
 
+function buildManualGameKey(game: any) {
+  const gameDate = game.gameDate ?? game.date;
+  const awayName = game.awayTeam?.name ?? game.awayTeam?.short ?? '';
+  const homeName = game.homeTeam?.name ?? game.homeTeam?.short ?? '';
+
+  if (!gameDate || !awayName || !homeName) return undefined;
+
+  return `${gameDate}-${awayName}-${homeName}`;
+}
+
+function getManualGameOverride(game: any) {
+  const manualGames = cpblManualSnapshot?.games ?? {};
+  const manualKey = buildManualGameKey(game);
+
+  return (
+    manualGames[game.id] ??
+    manualGames[game.gamePk] ??
+    (manualKey ? manualGames[manualKey] : undefined)
+  );
+}
+
+function applyCpblManualOverrides(games: any[]) {
+  return games.map((game) => {
+    const override = getManualGameOverride(game);
+
+    if (!override) return game;
+
+    return {
+      ...game,
+      ...override,
+      awayTeam: {
+        ...(game.awayTeam ?? {}),
+        ...(override.awayTeam ?? {}),
+      },
+      homeTeam: {
+        ...(game.homeTeam ?? {}),
+        ...(override.homeTeam ?? {}),
+      },
+      awayLine: override.awayLine ?? game.awayLine,
+      homeLine: override.homeLine ?? game.homeLine,
+    };
+  });
+}
+
 export async function fetchCpblMajorGamesByDate(date: string) {
   try {
     const remoteSnapshot = await getRemoteCpblSnapshot();
@@ -65,7 +110,7 @@ export async function fetchCpblMajorGamesByDate(date: string) {
       .map(attachCpblLogos);
 
     if (remoteGames.length > 0) {
-      return remoteGames;
+      return applyCpblManualOverrides(remoteGames);
     }
   } catch (error) {
     console.warn('Failed to load remote CPBL snapshot', error);
@@ -76,10 +121,11 @@ export async function fetchCpblMajorGamesByDate(date: string) {
     .map(attachCpblLogos);
 
   if (localGames.length > 0) {
-    return localGames;
+    return applyCpblManualOverrides(localGames);
   }
 
-  return fetchCpblMajorFallback(date);
+  const fallbackGames = await fetchCpblMajorFallback(date);
+  return applyCpblManualOverrides(fallbackGames);
 }
 
 export { fetchCpblMinorGamesByDate };
