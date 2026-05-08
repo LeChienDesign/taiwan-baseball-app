@@ -16,12 +16,33 @@ import {
 } from './providers/runAbroadProvider';
 
 const PROVIDERS = [
-  { name: 'mlb', enabled: true },
-  { name: 'npb', enabled: true },
-  { name: 'kbo', enabled: true },
+  {
+    name: 'mlb',
+    enabled: true,
+    retry: 2,
+    timeoutMs: 10000,
+    fallback: true,
+  },
+  {
+    name: 'npb',
+    enabled: true,
+    retry: 1,
+    timeoutMs: 8000,
+    fallback: false,
+  },
+  {
+    name: 'kbo',
+    enabled: true,
+    retry: 1,
+    timeoutMs: 8000,
+    fallback: false,
+  },
 ] as const satisfies ReadonlyArray<{
   name: AbroadProviderName;
   enabled: boolean;
+  retry: number;
+  timeoutMs: number;
+  fallback: boolean;
 }>;
 
 function resolveProjectPath(inputPath: string) {
