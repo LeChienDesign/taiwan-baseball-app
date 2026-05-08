@@ -66,6 +66,48 @@ data/manual/abroadNewsRules.ts
 徐若熙、王彥程、古林睿煬這類官方資料不穩或需人工補的資料，全放 manual。
 ```
 
+目前 manual layer 已改為：
+
+```txt
+server/data/manual/
+  abroadPlayers.manual.json
+  cpbl.manual.json
+  mlb.manual.json
+  npb.manual.json
+  kbo.manual.json
+```
+
+目前資料流：
+
+```txt
+remote/local/fallback
+↓
+manual override
+↓
+UI
+```
+
+共用 merge helper：
+
+```txt
+lib/manual/applyGameManualOverrides.ts
+```
+
+已套用：
+
+```txt
+lib/mlb.ts
+lib/npb.ts
+lib/kbo.ts
+lib/cpbl.ts
+```
+
+詳細 manual JSON 規格文件：
+
+```txt
+docs/MANUAL_DATA_LAYER.md
+```
+
 ## 第三階段：重整 provider / merge
 
 目前重點：
