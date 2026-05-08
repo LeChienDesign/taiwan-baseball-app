@@ -5,6 +5,7 @@ const NPB_REMOTE_EVENTS_URL =
 
 
 const npbLiveSnapshot = require('../server/data/eventsCenter.npb.json');
+const npbManualSnapshot = require('../server/data/manual/npb.manual.json');
 
 let remoteNpbSnapshotCache: any = null;
 let remoteNpbSnapshotFetchedAt = 0;
@@ -278,6 +279,50 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
+function buildManualGameKey(game: any) {
+  const gameDate = game.gameDate ?? game.date;
+  const awayName = game.awayTeam?.name ?? game.awayTeam?.short ?? '';
+  const homeName = game.homeTeam?.name ?? game.homeTeam?.short ?? '';
+
+  if (!gameDate || !awayName || !homeName) return undefined;
+
+  return `${gameDate}-${awayName}-${homeName}`;
+}
+
+function getManualGameOverride(game: any) {
+  const manualGames = npbManualSnapshot?.games ?? {};
+  const manualKey = buildManualGameKey(game);
+
+  return (
+    manualGames[game.id] ??
+    manualGames[game.gamePk] ??
+    (manualKey ? manualGames[manualKey] : undefined)
+  );
+}
+
+function applyNpbManualOverrides(games: any[]) {
+  return games.map((game) => {
+    const override = getManualGameOverride(game);
+
+    if (!override) return game;
+
+    return {
+      ...game,
+      ...override,
+      awayTeam: {
+        ...(game.awayTeam ?? {}),
+        ...(override.awayTeam ?? {}),
+      },
+      homeTeam: {
+        ...(game.homeTeam ?? {}),
+        ...(override.homeTeam ?? {}),
+      },
+      awayLine: override.awayLine ?? game.awayLine,
+      homeLine: override.homeLine ?? game.homeLine,
+    };
+  });
+}
+
 function isClockText(value: any) {
   return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
 }
@@ -363,16 +408,18 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
 
   if (options?.localOnly) {
     if (localGames.length > 0) {
-      return localGames;
+      return applyNpbManualOverrides(localGames);
     }
 
-    return fallbackGames
-      .map((game: any) => attachFallbackLogos(game, logoMap))
-      .map(normalizeNpbTaiwanDisplayTime);
+    return applyNpbManualOverrides(
+      fallbackGames
+        .map((game: any) => attachFallbackLogos(game, logoMap))
+        .map(normalizeNpbTaiwanDisplayTime)
+    );
   }
 
   if (localSnapshotHasDate && localGames.length > 0) {
-    return localGames;
+    return applyNpbManualOverrides(localGames);
   }
 
   if (!shouldFetchRemote) {
@@ -382,16 +429,18 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
     });
 
     if (finishedLocalGames.length > 0) {
-      return finishedLocalGames;
+      return applyNpbManualOverrides(finishedLocalGames);
     }
 
-    return fallbackGames
-      .filter((game: any) => {
-        const status = String(game?.status ?? '').toUpperCase();
-        return status === 'FINAL' || status === 'GAMEOVER';
-      })
-      .map((game: any) => attachFallbackLogos(game, logoMap))
-      .map(normalizeNpbTaiwanDisplayTime);
+    return applyNpbManualOverrides(
+      fallbackGames
+        .filter((game: any) => {
+          const status = String(game?.status ?? '').toUpperCase();
+          return status === 'FINAL' || status === 'GAMEOVER';
+        })
+        .map((game: any) => attachFallbackLogos(game, logoMap))
+        .map(normalizeNpbTaiwanDisplayTime)
+    );
   }
 
   try {
@@ -404,7 +453,7 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
       .map(normalizeNpbTaiwanDisplayTime);
 
     if (remoteSnapshotHasDate) {
-      return remoteGames;
+      return applyNpbManualOverrides(remoteGames);
     }
   } catch (error) {
     console.warn('Failed to load remote NPB snapshot', error);
