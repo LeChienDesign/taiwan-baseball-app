@@ -5,6 +5,10 @@ const MLB_REMOTE_EVENTS_URL =
 
 const localMlbPayload = require('../server/data/eventsCenter.mlb.json');
 
+let remoteMlbPayloadCache: any = null;
+let remoteMlbPayloadFetchedAt = 0;
+const REMOTE_CACHE_MS = 60 * 1000;
+
 export type TeamCardInfo = {
   name: string;
   short: string;
@@ -94,11 +98,39 @@ function getSnapshotGames(payload: any): ScoreboardGame[] {
   return [];
 }
 
-function getLocalGamesForDate(date: string): ScoreboardGame[] {
-  return getSnapshotGames(localMlbPayload).filter((game) => {
+function getGamesForDateFromPayload(payload: any, date: string): ScoreboardGame[] {
+  const gamesForDate = payload?.gamesByDate?.[date];
+
+  if (Array.isArray(gamesForDate)) {
+    return gamesForDate.map(normalizeGame);
+  }
+
+  return getSnapshotGames(payload).filter((game) => {
     const key = getDateKey(game.gameDate);
     return key === date;
   });
+}
+
+function getLocalGamesForDate(date: string): ScoreboardGame[] {
+  return getGamesForDateFromPayload(localMlbPayload, date);
+}
+async function getRemoteMlbPayload() {
+  const now = Date.now();
+
+  if (remoteMlbPayloadCache && now - remoteMlbPayloadFetchedAt < REMOTE_CACHE_MS) {
+    return remoteMlbPayloadCache;
+  }
+
+  const response = await fetch(`${MLB_REMOTE_EVENTS_URL}?t=${now}`);
+
+  if (!response.ok) {
+    throw new Error(`MLB remote snapshot failed: ${response.status}`);
+  }
+
+  remoteMlbPayloadCache = await response.json();
+  remoteMlbPayloadFetchedAt = now;
+
+  return remoteMlbPayloadCache;
 }
 
 function normalizeStatus(value?: string): ScoreboardGame['status'] {
@@ -177,19 +209,11 @@ export async function fetchMlbGamesByDate(
   }
 
   try {
-    const response = await fetch(`${MLB_REMOTE_EVENTS_URL}?t=${Date.now()}`);
+    const remotePayload = await getRemoteMlbPayload();
+    const filteredRemoteGames = getGamesForDateFromPayload(remotePayload, date);
 
-    if (response.ok) {
-      const remotePayload = await response.json();
-
-      const filteredRemoteGames = getSnapshotGames(remotePayload).filter((game) => {
-        const key = getDateKey(game.gameDate);
-        return key === date;
-      });
-
-      if (filteredRemoteGames.length > 0) {
-        return filteredRemoteGames;
-      }
+    if (filteredRemoteGames.length > 0) {
+      return filteredRemoteGames;
     }
   } catch (error) {
     console.warn('Failed to load remote MLB snapshot', error);
