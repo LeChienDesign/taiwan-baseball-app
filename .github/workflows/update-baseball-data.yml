@@ -123,6 +123,12 @@ jobs:
           test -f server/data/eventsCenter.npb.json
           test -f server/data/eventsCenter.kbo.json
 
+      - name: Validate events center data
+        id: validate_events
+        if: >
+          steps.verify_files.outcome == 'success'
+        run: npm run validate:events
+
       - name: Commit updated data
         if: >
           steps.export_seed.outcome == 'success' &&
@@ -131,7 +137,8 @@ jobs:
           steps.fetch_events_cpbl.outcome == 'success' &&
           steps.fetch_events_npb.outcome == 'success' &&
           steps.fetch_events_kbo.outcome == 'success' &&
-          steps.verify_files.outcome == 'success'
+          steps.verify_files.outcome == 'success' &&
+          steps.validate_events.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -166,6 +173,7 @@ jobs:
           echo "| fetch:events-npb | ${{ steps.fetch_events_npb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| fetch:events-kbo | ${{ steps.fetch_events_kbo.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| verify files | ${{ steps.verify_files.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| validate:events | ${{ steps.validate_events.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
           if [ "${{ steps.export_seed.outcome }}" != "success" ]; then
@@ -192,6 +200,10 @@ jobs:
             echo "- fetch:events-kbo failed" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+          if [ "${{ steps.validate_events.outcome || 'skipped' }}" != "success" ]; then
+            echo "- validate:events failed or was skipped" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Fail job if any update step failed
         if: >
           steps.export_seed.outcome != 'success' ||
@@ -199,7 +211,8 @@ jobs:
           steps.fetch_events_mlb.outcome != 'success' ||
           steps.fetch_events_cpbl.outcome != 'success' ||
           steps.fetch_events_npb.outcome != 'success' ||
-          steps.fetch_events_kbo.outcome != 'success'
+          steps.fetch_events_kbo.outcome != 'success' ||
+          steps.validate_events.outcome != 'success'
         run: |
-          echo "One or more update steps failed."
+          echo "One or more update or validation steps failed."
           exit 1
