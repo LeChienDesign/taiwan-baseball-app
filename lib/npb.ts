@@ -72,10 +72,74 @@ function isFutureOrTodayInTaipei(date: string) {
   return date >= today;
 }
 
+function getNpbGameDate(game: any) {
+  return String(game?.gameDate ?? game?.date ?? '').slice(0, 10);
+}
+
+function getEffectiveNpbStatus(game: any) {
+  const status = String(game?.status ?? '').toUpperCase();
+  const gameDate = getNpbGameDate(game);
+  const today = getTodayKeyTaipei();
+
+  if (status === 'LIVE' && gameDate && gameDate < today) {
+    return 'FINAL';
+  }
+
+  const awayInnings = Array.isArray(game?.awayLine?.innings) ? game.awayLine.innings : [];
+  const homeInnings = Array.isArray(game?.homeLine?.innings) ? game.homeLine.innings : [];
+  const hasNineInnings =
+    awayInnings.length >= 9 &&
+    homeInnings.length >= 9 &&
+    awayInnings.slice(0, 9).every((value: any) => value !== '-' && value !== '' && value != null) &&
+    homeInnings.slice(0, 9).every((value: any) => value !== '-' && value !== '' && value != null);
+
+  const statusText = String(game?.statusText ?? '').toUpperCase();
+  const footerLeft = String(game?.footerLeft ?? '').toUpperCase();
+  const footerRight = String(game?.footerRight ?? '').toUpperCase();
+
+  const hasFinalText =
+    statusText.includes('FINAL') ||
+    statusText.includes('GAMEOVER') ||
+    statusText.includes('試合終了') ||
+    footerLeft.includes('FINAL') ||
+    footerLeft.includes('GAMEOVER') ||
+    footerLeft.includes('試合終了') ||
+    footerRight.includes('FINAL') ||
+    footerRight.includes('GAMEOVER') ||
+    footerRight.includes('試合終了');
+
+  if (status === 'LIVE' && (hasNineInnings || hasFinalText)) {
+    return 'FINAL';
+  }
+
+  return status;
+}
+
+function normalizeExpiredNpbLiveStatus(game: any) {
+  const effectiveStatus = getEffectiveNpbStatus(game);
+
+  if (effectiveStatus !== 'FINAL') {
+    return game;
+  }
+
+  const rawStatus = String(game?.status ?? '').toUpperCase();
+  if (rawStatus !== 'LIVE') {
+    return game;
+  }
+
+  return {
+    ...game,
+    status: 'FINAL',
+    statusText: game?.statusText ?? 'FINAL',
+    footerLeft: 'FINAL',
+    footerRight: game?.footerRight === 'LIVE' ? '' : game?.footerRight,
+  };
+}
+
 function isUsableNpbLiveGame(game: any) {
   const awayName = String(game?.awayTeam?.name ?? '').trim();
   const homeName = String(game?.homeTeam?.name ?? '').trim();
-  const status = String(game?.status ?? '').toUpperCase();
+  const status = getEffectiveNpbStatus(game);
 
   if (!awayName || !homeName) return false;
   if (awayName === 'Away' || homeName === 'Home') return false;
@@ -297,7 +361,7 @@ function getSnapshotLivePriority(snapshotPayload: any, date: string) {
   const games = getSnapshotGamesByDate(snapshotPayload, date);
 
   return games.reduce((score: number, game: any) => {
-    const status = String(game?.status ?? '').toUpperCase();
+    const status = getEffectiveNpbStatus(game);
 
     if (status === 'LIVE') return score + 100;
     if (status === 'FINAL' || status === 'GAMEOVER') return score + 10;
@@ -343,7 +407,7 @@ function convertJapanTimeToTaiwanTime(value: any) {
 }
 
 function normalizeNpbTaiwanDisplayTime(game: any) {
-  const status = String(game?.status ?? '').toUpperCase();
+  const status = getEffectiveNpbStatus(game);
   const shouldConvertTime = status === 'SCHEDULED' || status === 'PRE' || status === 'PREGAME' || status === '';
 
   if (!shouldConvertTime) {
@@ -399,6 +463,7 @@ export async function fetchNpbGamesByDate(
 
   const localGames = getSnapshotGamesByDate(npbLiveSnapshot, date)
     .filter((game: any) => isUsableNpbLiveGame(game))
+    .map(normalizeExpiredNpbLiveStatus)
     .map((game: any) => attachFallbackLogos(game, logoMap))
     .map(normalizeNpbTaiwanDisplayTime);
 
@@ -426,6 +491,7 @@ export async function fetchNpbGamesByDate(
 
     const payloadGames = getSnapshotGamesByDate(preferredSnapshot, date)
       .filter((game: any) => isUsableNpbLiveGame(game))
+      .map(normalizeExpiredNpbLiveStatus)
       .map((game: any) => attachFallbackLogos(game, logoMap))
       .map(normalizeNpbTaiwanDisplayTime);
 
@@ -440,7 +506,7 @@ export async function fetchNpbGamesByDate(
 
   if (!shouldFetchRemote) {
     const finishedLocalGames = localGames.filter((game: any) => {
-      const status = String(game?.status ?? '').toUpperCase();
+      const status = getEffectiveNpbStatus(game);
       return status === 'FINAL' || status === 'GAMEOVER';
     });
 
@@ -451,7 +517,7 @@ export async function fetchNpbGamesByDate(
     return applyNpbManualOverrides(
       fallbackGames
         .filter((game: any) => {
-          const status = String(game?.status ?? '').toUpperCase();
+          const status = getEffectiveNpbStatus(game);
           return status === 'FINAL' || status === 'GAMEOVER';
         })
         .map((game: any) => attachFallbackLogos(game, logoMap))
@@ -466,6 +532,7 @@ export async function fetchNpbGamesByDate(
 
     const remoteGames = getSnapshotGamesByDate(preferredSnapshot, date)
       .filter((game: any) => isUsableNpbLiveGame(game))
+      .map(normalizeExpiredNpbLiveStatus)
       .map((game: any) => attachFallbackLogos(game, logoMap))
       .map(normalizeNpbTaiwanDisplayTime);
 

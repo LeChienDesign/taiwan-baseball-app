@@ -350,6 +350,20 @@ function parseLineScoreRowsFromDetailHtml(
   };
 }
 
+function hasNpbFinalText(html: string) {
+  const text = compactWhitespace(stripHtml(html));
+  return text.includes('試合終了') || text.includes('ゲームセット');
+}
+
+function hasCompletedNpbRegulation(lineScore: NonNullable<ReturnType<typeof parseLineScoreRowsFromDetailHtml>>) {
+  const awayInnings = lineScore.awayLine.innings;
+  const homeInnings = lineScore.homeLine.innings;
+  const reachedNinth = awayInnings.length >= 9 && homeInnings.length >= 9;
+  const hasWinner = lineScore.awayLine.r !== lineScore.homeLine.r;
+
+  return reachedNinth && hasWinner;
+}
+
 async function enrichGameWithLineScore(game: NpbScoreboardGame) {
   if (!game.officialUrl) return game;
 
@@ -366,11 +380,30 @@ async function enrichGameWithLineScore(game: NpbScoreboardGame) {
 
   if (!lineScore) return game;
 
+  const isFinal = hasNpbFinalText(html) || hasCompletedNpbRegulation(lineScore);
+  const nextStatus = isFinal ? 'FINAL' : game.status;
+
   return {
     ...game,
+    status: nextStatus,
+    statusText:
+      nextStatus === 'FINAL'
+        ? 'Final'
+        : nextStatus === 'LIVE'
+          ? 'Live'
+          : game.statusText,
     innings: lineScore.innings,
+    awayScore: lineScore.awayLine.r,
+    homeScore: lineScore.homeLine.r,
     awayLine: lineScore.awayLine,
     homeLine: lineScore.homeLine,
+    footerLeft:
+      nextStatus === 'FINAL'
+        ? 'Final'
+        : nextStatus === 'LIVE'
+          ? 'Live'
+          : game.footerLeft,
+    footerRight: nextStatus === 'FINAL' ? '' : game.footerRight,
   };
 }
 
