@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
 
 import localLivePayload from '../server/data/abroadPlayers.live.json';
 
@@ -41,6 +42,7 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [isUsingFallback, setIsUsingFallback] = useState(true);
+  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
 
   const players = useMemo(() => {
     return Array.isArray(payload.players) ? payload.players : [];
@@ -73,6 +75,23 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
 
   useEffect(() => {
     refresh();
+  }, [refresh]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      const wasInactive =
+        appStateRef.current === 'inactive' || appStateRef.current === 'background';
+
+      appStateRef.current = nextAppState;
+
+      if (wasInactive && nextAppState === 'active') {
+        refresh();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [refresh]);
 
   return {
