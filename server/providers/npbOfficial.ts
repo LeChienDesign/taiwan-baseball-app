@@ -317,8 +317,13 @@ function parseLineScoreRowsFromDetailHtml(
 
   if (rows.length < 2) return null;
 
-  const awayCells = rows[0];
-  const homeCells = rows[1];
+  const firstCells = rows[0];
+  const secondCells = rows[1];
+  const firstR = Number(firstCells.at(-3));
+  const secondR = Number(secondCells.at(-3));
+  const shouldSwapRows = firstR === homeScore && secondR === awayScore;
+  const awayCells = shouldSwapRows ? secondCells : firstCells;
+  const homeCells = shouldSwapRows ? firstCells : secondCells;
   const inningLength = Math.max(9, awayCells.length - 4, homeCells.length - 4);
   const innings = Array.from({ length: inningLength }, (_, index) => index + 1);
 
@@ -343,10 +348,18 @@ function parseLineScoreRowsFromDetailHtml(
     };
   };
 
+  const awayLine = buildLine(awayCells, awayShort, awayScore);
+  const homeLine = buildLine(homeCells, homeShort, homeScore);
+
+  if (awayLine.r !== awayScore || homeLine.r !== homeScore) {
+    awayLine.r = awayScore;
+    homeLine.r = homeScore;
+  }
+
   return {
     innings,
-    awayLine: buildLine(awayCells, awayShort, awayScore),
-    homeLine: buildLine(homeCells, homeShort, homeScore),
+    awayLine,
+    homeLine,
   };
 }
 
@@ -393,8 +406,8 @@ async function enrichGameWithLineScore(game: NpbScoreboardGame) {
           ? 'Live'
           : game.statusText,
     innings: lineScore.innings,
-    awayScore: lineScore.awayLine.r,
-    homeScore: lineScore.homeLine.r,
+    awayScore: game.awayScore,
+    homeScore: game.homeScore,
     awayLine: lineScore.awayLine,
     homeLine: lineScore.homeLine,
     footerLeft:
