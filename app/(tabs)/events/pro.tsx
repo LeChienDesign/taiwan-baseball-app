@@ -52,25 +52,25 @@ export default function ProPage() {
           <LeagueItem
             image={leagueLogos.mlb}
             caption="美國職棒 MLB"
-            onPress={() => router.push(`/league/mlb${dateQuery}`)}
+            onPress={() => router.push(`/league/mlb${dateQuery}` as any)}
           />
 
           <LeagueItem
             image={leagueLogos.npb}
             caption="日本職棒 NPB"
-            onPress={() => router.push(`/league/npb${dateQuery}`)}
+            onPress={() => router.push(`/league/npb${dateQuery}` as any)}
           />
 
           <LeagueItem
             image={leagueLogos.cpbl}
             caption="中華職棒 CPBL"
-            onPress={() => router.push(`/league/cpbl-major${dateQuery}`)}
+            onPress={() => router.push(`/league/cpbl-major${dateQuery}` as any)}
           />
 
           <LeagueItem
             image={leagueLogos.kbo}
             caption="韓國職棒 KBO"
-            onPress={() => router.push(`/league/kbo${dateQuery}`)}
+            onPress={() => router.push(`/league/kbo${dateQuery}` as any)}
           />
         </View>
       </ScrollView>

@@ -1,4 +1,4 @@
-export type PlayerStatus = '今日出賽' | '預告先發' | '已完賽' | '傷兵' | '待命';
+export type PlayerStatus = '今日出賽' | '預告先發' | '已完賽' | '傷兵' | '待命' | '大聯盟出賽';
 export type PlayerType = 'pitcher' | 'hitter';
 
 export type AbroadTeamMeta = {
@@ -61,6 +61,16 @@ export type AbroadPlayer = {
       bb: number;
       wins: number;
       saves: number;
+      losses?: number;
+      holds?: number;
+      games?: number;
+      battersFaced?: number;
+      hitByPitch?: number;
+      hits?: number;
+      homeRuns?: number;
+      runs?: number;
+      earnedRuns?: number;
+      winningPercentage?: string;
     };
   };
 
@@ -96,7 +106,7 @@ export type AbroadPlayer = {
 
 type PlayerSeedInput = Omit<
   AbroadPlayer,
-  'type' | 'seasonStats' | 'recentGames' | 'news' | 'career'
+  'type' | 'news' | 'career'
 > & {
   trending?: boolean;
   line1?: string;
@@ -231,35 +241,35 @@ export const TEAM_META = {
     code: 'F',
     abbreviation: 'F',
     logoKey: 'fighters',
-    displayName: 'Hokkaido Nippon-Ham Fighters',
+    displayName: '北海道日本火腿鬥士',
     leagueGroup: 'NPB',
   } satisfies AbroadTeamMeta,
   hawks: {
     code: 'H',
     abbreviation: 'H',
     logoKey: 'hawks',
-    displayName: 'Fukuoka SoftBank Hawks',
+    displayName: '福岡軟銀鷹',
     leagueGroup: 'NPB',
   } satisfies AbroadTeamMeta,
   lionsNpb: {
     code: 'L',
     abbreviation: 'L',
     logoKey: 'lions-npb',
-    displayName: 'Saitama Seibu Lions',
+    displayName: '埼玉西武獅',
     leagueGroup: 'NPB',
   } satisfies AbroadTeamMeta,
   rakutenEagles: {
     code: 'E',
     abbreviation: 'E',
     logoKey: 'eagles-npb',
-    displayName: 'Tohoku Rakuten Golden Eagles',
+    displayName: '東北樂天金鷲',
     leagueGroup: 'NPB',
   } satisfies AbroadTeamMeta,
   swallows: {
     code: 'S',
     abbreviation: 'S',
     logoKey: 'swallows',
-    displayName: 'Tokyo Yakult Swallows',
+    displayName: '東京養樂多燕子',
     leagueGroup: 'NPB',
   } satisfies AbroadTeamMeta,
 
@@ -268,7 +278,14 @@ export const TEAM_META = {
     code: 'HAN',
     abbreviation: 'HAN',
     logoKey: 'hanwha-eagles',
-    displayName: 'Hanwha Eagles',
+    displayName: '韓華鷹',
+    leagueGroup: 'KBO',
+  } satisfies AbroadTeamMeta,
+  samsungLions: {
+    code: 'SAM',
+    abbreviation: 'SAM',
+    logoKey: 'samsung-lions',
+    displayName: '三星獅',
     leagueGroup: 'KBO',
   } satisfies AbroadTeamMeta,
 } as const;
@@ -359,6 +376,15 @@ function inferTeamMeta(player: Pick<AbroadPlayer, 'team' | 'league' | 'level'>):
     return TEAM_META.hanwhaEagles;
   }
 
+  if (
+    team.includes('samsunglions') ||
+    team.includes('三星獅') ||
+    team.includes('三星狮') ||
+    team.includes('samsung')
+  ) {
+    return TEAM_META.samsungLions;
+  }
+
   return undefined;
 }
 
@@ -367,7 +393,7 @@ function makePitcher(input: PlayerSeedInput): AbroadPlayer {
     ...input,
     type: 'pitcher',
     teamMeta: input.teamMeta ?? inferTeamMeta(input),
-    seasonStats: {
+    seasonStats: input.seasonStats ?? {
       pitcher: {
         era: '—',
         whip: '—',
@@ -378,7 +404,7 @@ function makePitcher(input: PlayerSeedInput): AbroadPlayer {
         saves: 0,
       },
     },
-    recentGames: [],
+    recentGames: input.recentGames ?? [],
     news: [],
     career: [],
   };
@@ -401,7 +427,7 @@ function makeHitter(input: PlayerSeedInput): AbroadPlayer {
         hits: 0,
       },
     },
-    recentGames: [],
+    recentGames: input.recentGames ?? [],
     news: [],
     career: [],
   };
@@ -872,9 +898,9 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamMeta: TEAM_META.fighters,
     trending: true,
     line1: '旅日先發右投',
-    line2: '目前在日本火腿體系',
+    line2: '日本火腿一軍 / 支配下',
     intro: '旅日後話題與期待值都很高，是現階段最受關注的台灣旅日投手之一。',
-    recentNote: '建議優先補完整個人頁與新聞異動頁。',
+    recentNote: '優先同步一軍登板、先發預告、近 3 場投球內容與新聞異動。',
   }),
 
   makePitcher({
@@ -883,7 +909,7 @@ export const abroadPlayers: AbroadPlayer[] = [
     enName: 'Yi-Lei Sun',
     team: '日本火腿',
     league: 'NPB',
-    level: '育成 / 一軍體系',
+    level: '育成 / 日本火腿',
     position: 'RHP',
     bats: 'R',
     throws: 'R',
@@ -893,18 +919,18 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamColor: '#0066b3',
     teamMeta: TEAM_META.fighters,
     line1: '旅日年輕火球右投',
-    line2: '目前在日本火腿體系',
+    line2: '日本火腿育成投手',
     intro: '旅日年輕投手代表之一，具備高天花板與發展性。',
-    recentNote: '個人頁可強調年齡、球速、養成進度。',
+    recentNote: '優先同步二軍登板、養成進度、球速話題與支配下異動。',
   }),
 
   makePitcher({
     id: 'chun-wei-chang',
     name: '張峻瑋',
     enName: 'Chun-Wei Chang',
-    team: '軟銀',
+    team: '福岡軟銀鷹',
     league: 'NPB',
-    level: '育成',
+    level: '育成 / 軟銀',
     position: 'RHP',
     bats: 'R',
     throws: 'R',
@@ -914,18 +940,18 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamColor: '#f7c600',
     teamMeta: TEAM_META.hawks,
     line1: '旅日育成年輕右投',
-    line2: '目前在軟銀體系',
+    line2: '軟銀育成投手',
     intro: '近年被看好的台灣旅日年輕火球右投之一。',
-    recentNote: '非常適合加上「育成」「火球型」標籤。',
+    recentNote: '優先同步二軍登板、育成出賽、球速話題與支配下異動。',
   }),
 
   makeHitter({
     id: 'an-ko-lin',
     name: '林安可',
     enName: 'An-Ko Lin',
-    team: '西武',
+    team: '埼玉西武獅',
     league: 'NPB',
-    level: '一軍',
+    level: '一軍 / 西武',
     position: 'OF',
     bats: 'R',
     throws: 'R',
@@ -935,9 +961,9 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamColor: '#00469c',
     teamMeta: TEAM_META.lionsNpb,
     line1: '旅日外野手',
-    line2: '目前在西武體系',
+    line2: '西武一軍外野手',
     intro: '具備長打與國際賽知名度，是台灣旅日野手的重要代表。',
-    recentNote: '很適合放進旅外新聞總覽頁。',
+    recentNote: '優先同步一軍出賽、打席內容、長打表現與新聞異動。',
   }),
 
   makePitcher({
@@ -946,29 +972,29 @@ export const abroadPlayers: AbroadPlayer[] = [
     enName: 'Yen-Cheng Wang',
     team: 'Hanwha Eagles',
     league: 'KBO',
-    level: '一軍 / 先發輪值',
+    level: '一軍 / 韓華鷹',
     position: 'LHP',
     bats: 'L',
     throws: 'L',
     age: 25,
-    number: '19',
+    number: '—',
     status: '待命',
     teamColor: '#ff6600',
     teamMeta: TEAM_META.hanwhaEagles,
     trending: true,
     line1: '旅韓左投',
-    line2: '韓華鷹先發輪值',
-    intro: '目前效力 Hanwha Eagles，是台灣旅韓代表左投之一。',
-    recentNote: '建議接 KBO 真實先發紀錄、近 5 場內容與球種數據。',
+    line2: '韓華鷹左投',
+    intro: '目前效力 KBO 韓華鷹，是台灣旅韓代表左投之一。',
+    recentNote: '優先同步 KBO 逐場登板、近 3 場投球內容、防禦率、局數與被打擊率。',
   }),
 
   makePitcher({
     id: 'jo-hsi-hsu',
     name: '徐若熙',
     enName: 'Jo-Hsi Hsu',
-    team: 'Fukuoka SoftBank Hawks',
+    team: '福岡軟銀鷹',
     league: 'NPB',
-    level: '一軍 / 先發輪值',
+    level: '一軍 / 軟銀',
     position: 'RHP',
     bats: 'R',
     throws: 'R',
@@ -979,18 +1005,62 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamMeta: TEAM_META.hawks,
     trending: true,
     line1: '旅日先發右投',
-    line2: '軟銀一軍',
+    line2: '軟銀一軍先發右投',
     intro: '目前效力福岡軟銀鷹，是台灣最受矚目的旅日先發投手之一。',
-    recentNote: '建議優先同步先發輪值、近 5 場與球速變化。',
+    recentNote: '優先同步先發預告、近 3 場投球內容、球速變化與一軍異動。',
+    seasonStats: {
+      pitcher: {
+        era: '7.23',
+        whip: '2.04',
+        ip: '18.2',
+        so: 17,
+        bb: 9,
+        wins: 1,
+        losses: 3,
+        saves: 0,
+        holds: 0,
+        games: 4,
+        battersFaced: 91,
+        hitByPitch: 1,
+        hits: 29,
+        homeRuns: 5,
+        runs: 15,
+        earnedRuns: 15,
+        winningPercentage: '.250',
+      },
+    },
+    recentGames: [
+      {
+        date: '2026-05-04',
+        opponent: '西武獅 vs 福岡軟銀鷹',
+        result: '先發 / 敗投',
+        detail1: 'IP 4 / SO 5 / BB 1',
+        detail2: 'NP 92 / H 14 / HR 2 / R 7 / ER 7',
+      },
+      {
+        date: '2026-04-08',
+        opponent: '福岡軟銀鷹 vs 埼玉西武',
+        result: '先發',
+        detail1: 'IP 7 / SO 5 / BB 2',
+        detail2: 'NP 90 / H 6 / HR 1 / R 1 / ER 1',
+      },
+      {
+        date: '2026-04-01',
+        opponent: '福岡軟銀鷹 vs 東北楽天',
+        result: '先發',
+        detail1: 'IP 6 / SO 6 / BB 2',
+        detail2: 'NP 86 / H 3 / HR 0 / R 0 / ER 0',
+      },
+    ],
   }),
 
   makePitcher({
     id: 'chia-hao-sung',
     name: '宋家豪',
     enName: 'Chia-Hao Sung',
-    team: 'Tohoku Rakuten Golden Eagles',
+    team: '東北樂天金鷲',
     league: 'NPB',
-    level: '一軍 / 牛棚',
+    level: '一軍 / 樂天金鷲',
     position: 'RHP',
     bats: 'L',
     throws: 'R',
@@ -1001,18 +1071,18 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamMeta: TEAM_META.rakutenEagles,
     trending: true,
     line1: '旅日後援右投',
-    line2: '樂天金鷲牛棚',
+    line2: '樂天金鷲一軍牛棚',
     intro: '長年效力東北樂天金鷲，是旅日資歷最完整的台灣投手之一。',
-    recentNote: '建議同步中繼、防禦率、近 10 場牛棚內容。',
+    recentNote: '優先同步中繼登板、防禦率、近 3 場牛棚內容與勝敗中繼救援紀錄。',
   }),
 
   makeHitter({
     id: 'chia-cheng-lin',
     name: '林家正',
     enName: 'Chia-Cheng Lin',
-    team: 'Hokkaido Nippon-Ham Fighters',
+    team: '北海道日本火腿鬥士',
     league: 'NPB',
-    level: '支配下 / 捕手',
+    level: '支配下 / 日本火腿',
     position: 'C',
     bats: 'R',
     throws: 'R',
@@ -1023,18 +1093,18 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamMeta: TEAM_META.fighters,
     trending: true,
     line1: '旅日捕手',
-    line2: '日本火腿支配下',
+    line2: '日本火腿捕手',
     intro: '2026 年轉戰北海道日本火腿鬥士並登錄正式球員，有望與台灣投手形成旅日台灣投捕搭檔。',
-    recentNote: '建議同步一軍 / 二軍出賽與先發捕手紀錄。',
+    recentNote: '優先同步一軍 / 二軍出賽、先發捕手紀錄、打席內容與登錄異動。',
   }),
 
   makePitcher({
     id: 'hsiang-sheng-hsu',
     name: '徐翔聖',
     enName: 'Hsiang-Sheng Hsu',
-    team: 'Tokyo Yakult Swallows',
+    team: '東京養樂多燕子',
     league: 'NPB',
-    level: '二軍 / 育成',
+    level: '育成 / 養樂多二軍',
     position: 'RHP',
     bats: 'R',
     throws: 'R',
@@ -1044,8 +1114,8 @@ export const abroadPlayers: AbroadPlayer[] = [
     teamColor: '#00a7e0',
     teamMeta: TEAM_META.swallows,
     line1: '旅日年輕右投',
-    line2: '養樂多二軍',
+    line2: '養樂多育成右投',
     intro: '目前效力東京養樂多燕子，2026 年主要在二軍累積出賽與養成。',
-    recentNote: '建議同步二軍登板、局數、三振與支配下進度。',
+    recentNote: '優先同步二軍登板、局數、三振、失分與支配下進度。',
   }),
 ];

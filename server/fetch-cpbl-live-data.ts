@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import { fetchCpblOfficialGamesByDate } from './providers/cpblOfficial';
@@ -59,15 +58,6 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function readExistingPayload(outputPath: string) {
-  try {
-    const raw = fs.readFileSync(outputPath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
 function flattenGamesByDate(gamesByDate: Record<string, CpblGame[]>) {
   return Object.keys(gamesByDate)
     .sort()
@@ -77,11 +67,7 @@ function flattenGamesByDate(gamesByDate: Record<string, CpblGame[]>) {
 async function main() {
   const { startDate, endDate } = resolveCpblEventsDateRange();
   const outputPath = path.resolve(process.cwd(), 'server/data/eventsCenter.cpbl.json');
-  const existingPayload = readExistingPayload(outputPath);
-  const gamesByDate: Record<string, CpblGame[]> =
-    existingPayload?.gamesByDate && typeof existingPayload.gamesByDate === 'object'
-      ? { ...existingPayload.gamesByDate }
-      : {};
+  const gamesByDate: Record<string, CpblGame[]> = {};
   const delayMs = Number(process.env.CPBL_EVENTS_FETCH_DELAY_MS ?? 120);
 
   for (
@@ -91,7 +77,7 @@ async function main() {
   ) {
     const date = toDateString(cursor);
     const payload = await fetchCpblOfficialGamesByDate(date);
-    const games = payload.games ?? payload ?? [];
+    const games = (payload as any)?.games ?? payload ?? [];
 
     gamesByDate[date] = games;
 

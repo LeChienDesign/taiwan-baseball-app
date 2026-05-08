@@ -1,4 +1,4 @@
-import { abroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
+import { getAbroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
 
 type AbroadNewsItem = {
   id: string;
@@ -116,7 +116,7 @@ function normalizeText(value?: string) {
 }
 
 function isTrackedMlbPlayer(player: AbroadPlayerLike) {
-  const registry = abroadRegistry[player.id];
+  const registry = getAbroadRegistry(player.id);
   if (registry?.provider === 'mlb') return true;
 
   const league = normalizeText(player.league);
@@ -711,7 +711,7 @@ export async function buildMlbOfficialAbroadPatches(
   for (const player of players) {
     if (!isTrackedMlbPlayer(player)) continue;
 
-    const registry = abroadRegistry[player.id];
+    const registry = getAbroadRegistry(player.id);
     if (!registry || registry.provider !== 'mlb') continue;
 
     patches[player.id] = await buildSingleMlbPatch(player, registry, requestedDate);

@@ -10,6 +10,7 @@ import { getTeamLogoSource } from '../constants/teamLogos';
 
 const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
   黃仲翔: require('../assets/abroad/huang-chung-hsiang.png'),
+  徐若熙: require('../assets/abroad/jo-hsi-hsu.png'),
 };
 
 type Props = {

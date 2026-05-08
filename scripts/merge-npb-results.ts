@@ -26,8 +26,8 @@ type AnyGame = {
   footerRight?: string;
   awayTeam?: { name?: string };
   homeTeam?: { name?: string };
-  awayLine?: { r?: number; h?: number; e?: number; innings?: Array<string | number> };
-  homeLine?: { r?: number; h?: number; e?: number; innings?: Array<string | number> };
+  awayLine?: { team?: string; r?: number; h?: number; e?: number; innings?: Array<string | number> };
+  homeLine?: { team?: string; r?: number; h?: number; e?: number; innings?: Array<string | number> };
   [key: string]: any;
 };
 

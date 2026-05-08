@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fetchNpbScoreboardByDate } from './providers/npbOfficial';
 
@@ -59,15 +59,6 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function readExistingPayload(outputPath: string) {
-  try {
-    const raw = await readFile(outputPath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
 function flattenGamesByDate(gamesByDate: Record<string, NpbGame[]>) {
   return Object.keys(gamesByDate)
     .sort()
@@ -77,11 +68,7 @@ function flattenGamesByDate(gamesByDate: Record<string, NpbGame[]>) {
 async function main() {
   const { startDate, endDate } = resolveNpbEventsDateRange();
   const outputPath = path.resolve(process.cwd(), 'server/data/eventsCenter.npb.json');
-  const existingPayload = await readExistingPayload(outputPath);
-  const gamesByDate: Record<string, NpbGame[]> =
-    existingPayload?.gamesByDate && typeof existingPayload.gamesByDate === 'object'
-      ? { ...existingPayload.gamesByDate }
-      : {};
+  const gamesByDate: Record<string, NpbGame[]> = {};
   const delayMs = Number(process.env.NPB_EVENTS_FETCH_DELAY_MS ?? 120);
 
   for (

@@ -58,8 +58,8 @@ export default function AbroadPlayerDetailScreen() {
 
   const favorite = isFavorite(player.id);
   const isHitter = player.type === 'hitter';
-  const hitterStats = player.seasonStats.hitter;
-  const pitcherStats = player.seasonStats.pitcher;
+  const hitterStats = player.seasonStats?.hitter;
+  const pitcherStats = player.seasonStats?.pitcher;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -250,13 +250,13 @@ export default function AbroadPlayerDetailScreen() {
             <Text style={styles.sectionTitle}>近期比賽紀錄</Text>
 
             <View style={styles.gameLogWrap}>
-              {player.recentGames.length > 0 ? (
-                player.recentGames.map((game, index) => (
+              {(player.recentGames ?? []).length > 0 ? (
+                (player.recentGames ?? []).map((game, index) => (
                   <View
                     key={`${game.date}-${index}`}
                     style={[
                       styles.gameLogCard,
-                      index !== player.recentGames.length - 1 && styles.gameLogCardMargin,
+                      index !== (player.recentGames ?? []).length - 1 && styles.gameLogCardMargin,
                     ]}
                   >
                     <View style={styles.gameLogTop}>
@@ -281,13 +281,13 @@ export default function AbroadPlayerDetailScreen() {
             <Text style={styles.sectionTitle}>新聞與異動</Text>
 
             <View style={styles.newsWrap}>
-              {player.news.length > 0 ? (
-                player.news.map((item, index) => (
+              {(player.news ?? []).length > 0 ? (
+                (player.news ?? []).map((item, index) => (
                   <View
                     key={item.id}
                     style={[
                       styles.newsCard,
-                      index !== player.news.length - 1 && styles.newsCardMargin,
+                      index !== (player.news ?? []).length - 1 && styles.newsCardMargin,
                     ]}
                   >
                     <View style={styles.newsTop}>
@@ -311,13 +311,13 @@ export default function AbroadPlayerDetailScreen() {
             <Text style={styles.sectionTitle}>生涯歷程</Text>
 
             <View style={styles.careerWrap}>
-              {player.career.length > 0 ? (
-                player.career.map((item, index) => (
+              {(player.career ?? []).length > 0 ? (
+                (player.career ?? []).map((item, index) => (
                   <View
                     key={`${item.year}-${index}`}
                     style={[
                       styles.careerCard,
-                      index !== player.career.length - 1 && styles.careerCardMargin,
+                      index !== (player.career ?? []).length - 1 && styles.careerCardMargin,
                     ]}
                   >
                     <View style={styles.careerYearBox}>
@@ -378,6 +378,7 @@ function StatusBadge({ status }: { status: PlayerStatus }) {
     已完賽: { bg: '#0b2f1f', color: '#34d399' },
     傷兵: { bg: '#3b1111', color: '#f87171' },
     待命: { bg: '#1c2435', color: '#94a3b8' },
+    大聯盟出賽: { bg: '#dc2626', color: '#ffffff' },
   };
 
   return (

@@ -10,7 +10,6 @@ import {
   Image,
   Animated,
   Easing,
-  AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -21,7 +20,7 @@ import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
 
 import { fetchMlbGamesByDate } from '../../lib/mlb';
-import { fetchCpblMajorGamesByDate } from '../../lib/cpbl';
+import { fetchCpblMajorGamesByDate } from '../../lib/cpbl-real';
 import { fetchNpbGamesByDate } from '../../lib/npb';
 import { fetchKboGamesByDate } from '../../lib/kbo';
 
@@ -68,6 +67,7 @@ type FeaturedItem = {
   game: ScoreboardGame;
 };
 
+
 type LeagueStats = Record<
   LeagueKey,
   {
@@ -76,8 +76,11 @@ type LeagueStats = Record<
   }
 >;
 
-const AUTO_REFRESH_LIVE_MS = 30000;
-const AUTO_REFRESH_GAMES_MS = 60000;
+const SMART_SCORE_REFRESH_MS = 300000;
+const SCORE_REFRESH_BEFORE_START_MINUTES = 10;
+const SCORE_REFRESH_AFTER_START_MINUTES = 240;
+const HOME_FETCH_TIMEOUT_MS = 2500;
+
 
 function toDateKey(date: Date) {
   const y = date.getFullYear();
@@ -121,6 +124,21 @@ function mergeGamesById(games: ScoreboardGame[]) {
 
 function getLiveGamesOnly(games: ScoreboardGame[]) {
   return games.filter((game) => game.status === 'LIVE');
+}
+
+async function withHomeFetchTimeout<T>(promise: Promise<T>, fallback: T) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => resolve(fallback), HOME_FETCH_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 function normalizeHomeGameStatus(game: any, todayKeyForLeague: string): ScoreboardGame['status'] {
@@ -231,6 +249,27 @@ function parseTimeValue(text?: string) {
   return Number(match[1]) * 60 + Number(match[2]);
 }
 
+function shouldRefreshScoresForGame(game: ScoreboardGame) {
+  if (game.status === 'LIVE') return true;
+  if (game.status === 'FINAL') return false;
+
+  const scheduledMinutes = getGameTimeValue(game);
+  if (scheduledMinutes === 9999) return false;
+
+  const now = new Date();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const minutesToStart = scheduledMinutes - nowMinutes;
+
+  return (
+    minutesToStart <= SCORE_REFRESH_BEFORE_START_MINUTES &&
+    minutesToStart >= -SCORE_REFRESH_AFTER_START_MINUTES
+  );
+}
+
+function shouldAutoRefreshScores(items: FeaturedItem[]) {
+  return items.some((item) => shouldRefreshScoresForGame(item.game));
+}
+
 function getGameTimeValue(game: ScoreboardGame) {
   return parseTimeValue(game.footerRight);
 }
@@ -335,12 +374,16 @@ export default function HomePage() {
         setLoading(true);
       }
 
+      const localOnly = !options?.silent && !refreshing;
+
       const [cpblGames, mlbGamesByMlbDate, mlbGamesByTaipeiDate, npbGames, kboGames] = await Promise.all([
-        fetchCpblMajorGamesByDate(todayKey).catch(() => []),
-        fetchMlbGamesByDate(mlbTodayKey).catch(() => []),
-        mlbTodayKey === todayKey ? Promise.resolve([]) : fetchMlbGamesByDate(todayKey).catch(() => []),
-        fetchNpbGamesByDate(todayKey).catch(() => []),
-        fetchKboGamesByDate(todayKey).catch(() => []),
+        withHomeFetchTimeout(fetchCpblMajorGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
+        withHomeFetchTimeout(fetchMlbGamesByDate(mlbTodayKey, { localOnly } as any).catch(() => []), []),
+        mlbTodayKey === todayKey
+          ? Promise.resolve([])
+          : withHomeFetchTimeout(fetchMlbGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
+        withHomeFetchTimeout(fetchNpbGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
+        withHomeFetchTimeout(fetchKboGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
       ]);
 
       const mlbExtraTaipeiGames = getLiveGamesOnly(
@@ -381,6 +424,14 @@ export default function HomePage() {
 
   useEffect(() => {
     loadHomeData();
+
+    const timer = setTimeout(() => {
+      loadHomeData({ silent: true });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [loadHomeData]);
 
   useEffect(() => {
@@ -411,7 +462,7 @@ export default function HomePage() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    loadHomeData();
+    loadHomeData({ silent: true });
   }, [loadHomeData]);
 
   const displayedGames = useMemo(() => {
@@ -448,35 +499,22 @@ export default function HomePage() {
     leagueStats.NPB.live +
     leagueStats.KBO.live;
 
-  const hasAutoRefreshTarget = totalGamesToday > 0 || totalLiveToday > 0;
-  const autoRefreshMs = totalLiveToday > 0 ? AUTO_REFRESH_LIVE_MS : AUTO_REFRESH_GAMES_MS;
+  const hasAutoRefreshTarget = useMemo(() => shouldAutoRefreshScores(featuredGames), [featuredGames]);
 
   useEffect(() => {
     if (!hasAutoRefreshTarget) return;
 
     const timer = setInterval(() => {
       loadHomeData({ silent: true });
-    }, autoRefreshMs);
+    }, SMART_SCORE_REFRESH_MS);
 
     return () => {
       clearInterval(timer);
     };
-  }, [autoRefreshMs, hasAutoRefreshTarget, loadHomeData]);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        loadHomeData({ silent: true });
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, [loadHomeData]);
+  }, [hasAutoRefreshTarget, loadHomeData]);
 
   function openLeague(league: LeagueKey) {
-    router.push(buildLeagueHref(league, league === 'MLB' ? mlbTodayKey : todayKey));
+    router.push(buildLeagueHref(league, league === 'MLB' ? mlbTodayKey : todayKey) as any);
   }
 
   function handleSeeMore() {
@@ -522,7 +560,7 @@ export default function HomePage() {
             </View>
             <View style={[styles.summaryPill, styles.summaryPillLive]}>
               <Text style={styles.summaryPillText}>
-                LIVE {totalLiveToday}{hasAutoRefreshTarget ? ` · ${autoRefreshMs / 1000}s 自動更新` : ''}
+                LIVE {totalLiveToday}
               </Text>
             </View>
           </View>

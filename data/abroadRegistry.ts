@@ -41,6 +41,20 @@ function googleNewsUrl(query: string) {
   return `https://www.google.com/search?tbm=nws&q=${encodeURIComponent(query)}`;
 }
 
+function hasCjkText(value: string) {
+  return /[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(value);
+}
+
+function taiwanNewsKeywords(values: Array<string | undefined>) {
+  return Array.from(
+    new Set(
+      values
+        .filter((value): value is string => Boolean(value?.trim()))
+        .filter((value) => hasCjkText(value))
+    )
+  );
+}
+
 function mlbPlayerUrl(enName: string, personId: number) {
   return `https://www.mlb.com/player/${slugifyName(enName)}-${personId}`;
 }
@@ -78,7 +92,7 @@ function mlbEntry(input: {
     officialSearchQuery: `${input.enName} site:mlb.com`,
     personId: input.personId,
     teamLogoKey: input.teamLogoKey,
-    newsKeywords: [input.name, input.enName, input.officialTeam],
+    newsKeywords: taiwanNewsKeywords([input.name]),
     notes: input.notes,
   } satisfies AbroadRegistryEntry;
 }
@@ -95,12 +109,10 @@ function npbEntry(input: {
   notes?: string;
   extraNewsKeywords?: string[];
 }) {
-  const keywords = [
+  const keywords = taiwanNewsKeywords([
     input.name,
-    input.enName,
-    input.officialTeam,
     ...(input.extraNewsKeywords ?? []),
-  ];
+  ]);
 
   return {
     id: input.id,
@@ -116,8 +128,8 @@ function npbEntry(input: {
     officialStatsUrl: input.officialRosterUrl,
     officialGameLogUrl: input.officialRosterUrl,
     officialNewsUrl: input.officialOrgUrl,
-    officialSearchUrl: googleNewsUrl(`${input.name} ${input.officialTeam}`),
-    officialSearchQuery: `${input.name} ${input.officialTeam}`,
+    officialSearchUrl: googleNewsUrl(input.name),
+    officialSearchQuery: input.name,
     teamLogoKey: input.teamLogoKey,
     newsKeywords: keywords,
     notes: input.notes,
@@ -136,12 +148,10 @@ function kboEntry(input: {
   notes?: string;
   extraNewsKeywords?: string[];
 }) {
-  const keywords = [
+  const keywords = taiwanNewsKeywords([
     input.name,
-    input.enName,
-    input.officialTeam,
     ...(input.extraNewsKeywords ?? []),
-  ];
+  ]);
 
   return {
     id: input.id,
@@ -157,8 +167,8 @@ function kboEntry(input: {
     officialStatsUrl: input.officialPlayerUrl,
     officialGameLogUrl: input.officialPlayerUrl,
     officialNewsUrl: input.officialOrgUrl,
-    officialSearchUrl: googleNewsUrl(`${input.name} ${input.officialTeam}`),
-    officialSearchQuery: `${input.name} ${input.officialTeam}`,
+    officialSearchUrl: googleNewsUrl(input.name),
+    officialSearchQuery: input.name,
     teamLogoKey: input.teamLogoKey,
     newsKeywords: keywords,
     notes: input.notes,
@@ -426,7 +436,12 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.fighters.co.jp/',
     officialRosterUrl: 'https://media.fighters.co.jp/player/37/',
     teamLogoKey: 'fighters',
-    extraNewsKeywords: ['古林睿煬 日本火腿', '古林睿煬 北海道日本火腿鬥士'],
+    extraNewsKeywords: [
+      '古林睿煬 日本火腿',
+      '古林睿煬 北海道日本火腿鬥士',
+      'Ruei-Yang Gu Lin Fighters',
+      'Gu Lin Nippon-Ham Fighters',
+    ],
   }),
 
   'yi-lei-sun': npbEntry({
@@ -438,7 +453,12 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.fighters.co.jp/',
     officialRosterUrl: 'https://media.fighters.co.jp/player/96/',
     teamLogoKey: 'fighters',
-    extraNewsKeywords: ['孫易磊 日本火腿', '孫易磊 北海道日本火腿鬥士'],
+    extraNewsKeywords: [
+      '孫易磊 日本火腿',
+      '孫易磊 北海道日本火腿鬥士',
+      'Yi-Lei Sun Fighters',
+      'Sun Yi-Lei Nippon-Ham Fighters',
+    ],
   }),
 
   'chun-wei-chang': npbEntry({
@@ -450,7 +470,12 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.softbankhawks.co.jp/',
     officialRosterUrl: 'https://www.softbankhawks.co.jp/global/traditional-c/2026_153/',
     teamLogoKey: 'hawks',
-    extraNewsKeywords: ['張峻瑋 軟銀', '張峻瑋 福岡軟銀鷹'],
+    extraNewsKeywords: [
+      '張峻瑋 軟銀',
+      '張峻瑋 福岡軟銀鷹',
+      'Chun-Wei Chang SoftBank Hawks',
+      'Chang Chun-Wei Hawks',
+    ],
   }),
 
   'an-ko-lin': npbEntry({
@@ -462,7 +487,12 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.seibulions.jp/',
     officialRosterUrl: 'https://players.seibulions.jp/player/1098',
     teamLogoKey: 'lions-npb',
-    extraNewsKeywords: ['林安可 西武', '林安可 埼玉西武獅'],
+    extraNewsKeywords: [
+      '林安可 西武',
+      '林安可 埼玉西武獅',
+      'An-Ko Lin Seibu Lions',
+      'Lin An-Ko Lions',
+    ],
   }),
 
   'jo-hsi-hsu': npbEntry({
@@ -474,7 +504,13 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.softbankhawks.co.jp/',
     officialRosterUrl: 'https://www.softbankhawks.co.jp/team/player/detail/2026_00001589.html',
     teamLogoKey: 'hawks',
-    extraNewsKeywords: ['徐若熙 軟銀', '徐若熙 福岡軟銀鷹', 'Hsu Jo-Hsi SoftBank Hawks'],
+    extraNewsKeywords: [
+      '徐若熙 軟銀',
+      '徐若熙 福岡軟銀鷹',
+      '徐若熙 先發',
+      '徐若熙 日職',
+      '徐若熙 一軍',
+    ],
   }),
 
   'chia-hao-sung': npbEntry({
@@ -486,7 +522,13 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.rakuteneagles.jp/',
     officialRosterUrl: 'https://www.rakuteneagles.jp/team/player/detail/2026_00001013.html',
     teamLogoKey: 'eagles-npb',
-    extraNewsKeywords: ['宋家豪 樂天金鷲', '宋家豪 東北樂天', 'Sung Chia-Hao Rakuten Eagles'],
+    extraNewsKeywords: [
+      '宋家豪 樂天金鷲',
+      '宋家豪 東北樂天',
+      'Chia-Hao Sung Rakuten Eagles',
+      'Sung Chia-Hao Rakuten Eagles',
+      '宋家豪 中繼',
+    ],
   }),
 
   'chia-cheng-lin': npbEntry({
@@ -498,7 +540,13 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.fighters.co.jp/',
     officialRosterUrl: 'https://media.fighters.co.jp/player/38/',
     teamLogoKey: 'fighters',
-    extraNewsKeywords: ['林家正 日本火腿', '林家正 北海道日本火腿鬥士', 'Lyle Lin Fighters'],
+    extraNewsKeywords: [
+      '林家正 日本火腿',
+      '林家正 北海道日本火腿鬥士',
+      'Chia-Cheng Lin Fighters',
+      'Lyle Lin Fighters',
+      '林家正 捕手',
+    ],
     notes: 'Japanese club page currently lists him under the registered name ライル・リン.',
   }),
 
@@ -511,7 +559,13 @@ export const abroadRegistry = {
     officialOrgUrl: 'https://www.yakult-swallows.co.jp/',
     officialRosterUrl: 'https://npb.jp/bis/players/53255159.html',
     teamLogoKey: 'swallows',
-    extraNewsKeywords: ['徐翔聖 養樂多', '徐翔聖 東京養樂多燕子', '翔聖 ヤクルト'],
+    extraNewsKeywords: [
+      '徐翔聖 養樂多',
+      '徐翔聖 東京養樂多燕子',
+      'Hsiang-Sheng Hsu Yakult Swallows',
+      '翔聖 ヤクルト',
+      '徐翔聖 二軍',
+    ],
     notes:
       'Uses NPB official player page fallback; 2026 development registration confirms No.017 and Tokyo Yakult Swallows.',
   }),
@@ -521,18 +575,25 @@ export const abroadRegistry = {
     id: 'yen-cheng-wang',
     name: '王彥程',
     enName: 'Yen-Cheng Wang',
-    officialTeam: 'Hanwha Eagles',
-    officialTeamCode: 'HAN',
+    officialTeam: 'Samsung Lions',
+    officialTeamCode: 'SAM',
     officialOrgUrl: 'https://eng.koreabaseball.com/',
     officialPlayerUrl:
       'https://eng.koreabaseball.com/Teams/PlayerInfoPitcher/Summary.aspx?pcode=56719',
-    teamLogoKey: 'hanwha-eagles',
-    extraNewsKeywords: ['王彥程 韓華鷹', 'Yen-Cheng Wang Hanwha Eagles'],
+    teamLogoKey: 'samsung-lions',
+    extraNewsKeywords: [
+      '王彥程 三星獅',
+      '王彥程 KBO',
+      'Yen-Cheng Wang Samsung Lions',
+      'Wang Yen-Cheng Samsung Lions',
+      '王彥程 防禦率',
+    ],
+    notes: 'KBO provider should keep Samsung Lions / 三星獅 as the active team; do not revert to Hanwha Eagles.',
   }),
 } satisfies Record<string, AbroadRegistryEntry>;
 
 export const abroadRegistryList = Object.values(abroadRegistry);
 
 export function getAbroadRegistry(id: string) {
-  return abroadRegistry[id];
+  return (abroadRegistry as Record<string, AbroadRegistryEntry>)[id];
 }

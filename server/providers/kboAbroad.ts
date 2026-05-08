@@ -1,4 +1,4 @@
-import { abroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
+import { getAbroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
 
 type AbroadNewsItem = {
   id: string;
@@ -71,6 +71,7 @@ type ApplyOptions = {
 };
 
 const REQUEST_TIMEOUT_MS = 15000;
+const KBO_MAX_DAYS_BACK = 7;
 const htmlCache = new Map<string, string | null>();
 
 const KBO_PLAYER_ALIASES: Record<
@@ -165,7 +166,7 @@ async function fetchText(url: string): Promise<string | null> {
 }
 
 function isTrackedKboPlayer(player: AbroadPlayerLike) {
-  const registry = abroadRegistry[player.id];
+  const registry = getAbroadRegistry(player.id);
   if (registry?.provider === 'kbo') return true;
   return normalizeText(player.league) === 'kbo';
 }
@@ -361,11 +362,11 @@ async function buildRecentGamesFromOfficialSources(
     }));
 }
 
-function inferRecentNote(recentGames: Array<Record<string, any>>) {
+function inferRecentNote(recentGames: Array<Record<string, any>>, fallbackNote?: string) {
   if (recentGames.length > 0) {
-    return 'KBO 官方頁補充來源';
+    return 'KBO 官方頁補充近 5 場比賽資料';
   }
-  return '近 45 日尚無可用官方逐場紀錄';
+  return fallbackNote ?? '近 7 日尚無可用官方逐場紀錄';
 }
 
 function buildBasePatch(
@@ -374,7 +375,7 @@ function buildBasePatch(
   requestedDate: string
 ): AbroadPatch {
   return {
-    team: registry.officialTeam ?? player.team,
+    team: player.team ?? registry.officialTeam,
     league: 'KBO',
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
     news: buildFallbackNews(player, registry, requestedDate),
@@ -383,7 +384,7 @@ function buildBasePatch(
       code: registry.officialTeamCode ?? player.teamMeta?.code,
       abbreviation: registry.officialTeamCode ?? player.teamMeta?.abbreviation,
       logoKey: registry.teamLogoKey ?? player.teamMeta?.logoKey,
-      displayName: registry.officialTeam ?? player.teamMeta?.displayName,
+      displayName: player.teamMeta?.displayName ?? player.team ?? registry.officialTeam,
       leagueGroup: 'KBO',
     },
   };
@@ -398,20 +399,19 @@ async function buildSingleKboPatch(
 ): Promise<AbroadPatch> {
   const basePatch = buildBasePatch(player, registry, requestedDate);
 
-  const recentGames = hasRecentGames(player)
-    ? player.recentGames ?? []
-    : await buildRecentGamesFromOfficialSources(
-        player,
-        registry,
-        requestedDate,
-        daysBack,
-        maxGames
-      );
+  const fetchedRecentGames = await buildRecentGamesFromOfficialSources(
+    player,
+    registry,
+    requestedDate,
+    daysBack,
+    maxGames
+  );
+  const recentGames = fetchedRecentGames.length > 0 ? fetchedRecentGames : player.recentGames ?? [];
 
   return {
     ...basePatch,
     recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
-    recentNote: inferRecentNote(recentGames),
+    recentNote: inferRecentNote(recentGames, player.recentNote),
     news: buildFallbackNews(player, registry, requestedDate),
   };
 }
@@ -421,7 +421,8 @@ export async function buildKboAbroadPatches(
   options: ApplyOptions = {}
 ): Promise<AbroadPatchMap> {
   const requestedDate = toDateOnly(options.date);
-  const daysBack = typeof options.daysBack === 'number' ? options.daysBack : 45;
+  const rawDaysBack = typeof options.daysBack === 'number' ? options.daysBack : 3;
+  const daysBack = Math.min(Math.max(rawDaysBack, 1), KBO_MAX_DAYS_BACK);
   const maxGames = typeof options.maxGames === 'number' ? options.maxGames : 5;
 
   const patches: AbroadPatchMap = {};
@@ -429,7 +430,7 @@ export async function buildKboAbroadPatches(
   for (const player of players) {
     if (!isTrackedKboPlayer(player)) continue;
 
-    const registry = abroadRegistry[player.id];
+    const registry = getAbroadRegistry(player.id);
     if (!registry || registry.provider !== 'kbo') continue;
 
     patches[player.id] = await buildSingleKboPatch(

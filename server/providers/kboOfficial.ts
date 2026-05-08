@@ -1,5 +1,3 @@
-
-
 export async function fetchKboScoreboardByDate(date: string) {
   const d = date.replace(/-/g, '');
 
@@ -7,7 +5,9 @@ export async function fetchKboScoreboardByDate(date: string) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
-      'X-Requested-With': 'XMLHttpRequest'
+      'X-Requested-With': 'XMLHttpRequest',
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache'
     },
     body: JSON.stringify({ leId: '1', srId: '0,9', date: d })
   });
@@ -92,6 +92,7 @@ export async function fetchKboScoreboardByDate(date: string) {
     innings: number[];
     awayLine: { innings: string[]; r: number; h: number; e: number };
     homeLine: { innings: string[]; r: number; h: number; e: number };
+    latestInning: number;
   }>();
 
   try {
@@ -126,10 +127,19 @@ export async function fetchKboScoreboardByDate(date: string) {
         e: Number(cells[18]) || 0,
       });
 
+      const awayLine = buildLine(awayCells);
+      const homeLine = buildLine(homeCells);
+      const latestInning = Math.max(
+        ...awayLine.innings.map((value, index) => (String(value ?? '').trim() && String(value ?? '').trim() !== '-' ? index + 1 : 0)),
+        ...homeLine.innings.map((value, index) => (String(value ?? '').trim() && String(value ?? '').trim() !== '-' ? index + 1 : 0)),
+        0
+      );
+
       lineScoreMap.set(`${awayKor}-${homeKor}`, {
         innings: Array.from({ length: 15 }, (_, index) => index + 1),
-        awayLine: buildLine(awayCells),
-        homeLine: buildLine(homeCells),
+        awayLine,
+        homeLine,
+        latestInning,
       });
     }
   } catch {
@@ -164,10 +174,15 @@ export async function fetchKboScoreboardByDate(date: string) {
 
     const awayTeam = toTeam(g.AWAY_NM);
     const homeTeam = toTeam(g.HOME_NM);
-    const awayScore = Number(g.T_SCORE_CN || 0);
-    const homeScore = Number(g.B_SCORE_CN || 0);
+    const rawAwayScore = Number(g.T_SCORE_CN || 0);
+    const rawHomeScore = Number(g.B_SCORE_CN || 0);
     const lineScore = lineScoreMap.get(`${String(g.AWAY_NM ?? '').trim()}-${String(g.HOME_NM ?? '').trim()}`);
     const innings = lineScore?.innings ?? [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const awayScore = lineScore?.awayLine.r ?? rawAwayScore;
+    const homeScore = lineScore?.homeLine.r ?? rawHomeScore;
+    const displayInning = lineScore?.latestInning && lineScore.latestInning > Number(inning || 0)
+      ? lineScore.latestInning
+      : inning;
 
     return {
       id: g.G_ID,
@@ -200,7 +215,7 @@ export async function fetchKboScoreboardByDate(date: string) {
       footerLeft: status === 'LIVE' ? 'Live' : status === 'FINAL' ? 'Final' : 'Scheduled',
       footerRight:
         status === 'LIVE'
-          ? `${inning}回${half}`
+          ? `${displayInning}回${half}`
           : status === 'FINAL'
           ? 'Final'
           : g.G_TM,

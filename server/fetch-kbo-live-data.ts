@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fetchKboScoreboardByDate } from './providers/kboOfficial';
 
@@ -58,14 +58,6 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function readExistingPayload(outputPath: string) {
-  try {
-    const raw = await readFile(outputPath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
 
 function flattenGamesByDate(gamesByDate: Record<string, KboGame[]>) {
   return Object.keys(gamesByDate)
@@ -76,11 +68,7 @@ function flattenGamesByDate(gamesByDate: Record<string, KboGame[]>) {
 async function main() {
   const { startDate, endDate } = resolveKboEventsDateRange();
   const outputPath = path.resolve(process.cwd(), 'server/data/eventsCenter.kbo.json');
-  const existingPayload = await readExistingPayload(outputPath);
-  const gamesByDate: Record<string, KboGame[]> =
-    existingPayload?.gamesByDate && typeof existingPayload.gamesByDate === 'object'
-      ? { ...existingPayload.gamesByDate }
-      : {};
+  const gamesByDate: Record<string, KboGame[]> = {};
   const delayMs = Number(process.env.KBO_EVENTS_FETCH_DELAY_MS ?? 120);
 
   for (

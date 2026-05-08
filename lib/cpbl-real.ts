@@ -448,7 +448,7 @@ export async function fetchCpblMajorGamesByDate(
 ): Promise<ScoreboardGame[]> {
   const localGames = getLocalGamesByDate(date);
 
-  if (localGames) {
+  if (localGames && localGames.length > 0) {
     return localGames;
   }
 

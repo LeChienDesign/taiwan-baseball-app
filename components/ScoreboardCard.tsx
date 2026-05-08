@@ -423,6 +423,9 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     lineHeight: 11,
   },
+  teamNameRight: {
+    textAlign: 'right',
+  },
   winnerText: {
     color: '#f8fafc',
     fontWeight: '900',

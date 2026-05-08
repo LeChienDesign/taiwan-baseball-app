@@ -124,7 +124,7 @@ export default function AbroadNewsScreen() {
 
   const newsItems = useMemo<AbroadNewsItem[]>(() => {
     const flattened = players.flatMap((player) =>
-      (player.news ?? []).map((item) => ({
+      (player.news ?? []).map((item: any) => ({
         id: item.id,
         playerId: player.id,
         playerName: player.name,

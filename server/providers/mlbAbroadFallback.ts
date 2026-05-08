@@ -1,4 +1,4 @@
-import { abroadRegistry } from '../../data/abroadRegistry';
+import { getAbroadRegistry } from '../../data/abroadRegistry';
 
 type AbroadNewsItem = {
   id: string;
@@ -127,7 +127,7 @@ function addDays(dateString: string, days: number) {
 }
 
 function isTrackedMiLbPlayer(player: AbroadPlayerLike) {
-  const registry = abroadRegistry[player.id];
+  const registry = getAbroadRegistry(player.id);
   if (registry?.provider !== 'mlb') return false;
   return normalizeText(registry.league) === 'milb' || normalizeText(player.league) === 'milb';
 }
@@ -194,8 +194,8 @@ async function fetchAllMiLbTeams(season: number) {
   const json = await fetchJson<any>(url);
   const rawTeams = Array.isArray(json?.teams) ? json.teams : [];
   const teams = rawTeams
-    .map(normalizeAffiliateTeam)
-    .filter((item): item is NormalizedAffiliateTeam => !!item);
+    .map((team: any) => normalizeAffiliateTeam(team))
+    .filter((item: NormalizedAffiliateTeam | null): item is NormalizedAffiliateTeam => !!item);
 
   allMiLbTeamsCache.set(season, teams);
   return teams;
@@ -207,7 +207,7 @@ async function getAffiliateTeamsForOrg(orgId: number, season: number) {
   if (cached) return cached;
 
   const allTeams = await fetchAllMiLbTeams(season);
-  const filtered = allTeams.filter((team) => team.parentOrgId === orgId);
+  const filtered = allTeams.filter((team: NormalizedAffiliateTeam) => team.parentOrgId === orgId);
 
   orgAffiliateTeamsCache.set(cacheKey, filtered);
   return filtered;
@@ -251,8 +251,8 @@ async function fetchScheduleForAffiliate(
 
   const json = await fetchJson<any>(url);
   const games = flattenScheduleDates(json)
-    .map(normalizeScheduledGame)
-    .filter((item): item is NormalizedScheduledGame => !!item);
+    .map((game: any) => normalizeScheduledGame(game))
+    .filter((item: NormalizedScheduledGame | null): item is NormalizedScheduledGame => !!item);
 
   orgRecentGamesCache.set(cacheKey, games);
   return games;
@@ -271,7 +271,7 @@ async function getRecentGamesForOrg(
 
   const affiliates = await getAffiliateTeamsForOrg(orgId, season);
   const gameArrays = await Promise.all(
-    affiliates.map((affiliate) => fetchScheduleForAffiliate(affiliate, startDate, requestedDate))
+    affiliates.map((affiliate: NormalizedAffiliateTeam) => fetchScheduleForAffiliate(affiliate, startDate, requestedDate))
   );
 
   const deduped = new Map<number, NormalizedScheduledGame>();
@@ -423,7 +423,7 @@ async function buildFallbackRecentGamesForPlayer(
   daysBack: number,
   maxGames: number
 ) {
-  const registry = abroadRegistry[player.id];
+  const registry = getAbroadRegistry(player.id);
   if (!registry || registry.provider !== 'mlb') return [];
 
   const personId = registry.personId ?? player.officialPersonId;

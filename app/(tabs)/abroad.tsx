@@ -83,9 +83,13 @@ const FILTERS = ['全部', '投手', '野手', '今日出賽', '預告先發'] a
 
 const LEAGUE_ORDER: Record<string, number> = {
   MLB: 0,
-  MiLB: 0,
   NPB: 1,
   KBO: 2,
+  MiLB: 3,
+  MILB: 3,
+  'Minor League': 3,
+  '小聯盟': 3,
+  '二軍': 4,
 };
 
 function normalizeSortText(value?: string | null) {
@@ -131,7 +135,22 @@ function mergePlayers(seed: PlayerLike[], live: PlayerLike[]) {
 }
 
 function getLeagueSortRank(player: PlayerLike) {
-  return LEAGUE_ORDER[player.league ?? ''] ?? 99;
+  const league = player.league ?? '';
+  const level = player.level ?? '';
+  const normalizedLeague = league.trim();
+  const normalizedLevel = level.trim();
+
+  if (LEAGUE_ORDER[normalizedLeague] !== undefined) return LEAGUE_ORDER[normalizedLeague];
+
+  const combined = `${normalizedLeague} ${normalizedLevel}`.toLowerCase();
+
+  if (combined.includes('mlb')) return LEAGUE_ORDER.MLB;
+  if (combined.includes('npb') || combined.includes('日職')) return LEAGUE_ORDER.NPB;
+  if (combined.includes('kbo') || combined.includes('韓職')) return LEAGUE_ORDER.KBO;
+  if (combined.includes('milb') || combined.includes('minor') || combined.includes('小聯盟')) return LEAGUE_ORDER.MiLB;
+  if (combined.includes('二軍') || combined.includes('farm')) return LEAGUE_ORDER['二軍'];
+
+  return 99;
 }
 
 function getTeamGroupKey(player: PlayerLike) {

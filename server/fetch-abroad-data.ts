@@ -193,15 +193,13 @@ async function runProvider(
     let nextPlayers = players;
 
     if (name === 'mlb') {
-  let patched = await applyMlbOfficialAbroadPatches(players, { date });
-  patched = await applyMlbAbroadFallbackPatches(patched, { date });
-  nextPlayers = patched;
-}
- else if (name === 'npb') {
-      nextPlayers = await applyNpbAbroadPatches(players, { date });
-    } 
-else if (name === 'kbo') {
-      nextPlayers = await applyKboAbroadPatches(players, { date });
+      let patched = await applyMlbOfficialAbroadPatches(players as any, { date });
+      patched = await applyMlbAbroadFallbackPatches(patched, { date });
+      nextPlayers = patched;
+    } else if (name === 'npb') {
+      nextPlayers = await applyNpbAbroadPatches(players as any, { date });
+    } else if (name === 'kbo') {
+      nextPlayers = await applyKboAbroadPatches(players as any, { date });
     } else {
       return {
         players,

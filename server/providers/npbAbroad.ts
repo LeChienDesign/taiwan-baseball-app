@@ -1,4 +1,4 @@
-import { abroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
+import { getAbroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -85,6 +85,55 @@ type OfficialSupplement = {
   recentNote?: string;
 };
 
+const MANUAL_NPB_PLAYER_PATCHES: Record<string, Partial<AbroadPlayerLike>> = {
+  'jo-hsi-hsu': {
+    seasonStats: {
+      pitcher: {
+        era: '7.23',
+        whip: '2.04',
+        ip: '18.2',
+        so: 17,
+        bb: 9,
+        wins: 1,
+        losses: 3,
+        saves: 0,
+        holds: 0,
+        games: 4,
+        battersFaced: 91,
+        hitByPitch: 1,
+        hits: 29,
+        homeRuns: 5,
+        runs: 15,
+        earnedRuns: 15,
+        winningPercentage: '.250',
+      },
+    },
+    recentGames: [
+      {
+        date: '2026-05-04',
+        opponent: '西武獅 vs 福岡軟銀鷹',
+        result: '先發 / 敗投',
+        detail1: 'IP 4 / SO 5 / BB 1',
+        detail2: 'NP 92 / H 14 / HR 2 / R 7 / ER 7',
+      },
+      {
+        date: '2026-04-08',
+        opponent: '福岡軟銀鷹 vs 埼玉西武',
+        result: '先發',
+        detail1: 'IP 7 / SO 5 / BB 2',
+        detail2: 'NP 90 / H 6 / HR 1 / R 1 / ER 1',
+      },
+      {
+        date: '2026-04-01',
+        opponent: '福岡軟銀鷹 vs 東北楽天',
+        result: '先發',
+        detail1: 'IP 6 / SO 6 / BB 2',
+        detail2: 'NP 86 / H 3 / HR 0 / R 0 / ER 0',
+      },
+    ],
+  },
+};
+
 const NPB_BASE = 'https://npb.jp';
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_LINKS_PER_PLAYER = 30;
@@ -92,6 +141,16 @@ const FALLBACK_LINKS_PER_PLAYER = 80;
 
 const DEBUG_ABROAD_TIMING = process.env.DEBUG_ABROAD_TIMING === '1';
 const DEBUG_PLAYER_ID = process.env.DEBUG_PLAYER_ID?.trim();
+const NPB_FETCH_PHOTOS = process.env.NPB_FETCH_PHOTOS === '1';
+const NPB_MAX_DAYS_BACK = 7;
+const NPB_PHOTO_CHECK_DAY = Number(process.env.NPB_PHOTO_CHECK_DAY ?? 1);
+
+function shouldCheckNpbPhotos(requestedDate: string) {
+  if (NPB_FETCH_PHOTOS) return true;
+
+  const day = Number(requestedDate.slice(8, 10));
+  return Number.isFinite(day) && day === NPB_PHOTO_CHECK_DAY;
+}
 
 const NPB_PLAYER_ALIASES: Record<
   string,
@@ -117,7 +176,18 @@ const NPB_PLAYER_ALIASES: Record<
       type: 'hitter',
     },
     'jo-hsi-hsu': {
-      aliases: ['Jo-Hsi Hsu', '徐若熙', 'しゅー・るおしー'],
+      aliases: [
+        'Jo-Hsi Hsu',
+        'Hsu Jo-Hsi',
+        'J.Hsu',
+        'J. Hsu',
+        'JH.Hsu',
+        'JH. Hsu',
+        'JH Hsu',
+        'Hsu',
+        '徐若熙',
+        'しゅー・るおしー',
+      ],
       type: 'pitcher',
     },
     'chia-hao-sung': {
@@ -250,7 +320,7 @@ function compactWhitespace(input: string) {
 }
 
 function isTrackedNpbPlayer(player: AbroadPlayerLike) {
-  const registry = abroadRegistry[player.id];
+  const registry = getAbroadRegistry(player.id);
   if (registry?.provider === 'npb') return true;
   return normalizeText(player.league) === 'npb';
 }
@@ -513,6 +583,7 @@ function isRakutenPlayer(player: AbroadPlayerLike, registry: AbroadRegistryEntry
   );
 }
 
+
 function absoluteUrl(baseUrl: string, href?: string) {
   if (!href) return undefined;
   if (/^https?:\/\//i.test(href)) return href;
@@ -521,6 +592,59 @@ function absoluteUrl(baseUrl: string, href?: string) {
     return `${base.origin}${href}`;
   }
   return new URL(href, baseUrl).toString();
+}
+
+function looksLikePlayerPhotoUrl(url?: string) {
+  if (!url) return false;
+  const normalized = url.toLowerCase();
+
+  if (!/\.(?:webp|png|jpe?g)(?:\?|$)/i.test(normalized)) return false;
+  if (normalized.includes('logo')) return false;
+  if (normalized.includes('banner')) return false;
+  if (normalized.includes('icon')) return false;
+  if (normalized.includes('sponsor')) return false;
+
+  return (
+    normalized.includes('player') ||
+    normalized.includes('players') ||
+    normalized.includes('profile') ||
+    normalized.includes('member') ||
+    normalized.includes('team') ||
+    normalized.includes('uploads') ||
+    normalized.includes('wp-content')
+  );
+}
+
+function extractOfficialPhotoUrlFromHtml(html: string, baseUrl: string) {
+  const ogImageMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
+  const ogImageUrl = absoluteUrl(baseUrl, ogImageMatch?.[1]);
+  if (looksLikePlayerPhotoUrl(ogImageUrl)) return ogImageUrl;
+
+  const imageMatches = [...html.matchAll(/<img[^>]+(?:src|data-src|data-original)=["']([^"']+)["'][^>]*>/gi)];
+
+  for (const match of imageMatches) {
+    const imageUrl = absoluteUrl(baseUrl, match[1]);
+    if (looksLikePlayerPhotoUrl(imageUrl)) return imageUrl;
+  }
+
+  return undefined;
+}
+
+async function buildOfficialPhotoUrl(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  requestedDate: string
+) {
+  if (player.officialPhotoUrl) return player.officialPhotoUrl;
+  if (!shouldCheckNpbPhotos(requestedDate)) return undefined;
+
+  const sourceUrl = registry.officialPlayerUrl ?? registry.officialRosterUrl;
+  if (!sourceUrl) return undefined;
+
+  const html = await fetchText(sourceUrl);
+  if (!html) return undefined;
+
+  return extractOfficialPhotoUrlFromHtml(html, sourceUrl);
 }
 
 function extractDateFromText(text: string, fallbackDate: string) {
@@ -567,6 +691,16 @@ function extractRakutenArticleCandidates(
     const anchorHtml = match[2];
     const title = compactWhitespace(stripHtml(anchorHtml));
     if (!title || title.length < 6) continue;
+    if (
+      title.includes('監督') ||
+      title.includes('コーチ') ||
+      title.includes('スタッフ') ||
+      title.toLowerCase().includes('coach') ||
+      title.toLowerCase().includes('staff') ||
+      title.toLowerCase().includes('member')
+    ) {
+      continue;
+    }
 
     const start = Math.max(0, (match.index ?? 0) - 500);
     const end = Math.min(html.length, (match.index ?? 0) + 1200);
@@ -580,6 +714,16 @@ function extractRakutenArticleCandidates(
 
     const date = extractDateFromText(contextText, fallbackDate);
     const url = absoluteUrl(baseUrl, href);
+
+    const normalizedUrl = String(url ?? href ?? '').toLowerCase();
+    if (
+      normalizedUrl.includes('/team/staff') ||
+      normalizedUrl.includes('/team/coach') ||
+      normalizedUrl.includes('/team/member') ||
+      normalizedUrl.includes('/player/staff')
+    ) {
+      continue;
+    }
 
     results.push({
       title,
@@ -743,7 +887,9 @@ function extractFightersGameRows(html: string, requestedDate: string, maxGames: 
         detail2: `H ${h} / R ${r} / ER ${er} / ERA ${era}`,
       };
     })
-    .filter((item): item is Record<string, any> => !!item)
+    .filter(
+      (item): item is { date: string; opponent: string; result: string; detail1: string; detail2: string } => !!item
+    )
     .slice(0, maxGames);
 }
 async function buildFightersOfficialSupplement(
@@ -759,12 +905,19 @@ async function buildFightersOfficialSupplement(
   }
 
   const playerPageHtml = await fetchText(sourceUrl);
+  if (!playerPageHtml) {
+    return { recentGames: [], news: [] };
+  }
+
   const detailUrlMatch = playerPageHtml.match(
     /https:\/\/www\.fighters\.co\.jp\/team\/player\/detail\/\d+_\d+\.html/
   );
 
   const detailUrl = detailUrlMatch?.[0] ?? sourceUrl;
   const html = await fetchText(detailUrl);
+  if (!html) {
+    return { recentGames: [], news: [] };
+  }
 
   const configMatch = html.match(/var result_by_game = (\{[\s\S]*?\});/);
   if (!configMatch) {
@@ -848,6 +1001,60 @@ function buildNpbScoreBoxUrl(item: NpbGameLink) {
   }
 
   return `${NPB_BASE}/scores/${year}/${monthDay}/f-b-08/box.html`;
+}
+
+function buildNpbScoreBoxCandidateUrls(item: NpbGameLink, registry: AbroadRegistryEntry) {
+  const match = item.url.match(/\/bis\/eng\/(\d{4})\/games\/[sf]?s?(\d{8})\d*\.html/i);
+  if (!match) return [];
+
+  const year = match[1];
+  const ymd = match[2];
+  const monthDay = ymd.slice(4, 8);
+  const joined = `${item.contextText ?? ''} ${registry.officialTeam ?? ''}`.toLowerCase();
+
+  const pairCandidates = new Set<string>();
+
+  if (joined.includes('softbank') || joined.includes('hawks') || joined.includes('ソフトバンク')) {
+    ['h-b', 'h-e', 'h-f', 'h-l', 'h-m', 'b-h', 'e-h', 'f-h', 'l-h', 'm-h'].forEach((pair) => pairCandidates.add(pair));
+  }
+
+  if (joined.includes('fighters') || joined.includes('nippon-ham') || joined.includes('日本ハム')) {
+    ['f-b', 'f-e', 'f-h', 'f-l', 'f-m', 'b-f', 'e-f', 'h-f', 'l-f', 'm-f'].forEach((pair) => pairCandidates.add(pair));
+  }
+
+  if (joined.includes('rakuten') || joined.includes('eagles') || joined.includes('楽天')) {
+    ['e-b', 'e-f', 'e-h', 'e-l', 'e-m', 'b-e', 'f-e', 'h-e', 'l-e', 'm-e'].forEach((pair) => pairCandidates.add(pair));
+  }
+
+  if (joined.includes('seibu') || joined.includes('lions') || joined.includes('西武')) {
+    ['l-b', 'l-e', 'l-f', 'l-h', 'l-m', 'b-l', 'e-l', 'f-l', 'h-l', 'm-l'].forEach((pair) => pairCandidates.add(pair));
+  }
+
+  if (joined.includes('yakult') || joined.includes('swallows') || joined.includes('ヤクルト')) {
+    ['s-c', 's-d', 's-g', 's-t', 'c-s', 'd-s', 'g-s', 't-s'].forEach((pair) => pairCandidates.add(pair));
+  }
+
+  return Array.from(pairCandidates).flatMap((pair) => [
+    `${NPB_BASE}/scores/${year}/${monthDay}/${pair}-09/box.html`,
+    `${NPB_BASE}/scores/${year}/${monthDay}/${pair}-08/box.html`,
+  ]);
+}
+
+function extractScoreBoxUrlFromGameHtml(html: string, baseUrl: string) {
+  const hrefMatches = [...html.matchAll(/href=["']([^"']*\/scores\/[^"']*\/box\.html)["']/gi)];
+
+  for (const match of hrefMatches) {
+    const url = absoluteUrl(baseUrl, match[1]);
+    if (url) return url;
+  }
+
+  const relativeMatches = [...html.matchAll(/href=["']([^"']*box\.html)["']/gi)];
+  for (const match of relativeMatches) {
+    const url = absoluteUrl(baseUrl, match[1]);
+    if (url && url.includes('/scores/')) return url;
+  }
+
+  return null;
 }
 
 function extractTitle(html: string) {
@@ -1037,6 +1244,7 @@ function buildHitterRecentGame(meta: ReturnType<typeof extractGameMeta>, line: s
 }
 async function findEntryFromGamePage(
   player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
   item: NpbGameLink,
   aliases: string[],
   configuredType: 'pitcher' | 'hitter'
@@ -1102,6 +1310,33 @@ async function findEntryFromGamePage(
     if (boxCells) {
       debugPlayerLog(player.id, 'box cells =', boxCells);
       return buildPitcherRecentGameFromBoxCells(activeMeta, boxCells);
+    }
+
+    const linkedBoxUrl = extractScoreBoxUrlFromGameHtml(activeHtml, item.url);
+    if (linkedBoxUrl) {
+      debugPlayerLog(player.id, 'trying linked box page =', linkedBoxUrl);
+      const linkedBoxHtml = await timeAsync(`player:${player.id}:fetchLinkedBox`, () => fetchText(linkedBoxUrl));
+      if (linkedBoxHtml) {
+        const linkedBoxMeta = extractGameMeta(linkedBoxHtml, item.date);
+        const linkedBoxCells = extractNpbBoxCellsForAlias(linkedBoxHtml, aliases);
+        if (linkedBoxCells) {
+          debugPlayerLog(player.id, 'linked box cells =', linkedBoxCells);
+          return buildPitcherRecentGameFromBoxCells(linkedBoxMeta, linkedBoxCells);
+        }
+      }
+    }
+
+    for (const candidateUrl of buildNpbScoreBoxCandidateUrls(item, registry)) {
+      debugPlayerLog(player.id, 'trying candidate box page =', candidateUrl);
+      const candidateHtml = await timeAsync(`player:${player.id}:fetchCandidateBox`, () => fetchText(candidateUrl));
+      if (!candidateHtml) continue;
+
+      const candidateCells = extractNpbBoxCellsForAlias(candidateHtml, aliases);
+      if (!candidateCells) continue;
+
+      const candidateMeta = extractGameMeta(candidateHtml, item.date);
+      debugPlayerLog(player.id, 'candidate box cells =', candidateCells);
+      return buildPitcherRecentGameFromBoxCells(candidateMeta, candidateCells);
     }
   }
 
@@ -1184,7 +1419,7 @@ async function buildRecentGamesFromOfficialScores(
       `checking game: date=${item.date} farm=${item.isFarm} url=${item.url}`
     );
 
-    const entry = await findEntryFromGamePage(player, item, aliases, configuredType);
+    const entry = await findEntryFromGamePage(player, registry, item, aliases, configuredType);
     if (entry) {
       results.push(entry);
     }
@@ -1194,24 +1429,68 @@ async function buildRecentGamesFromOfficialScores(
   return results;
 }
 
+
 function inferRecentNote(recentGames: Array<Record<string, any>>) {
   if (recentGames.length > 0) {
-    return 'NPB 官方比分頁補充來源';
+    return 'NPB 官方比分頁補充近 5 場比賽資料';
   }
-  return '近 45 日尚無可用官方比分頁逐場紀錄';
+  return '近 7 日尚無可用官方比分頁逐場紀錄';
 }
 
-function buildOfficialUrlsPatch(player: AbroadPlayerLike, registry: AbroadRegistryEntry) {
+function recentGameDetailScore(game: Record<string, any>) {
+  const text = `${game.detail1 ?? ''} ${game.detail2 ?? ''}`;
+  let score = 0;
+
+  if (/\bIP\b|投球回/.test(text)) score += 2;
+  if (/\bSO\b|三振/.test(text)) score += 2;
+  if (/\bBB\b|四球|四壞/.test(text)) score += 1;
+  if (/\bNP\b|投球数|投球數/.test(text)) score += 2;
+  if (/\bH\b|安打/.test(text)) score += 1;
+  if (/\bHR\b|本塁打|全壘打/.test(text)) score += 1;
+  if (/\bER\b|自責|責失/.test(text)) score += 2;
+  if (/\bLP\b|\bWP\b|NPB 官方比分頁/.test(text)) score -= 1;
+
+  return score;
+}
+
+function mergeRecentGamesPreferDetails(
+  seedRecentGames: Array<Record<string, any>>,
+  fetchedRecentGames: Array<Record<string, any>>,
+  maxGames: number
+) {
+  const byDate = new Map<string, Record<string, any>>();
+
+  for (const game of [...seedRecentGames, ...fetchedRecentGames]) {
+    const date = String(game.date ?? '');
+    if (!date) continue;
+
+    const existing = byDate.get(date);
+    if (!existing || recentGameDetailScore(game) > recentGameDetailScore(existing)) {
+      byDate.set(date, game);
+    }
+  }
+
+  return Array.from(byDate.values())
+    .sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')))
+    .slice(0, maxGames);
+}
+
+function buildOfficialUrlsPatch(
+  player: AbroadPlayerLike,
+  registry: AbroadRegistryEntry,
+  officialPhotoUrl?: string
+) {
   return {
-    team: registry.officialTeam ?? player.team,
+    team: player.team ?? registry.officialTeam,
     league: 'NPB',
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
+    officialPhotoUrl: officialPhotoUrl ?? player.officialPhotoUrl,
     teamMeta: {
       ...(player.teamMeta ?? {}),
       code: registry.officialTeamCode ?? player.teamMeta?.code,
       abbreviation: registry.officialTeamCode ?? player.teamMeta?.abbreviation,
       logoKey: registry.teamLogoKey ?? player.teamMeta?.logoKey,
-      displayName: registry.officialTeam ?? player.teamMeta?.displayName,
+      displayName: player.teamMeta?.displayName ?? player.team ?? registry.officialTeam,
       leagueGroup: 'NPB' as const,
     },
   };
@@ -1224,7 +1503,8 @@ async function buildSingleNpbPatch(
   daysBack: number,
   maxGames: number
 ): Promise<AbroadPatch> {
-  const basePatch = buildOfficialUrlsPatch(player, registry);
+  const officialPhotoUrl = await buildOfficialPhotoUrl(player, registry, requestedDate);
+  const basePatch = buildOfficialUrlsPatch(player, registry, officialPhotoUrl);
 
   debugPlayerLog(player.id, 'buildSingleNpbPatch start', {
     team: player.team,
@@ -1233,9 +1513,21 @@ async function buildSingleNpbPatch(
     officialNewsUrl: registry.officialNewsUrl,
   });
 
-  let recentGames = hasRecentGames(player)
-    ? player.recentGames ?? []
-    : await buildRecentGamesFromOfficialScores(player, registry, requestedDate, daysBack, maxGames);
+  const manualPatch = MANUAL_NPB_PLAYER_PATCHES[player.id] ?? {};
+  const fetchedRecentGames = await buildRecentGamesFromOfficialScores(
+    player,
+    registry,
+    requestedDate,
+    daysBack,
+    maxGames
+  );
+  const seedRecentGames = player.recentGames ?? [];
+  const manualRecentGames = manualPatch.recentGames ?? [];
+  let recentGames = mergeRecentGamesPreferDetails(
+    [...manualRecentGames, ...seedRecentGames],
+    fetchedRecentGames,
+    maxGames
+  );
 
   let officialSupplement: OfficialSupplement | null = null;
 
@@ -1259,12 +1551,9 @@ async function buildSingleNpbPatch(
       }
 
       if (officialSupplement?.recentGames.length) {
-        const existingRecentGames = recentGames.length > 0 ? recentGames : player.recentGames ?? [];
-
-        recentGames =
-          existingRecentGames.length >= officialSupplement.recentGames.length
-            ? existingRecentGames
-            : officialSupplement.recentGames;
+        recentGames = recentGames.length >= officialSupplement.recentGames.length
+          ? recentGames
+          : officialSupplement.recentGames;
       }
     }
 
@@ -1280,7 +1569,8 @@ async function buildSingleNpbPatch(
   return {
     ...basePatch,
     recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
-    recentNote: officialSupplement?.recentNote ?? inferRecentNote(recentGames),
+    recentNote: officialSupplement?.recentNote ?? (recentGames.length > 0 ? inferRecentNote(recentGames) : player.recentNote),
+    seasonStats: manualPatch.seasonStats ?? player.seasonStats,
     news,
   };
 }
@@ -1290,7 +1580,8 @@ export async function buildNpbAbroadPatches(
   options: ApplyOptions = {}
 ): Promise<AbroadPatchMap> {
   const requestedDate = toDateOnly(options.date);
-  const daysBack = typeof options.daysBack === 'number' ? options.daysBack : 45;
+  const rawDaysBack = typeof options.daysBack === 'number' ? options.daysBack : 7;
+  const daysBack = Math.min(Math.max(rawDaysBack, 1), NPB_MAX_DAYS_BACK);
   const maxGames = typeof options.maxGames === 'number' ? options.maxGames : 5;
 
   const patches: AbroadPatchMap = {};
@@ -1299,7 +1590,7 @@ export async function buildNpbAbroadPatches(
     if (!isTrackedNpbPlayer(player)) continue;
     if (DEBUG_PLAYER_ID && player.id !== DEBUG_PLAYER_ID) continue;
 
-    const registry = abroadRegistry[player.id];
+    const registry = getAbroadRegistry(player.id);
     if (!registry || registry.provider !== 'npb') continue;
 
     patches[player.id] = await timeAsync(`player:${player.id}`, () =>

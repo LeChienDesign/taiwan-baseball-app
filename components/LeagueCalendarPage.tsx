@@ -32,6 +32,8 @@ type DayMeta = {
 };
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
+const MONTH_META_FETCH_TIMEOUT_MS = 2500;
+const DAY_GAMES_FETCH_TIMEOUT_MS = 5000;
 
 
 function daysInMonth(year: number, month: number) {
@@ -73,6 +75,21 @@ function getDayPreview(games: any[]) {
 
 function hasLiveGame(games: any[]) {
   return games.some((game) => normalizeStatus(game.status) === 'LIVE');
+}
+
+async function withCalendarFetchTimeout<T>(promise: Promise<T>, fallback: T, timeoutMs: number) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => resolve(fallback), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 function makeMonthCacheKey(year: number, month: number) {
@@ -148,7 +165,11 @@ export default function LeagueCalendarPage({
           setLoadingGames(true);
         }
         setGamesError(null);
-        const games = await fetchGamesByDate(dateKey);
+        const games = await withCalendarFetchTimeout(
+          fetchGamesByDate(dateKey),
+          [],
+          DAY_GAMES_FETCH_TIMEOUT_MS
+        );
 
         if (latestSelectedDateRef.current !== dateKey) {
           return;
@@ -214,7 +235,11 @@ export default function LeagueCalendarPage({
             const dateKey = makeDateKey(year, month, day);
 
             try {
-              const games = await fetchGamesByDate(dateKey, { localOnly: true });
+              const games = await withCalendarFetchTimeout(
+                fetchGamesByDate(dateKey, { localOnly: true }),
+                [],
+                MONTH_META_FETCH_TIMEOUT_MS
+              );
 
               const meta: DayMeta = {
                 count: games.length,

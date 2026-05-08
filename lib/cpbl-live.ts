@@ -116,7 +116,7 @@ export async function fetchCpblOfficialStatusByGame(params: {
 
   console.log('CPBL live url =', primaryUrl);
 
-  let detected = { status: 'SCHEDULED' as const, label: '' };
+  let detected: ReturnType<typeof detectOfficialStatus> = { status: 'SCHEDULED' as const, label: '' };
 
   try {
     const html = await fetchText(primaryUrl, 'https://en.cpbl.com.tw/box');

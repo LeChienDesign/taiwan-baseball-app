@@ -146,6 +146,7 @@ function StatusBadge({
     已完賽: { bg: '#0b2f1f', color: '#34d399' },
     傷兵: { bg: '#3b1111', color: '#f87171' },
     待命: { bg: '#1c2435', color: '#94a3b8' },
+    大聯盟出賽: { bg: '#dc2626', color: '#ffffff' },
   };
 
   return (

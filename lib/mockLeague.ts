@@ -29,8 +29,8 @@ export function createMockLeagueFetcher(options: MockFetcherOptions) {
       const awayRuns = innings.map((n) => ((day + index + n) % 2 === 0 ? 1 : 0));
       const homeRuns = innings.map((n) => ((day + index + n + 1) % 3 === 0 ? 1 : 0));
 
-      const awayScore = awayRuns.reduce((a, b) => a + b, 0);
-      const homeScore = homeRuns.reduce((a, b) => a + b, 0);
+      const awayScore = awayRuns.reduce<number>((a, b) => a + b, 0);
+      const homeScore = homeRuns.reduce<number>((a, b) => a + b, 0);
 
       return {
         id: `${options.leagueCode}-${date}-${index}`,

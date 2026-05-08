@@ -22,8 +22,8 @@ export type LineScoreRow = {
 
 export type ScoreboardGame = {
   id: string;
-  gamePk: number;
-  status: 'SCHEDULED' | 'LIVE' | 'FINAL';
+  gamePk?: number;
+  status: 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'SUSPENDED';
   venue: string;
   awayTeam: TeamCardInfo;
   homeTeam: TeamCardInfo;
@@ -61,6 +61,15 @@ function getTodayKeyTaipei() {
   }).format(new Date());
 }
 
+function getTodayKeyNewYork() {
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
 function getSnapshotGames(payload: any): ScoreboardGame[] {
   const gamesByDate = payload?.gamesByDate;
 
@@ -92,8 +101,14 @@ function getLocalGamesForDate(date: string): ScoreboardGame[] {
   });
 }
 
-function normalizeStatus(value?: string): 'SCHEDULED' | 'LIVE' | 'FINAL' {
-  if (value === 'LIVE' || value === 'FINAL' || value === 'SCHEDULED') {
+function normalizeStatus(value?: string): ScoreboardGame['status'] {
+  if (
+    value === 'LIVE' ||
+    value === 'FINAL' ||
+    value === 'SCHEDULED' ||
+    value === 'POSTPONED' ||
+    value === 'SUSPENDED'
+  ) {
     return value;
   }
   return 'SCHEDULED';
@@ -151,10 +166,11 @@ export async function fetchMlbGamesByDate(
   options?: { localOnly?: boolean }
 ): Promise<ScoreboardGame[]> {
   const todayTaipei = getTodayKeyTaipei();
+  const todayNewYork = getTodayKeyNewYork();
   if (options?.localOnly) {
     return getLocalGamesForDate(date);
   }
-  const shouldFetchRemote = date === todayTaipei;
+  const shouldFetchRemote = date === todayTaipei || date === todayNewYork;
 
   if (!shouldFetchRemote) {
     return getLocalGamesForDate(date);

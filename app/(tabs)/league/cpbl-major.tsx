@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import LeagueCalendarPage from '../../../components/LeagueCalendarPage';
-import { fetchCpblMajorGamesByDate } from '../../../lib/cpbl';
+import { fetchCpblMajorGamesByDate } from '../../../lib/cpbl-real';
 
 export default function CPBLMajorPage() {
   const { date } = useLocalSearchParams<{ date?: string }>();

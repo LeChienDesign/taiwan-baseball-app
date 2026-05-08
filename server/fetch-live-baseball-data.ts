@@ -43,9 +43,6 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function normalizeStatus(game: any) {
-  return String(game?.status ?? '').toUpperCase();
-}
 
 function getGameIdentity(game: any) {
   const gamePk = game?.gamePk ?? game?.id;
@@ -71,28 +68,7 @@ function dedupeGames(games: any[]) {
   return Array.from(map.values());
 }
 
-function removeStaleLiveGames(
-  gamesByDate: Record<string, any[]>,
-  activeDates: Set<string>
-) {
-  for (const [date, games] of Object.entries(gamesByDate)) {
-    if (activeDates.has(date)) {
-      gamesByDate[date] = dedupeGames(games);
-      continue;
-    }
 
-    gamesByDate[date] = dedupeGames(games).filter((game) => normalizeStatus(game) !== 'LIVE');
-  }
-}
-
-async function readExistingPayload(outputPath: string) {
-  try {
-    const raw = await fs.readFile(outputPath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
 
 function flattenGamesByDate(
   gamesByDate: Record<string, Awaited<ReturnType<typeof fetchMlbScoreboardByDate>>>
@@ -116,13 +92,8 @@ async function main() {
     process.env.EVENTS_CENTER_OUTPUT_JSON_PATH ??
     path.resolve('server/data/eventsCenter.mlb.json');
 
-  const existingPayload = await readExistingPayload(outputPath);
-  const gamesByDate: Record<string, Awaited<ReturnType<typeof fetchMlbScoreboardByDate>>> =
-    existingPayload?.gamesByDate && typeof existingPayload.gamesByDate === 'object'
-      ? { ...existingPayload.gamesByDate }
-      : {};
+  const gamesByDate: Record<string, Awaited<ReturnType<typeof fetchMlbScoreboardByDate>>> = {};
   const delayMs = Number(process.env.MLB_EVENTS_FETCH_DELAY_MS ?? 120);
-  const updatedDates = new Set<string>();
 
   for (
     let cursor = new Date(`${startDate}T00:00:00.000Z`);
@@ -133,7 +104,6 @@ async function main() {
     const mlb = dedupeGames(await fetchMlbScoreboardByDate(date));
 
     gamesByDate[date] = mlb;
-    updatedDates.add(date);
 
     console.log(`Fetched MLB schedule date: ${date} (${mlb.length} games)`);
 
@@ -142,7 +112,6 @@ async function main() {
     }
   }
 
-  removeStaleLiveGames(gamesByDate, updatedDates);
 
   const allGames = flattenGamesByDate(gamesByDate);
   const storedDates = Object.keys(gamesByDate).sort();
