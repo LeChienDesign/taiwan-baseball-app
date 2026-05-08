@@ -9,6 +9,31 @@ const CPBL_REMOTE_EVENTS_URL =
 
 const localSnapshot = require('../server/data/eventsCenter.cpbl.json');
 
+let remoteCpblSnapshotCache: any = null;
+let remoteCpblSnapshotFetchedAt = 0;
+const REMOTE_CPBL_CACHE_MS = 60 * 1000;
+async function getRemoteCpblSnapshot() {
+  const now = Date.now();
+
+  if (
+    remoteCpblSnapshotCache &&
+    now - remoteCpblSnapshotFetchedAt < REMOTE_CPBL_CACHE_MS
+  ) {
+    return remoteCpblSnapshotCache;
+  }
+
+  const response = await fetch(`${CPBL_REMOTE_EVENTS_URL}?t=${now}`);
+
+  if (!response.ok) {
+    throw new Error(`CPBL remote snapshot failed: ${response.status}`);
+  }
+
+  remoteCpblSnapshotCache = await response.json();
+  remoteCpblSnapshotFetchedAt = now;
+
+  return remoteCpblSnapshotCache;
+}
+
 function getTeamLogo(name?: string) {
   if (!name) return require('../assets/league/cpbl.png');
   return CPBL_TEAM_LOGOS[name] ?? require('../assets/league/cpbl.png');
@@ -33,20 +58,14 @@ function attachCpblLogos(game: any) {
 
 export async function fetchCpblMajorGamesByDate(date: string) {
   try {
-    const response = await fetch(
-      `${CPBL_REMOTE_EVENTS_URL}?t=${Date.now()}`,
-    );
+    const remoteSnapshot = await getRemoteCpblSnapshot();
 
-    if (response.ok) {
-      const remoteSnapshot = await response.json();
+    const remoteGames = ((remoteSnapshot as any).games || [])
+      .filter((game: any) => game.gameDate === date || game.date === date)
+      .map(attachCpblLogos);
 
-      const remoteGames = ((remoteSnapshot as any).games || [])
-        .filter((game: any) => game.gameDate === date || game.date === date)
-        .map(attachCpblLogos);
-
-      if (remoteGames.length > 0) {
-        return remoteGames;
-      }
+    if (remoteGames.length > 0) {
+      return remoteGames;
     }
   } catch (error) {
     console.warn('Failed to load remote CPBL snapshot', error);
