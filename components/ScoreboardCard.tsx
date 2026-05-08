@@ -47,22 +47,40 @@ function normalizeInnings(source: unknown): (number | string)[] {
   return source.map((v) => (v === null || v === undefined || v === '' ? '-' : v));
 }
 
+
+function getPlayedInningLength(values?: (number | string)[]) {
+  if (!Array.isArray(values)) return 0;
+
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    const value = values[index];
+    if (value !== '-' && value !== '' && value !== null && value !== undefined) {
+      return index + 1;
+    }
+  }
+
+  return 0;
+}
+
 function buildInningHeaders(
   innings?: number[],
   awayInnings?: (number | string)[],
   homeInnings?: (number | string)[]
 ) {
-  if (Array.isArray(innings) && innings.length > 0) {
-    return innings;
-  }
+  const playedLength = Math.max(
+    getPlayedInningLength(awayInnings),
+    getPlayedInningLength(homeInnings)
+  );
 
-  const maxLength = Math.max(awayInnings?.length ?? 0, homeInnings?.length ?? 0, 9);
-  return Array.from({ length: maxLength }, (_, i) => i + 1);
+  const inningCount = Math.max(9, playedLength);
+
+  return Array.from({ length: inningCount }, (_, i) => i + 1);
 }
 
 function padLine(values: (number | string)[], targetLength: number) {
-  if (values.length >= targetLength) return values;
-  return [...values, ...Array.from({ length: targetLength - values.length }, () => '-')];
+  const trimmedValues = values.slice(0, targetLength);
+
+  if (trimmedValues.length >= targetLength) return trimmedValues;
+  return [...trimmedValues, ...Array.from({ length: targetLength - trimmedValues.length }, () => '-')];
 }
 
 function normalizeStatus(status: ScoreboardCardProps['status']) {
