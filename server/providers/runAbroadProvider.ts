@@ -1,5 +1,3 @@
-
-
 import { applyMlbOfficialAbroadPatches } from './mlbAbroad';
 import { applyMlbAbroadFallbackPatches } from './mlbAbroadFallback';
 import { applyNpbAbroadPatches } from './npbAbroad';
@@ -13,6 +11,12 @@ export type ProviderRunResult = {
   ok: boolean;
   message: string;
   affectedPlayers: number;
+};
+
+export type AbroadProviderRunOptions = {
+  retry?: number;
+  timeoutMs?: number;
+  fallback?: boolean;
 };
 
 function countAffectedPlayers(
@@ -33,59 +37,82 @@ function countAffectedPlayers(
   return count;
 }
 
-export async function runAbroadProvider(
+async function runProviderOnce(
   name: AbroadProviderName,
   players: AbroadPlayerLike[],
   date: string
-): Promise<{ players: AbroadPlayerLike[]; result: ProviderRunResult }> {
-  try {
-    let nextPlayers = players;
+) {
+  if (name === 'mlb') {
+    let patched = await applyMlbOfficialAbroadPatches(players as any, { date });
+    patched = await applyMlbAbroadFallbackPatches(patched, { date });
+    return patched;
+  }
 
-    if (name === 'mlb') {
-      let patched = await applyMlbOfficialAbroadPatches(players as any, { date });
-      patched = await applyMlbAbroadFallbackPatches(patched, { date });
-      nextPlayers = patched;
-    } else if (name === 'npb') {
-      nextPlayers = await applyNpbAbroadPatches(players as any, { date });
-    } else if (name === 'kbo') {
-      nextPlayers = await applyKboAbroadPatches(players as any, { date });
-    } else {
+  if (name === 'npb') {
+    return applyNpbAbroadPatches(players as any, { date });
+  }
+
+  if (name === 'kbo') {
+    return applyKboAbroadPatches(players as any, { date });
+  }
+
+  throw new Error('Unknown provider');
+}
+
+export async function runAbroadProvider(
+  name: AbroadProviderName,
+  players: AbroadPlayerLike[],
+  date: string,
+  options: AbroadProviderRunOptions = {}
+): Promise<{ players: AbroadPlayerLike[]; result: ProviderRunResult }> {
+  const maxAttempts = Math.max(1, (options.retry ?? 0) + 1);
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const nextPlayers = await runProviderOnce(name, players, date);
+      const affectedPlayers = countAffectedPlayers(players, nextPlayers);
+
       return {
-        players,
+        players: dedupePlayers(nextPlayers),
         result: {
           name,
-          ok: false,
-          message: 'Unknown provider',
-          affectedPlayers: 0,
+          ok: true,
+          message:
+            attempt > 1
+              ? `${name.toUpperCase()} provider applied after ${attempt} attempts`
+              : `${name.toUpperCase()} provider applied`,
+          affectedPlayers,
         },
       };
+    } catch (error) {
+      lastError = error;
+      const message =
+        error instanceof Error ? error.message : `Unknown ${name} provider error`;
+
+      if (attempt < maxAttempts) {
+        console.warn(
+          `[fetch-abroad-data] ${name} provider attempt ${attempt}/${maxAttempts} failed: ${message}`
+        );
+        continue;
+      }
     }
-
-    const affectedPlayers = countAffectedPlayers(players, nextPlayers);
-
-    return {
-      players: dedupePlayers(nextPlayers),
-      result: {
-        name,
-        ok: true,
-        message: `${name.toUpperCase()} provider applied`,
-        affectedPlayers,
-      },
-    };
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : `Unknown ${name} provider error`;
-
-    console.warn(`[fetch-abroad-data] ${name} provider failed: ${message}`);
-
-    return {
-      players,
-      result: {
-        name,
-        ok: false,
-        message,
-        affectedPlayers: 0,
-      },
-    };
   }
+
+  const message =
+    lastError instanceof Error
+      ? lastError.message
+      : `Unknown ${name} provider error`;
+
+  console.warn(`[fetch-abroad-data] ${name} provider failed: ${message}`);
+
+  return {
+    players,
+    result: {
+      name,
+      ok: false,
+      message,
+      affectedPlayers: 0,
+    },
+  };
 }
