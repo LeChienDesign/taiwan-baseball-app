@@ -6,6 +6,31 @@ const NPB_REMOTE_EVENTS_URL =
 
 const npbLiveSnapshot = require('../server/data/eventsCenter.npb.json');
 
+let remoteNpbSnapshotCache: any = null;
+let remoteNpbSnapshotFetchedAt = 0;
+const REMOTE_NPB_CACHE_MS = 60 * 1000;
+async function getRemoteNpbSnapshot() {
+  const now = Date.now();
+
+  if (
+    remoteNpbSnapshotCache &&
+    now - remoteNpbSnapshotFetchedAt < REMOTE_NPB_CACHE_MS
+  ) {
+    return remoteNpbSnapshotCache;
+  }
+
+  const response = await fetch(`${NPB_REMOTE_EVENTS_URL}?t=${now}`);
+
+  if (!response.ok) {
+    throw new Error(`NPB remote snapshot failed: ${response.status}`);
+  }
+
+  remoteNpbSnapshotCache = await response.json();
+  remoteNpbSnapshotFetchedAt = now;
+
+  return remoteNpbSnapshotCache;
+}
+
 const NPB_TEAM_LOGOS: Record<string, any> = {
   Yomiuri: require('../assets/npb/Yomiuri Giants.png'),
   Yakult: require('../assets/npb/Tokyo Yakult Swal.png'),
@@ -370,22 +395,16 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
   }
 
   try {
-    const response = await fetch(
-      `${NPB_REMOTE_EVENTS_URL}?t=${Date.now()}`,
-    );
+    const remoteSnapshot = await getRemoteNpbSnapshot();
+    const remoteSnapshotHasDate = snapshotHasDate(remoteSnapshot, date);
 
-    if (response.ok) {
-      const remoteSnapshot = await response.json();
-      const remoteSnapshotHasDate = snapshotHasDate(remoteSnapshot, date);
+    const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date)
+      .filter((game: any) => isUsableNpbLiveGame(game))
+      .map((game: any) => attachFallbackLogos(game, logoMap))
+      .map(normalizeNpbTaiwanDisplayTime);
 
-      const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date)
-        .filter((game: any) => isUsableNpbLiveGame(game))
-        .map((game: any) => attachFallbackLogos(game, logoMap))
-        .map(normalizeNpbTaiwanDisplayTime);
-
-      if (remoteSnapshotHasDate) {
-        return remoteGames;
-      }
+    if (remoteSnapshotHasDate) {
+      return remoteGames;
     }
   } catch (error) {
     console.warn('Failed to load remote NPB snapshot', error);
