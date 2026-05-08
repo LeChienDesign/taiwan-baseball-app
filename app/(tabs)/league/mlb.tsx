@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import LeagueCalendarPage from '../../../components/LeagueCalendarPage';
 import { fetchMlbGamesByDate } from '../../../lib/mlb';
+import { useLiveJson } from '../../../hooks/useLiveJson';
 
 function getTodayKeyNewYork() {
   return new Intl.DateTimeFormat('sv-SE', {
@@ -14,13 +15,26 @@ function getTodayKeyNewYork() {
 export default function MLBPage() {
   const { date } = useLocalSearchParams<{ date?: string }>();
   const initialDate = typeof date === 'string' ? date : getTodayKeyNewYork();
+
+  const { payload } = useLiveJson({
+    remoteUrl:
+      'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json',
+    fallbackPayload: require('../../../server/data/eventsCenter.mlb.json'),
+    pollingIntervalMs: 60 * 1000,
+  });
+
   return (
     <LeagueCalendarPage
       logo={require('../../../assets/league/mlb.png')}
       leagueTitle="美國職棒 / MLB"
       leagueSubtitle="每日賽事及轉播單位"
       backHref="/events/pro"
-      fetchGamesByDate={fetchMlbGamesByDate}
+      fetchGamesByDate={(selectedDate, options) =>
+        fetchMlbGamesByDate(selectedDate, {
+          ...options,
+          payload,
+        })
+      }
       initialDate={initialDate}
     />
   );

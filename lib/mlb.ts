@@ -1,4 +1,5 @@
 import { getMlbTeamLogo } from '../constants/mlbTeamLogos';
+import { fetchMlbRealGamesByDate } from './mlb-real';
 
 const MLB_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json';
@@ -195,17 +196,30 @@ function normalizeGame(game: any): ScoreboardGame {
 
 export async function fetchMlbGamesByDate(
   date: string,
-  options?: { localOnly?: boolean }
+  options?: {
+    localOnly?: boolean;
+    payload?: any;
+  }
 ): Promise<ScoreboardGame[]> {
   const todayTaipei = getTodayKeyTaipei();
   const todayNewYork = getTodayKeyNewYork();
+
   if (options?.localOnly) {
-    return getLocalGamesForDate(date);
+    return fetchMlbRealGamesByDate(date);
   }
+
+  if (options?.payload) {
+    const payloadGames = getGamesForDateFromPayload(options.payload, date);
+
+    if (payloadGames.length > 0) {
+      return payloadGames;
+    }
+  }
+
   const shouldFetchRemote = date === todayTaipei || date === todayNewYork;
 
   if (!shouldFetchRemote) {
-    return getLocalGamesForDate(date);
+    return fetchMlbRealGamesByDate(date);
   }
 
   try {
@@ -219,5 +233,11 @@ export async function fetchMlbGamesByDate(
     console.warn('Failed to load remote MLB snapshot', error);
   }
 
-  return getLocalGamesForDate(date);
+  const localLiveGames = getLocalGamesForDate(date);
+
+  if (localLiveGames.length > 0) {
+    return localLiveGames;
+  }
+
+  return fetchMlbRealGamesByDate(date);
 }

@@ -62,24 +62,62 @@ function applyCpblManualOverrides(games: any[]) {
   return applyGameManualOverrides(games, cpblManualSnapshot);
 }
 
-export async function fetchCpblMajorGamesByDate(date: string) {
+function getSnapshotUpdatedAtMs(snapshotPayload: any) {
+  const timestamp = snapshotPayload?.updatedAt;
+  if (!timestamp) return 0;
+
+  const parsed = Date.parse(String(timestamp));
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function chooseNewerSnapshot(remoteSnapshot: any, localSnapshotPayload: any) {
+  const remoteUpdatedAt = getSnapshotUpdatedAtMs(remoteSnapshot);
+  const localUpdatedAt = getSnapshotUpdatedAtMs(localSnapshotPayload);
+
+  return remoteUpdatedAt > localUpdatedAt ? remoteSnapshot : localSnapshotPayload;
+}
+
+function getSnapshotGamesForDate(snapshotPayload: any, date: string) {
+  const gamesByDate = snapshotPayload?.gamesByDate;
+
+  if (gamesByDate && typeof gamesByDate === 'object') {
+    const games = gamesByDate[date];
+    return Array.isArray(games) ? games.map(attachCpblLogos) : [];
+  }
+
+  return ((snapshotPayload as any).games || [])
+    .filter((game: any) => game.gameDate === date || game.date === date)
+    .map(attachCpblLogos);
+}
+
+export async function fetchCpblMajorGamesByDate(
+  date: string,
+  options?: { localOnly?: boolean }
+) {
+  if (options?.localOnly) {
+    const localGames = getSnapshotGamesForDate(localSnapshot, date);
+
+    if (localGames.length > 0) {
+      return applyCpblManualOverrides(localGames);
+    }
+
+    const fallbackGames = await fetchCpblMajorFallback(date);
+    return applyCpblManualOverrides(fallbackGames);
+  }
+
   try {
     const remoteSnapshot = await getRemoteCpblSnapshot();
+    const preferredSnapshot = chooseNewerSnapshot(remoteSnapshot, localSnapshot);
+    const preferredGames = getSnapshotGamesForDate(preferredSnapshot, date);
 
-    const remoteGames = ((remoteSnapshot as any).games || [])
-      .filter((game: any) => game.gameDate === date || game.date === date)
-      .map(attachCpblLogos);
-
-    if (remoteGames.length > 0) {
-      return applyCpblManualOverrides(remoteGames);
+    if (preferredGames.length > 0) {
+      return applyCpblManualOverrides(preferredGames);
     }
   } catch (error) {
     console.warn('Failed to load remote CPBL snapshot', error);
   }
 
-  const localGames = ((localSnapshot as any).games || [])
-    .filter((game: any) => game.gameDate === date || game.date === date)
-    .map(attachCpblLogos);
+  const localGames = getSnapshotGamesForDate(localSnapshot, date);
 
   if (localGames.length > 0) {
     return applyCpblManualOverrides(localGames);
