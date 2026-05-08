@@ -70,7 +70,23 @@ function getSnapshotUpdatedAtMs(snapshotPayload: any) {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
-function chooseNewerSnapshot(remoteSnapshot: any, localSnapshotPayload: any) {
+function getSnapshotLivePriority(snapshotPayload: any, date: string) {
+  const games = getSnapshotGamesForDate(snapshotPayload, date);
+  return games.reduce((score: number, game: any) => {
+    if (game.status === 'LIVE') return score + 100;
+    if (game.status === 'FINAL') return score + 10;
+    return score;
+  }, 0);
+}
+
+function choosePreferredSnapshot(remoteSnapshot: any, localSnapshotPayload: any, date: string) {
+  const remotePriority = getSnapshotLivePriority(remoteSnapshot, date);
+  const localPriority = getSnapshotLivePriority(localSnapshotPayload, date);
+
+  if (remotePriority !== localPriority) {
+    return remotePriority > localPriority ? remoteSnapshot : localSnapshotPayload;
+  }
+
   const remoteUpdatedAt = getSnapshotUpdatedAtMs(remoteSnapshot);
   const localUpdatedAt = getSnapshotUpdatedAtMs(localSnapshotPayload);
 
@@ -107,7 +123,7 @@ export async function fetchCpblMajorGamesByDate(
 
   try {
     const remoteSnapshot = await getRemoteCpblSnapshot();
-    const preferredSnapshot = chooseNewerSnapshot(remoteSnapshot, localSnapshot);
+    const preferredSnapshot = choosePreferredSnapshot(remoteSnapshot, localSnapshot, date);
     const preferredGames = getSnapshotGamesForDate(preferredSnapshot, date);
 
     if (preferredGames.length > 0) {
