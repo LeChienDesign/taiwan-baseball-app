@@ -285,6 +285,40 @@ function applyNpbManualOverrides(games: any[]) {
   return applyGameManualOverrides(games, npbManualSnapshot);
 }
 
+function getSnapshotUpdatedAtMs(snapshotPayload: any) {
+  const timestamp = snapshotPayload?.updatedAt;
+  if (!timestamp) return 0;
+
+  const parsed = Date.parse(String(timestamp));
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function getSnapshotLivePriority(snapshotPayload: any, date: string) {
+  const games = getSnapshotGamesByDate(snapshotPayload, date);
+
+  return games.reduce((score: number, game: any) => {
+    const status = String(game?.status ?? '').toUpperCase();
+
+    if (status === 'LIVE') return score + 100;
+    if (status === 'FINAL' || status === 'GAMEOVER') return score + 10;
+    return score;
+  }, 0);
+}
+
+function choosePreferredSnapshot(firstSnapshot: any, secondSnapshot: any, date: string) {
+  const firstPriority = getSnapshotLivePriority(firstSnapshot, date);
+  const secondPriority = getSnapshotLivePriority(secondSnapshot, date);
+
+  if (firstPriority !== secondPriority) {
+    return firstPriority > secondPriority ? firstSnapshot : secondSnapshot;
+  }
+
+  const firstUpdatedAt = getSnapshotUpdatedAtMs(firstSnapshot);
+  const secondUpdatedAt = getSnapshotUpdatedAtMs(secondSnapshot);
+
+  return firstUpdatedAt >= secondUpdatedAt ? firstSnapshot : secondSnapshot;
+}
+
 function isClockText(value: any) {
   return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
 }
@@ -351,7 +385,13 @@ function getSnapshotGamesByDate(snapshot: any, date: string) {
     : [];
 }
 
-export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: boolean }) {
+export async function fetchNpbGamesByDate(
+  date: string,
+  options?: {
+    localOnly?: boolean;
+    payload?: any;
+  }
+) {
   const fallbackGames = await fetchFallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
   const todayTaipei = getTodayKeyTaipei();
@@ -378,6 +418,20 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
         .map((game: any) => attachFallbackLogos(game, logoMap))
         .map(normalizeNpbTaiwanDisplayTime)
     );
+  }
+
+  if (options?.payload) {
+    const preferredSnapshot = choosePreferredSnapshot(options.payload, npbLiveSnapshot, date);
+    const preferredSnapshotHasDate = snapshotHasDate(preferredSnapshot, date);
+
+    const payloadGames = getSnapshotGamesByDate(preferredSnapshot, date)
+      .filter((game: any) => isUsableNpbLiveGame(game))
+      .map((game: any) => attachFallbackLogos(game, logoMap))
+      .map(normalizeNpbTaiwanDisplayTime);
+
+    if (preferredSnapshotHasDate && payloadGames.length > 0) {
+      return applyNpbManualOverrides(payloadGames);
+    }
   }
 
   if (localSnapshotHasDate && localGames.length > 0) {
@@ -407,14 +461,15 @@ export async function fetchNpbGamesByDate(date: string, options?: { localOnly?: 
 
   try {
     const remoteSnapshot = await getRemoteNpbSnapshot();
-    const remoteSnapshotHasDate = snapshotHasDate(remoteSnapshot, date);
+    const preferredSnapshot = choosePreferredSnapshot(remoteSnapshot, npbLiveSnapshot, date);
+    const preferredSnapshotHasDate = snapshotHasDate(preferredSnapshot, date);
 
-    const remoteGames = getSnapshotGamesByDate(remoteSnapshot, date)
+    const remoteGames = getSnapshotGamesByDate(preferredSnapshot, date)
       .filter((game: any) => isUsableNpbLiveGame(game))
       .map((game: any) => attachFallbackLogos(game, logoMap))
       .map(normalizeNpbTaiwanDisplayTime);
 
-    if (remoteSnapshotHasDate) {
+    if (preferredSnapshotHasDate) {
       return applyNpbManualOverrides(remoteGames);
     }
   } catch (error) {
