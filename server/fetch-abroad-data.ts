@@ -61,6 +61,11 @@ type AbroadLivePayload = {
   players: AbroadPlayerLike[];
 };
 
+type AbroadManualPayload = {
+  players?: Record<string, Partial<AbroadPlayerLike>>;
+  notes?: Array<any>;
+};
+
 function resolveProjectPath(inputPath: string) {
   if (path.isAbsolute(inputPath)) return inputPath;
   return path.resolve(process.cwd(), inputPath);
@@ -166,6 +171,57 @@ async function readSeedPlayers(seedPath: string) {
   return dedupePlayers(normalizePlayers(parsed));
 }
 
+async function readManualPayload(manualPath: string): Promise<AbroadManualPayload> {
+  try {
+    const raw = await fs.readFile(manualPath, 'utf8');
+    const parsed = JSON.parse(raw);
+
+    if (!parsed || typeof parsed !== 'object') {
+      return { players: {}, notes: [] };
+    }
+
+    return {
+      players:
+        parsed.players && typeof parsed.players === 'object' && !Array.isArray(parsed.players)
+          ? parsed.players
+          : {},
+      notes: Array.isArray(parsed.notes) ? parsed.notes : [],
+    };
+  } catch (error: any) {
+    if (error?.code === 'ENOENT') {
+      return { players: {}, notes: [] };
+    }
+
+    throw error;
+  }
+}
+
+function applyManualAbroadOverrides(
+  players: AbroadPlayerLike[],
+  manualPayload: AbroadManualPayload
+) {
+  const manualPlayers = manualPayload.players ?? {};
+
+  return players.map((player) => {
+    const override = manualPlayers[player.id];
+
+    if (!override) return player;
+
+    return {
+      ...player,
+      ...override,
+      teamMeta: {
+        ...(player.teamMeta ?? {}),
+        ...(override.teamMeta ?? {}),
+      },
+      nextGame: override.nextGame ?? player.nextGame,
+      seasonStats: override.seasonStats ?? player.seasonStats,
+      recentGames: override.recentGames ?? player.recentGames,
+      news: override.news ?? player.news,
+    };
+  });
+}
+
 async function writeLivePayload(outputPath: string, payload: AbroadLivePayload) {
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify(payload, null, 2), 'utf8');
@@ -250,9 +306,14 @@ async function main() {
     'ABROAD_OUTPUT_JSON_PATH',
     'server/data/abroadPlayers.live.json'
   );
+  const manualPath = getEnvPath(
+    'ABROAD_MANUAL_JSON_PATH',
+    'server/data/manual/abroadPlayers.manual.json'
+  );
   const date = getRequestedDate();
 
   let players = await readSeedPlayers(seedPath);
+  const manualPayload = await readManualPayload(manualPath);
   const providerResults: ProviderRunResult[] = [];
 
   const mlbRun = await runProvider('mlb', players, date);
@@ -266,6 +327,8 @@ async function main() {
   const kboRun = await runProvider('kbo', players, date);
   players = kboRun.players;
   providerResults.push(kboRun.result);
+
+  players = dedupePlayers(applyManualAbroadOverrides(players, manualPayload));
 
   const payload: AbroadLivePayload = {
     updatedAt: new Date().toISOString(),
