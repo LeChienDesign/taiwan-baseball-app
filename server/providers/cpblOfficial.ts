@@ -155,6 +155,21 @@ const OFFICIAL_GAME_META_MAP: Record<string, { gameSno: string; kindCode: string
     kindCode: 'A',
     year: '2026',
   },
+  '2026-05-08|Wei Chuan Dragons|Fubon Guardians': {
+    gameSno: '85',
+    kindCode: 'A',
+    year: '2026',
+  },
+  '2026-05-08|Uni-President Lions|Rakuten Monkeys': {
+    gameSno: '86',
+    kindCode: 'A',
+    year: '2026',
+  },
+  '2026-05-08|TSG Hawks|CTBC Brothers': {
+    gameSno: '87',
+    kindCode: 'A',
+    year: '2026',
+  },
 };
 
 let computedOfficialGameMetaMapCache: Record<string, { gameSno: string; kindCode: string; year: string }> | null = null;
