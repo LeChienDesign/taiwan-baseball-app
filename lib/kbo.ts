@@ -4,6 +4,7 @@ const KBO_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.kbo.json';
 
 const snapshot = require('../server/data/eventsCenter.kbo.json');
+const kboManualSnapshot = require('../server/data/manual/kbo.manual.json');
 
 let remoteKboSnapshotCache: any = null;
 let remoteKboSnapshotFetchedAt = 0;
@@ -69,6 +70,50 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
+function buildManualGameKey(game: any) {
+  const gameDate = game.gameDate ?? game.date;
+  const awayName = game.awayTeam?.name ?? game.awayTeam?.short ?? '';
+  const homeName = game.homeTeam?.name ?? game.homeTeam?.short ?? '';
+
+  if (!gameDate || !awayName || !homeName) return undefined;
+
+  return `${gameDate}-${awayName}-${homeName}`;
+}
+
+function getManualGameOverride(game: any) {
+  const manualGames = kboManualSnapshot?.games ?? {};
+  const manualKey = buildManualGameKey(game);
+
+  return (
+    manualGames[game.id] ??
+    manualGames[game.gamePk] ??
+    (manualKey ? manualGames[manualKey] : undefined)
+  );
+}
+
+function applyKboManualOverrides(games: any[]) {
+  return games.map((game) => {
+    const override = getManualGameOverride(game);
+
+    if (!override) return game;
+
+    return {
+      ...game,
+      ...override,
+      awayTeam: {
+        ...(game.awayTeam ?? {}),
+        ...(override.awayTeam ?? {}),
+      },
+      homeTeam: {
+        ...(game.homeTeam ?? {}),
+        ...(override.homeTeam ?? {}),
+      },
+      awayLine: override.awayLine ?? game.awayLine,
+      homeLine: override.homeLine ?? game.homeLine,
+    };
+  });
+}
+
 function getSnapshotGamesByDate(snapshotPayload: any, date: string) {
   const payload = snapshotPayload as any;
   const gamesByDate = payload?.gamesByDate;
@@ -119,10 +164,10 @@ export async function fetchKboGamesByDate(date: string, options?: { localOnly?: 
 
   if (options?.localOnly || !shouldFetchRemote) {
     if (localGames.length > 0) {
-      return localGames;
+      return applyKboManualOverrides(localGames);
     }
 
-    return fallbackGames;
+    return applyKboManualOverrides(fallbackGames);
   }
 
   try {
@@ -133,15 +178,15 @@ export async function fetchKboGamesByDate(date: string, options?: { localOnly?: 
     );
 
     if (remoteGames.length > 0) {
-      return remoteGames;
+      return applyKboManualOverrides(remoteGames);
     }
   } catch (error) {
     console.warn('Failed to load remote KBO snapshot', error);
   }
 
   if (localGames.length > 0) {
-    return localGames;
+    return applyKboManualOverrides(localGames);
   }
 
-  return fallbackGames;
+  return applyKboManualOverrides(fallbackGames);
 }
