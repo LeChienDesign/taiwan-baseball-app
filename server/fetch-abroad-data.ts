@@ -15,6 +15,15 @@ import {
   type ProviderRunResult,
 } from './providers/runAbroadProvider';
 
+const PROVIDERS = [
+  { name: 'mlb', enabled: true },
+  { name: 'npb', enabled: true },
+  { name: 'kbo', enabled: true },
+] as const satisfies ReadonlyArray<{
+  name: AbroadProviderName;
+  enabled: boolean;
+}>;
+
 function resolveProjectPath(inputPath: string) {
   if (path.isAbsolute(inputPath)) return inputPath;
   return path.resolve(process.cwd(), inputPath);
@@ -97,10 +106,11 @@ async function main() {
   let players = await readSeedPlayers(seedPath);
   const manualPayload = await readManualPayload(manualPath);
   const providerResults: ProviderRunResult[] = [];
-  const providers: AbroadProviderName[] = ['mlb', 'npb', 'kbo'];
 
-  for (const provider of providers) {
-    const run = await runAbroadProvider(provider, players, date);
+  for (const provider of PROVIDERS) {
+    if (!provider.enabled) continue;
+
+    const run = await runAbroadProvider(provider.name, players, date);
     players = run.players;
     providerResults.push(run.result);
   }
