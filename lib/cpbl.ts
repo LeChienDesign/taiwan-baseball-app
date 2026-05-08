@@ -3,6 +3,7 @@ import {
   fetchCpblMinorGamesByDate,
 } from './cpbl-real';
 import { CPBL_TEAM_LOGOS } from '../constants/cpblTeamLogos';
+import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 
 const CPBL_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.cpbl.json';
@@ -57,48 +58,8 @@ function attachCpblLogos(game: any) {
   };
 }
 
-function buildManualGameKey(game: any) {
-  const gameDate = game.gameDate ?? game.date;
-  const awayName = game.awayTeam?.name ?? game.awayTeam?.short ?? '';
-  const homeName = game.homeTeam?.name ?? game.homeTeam?.short ?? '';
-
-  if (!gameDate || !awayName || !homeName) return undefined;
-
-  return `${gameDate}-${awayName}-${homeName}`;
-}
-
-function getManualGameOverride(game: any) {
-  const manualGames = cpblManualSnapshot?.games ?? {};
-  const manualKey = buildManualGameKey(game);
-
-  return (
-    manualGames[game.id] ??
-    manualGames[game.gamePk] ??
-    (manualKey ? manualGames[manualKey] : undefined)
-  );
-}
-
 function applyCpblManualOverrides(games: any[]) {
-  return games.map((game) => {
-    const override = getManualGameOverride(game);
-
-    if (!override) return game;
-
-    return {
-      ...game,
-      ...override,
-      awayTeam: {
-        ...(game.awayTeam ?? {}),
-        ...(override.awayTeam ?? {}),
-      },
-      homeTeam: {
-        ...(game.homeTeam ?? {}),
-        ...(override.homeTeam ?? {}),
-      },
-      awayLine: override.awayLine ?? game.awayLine,
-      homeLine: override.homeLine ?? game.homeLine,
-    };
-  });
+  return applyGameManualOverrides(games, cpblManualSnapshot);
 }
 
 export async function fetchCpblMajorGamesByDate(date: string) {

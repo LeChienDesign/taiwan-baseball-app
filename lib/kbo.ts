@@ -1,4 +1,5 @@
 import { fetchKboGamesByDate as fallback } from './kbo-real';
+import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 
 const KBO_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.kbo.json';
@@ -70,48 +71,9 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
-function buildManualGameKey(game: any) {
-  const gameDate = game.gameDate ?? game.date;
-  const awayName = game.awayTeam?.name ?? game.awayTeam?.short ?? '';
-  const homeName = game.homeTeam?.name ?? game.homeTeam?.short ?? '';
-
-  if (!gameDate || !awayName || !homeName) return undefined;
-
-  return `${gameDate}-${awayName}-${homeName}`;
-}
-
-function getManualGameOverride(game: any) {
-  const manualGames = kboManualSnapshot?.games ?? {};
-  const manualKey = buildManualGameKey(game);
-
-  return (
-    manualGames[game.id] ??
-    manualGames[game.gamePk] ??
-    (manualKey ? manualGames[manualKey] : undefined)
-  );
-}
 
 function applyKboManualOverrides(games: any[]) {
-  return games.map((game) => {
-    const override = getManualGameOverride(game);
-
-    if (!override) return game;
-
-    return {
-      ...game,
-      ...override,
-      awayTeam: {
-        ...(game.awayTeam ?? {}),
-        ...(override.awayTeam ?? {}),
-      },
-      homeTeam: {
-        ...(game.homeTeam ?? {}),
-        ...(override.homeTeam ?? {}),
-      },
-      awayLine: override.awayLine ?? game.awayLine,
-      homeLine: override.homeLine ?? game.homeLine,
-    };
-  });
+  return applyGameManualOverrides(games, kboManualSnapshot);
 }
 
 function getSnapshotGamesByDate(snapshotPayload: any, date: string) {
