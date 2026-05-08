@@ -6,6 +6,8 @@ import localLivePayload from '../server/data/abroadPlayers.live.json';
 const REMOTE_ABROAD_LIVE_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/abroadPlayers.live.json';
 
+const POLLING_INTERVAL_MS = 60 * 1000;
+
 type LivePlayer = {
   id: string;
   [key: string]: any;
@@ -43,6 +45,7 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
   const [error, setError] = useState<string | undefined>();
   const [isUsingFallback, setIsUsingFallback] = useState(true);
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+  const refreshRef = useRef<() => Promise<void>>(async () => {});
 
   const players = useMemo(() => {
     return Array.isArray(payload.players) ? payload.players : [];
@@ -74,6 +77,10 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
   }, []);
 
   useEffect(() => {
+    refreshRef.current = refresh;
+  }, [refresh]);
+
+  useEffect(() => {
     refresh();
   }, [refresh]);
 
@@ -93,6 +100,18 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
       subscription.remove();
     };
   }, [refresh]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (appStateRef.current === 'active') {
+        refreshRef.current();
+      }
+    }, POLLING_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return {
     players,
