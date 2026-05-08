@@ -66,3 +66,34 @@ export function dedupePlayers(players: AbroadPlayerLike[]) {
 
   return Array.from(map.values());
 }
+
+export type AbroadManualPayload = {
+  players?: Record<string, Partial<AbroadPlayerLike>>;
+  notes?: Array<any>;
+};
+
+export function applyManualAbroadOverrides(
+  players: AbroadPlayerLike[],
+  manualPayload: AbroadManualPayload
+) {
+  const manualPlayers = manualPayload.players ?? {};
+
+  return players.map((player) => {
+    const override = manualPlayers[player.id];
+
+    if (!override) return player;
+
+    return {
+      ...player,
+      ...override,
+      teamMeta: {
+        ...(player.teamMeta ?? {}),
+        ...(override.teamMeta ?? {}),
+      },
+      nextGame: override.nextGame ?? player.nextGame,
+      seasonStats: override.seasonStats ?? player.seasonStats,
+      recentGames: override.recentGames ?? player.recentGames,
+      news: override.news ?? player.news,
+    };
+  });
+}
