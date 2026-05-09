@@ -5,11 +5,14 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { abroadPlayers, type PlayerStatus } from '../data/abroadPlayers';
+import { abroadPlayers } from '../data/abroadPlayers';
+import {
+  formatAbroadTeamLine,
+  getAbroadPlayerStatus,
+} from '../lib/viewModels/abroadPlayerViewModel';
 import { useAbroadFavorites } from '../store/abroadFavorites';
 
 export default function TrackedAbroadSection() {
@@ -82,11 +85,11 @@ export default function TrackedAbroadSection() {
             <View style={styles.info}>
               <View style={styles.topRow}>
                 <Text style={styles.name} numberOfLines={1}>{player.name}</Text>
-                <StatusBadge status={player.status} />
+                <StatusBadge status={getAbroadPlayerStatus(player)} />
               </View>
 
               <Text style={styles.meta} numberOfLines={1}>
-                {player.team}・{player.league} {player.level}
+                {formatAbroadTeamLine(player)}・{player.league} {player.level}
               </Text>
 
               <Text style={styles.line1} numberOfLines={1}>{player.line1}</Text>
@@ -101,8 +104,8 @@ export default function TrackedAbroadSection() {
   );
 }
 
-function StatusBadge({ status }: { status: PlayerStatus }) {
-  const map = {
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { bg: string; color: string }> = {
     今日出賽: { bg: '#0b2a4d', color: '#60a5fa' },
     預告先發: { bg: '#3a2306', color: '#fbbf24' },
     已完賽: { bg: '#0b2f1f', color: '#34d399' },
