@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-09T19:44:39.928Z",
+  "updatedAt": "2026-05-09T20:29:19.377Z",
   "date": "2026-05-09",
   "startDate": "2026-05-09",
   "endDate": "2026-05-09",
@@ -26,21 +26,25 @@
         "logoKey": "TOR"
       },
       "awayScore": 0,
-      "homeScore": 0,
+      "homeScore": 1,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "LAA",
         "innings": [
           0,
           0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 3,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
@@ -48,14 +52,16 @@
         "innings": [
           0,
           0,
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 2,
+        "r": 1,
+        "h": 5,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "上3局",
+      "footerRight": "上5局",
       "gameDate": "2026-05-09T19:07:00Z"
     },
     {
@@ -65,7 +71,7 @@
       "date": "2026-05-09",
       "gamePk": 824847,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Oriole Park at Camden Yards",
       "awayTeam": {
         "id": 133,
@@ -79,31 +85,34 @@
         "abbreviation": "BAL",
         "logoKey": "BAL"
       },
-      "awayScore": 0,
+      "awayScore": 1,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "ATH",
         "innings": [
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 2,
         "e": 0
       },
       "homeLine": {
         "team": "BAL",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 2,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上2局",
       "gameDate": "2026-05-09T20:05:00Z"
     },
     {
@@ -113,7 +122,7 @@
       "date": "2026-05-09",
       "gamePk": 824523,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Great American Ball Park",
       "awayTeam": {
         "id": 117,
@@ -130,76 +139,31 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "HOU",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
         "team": "CIN",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
-      "gameDate": "2026-05-09T20:10:00Z"
-    },
-    {
-      "id": "mlb-824766",
-      "source": "mlb-official",
-      "league": "MLB",
-      "date": "2026-05-09",
-      "gamePk": 824766,
-      "status": "LIVE",
-      "statusText": "Pre-Game",
-      "venue": "Fenway Park",
-      "awayTeam": {
-        "id": 139,
-        "name": "Tampa Bay Rays",
-        "abbreviation": "TB",
-        "logoKey": "TB"
-      },
-      "homeTeam": {
-        "id": 111,
-        "name": "Boston Red Sox",
-        "abbreviation": "BOS",
-        "logoKey": "BOS"
-      },
-      "awayScore": 0,
-      "homeScore": 0,
-      "innings": [
-        1
-      ],
-      "awayLine": {
-        "team": "TB",
-        "innings": [
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "homeLine": {
-        "team": "BOS",
-        "innings": [
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上2局",
       "gameDate": "2026-05-09T20:10:00Z"
     },
     {
@@ -209,7 +173,7 @@
       "date": "2026-05-09",
       "gamePk": 823869,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "loanDepot park",
       "awayTeam": {
         "id": 120,
@@ -223,7 +187,7 @@
         "abbreviation": "MIA",
         "logoKey": "MIA"
       },
-      "awayScore": 0,
+      "awayScore": 3,
       "homeScore": 0,
       "innings": [
         1
@@ -231,10 +195,10 @@
       "awayLine": {
         "team": "WSH",
         "innings": [
-          "-"
+          3
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
@@ -246,8 +210,8 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下1局",
       "gameDate": "2026-05-09T20:10:00Z"
     },
     {
@@ -424,7 +388,7 @@
       "league": "MLB",
       "date": "2026-05-09",
       "gamePk": 824115,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Kauffman Stadium",
       "awayTeam": {
@@ -442,27 +406,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "DET",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -472,14 +420,6 @@
       "homeLine": {
         "team": "KC",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -487,7 +427,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:10",
+      "footerRight": "上1局",
       "gameDate": "2026-05-09T23:10:00Z"
     },
     {
@@ -496,7 +436,7 @@
       "league": "MLB",
       "date": "2026-05-09",
       "gamePk": 824606,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Rate Field",
       "awayTeam": {
@@ -514,27 +454,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "SEA",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -544,14 +468,6 @@
       "homeLine": {
         "team": "CWS",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -559,7 +475,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:10",
+      "footerRight": "上1局",
       "gameDate": "2026-05-09T23:10:00Z"
     },
     {
@@ -569,7 +485,7 @@
       "date": "2026-05-09",
       "gamePk": 823792,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "American Family Field",
       "awayTeam": {
         "id": 147,
@@ -630,7 +546,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:10",
       "gameDate": "2026-05-09T23:10:00Z"
     },
@@ -688,8 +604,8 @@
       "league": "MLB",
       "date": "2026-05-09",
       "gamePk": 823304,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "Petco Park",
       "awayTeam": {
         "id": 138,
@@ -706,27 +622,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "STL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -736,22 +636,14 @@
       "homeLine": {
         "team": "SD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "07:15",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-05-09T23:15:00Z"
     },
     {
@@ -897,6 +789,78 @@
       "footerLeft": "Scheduled",
       "footerRight": "09:10",
       "gameDate": "2026-05-10T01:10:00Z"
+    },
+    {
+      "id": "mlb-824766",
+      "source": "mlb-official",
+      "league": "MLB",
+      "date": "2026-05-09",
+      "gamePk": 824766,
+      "status": "FINAL",
+      "statusText": "Postponed",
+      "venue": "Fenway Park",
+      "awayTeam": {
+        "id": 139,
+        "name": "Tampa Bay Rays",
+        "abbreviation": "TB",
+        "logoKey": "TB"
+      },
+      "homeTeam": {
+        "id": 111,
+        "name": "Boston Red Sox",
+        "abbreviation": "BOS",
+        "logoKey": "BOS"
+      },
+      "awayScore": 0,
+      "homeScore": 0,
+      "innings": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "awayLine": {
+        "team": "TB",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "homeLine": {
+        "team": "BOS",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "footerLeft": "Postponed",
+      "footerRight": "04:10",
+      "gameDate": "2026-05-09T20:10:00Z"
     }
   ],
   "gamesByDate": {
@@ -923,21 +887,25 @@
           "logoKey": "TOR"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 1,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "LAA",
           "innings": [
             0,
             0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -945,14 +913,16 @@
           "innings": [
             0,
             0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 2,
+          "r": 1,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上3局",
+        "footerRight": "上5局",
         "gameDate": "2026-05-09T19:07:00Z"
       },
       {
@@ -962,7 +932,7 @@
         "date": "2026-05-09",
         "gamePk": 824847,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Oriole Park at Camden Yards",
         "awayTeam": {
           "id": 133,
@@ -976,31 +946,34 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "ATH",
           "innings": [
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "BAL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-05-09T20:05:00Z"
       },
       {
@@ -1010,7 +983,7 @@
         "date": "2026-05-09",
         "gamePk": 824523,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 117,
@@ -1027,76 +1000,31 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "HOU",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
-        "gameDate": "2026-05-09T20:10:00Z"
-      },
-      {
-        "id": "mlb-824766",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-05-09",
-        "gamePk": 824766,
-        "status": "LIVE",
-        "statusText": "Pre-Game",
-        "venue": "Fenway Park",
-        "awayTeam": {
-          "id": 139,
-          "name": "Tampa Bay Rays",
-          "abbreviation": "TB",
-          "logoKey": "TB"
-        },
-        "homeTeam": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "abbreviation": "BOS",
-          "logoKey": "BOS"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1
-        ],
-        "awayLine": {
-          "team": "TB",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "BOS",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1106,7 +1034,7 @@
         "date": "2026-05-09",
         "gamePk": 823869,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 120,
@@ -1120,7 +1048,7 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
           1
@@ -1128,10 +1056,10 @@
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-"
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -1143,8 +1071,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1321,7 +1249,7 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 824115,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Kauffman Stadium",
         "awayTeam": {
@@ -1339,27 +1267,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1369,14 +1281,6 @@
         "homeLine": {
           "team": "KC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1384,7 +1288,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:10:00Z"
       },
       {
@@ -1393,7 +1297,7 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 824606,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Rate Field",
         "awayTeam": {
@@ -1411,27 +1315,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "SEA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1441,14 +1329,6 @@
         "homeLine": {
           "team": "CWS",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1456,7 +1336,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:10:00Z"
       },
       {
@@ -1466,7 +1346,7 @@
         "date": "2026-05-09",
         "gamePk": 823792,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 147,
@@ -1527,7 +1407,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:10",
         "gameDate": "2026-05-09T23:10:00Z"
       },
@@ -1585,8 +1465,8 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 823304,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 138,
@@ -1603,27 +1483,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1633,22 +1497,14 @@
         "homeLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:15",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:15:00Z"
       },
       {
@@ -1794,6 +1650,78 @@
         "footerLeft": "Scheduled",
         "footerRight": "09:10",
         "gameDate": "2026-05-10T01:10:00Z"
+      },
+      {
+        "id": "mlb-824766",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-05-09",
+        "gamePk": 824766,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Fenway Park",
+        "awayTeam": {
+          "id": 139,
+          "name": "Tampa Bay Rays",
+          "abbreviation": "TB",
+          "logoKey": "TB"
+        },
+        "homeTeam": {
+          "id": 111,
+          "name": "Boston Red Sox",
+          "abbreviation": "BOS",
+          "logoKey": "BOS"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "TB",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "BOS",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "04:10",
+        "gameDate": "2026-05-09T20:10:00Z"
       }
     ]
   },
@@ -1821,21 +1749,25 @@
           "logoKey": "TOR"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 1,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "LAA",
           "innings": [
             0,
             0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -1843,14 +1775,16 @@
           "innings": [
             0,
             0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 2,
+          "r": 1,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上3局",
+        "footerRight": "上5局",
         "gameDate": "2026-05-09T19:07:00Z"
       },
       {
@@ -1860,7 +1794,7 @@
         "date": "2026-05-09",
         "gamePk": 824847,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Oriole Park at Camden Yards",
         "awayTeam": {
           "id": 133,
@@ -1874,31 +1808,34 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "ATH",
           "innings": [
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "BAL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-05-09T20:05:00Z"
       },
       {
@@ -1908,7 +1845,7 @@
         "date": "2026-05-09",
         "gamePk": 824523,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 117,
@@ -1925,76 +1862,31 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "HOU",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
-        "gameDate": "2026-05-09T20:10:00Z"
-      },
-      {
-        "id": "mlb-824766",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-05-09",
-        "gamePk": 824766,
-        "status": "LIVE",
-        "statusText": "Pre-Game",
-        "venue": "Fenway Park",
-        "awayTeam": {
-          "id": 139,
-          "name": "Tampa Bay Rays",
-          "abbreviation": "TB",
-          "logoKey": "TB"
-        },
-        "homeTeam": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "abbreviation": "BOS",
-          "logoKey": "BOS"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1
-        ],
-        "awayLine": {
-          "team": "TB",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "BOS",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -2004,7 +1896,7 @@
         "date": "2026-05-09",
         "gamePk": 823869,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 120,
@@ -2018,7 +1910,7 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
           1
@@ -2026,10 +1918,10 @@
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-"
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -2041,8 +1933,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -2219,7 +2111,7 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 824115,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Kauffman Stadium",
         "awayTeam": {
@@ -2237,27 +2129,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2267,14 +2143,6 @@
         "homeLine": {
           "team": "KC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2282,7 +2150,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:10:00Z"
       },
       {
@@ -2291,7 +2159,7 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 824606,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Rate Field",
         "awayTeam": {
@@ -2309,27 +2177,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "SEA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2339,14 +2191,6 @@
         "homeLine": {
           "team": "CWS",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2354,7 +2198,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:10:00Z"
       },
       {
@@ -2364,7 +2208,7 @@
         "date": "2026-05-09",
         "gamePk": 823792,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 147,
@@ -2425,7 +2269,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:10",
         "gameDate": "2026-05-09T23:10:00Z"
       },
@@ -2483,8 +2327,8 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 823304,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 138,
@@ -2501,27 +2345,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2531,22 +2359,14 @@
         "homeLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:15",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-05-09T23:15:00Z"
       },
       {
@@ -2692,6 +2512,78 @@
         "footerLeft": "Scheduled",
         "footerRight": "09:10",
         "gameDate": "2026-05-10T01:10:00Z"
+      },
+      {
+        "id": "mlb-824766",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-05-09",
+        "gamePk": 824766,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Fenway Park",
+        "awayTeam": {
+          "id": 139,
+          "name": "Tampa Bay Rays",
+          "abbreviation": "TB",
+          "logoKey": "TB"
+        },
+        "homeTeam": {
+          "id": 111,
+          "name": "Boston Red Sox",
+          "abbreviation": "BOS",
+          "logoKey": "BOS"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "TB",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "BOS",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "04:10",
+        "gameDate": "2026-05-09T20:10:00Z"
       }
     ]
   }
