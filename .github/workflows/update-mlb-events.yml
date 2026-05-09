@@ -1,0 +1,106 @@
+
+
+name: Update MLB Events
+
+on:
+  schedule:
+    # Taipei 00:00-14:00 = UTC 16:00-23:59 + 00:00-05:59
+    - cron: '*/5 16-23 * * *'
+    - cron: '*/5 0-5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-mlb-events
+  cancel-in-progress: false
+
+jobs:
+  update-mlb-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve MLB event date
+        id: resolve_dates
+        shell: bash
+        run: |
+          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
+          TAIPEI_HOUR=$(TZ=Asia/Taipei date +%H)
+
+          if [ "$TAIPEI_HOUR" -lt 18 ]; then
+            MLB_DATE=$(TZ=Asia/Taipei date -d "yesterday" +%F)
+          else
+            MLB_DATE="$TAIPEI_TODAY"
+          fi
+
+          echo "mlb_date=$MLB_DATE" >> "$GITHUB_OUTPUT"
+          echo "MLB date: $MLB_DATE"
+
+      - name: Fetch MLB events center data
+        id: fetch_events_mlb
+        run: npm run fetch:events-mlb ${{ steps.resolve_dates.outputs.mlb_date }} ${{ steps.resolve_dates.outputs.mlb_date }}
+
+      - name: Verify MLB snapshot
+        id: verify_mlb
+        run: test -f server/data/eventsCenter.mlb.json
+
+      - name: Validate events center data
+        id: validate_events
+        run: npm run validate:events
+
+      - name: Commit updated MLB events
+        if: >
+          steps.fetch_events_mlb.outcome == 'success' &&
+          steps.verify_mlb.outcome == 'success' &&
+          steps.validate_events.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add server/data/eventsCenter.mlb.json
+
+          if git diff --cached --quiet; then
+            echo "No MLB event changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update MLB events data"
+          git pull --rebase origin main
+          git push
+
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "## Update MLB Events Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| resolve date | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-mlb | ${{ steps.fetch_events_mlb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify MLB snapshot | ${{ steps.verify_mlb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| validate:events | ${{ steps.validate_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail job if MLB update failed
+        if: >
+          steps.fetch_events_mlb.outcome != 'success' ||
+          steps.verify_mlb.outcome != 'success' ||
+          steps.validate_events.outcome != 'success'
+        run: |
+          echo "MLB event update failed."
+          exit 1
