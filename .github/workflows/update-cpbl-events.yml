@@ -1,0 +1,97 @@
+
+
+name: Update CPBL Events
+
+on:
+  schedule:
+    # Taipei 15:00-01:00 = UTC 07:00-16:59
+    - cron: '*/5 7-16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-cpbl-events
+  cancel-in-progress: false
+
+jobs:
+  update-cpbl-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve CPBL event date
+        id: resolve_dates
+        shell: bash
+        run: |
+          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
+          echo "taipei_today=$TAIPEI_TODAY" >> "$GITHUB_OUTPUT"
+          echo "CPBL date: $TAIPEI_TODAY"
+
+      - name: Fetch CPBL events center data
+        id: fetch_events_cpbl
+        run: npm run fetch:events-cpbl ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
+
+      - name: Verify CPBL snapshot
+        id: verify_cpbl
+        run: test -f server/data/eventsCenter.cpbl.json
+
+      - name: Validate events center data
+        id: validate_events
+        run: npm run validate:events
+
+      - name: Commit updated CPBL events
+        if: >
+          steps.fetch_events_cpbl.outcome == 'success' &&
+          steps.verify_cpbl.outcome == 'success' &&
+          steps.validate_events.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add server/data/eventsCenter.cpbl.json
+
+          if git diff --cached --quiet; then
+            echo "No CPBL event changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update CPBL events data"
+          git pull --rebase origin main
+          git push
+
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "## Update CPBL Events Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| resolve date | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-cpbl | ${{ steps.fetch_events_cpbl.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify CPBL snapshot | ${{ steps.verify_cpbl.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| validate:events | ${{ steps.validate_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail job if CPBL update failed
+        if: >
+          steps.fetch_events_cpbl.outcome != 'success' ||
+          steps.verify_cpbl.outcome != 'success' ||
+          steps.validate_events.outcome != 'success'
+        run: |
+          echo "CPBL event update failed."
+          exit 1
