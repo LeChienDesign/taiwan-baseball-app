@@ -1,5 +1,3 @@
-
-
 # Taiwan Baseball App 架構重整計畫
 
 ## 目標
@@ -110,38 +108,61 @@ docs/MANUAL_DATA_LAYER.md
 
 ## 第三階段：重整 provider / merge
 
-目前重點：
+目標：Provider / Merge 完全分離。
+
+### 第三階段最小版執行範圍
+
+先不要大拆全部 provider / merge，只先整理最小可控切片：
 
 ```txt
-server/fetch-abroad-data.ts
-server/providers/mlbAbroad.ts
-server/providers/npbAbroad.ts
-server/providers/kboAbroad.ts
-```
-
-新增：
-
-```txt
-server/merge/mergeAbroadPlayers.ts
 server/merge/mergeRecentGames.ts
 server/merge/mergeSeasonStats.ts
-server/merge/mergeNews.ts
+server/merge/buildSummary.ts
 ```
 
-provider 只做：
+目的：
 
 ```txt
-fetch
-parse
-normalize
+先把 recentGames、seasonStats、summary 從 fetch/provider 中抽出
+降低 fetch-abroad-data.ts 複雜度
+避免一次改動太大造成四聯盟與旅外資料一起壞掉
 ```
 
-merge 才決定：
+第三階段最小版完成後，必須先驗證資料，再進第五階段首頁 smart refresh。
+
+優先拆分順序：
 
 ```txt
-誰覆蓋誰
-資料保留邏輯
-同日期 recentGames 擇優
+第三階段最小版：
+1. mergeRecentGames.ts
+2. mergeSeasonStats.ts
+3. buildSummary.ts
+
+第三階段後續版：
+4. mergeNews.ts
+5. mergeTeamMeta.ts
+```
+
+判斷原則：
+
+```txt
+如果程式碼在決定「哪份資料比較新、比較可信、要不要保留舊值」，它就不該在 provider，應移到 merge。
+如果程式碼只是在把官方回傳格式轉成 app 統一格式，它可以留在 provider。
+```
+
+第三階段最小版完成後驗證：
+
+```bash
+npx tsc --noEmit
+npm run validate:events
+```
+
+驗證範圍：
+
+```txt
+四聯盟 eventsCenter JSON
+旅外球員 abroadPlayers.live.json
+recentGames / seasonStats / summary 是否仍正常
 ```
 
 ## 第四階段：四聯盟賽事中心統一
@@ -173,75 +194,19 @@ lib/cpbl.ts
 }
 ```
 
-## GitHub Actions 自動更新紀錄
-
-目前 workflow：
-
-```txt
-.github/workflows/update-baseball-data.yml
-```
-
-GitHub Actions 頁面：
-
-```txt
-https://github.com/LeChienDesign/taiwan-baseball-app/actions
-```
-
-目前 workflow 名稱：
-
-```txt
-Update Baseball Data
-```
-
-目前排程：
-
-```yaml
-on:
-  schedule:
-    - cron: '*/5 * * * *'
-  workflow_dispatch:
-```
-
-意思是理論上每 5 分鐘觸發一次，但 GitHub Actions scheduled workflow 不保證精準準時；在高負載或同一個 concurrency group 排隊時，可能延遲或跳過部分排程。
-
-目前 workflow 實際執行內容：
-
-```txt
-npm run export:abroad-seed
-npm run fetch:abroad-live
-npm run fetch:events-mlb
-npm run fetch:events-cpbl
-npm run fetch:events-npb
-npm run fetch:events-kbo
-```
-
-目前風險：
-
-```txt
-每 5 分鐘跑全量資料太重
-abroad-live 沒必要高頻更新
-四聯盟賽事也不應平常全量抓
-GitHub schedule 實際可能變成 1~2 小時才成功跑一次
-```
-
-重整方向：
-
-```txt
-旅外球員：低頻，建議每日或手動更新
-四聯盟賽事：依比賽時間 smart refresh
-LIVE 比分：開賽前 10 分鐘至開賽後 4 小時，每 5 分鐘更新
-非比賽時間：不跑或低頻跑
-```
-
-後續要把 GitHub Actions 拆成：
-
-```txt
-update-abroad-data.yml
-update-events-daily.yml
-update-live-games.yml
-```
-
 ## 第五階段：首頁 smart refresh
+
+進入第五階段前置條件：
+
+```txt
+第三階段最小版已完成
+npx tsc --noEmit 通過
+npm run validate:events 通過
+四聯盟與旅外資料驗證正常
+```
+
+第五階段只處理首頁 refresh orchestration，不處理 provider / merge 分離。
+Provider / Merge 完全分離屬於第三階段。
 
 整理：
 
@@ -267,6 +232,24 @@ lib/homeGameSelector.ts
 比賽中抓
 開賽後最多追 4 小時
 每 5 分鐘更新一次
+```
+
+首頁 smart refresh 規則：
+
+```txt
+首頁 hook 不可直接呼叫 server/providers/*
+首頁 hook 不可處理 merge / fallback 優先權
+首頁 hook 只能透過 lib/* 讀取已整理好的資料
+首頁只決定哪些聯盟 / 哪些比賽需要 refresh
+```
+
+首頁 refresh 目標：
+
+```txt
+LIVE 比賽優先
+即將開賽 10~15 分鐘內開始追
+剛結束 4 小時內仍可 refresh
+非比賽時間不高頻抓
 ```
 
 ## 第六階段：UI viewModel 化
@@ -344,10 +327,10 @@ rg "檔名或函式名" .
 ```txt
 1. 畫出目前資料流
 2. 整理 abroadPlayers / registry / manual
-3. 建立 merge 層
-4. 重整 abroad fetch
-5. 重整四聯盟 eventsCenter
-6. 重整首頁 smart refresh
+3. 第三階段最小版：mergeRecentGames / mergeSeasonStats / buildSummary
+4. 跑四聯盟與旅外資料驗證：npx tsc --noEmit / npm run validate:events
+5. 第五階段：useHomeGames / useSmartLeagueRefresh / homeGameSelector
+6. 第三階段後續版：mergeNews / mergeTeamMeta
 7. 重整 UI viewModel
 8. 整理圖片路徑
 9. 刪除重複檔案
