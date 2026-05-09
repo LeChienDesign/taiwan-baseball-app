@@ -45,7 +45,7 @@ jobs:
 
       - name: Fetch NPB events center data
         id: fetch_events_npb
-        run: npm run fetch:events-npb ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
+        run: npm run fetch:events-npb -- --date ${{ steps.resolve_dates.outputs.taipei_today }}
 
       - name: Verify NPB snapshot
         id: verify_npb
