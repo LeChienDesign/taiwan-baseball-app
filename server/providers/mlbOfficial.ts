@@ -117,6 +117,26 @@ function mapStatusCodeToNormalized(
   return 'SCHEDULED';
 }
 
+function hasLiveInning(game: any) {
+  const currentInning = Number(game?.linescore?.currentInning);
+  const inningState = String(game?.linescore?.inningState || '').trim();
+
+  return Number.isFinite(currentInning) && currentInning > 0 && inningState.length > 0;
+}
+
+function getEffectiveMlbStatus(game: any): NormalizedGameStatus {
+  const status = mapStatusCodeToNormalized(
+    game?.status?.abstractGameState,
+    game?.status?.detailedState
+  );
+
+  if (status === 'SCHEDULED' && hasLiveInning(game)) {
+    return 'LIVE';
+  }
+
+  return status;
+}
+
 function safeTeamAbbr(team: any) {
   return (
     team?.abbreviation ||
@@ -188,7 +208,7 @@ function buildFooter(game: any) {
 
   const footerRight =
     inningState && currentInning
-      ? `${inningState}${currentInning}局`
+      ? `${String(inningState).replace(/^Top$/i, '上').replace(/^Bottom$/i, '下')}${currentInning}局`
       : toTaipeiTime(game?.gameDate);
 
   return {
@@ -216,10 +236,7 @@ export async function fetchMlbScoreboardByDate(date: string): Promise<Scoreboard
   const games = data?.dates?.[0]?.games ?? [];
 
   return games.map((game: any) => {
-    const status = mapStatusCodeToNormalized(
-      game?.status?.abstractGameState,
-      game?.status?.detailedState
-    );
+    const status = getEffectiveMlbStatus(game);
 
     const awayShort = safeTeamAbbr(game?.teams?.away?.team);
     const homeShort = safeTeamAbbr(game?.teams?.home?.team);
@@ -265,10 +282,7 @@ export async function fetchMlbTeamGames(args: {
   const games = dates.flatMap((d: any) => d?.games ?? []);
 
   return games.map((game: any) => {
-    const status = mapStatusCodeToNormalized(
-      game?.status?.abstractGameState,
-      game?.status?.detailedState
-    );
+    const status = getEffectiveMlbStatus(game);
 
     const awayShort = safeTeamAbbr(game?.teams?.away?.team);
     const homeShort = safeTeamAbbr(game?.teams?.home?.team);

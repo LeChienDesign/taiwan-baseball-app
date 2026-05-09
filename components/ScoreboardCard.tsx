@@ -235,6 +235,7 @@ export default function ScoreboardCard({
 
   const awayInnings = padLine(awayInningsRaw, inningHeaders.length);
   const homeInnings = padLine(homeInningsRaw, inningHeaders.length);
+  const hasExtraInnings = inningHeaders.length > 9;
 
   const shouldShowLineScore = hasLineScoreData(awayInningsRaw, homeInningsRaw) || !isScheduled;
 
@@ -356,37 +357,40 @@ export default function ScoreboardCard({
             <View style={styles.headerRow}>
               <View style={styles.teamCodeCell} />
               {inningHeaders.map((inning) => (
-                <Text key={`h-${inning}`} style={styles.inningHeader}>
+                <Text
+                  key={`h-${inning}`}
+                  style={[styles.inningHeader, hasExtraInnings && styles.inningHeaderCompact]}
+                >
                   {inning}
                 </Text>
               ))}
-              <Text style={styles.inningHeader}>R</Text>
-              <Text style={styles.inningHeader}>H</Text>
-              <Text style={styles.inningHeader}>E</Text>
+              <Text style={[styles.inningHeader, hasExtraInnings && styles.inningHeaderCompact]}>R</Text>
+              <Text style={[styles.inningHeader, hasExtraInnings && styles.inningHeaderCompact]}>H</Text>
+              <Text style={[styles.inningHeader, hasExtraInnings && styles.inningHeaderCompact]}>E</Text>
             </View>
 
             <View style={[styles.scoreRow, awayWin && styles.scoreRowWinner]}>
               <Text style={styles.teamCodeCellText}>{safeAwayLine.team}</Text>
               {safeAwayLine.innings.map((v, idx) => (
-                <Text key={`a-${idx}`} style={styles.scoreCell}>
+                <Text key={`a-${idx}`} style={[styles.scoreCell, hasExtraInnings && styles.scoreCellCompact]}>
                   {v}
                 </Text>
               ))}
-              <Text style={styles.scoreCellBold}>{safeAwayLine.r}</Text>
-              <Text style={styles.scoreCellBold}>{safeAwayLine.h}</Text>
-              <Text style={styles.scoreCellBold}>{safeAwayLine.e}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeAwayLine.r}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeAwayLine.h}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeAwayLine.e}</Text>
             </View>
 
             <View style={[styles.scoreRow, homeWin && styles.scoreRowWinner]}>
               <Text style={styles.teamCodeCellText}>{safeHomeLine.team}</Text>
               {safeHomeLine.innings.map((v, idx) => (
-                <Text key={`b-${idx}`} style={styles.scoreCell}>
+                <Text key={`b-${idx}`} style={[styles.scoreCell, hasExtraInnings && styles.scoreCellCompact]}>
                   {v}
                 </Text>
               ))}
-              <Text style={styles.scoreCellBold}>{safeHomeLine.r}</Text>
-              <Text style={styles.scoreCellBold}>{safeHomeLine.h}</Text>
-              <Text style={styles.scoreCellBold}>{safeHomeLine.e}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeHomeLine.r}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeHomeLine.h}</Text>
+              <Text style={[styles.scoreCellBold, hasExtraInnings && styles.scoreCellBoldCompact]}>{safeHomeLine.e}</Text>
             </View>
           </View>
         </>
@@ -617,6 +621,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
   },
+  inningHeaderCompact: {
+    width: 22,
+    fontSize: 9,
+    letterSpacing: -0.6,
+  },
   teamCodeCell: {
     width: 50,
   },
@@ -645,12 +654,22 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
   },
+  scoreCellCompact: {
+    width: 22,
+    fontSize: 10,
+    letterSpacing: -0.8,
+  },
   scoreCellBold: {
     width: 25,
     textAlign: 'center',
     color: '#ffffff',
     fontSize: 11,
     fontWeight: '900',
+  },
+  scoreCellBoldCompact: {
+    width: 21,
+    fontSize: 10,
+    letterSpacing: -0.7,
   },
   footerRow: {
     flexDirection: 'row',

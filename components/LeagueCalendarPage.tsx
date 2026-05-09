@@ -77,6 +77,31 @@ function hasLiveGame(games: any[]) {
   return games.some((game) => normalizeStatus(game.status) === 'LIVE');
 }
 
+function getDisplayPriority(game: any) {
+  const status = normalizeStatus(game.status);
+
+  if (status === 'LIVE') return 0;
+  if (status === 'SCHEDULED') return 1;
+  if (status === 'FINAL') return 2;
+  return 3;
+}
+
+function getDisplayTimeKey(game: any) {
+  return String(game.footerRight || game.gameTime || game.gameDate || game.id || '');
+}
+
+function sortGamesForDisplay(games: any[]) {
+  return [...games].sort((a, b) => {
+    const priorityDiff = getDisplayPriority(a) - getDisplayPriority(b);
+
+    if (priorityDiff !== 0) {
+      return priorityDiff;
+    }
+
+    return getDisplayTimeKey(a).localeCompare(getDisplayTimeKey(b));
+  });
+}
+
 async function withCalendarFetchTimeout<T>(promise: Promise<T>, fallback: T, timeoutMs: number) {
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -504,7 +529,7 @@ export default function LeagueCalendarPage({
               <Text style={styles.emptyText}>這一天沒有比賽</Text>
             </View>
           ) : (
-            realGames.map((game) => (
+            sortGamesForDisplay(realGames).map((game) => (
               <ScoreboardCard
                 key={game.id}
                 status={game.status}

@@ -1,19 +1,23 @@
-name: Update Baseball Data
+name: Update Abroad Data
 
 on:
+  schedule:
+    # Taipei 06:00-24:00 = UTC 22:00-23:59 + 00:00-15:59
+    - cron: '*/30 22-23 * * *'
+    - cron: '*/30 0-15 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-baseball-data
+  group: update-abroad-data
   cancel-in-progress: false
 
 jobs:
-  update-data:
+  update-abroad-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -32,185 +36,55 @@ jobs:
 
       - name: Export abroad seed
         id: export_seed
-        continue-on-error: true
         run: npm run export:abroad-seed
 
       - name: Fetch abroad live data
         id: fetch_abroad
-        continue-on-error: true
         run: npm run fetch:abroad-live
 
-      - name: Resolve event dates
-        id: resolve_dates
-        shell: bash
-        run: |
-          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
-          TAIPEI_HOUR=$(TZ=Asia/Taipei date +%H)
-
-          if [ "$TAIPEI_HOUR" -lt 18 ]; then
-            MLB_DATE=$(TZ=Asia/Taipei date -d "yesterday" +%F)
-          else
-            MLB_DATE="$TAIPEI_TODAY"
-          fi
-
-          echo "taipei_today=$TAIPEI_TODAY" >> "$GITHUB_OUTPUT"
-          echo "mlb_date=$MLB_DATE" >> "$GITHUB_OUTPUT"
-
-          echo "Taipei today: $TAIPEI_TODAY"
-          echo "MLB date: $MLB_DATE"
-
-      - name: Fetch MLB events center data
-        id: fetch_events_mlb
-        continue-on-error: true
-        run: npm run fetch:events-mlb ${{ steps.resolve_dates.outputs.mlb_date }} ${{ steps.resolve_dates.outputs.mlb_date }}
-
-      - name: Fetch CPBL events center data
-        id: fetch_events_cpbl
-        continue-on-error: true
-        run: npm run fetch:events-cpbl ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
-
-      - name: Debug CPBL latest snapshot
-        if: always()
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const file = 'server/data/eventsCenter.cpbl.json';
-          if (!fs.existsSync(file)) {
-            console.log('CPBL snapshot missing');
-            process.exit(0);
-          }
-          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-          const date = '${{ steps.resolve_dates.outputs.taipei_today }}';
-          console.log('CPBL updatedAt:', data.updatedAt);
-          console.log('CPBL date:', date);
-          console.log((data.gamesByDate?.[date] || []).map((game) => ({
-            away: game.awayTeam?.name,
-            home: game.homeTeam?.name,
-            status: game.status,
-            score: `${game.awayScore}-${game.homeScore}`,
-            footerRight: game.footerRight,
-            awayLine: game.awayLine?.innings,
-            homeLine: game.homeLine?.innings,
-          })));
-          NODE
-
-      - name: Fetch NPB events center data
-        id: fetch_events_npb
-        continue-on-error: true
-        run: npm run fetch:events-npb ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
-
-      - name: Fetch KBO events center data
-        id: fetch_events_kbo
-        continue-on-error: true
-        run: npm run fetch:events-kbo ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
-
-      - name: Verify generated files
-        id: verify_files
-        if: >
-          steps.export_seed.outcome == 'success' &&
-          steps.fetch_abroad.outcome == 'success' &&
-          steps.fetch_events_mlb.outcome == 'success' &&
-          steps.fetch_events_cpbl.outcome == 'success' &&
-          steps.fetch_events_npb.outcome == 'success' &&
-          steps.fetch_events_kbo.outcome == 'success'
+      - name: Verify abroad snapshots
+        id: verify_abroad
         run: |
           test -f server/data/abroadPlayers.seed.json
           test -f server/data/abroadPlayers.live.json
-          test -f server/data/eventsCenter.mlb.json
-          test -f server/data/eventsCenter.cpbl.json
-          test -f server/data/eventsCenter.npb.json
-          test -f server/data/eventsCenter.kbo.json
 
-      - name: Validate events center data
-        id: validate_events
-        if: >
-          steps.verify_files.outcome == 'success'
-        run: npm run validate:events
-
-      - name: Commit updated data
+      - name: Commit updated abroad data
         if: >
           steps.export_seed.outcome == 'success' &&
           steps.fetch_abroad.outcome == 'success' &&
-          steps.fetch_events_mlb.outcome == 'success' &&
-          steps.fetch_events_cpbl.outcome == 'success' &&
-          steps.fetch_events_npb.outcome == 'success' &&
-          steps.fetch_events_kbo.outcome == 'success' &&
-          steps.verify_files.outcome == 'success' &&
-          steps.validate_events.outcome == 'success'
+          steps.verify_abroad.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add server/data/abroadPlayers.seed.json
           git add server/data/abroadPlayers.live.json
-          git add server/data/eventsCenter.mlb.json
-          git add server/data/eventsCenter.cpbl.json
-          git add server/data/eventsCenter.npb.json
-          git add server/data/eventsCenter.kbo.json
 
           if git diff --cached --quiet; then
-            echo "No data changes to commit."
+            echo "No abroad data changes to commit."
             exit 0
           fi
 
-          git commit -m "chore: update baseball data"
+          git commit -m "chore: update abroad players data"
+          git pull --rebase origin main
           git push
 
       - name: Workflow summary
         if: always()
         run: |
-          echo "## Update Baseball Data Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Update Abroad Data Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
           echo "| export:abroad-seed | ${{ steps.export_seed.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| fetch:abroad-live | ${{ steps.fetch_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| resolve dates | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-mlb | ${{ steps.fetch_events_mlb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-cpbl | ${{ steps.fetch_events_cpbl.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-npb | ${{ steps.fetch_events_npb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-kbo | ${{ steps.fetch_events_kbo.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| verify files | ${{ steps.verify_files.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| validate:events | ${{ steps.validate_events.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify abroad snapshots | ${{ steps.verify_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ steps.export_seed.outcome }}" != "success" ]; then
-            echo "- export:abroad-seed failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.fetch_abroad.outcome }}" != "success" ]; then
-            echo "- fetch:abroad-live failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.fetch_events_mlb.outcome }}" != "success" ]; then
-            echo "- fetch:events-mlb failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.fetch_events_cpbl.outcome }}" != "success" ]; then
-            echo "- fetch:events-cpbl failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.fetch_events_npb.outcome }}" != "success" ]; then
-            echo "- fetch:events-npb failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.fetch_events_kbo.outcome }}" != "success" ]; then
-            echo "- fetch:events-kbo failed" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          if [ "${{ steps.validate_events.outcome || 'skipped' }}" != "success" ]; then
-            echo "- validate:events failed or was skipped" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-      - name: Fail job if any update step failed
+      - name: Fail job if abroad update failed
         if: >
           steps.export_seed.outcome != 'success' ||
           steps.fetch_abroad.outcome != 'success' ||
-          steps.fetch_events_mlb.outcome != 'success' ||
-          steps.fetch_events_cpbl.outcome != 'success' ||
-          steps.fetch_events_npb.outcome != 'success' ||
-          steps.fetch_events_kbo.outcome != 'success' ||
-          steps.validate_events.outcome != 'success'
+          steps.verify_abroad.outcome != 'success'
         run: |
-          echo "One or more update or validation steps failed."
+          echo "Abroad data update failed."
           exit 1
