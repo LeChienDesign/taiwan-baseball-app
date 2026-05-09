@@ -1,0 +1,97 @@
+
+
+name: Update KBO Events
+
+on:
+  schedule:
+    # Taipei 13:00-24:00 = UTC 05:00-15:59
+    - cron: '*/5 5-15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-kbo-events
+  cancel-in-progress: false
+
+jobs:
+  update-kbo-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve KBO event date
+        id: resolve_dates
+        shell: bash
+        run: |
+          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
+          echo "taipei_today=$TAIPEI_TODAY" >> "$GITHUB_OUTPUT"
+          echo "KBO date: $TAIPEI_TODAY"
+
+      - name: Fetch KBO events center data
+        id: fetch_events_kbo
+        run: npm run fetch:events-kbo ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
+
+      - name: Verify KBO snapshot
+        id: verify_kbo
+        run: test -f server/data/eventsCenter.kbo.json
+
+      - name: Validate events center data
+        id: validate_events
+        run: npm run validate:events
+
+      - name: Commit updated KBO events
+        if: >
+          steps.fetch_events_kbo.outcome == 'success' &&
+          steps.verify_kbo.outcome == 'success' &&
+          steps.validate_events.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add server/data/eventsCenter.kbo.json
+
+          if git diff --cached --quiet; then
+            echo "No KBO event changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update KBO events data"
+          git pull --rebase origin main
+          git push
+
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "## Update KBO Events Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| resolve date | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:events-kbo | ${{ steps.fetch_events_kbo.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify KBO snapshot | ${{ steps.verify_kbo.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| validate:events | ${{ steps.validate_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail job if KBO update failed
+        if: >
+          steps.fetch_events_kbo.outcome != 'success' ||
+          steps.verify_kbo.outcome != 'success' ||
+          steps.validate_events.outcome != 'success'
+        run: |
+          echo "KBO event update failed."
+          exit 1
