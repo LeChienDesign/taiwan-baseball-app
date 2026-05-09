@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
   Image,
   Animated,
   Easing,
@@ -19,420 +18,27 @@ import TrackedAbroadSection from '../../components/TrackedAbroadSection';
 import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
 
-import { fetchMlbGamesByDate } from '../../lib/mlb';
-import { fetchCpblMajorGamesByDate } from '../../lib/cpbl-real';
-import { fetchNpbGamesByDate } from '../../lib/npb';
-import { fetchKboGamesByDate } from '../../lib/kbo';
+import { useHomeGames, type LeagueKey } from '../../hooks/useHomeGames';
+import { buildLeagueHref } from '../../lib/homeGameSelector';
 
-type TeamCardInfo = {
-  name: string;
-  short: string;
-  record: string;
-  logo: any;
-};
-
-type ScoreboardGame = {
-  id: string | number;
-  status: 'FINAL' | 'LIVE' | 'SCHEDULED';
-  venue: string;
-  awayTeam: TeamCardInfo;
-  homeTeam: TeamCardInfo;
-  awayScore: number;
-  homeScore: number;
-  innings: number[];
-  awayLine: {
-    team: string;
-    innings: (number | string)[];
-    r: number;
-    h: number;
-    e: number;
-  };
-  homeLine: {
-    team: string;
-    innings: (number | string)[];
-    r: number;
-    h: number;
-    e: number;
-  };
-  footerLeft?: string;
-  footerRight?: string;
-  gameDate?: string;
-  date?: string;
-};
-
-type LeagueKey = 'CPBL' | 'MLB' | 'NPB' | 'KBO';
-
-type FeaturedItem = {
-  league: LeagueKey;
-  game: ScoreboardGame;
-};
-
-
-type LeagueStats = Record<
-  LeagueKey,
-  {
-    total: number;
-    live: number;
-  }
->;
-
-const SMART_SCORE_REFRESH_MS = 300000;
-const SCORE_REFRESH_BEFORE_START_MINUTES = 10;
-const SCORE_REFRESH_AFTER_START_MINUTES = 240;
-const HOME_FETCH_TIMEOUT_MS = 2500;
-
-
-function toDateKey(date: Date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
-
-function getTodayDateKey() {
-  return toDateKey(new Date());
-}
-
-function getPreviousDateKey(dateKey: string) {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  const date = new Date(year, month - 1, day);
-  date.setDate(date.getDate() - 1);
-  return toDateKey(date);
-}
-
-function getGameDateKey(game: any) {
-  const value = game?.gameDate || game?.date || game?.startDate || game?.startTime || '';
-  return String(value).slice(0, 10);
-}
-
-function getMlbDateKeyForTaipei(todayKey: string) {
-  const taipeiHour = new Date().getHours();
-
-  // MLB games shown in Taiwan morning/afternoon usually still belong to the previous US calendar date.
-  return taipeiHour < 18 ? getPreviousDateKey(todayKey) : todayKey;
-}
-
-function mergeGamesById(games: ScoreboardGame[]) {
-  const map = new Map<string, ScoreboardGame>();
-
-  for (const game of games) {
-    map.set(String(game.id), game);
-  }
-
-  return Array.from(map.values());
-}
-
-function getLiveGamesOnly(games: ScoreboardGame[]) {
-  return games.filter((game) => game.status === 'LIVE');
-}
-
-async function withHomeFetchTimeout<T>(promise: Promise<T>, fallback: T) {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  try {
-    return await Promise.race([
-      promise,
-      new Promise<T>((resolve) => {
-        timer = setTimeout(() => resolve(fallback), HOME_FETCH_TIMEOUT_MS);
-      }),
-    ]);
-  } finally {
-    if (timer) clearTimeout(timer);
-  }
-}
-
-function normalizeHomeGameStatus(game: any, todayKeyForLeague: string): ScoreboardGame['status'] {
-  const raw = String(game?.status ?? game?.statusText ?? game?.footerLeft ?? '').toUpperCase();
-  const footerRaw = `${game?.footerLeft ?? ''} ${game?.footerRight ?? ''}`;
-  const footer = footerRaw.toUpperCase();
-  const gameDate = getGameDateKey(game);
-  const isPastGameDate = Boolean(gameDate && gameDate < todayKeyForLeague);
-  const isPostponed = raw.includes('POSTPONED') || raw.includes('延賽') || footer.includes('延賽');
-  const hasScore = Number(game?.awayScore ?? 0) > 0 || Number(game?.homeScore ?? 0) > 0;
-  const hasLineScore =
-    Array.isArray(game?.awayLine?.innings) &&
-    Array.isArray(game?.homeLine?.innings) &&
-    (game.awayLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-') ||
-      game.homeLine.innings.some((value: any) => String(value ?? '').trim() !== '' && String(value ?? '').trim() !== '-'));
-  const explicitFinal =
-    raw === 'FINAL' ||
-    raw.includes('FINAL') ||
-    raw.includes('GAME_OVER') ||
-    raw.includes('GAME OVER') ||
-    raw.includes('COMPLETED') ||
-    raw.includes('CLOSED') ||
-    raw.includes('結束') ||
-    raw.includes('比賽結束') ||
-    raw.includes('試合終了') ||
-    raw.includes('終了') ||
-    raw.includes('已完賽') ||
-    footer.includes('FINAL') ||
-    footer.includes('GAME_OVER') ||
-    footer.includes('GAME OVER') ||
-    footer.includes('比賽結束') ||
-    footer.includes('試合終了') ||
-    footer.includes('終了');
-  const explicitLive =
-    raw === 'LIVE' ||
-    raw.includes('LIVE') ||
-    raw.includes('比賽中') ||
-    raw.includes('比賽進行中') ||
-    raw.includes('IN PROGRESS') ||
-    raw.includes('IN_PROGRESS') ||
-    raw.includes('PROGRESS') ||
-    raw.includes('PLAYING') ||
-    raw.includes('경기중') ||
-    footer.includes('LIVE') ||
-    footer.includes('比賽中') ||
-    footer.includes('경기중');
-  const inningLikeLive =
-    footer.includes('局') ||
-    footer.includes('回') ||
-    footer.includes('회') ||
-    /\b(?:TOP|BOT|BOTTOM)\s*\d+/i.test(footerRaw) ||
-    /\d+\s*(?:ST|ND|RD|TH)/i.test(footerRaw);
-
-  if (explicitFinal) {
-    return 'FINAL';
-  }
-
-  if (explicitLive) {
-    return 'LIVE';
-  }
-
-  // Home is grouped by Taiwan date. After Taiwan 23:59, prior-date games should leave home
-  // unless they are explicitly marked LIVE by the provider. This also prevents finals like
-  // "11局 延長賽" from being treated as live just because the footer contains "局".
-  if (isPastGameDate && !isPostponed) {
-    return 'FINAL';
-  }
-
-  if (inningLikeLive && !isPastGameDate) {
-    return 'LIVE';
-  }
-
-  if (!isPastGameDate && !isPostponed && (hasScore || hasLineScore)) {
-    return 'LIVE';
-  }
-
-  return 'SCHEDULED';
-}
-
-function normalizeHomeGames(games: ScoreboardGame[], todayKeyForLeague: string) {
-  return games.map((game: any) => ({
-    ...game,
-    status: normalizeHomeGameStatus(game, todayKeyForLeague),
-  })) as ScoreboardGame[];
-}
-
-function getLeagueOrder(league: LeagueKey) {
-  const order: Record<LeagueKey, number> = {
-    CPBL: 1,
-    MLB: 2,
-    NPB: 3,
-    KBO: 4,
-  };
-  return order[league];
-}
-
-function getStatusOrder(status: ScoreboardGame['status']) {
-  if (status === 'LIVE') return 1;
-  if (status === 'SCHEDULED') return 2;
-  if (status === 'FINAL') return 3;
-  return 4;
-}
-
-function parseTimeValue(text?: string) {
-  if (!text) return 9999;
-  const match = text.match(/(\d{1,2}):(\d{2})/);
-  if (!match) return 9999;
-  return Number(match[1]) * 60 + Number(match[2]);
-}
-
-function shouldRefreshScoresForGame(game: ScoreboardGame) {
-  if (game.status === 'LIVE') return true;
-  if (game.status === 'FINAL') return false;
-
-  const scheduledMinutes = getGameTimeValue(game);
-  if (scheduledMinutes === 9999) return false;
-
-  const now = new Date();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-  const minutesToStart = scheduledMinutes - nowMinutes;
-
-  return (
-    minutesToStart <= SCORE_REFRESH_BEFORE_START_MINUTES &&
-    minutesToStart >= -SCORE_REFRESH_AFTER_START_MINUTES
-  );
-}
-
-function shouldAutoRefreshScores(items: FeaturedItem[]) {
-  return items.some((item) => shouldRefreshScoresForGame(item.game));
-}
-
-function getGameTimeValue(game: ScoreboardGame) {
-  return parseTimeValue(game.footerRight);
-}
-
-function getLiveInningValue(game: ScoreboardGame) {
-  const text = `${game.footerLeft ?? ''} ${game.footerRight ?? ''}`;
-  const match = text.match(/(\d{1,2})\s*(?:局|回|th|st|nd|rd)/i);
-  if (!match) return 0;
-  return Number(match[1]) || 0;
-}
-
-function sortLiveGames(items: FeaturedItem[]) {
-  return [...items].sort((a, b) => {
-    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
-    if (leagueDiff !== 0) return leagueDiff;
-
-    const inningDiff = getLiveInningValue(b.game) - getLiveInningValue(a.game);
-    if (inningDiff !== 0) return inningDiff;
-
-    const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
-    if (timeDiff !== 0) return timeDiff;
-
-    return String(a.game.id).localeCompare(String(b.game.id));
-  });
-}
-
-function hasMeaningfulGameContent(game: ScoreboardGame) {
-  const hasVenue = !!String(game.venue || '').trim();
-  const hasTime = !!String(game.footerRight || '').trim();
-  const hasStatus = !!String(game.status || '').trim();
-  const hasTeams = !!game.awayTeam?.name && !!game.homeTeam?.name;
-
-  if (!hasTeams || !hasStatus) return false;
-
-  if (game.status === 'LIVE' || game.status === 'FINAL') {
-    return true;
-  }
-
-  return hasVenue || hasTime;
-}
-
-function sortFeatured(items: FeaturedItem[]) {
-  return [...items].sort((a, b) => {
-    const statusDiff = getStatusOrder(a.game.status) - getStatusOrder(b.game.status);
-    if (statusDiff !== 0) return statusDiff;
-
-    const timeDiff = getGameTimeValue(a.game) - getGameTimeValue(b.game);
-    if (timeDiff !== 0) return timeDiff;
-
-    const leagueDiff = getLeagueOrder(a.league) - getLeagueOrder(b.league);
-    if (leagueDiff !== 0) return leagueDiff;
-
-    return String(a.game.id).localeCompare(String(b.game.id));
-  });
-}
-
-function buildFeaturedItems(league: LeagueKey, games: ScoreboardGame[]) {
-  return games
-    .filter((game) => game.status !== 'FINAL')
-    .filter(hasMeaningfulGameContent)
-    .map((game) => ({ league, game }));
-}
-
-function buildLeagueStat(games: ScoreboardGame[]) {
-  const meaningful = games
-    .filter((game) => game.status !== 'FINAL')
-    .filter(hasMeaningfulGameContent);
-
-  return {
-    total: meaningful.length,
-    live: meaningful.filter((g) => g.status === 'LIVE').length,
-  };
-}
-
-function buildLeagueHref(league: LeagueKey, date: string) {
-  if (league === 'CPBL') return `/league/cpbl-major?date=${date}`;
-  if (league === 'MLB') return `/league/mlb?date=${date}`;
-  if (league === 'NPB') return `/league/npb?date=${date}`;
-  return `/league/kbo?date=${date}`;
-}
 
 export default function HomePage() {
   const router = useRouter();
-  const todayKey = useMemo(() => getTodayDateKey(), []);
-  const mlbTodayKey = useMemo(() => getMlbDateKeyForTaipei(todayKey), [todayKey]);
   const logoPulse = useRef(new Animated.Value(1)).current;
-
-  const [featuredGames, setFeaturedGames] = useState<FeaturedItem[]>([]);
-  const [leagueStats, setLeagueStats] = useState<LeagueStats>({
-    CPBL: { total: 0, live: 0 },
-    MLB: { total: 0, live: 0 },
-    NPB: { total: 0, live: 0 },
-    KBO: { total: 0, live: 0 },
-  });
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [showAllLiveGames, setShowAllLiveGames] = useState(false);
 
-  const loadHomeData = useCallback(async (options?: { silent?: boolean }) => {
-    try {
-      if (!options?.silent) {
-        setLoading(true);
-      }
+  const {
+    todayKey,
+    mlbTodayKey,
+    displayedGames,
+    liveGames,
+    leagueStats,
+    loading,
+    refreshing,
+    refresh,
+  } = useHomeGames();
 
-      const localOnly = !options?.silent && !refreshing;
 
-      const [cpblGames, mlbGamesByMlbDate, mlbGamesByTaipeiDate, npbGames, kboGames] = await Promise.all([
-        withHomeFetchTimeout(fetchCpblMajorGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
-        withHomeFetchTimeout(fetchMlbGamesByDate(mlbTodayKey, { localOnly } as any).catch(() => []), []),
-        mlbTodayKey === todayKey
-          ? Promise.resolve([])
-          : withHomeFetchTimeout(fetchMlbGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
-        withHomeFetchTimeout(fetchNpbGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
-        withHomeFetchTimeout(fetchKboGamesByDate(todayKey, { localOnly } as any).catch(() => []), []),
-      ]);
-
-      const mlbExtraTaipeiGames = getLiveGamesOnly(
-        normalizeHomeGames(mlbGamesByTaipeiDate as ScoreboardGame[], todayKey)
-      );
-      const mlbGames = mergeGamesById([
-        ...(mlbGamesByMlbDate as ScoreboardGame[]),
-        ...mlbExtraTaipeiGames,
-      ]);
-
-      const normalizedCpblGames = normalizeHomeGames(cpblGames as ScoreboardGame[], todayKey);
-      const normalizedMlbGames = normalizeHomeGames(mlbGames as ScoreboardGame[], todayKey);
-      const normalizedNpbGames = normalizeHomeGames(npbGames as ScoreboardGame[], todayKey);
-      const normalizedKboGames = normalizeHomeGames(kboGames as ScoreboardGame[], todayKey);
-
-      setLeagueStats({
-        CPBL: buildLeagueStat(normalizedCpblGames),
-        MLB: buildLeagueStat(normalizedMlbGames),
-        NPB: buildLeagueStat(normalizedNpbGames),
-        KBO: buildLeagueStat(normalizedKboGames),
-      });
-
-      const merged = [
-        ...buildFeaturedItems('CPBL', normalizedCpblGames),
-        ...buildFeaturedItems('MLB', normalizedMlbGames),
-        ...buildFeaturedItems('NPB', normalizedNpbGames),
-        ...buildFeaturedItems('KBO', normalizedKboGames),
-      ];
-
-      setFeaturedGames(sortFeatured(merged));
-    } finally {
-      if (!options?.silent) {
-        setLoading(false);
-      }
-      setRefreshing(false);
-    }
-  }, [mlbTodayKey, todayKey]);
-
-  useEffect(() => {
-    loadHomeData();
-
-    const timer = setTimeout(() => {
-      loadHomeData({ silent: true });
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [loadHomeData]);
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -460,29 +66,7 @@ export default function HomePage() {
     };
   }, [logoPulse]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadHomeData({ silent: true });
-  }, [loadHomeData]);
 
-  const displayedGames = useMemo(() => {
-    const liveIds = new Set(
-      featuredGames
-        .filter((item) => item.game.status === 'LIVE')
-        .map((item) => String(item.game.id))
-    );
-
-    const withoutLiveOrFinal = featuredGames.filter(
-      (item) =>
-        item.game.status !== 'FINAL' && !liveIds.has(String(item.game.id))
-    );
-
-    return withoutLiveOrFinal.slice(0, 4);
-  }, [featuredGames]);
-
-  const liveGames = useMemo(() => {
-    return sortLiveGames(featuredGames.filter((item) => item.game.status === 'LIVE'));
-  }, [featuredGames]);
 
   const visibleLiveGames = showAllLiveGames ? liveGames : liveGames.slice(0, 6);
   const hasMoreLiveGames = liveGames.length > 6;
@@ -499,20 +83,6 @@ export default function HomePage() {
     leagueStats.NPB.live +
     leagueStats.KBO.live;
 
-  const hasAutoRefreshTarget = useMemo(() => shouldAutoRefreshScores(featuredGames), [featuredGames]);
-
-  useEffect(() => {
-    if (!hasAutoRefreshTarget) return;
-
-    const timer = setInterval(() => {
-      loadHomeData({ silent: true });
-    }, SMART_SCORE_REFRESH_MS);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [hasAutoRefreshTarget, loadHomeData]);
-
   function openLeague(league: LeagueKey) {
     router.push(buildLeagueHref(league, league === 'MLB' ? mlbTodayKey : todayKey) as any);
   }
@@ -526,7 +96,7 @@ export default function HomePage() {
     <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         <View style={styles.heroCard}>
           <View style={styles.heroTopRow}>
