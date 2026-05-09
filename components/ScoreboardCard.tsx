@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
+import {
+  getScoreboardStatusLabel,
+  normalizeScoreboardStatus,
+} from '../lib/viewModels/scoreboardGameViewModel';
 
 type TeamInfo = {
   name: string;
@@ -83,19 +87,6 @@ function padLine(values: (number | string)[], targetLength: number) {
   return [...trimmedValues, ...Array.from({ length: targetLength - trimmedValues.length }, () => '-')];
 }
 
-function normalizeStatus(status: ScoreboardCardProps['status']) {
-  const raw = String(status || '').toUpperCase();
-
-  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
-  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
-  return 'SCHEDULED';
-}
-
-function getStatusLabel(status: string, footerLeft?: string, footerRight?: string) {
-  if (status === 'LIVE') return footerLeft || footerRight || 'LIVE';
-  if (status === 'FINAL') return 'FINAL';
-  return footerRight || 'SCHEDULED';
-}
 
 function hasLineScoreData(awayInnings: (number | string)[], homeInnings: (number | string)[]) {
   return awayInnings.some((v) => v !== '-') || homeInnings.some((v) => v !== '-');
@@ -136,7 +127,7 @@ export default function ScoreboardCard({
   footerLeft,
   footerRight,
 }: ScoreboardCardProps) {
-  const normalizedStatus = normalizeStatus(status);
+  const normalizedStatus = normalizeScoreboardStatus(status);
   const isScheduled = normalizedStatus === 'SCHEDULED';
   const isLive = normalizedStatus === 'LIVE';
   const isFinal = normalizedStatus === 'FINAL';
@@ -151,7 +142,7 @@ export default function ScoreboardCard({
   const awayWin = isFinal && awayScore > homeScore;
   const homeWin = isFinal && homeScore > awayScore;
   const footerVenue = venue && venue !== '—' ? venue : '';
-  const statusLabel = getStatusLabel(normalizedStatus, footerLeft, footerRight);
+  const statusLabel = getScoreboardStatusLabel(normalizedStatus, footerLeft, footerRight);
   const liveDetail = isLive ? statusLabel : footerRight;
 
   useEffect(() => {

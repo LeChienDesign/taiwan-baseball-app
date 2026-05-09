@@ -10,7 +10,7 @@ export type ScoreboardCardViewModel = ScoreboardGame & {
   isFinal: boolean;
 };
 
-export function normalizeScoreboardStatus(status: ScoreboardGame['status']) {
+export function normalizeScoreboardStatus(status?: string) {
   const raw = String(status || '').toUpperCase();
 
   if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
