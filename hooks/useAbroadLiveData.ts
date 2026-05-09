@@ -45,7 +45,7 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
     isUsingFallback,
     refresh,
   } = useLiveJson<LivePayload>({
-    remoteUrl: REMOTE_ABROAD_LIVE_URL,
+    remoteUrl: undefined,
     fallbackPayload,
     pollingIntervalMs: 60 * 1000,
   });
