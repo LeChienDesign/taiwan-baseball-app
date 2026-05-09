@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-09T21:23:51.335Z",
+  "updatedAt": "2026-05-09T22:06:14.338Z",
   "date": "2026-05-09",
   "startDate": "2026-05-09",
   "endDate": "2026-05-09",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-05-09",
       "gamePk": 822820,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Rogers Centre",
       "awayTeam": {
         "id": 108,
@@ -25,8 +25,8 @@
         "abbreviation": "TOR",
         "logoKey": "TOR"
       },
-      "awayScore": 0,
-      "homeScore": 9,
+      "awayScore": 1,
+      "homeScore": 14,
       "innings": [
         1,
         2,
@@ -34,7 +34,9 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "LAA",
@@ -45,10 +47,12 @@
           0,
           0,
           0,
+          0,
+          1,
           0
         ],
-        "r": 0,
-        "h": 4,
+        "r": 1,
+        "h": 10,
         "e": 1
       },
       "homeLine": {
@@ -60,14 +64,16 @@
           1,
           7,
           0,
-          1
+          2,
+          4,
+          "-"
         ],
-        "r": 9,
-        "h": 14,
+        "r": 14,
+        "h": 20,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下7局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-05-09T19:07:00Z"
     },
     {
@@ -91,13 +97,15 @@
         "abbreviation": "BAL",
         "logoKey": "BAL"
       },
-      "awayScore": 4,
+      "awayScore": 5,
       "homeScore": 0,
       "innings": [
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6
       ],
       "awayLine": {
         "team": "ATH",
@@ -105,10 +113,12 @@
           1,
           0,
           3,
+          0,
+          1,
           0
         ],
-        "r": 4,
-        "h": 4,
+        "r": 5,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
@@ -117,14 +127,16 @@
           0,
           0,
           0,
-          "-"
+          0,
+          0,
+          0
         ],
         "r": 0,
-        "h": 4,
+        "h": 6,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下4局",
+      "footerRight": "End6局",
       "gameDate": "2026-05-09T20:05:00Z"
     },
     {
@@ -149,13 +161,15 @@
         "logoKey": "CIN"
       },
       "awayScore": 1,
-      "homeScore": 0,
+      "homeScore": 3,
       "innings": [
         1,
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "HOU",
@@ -164,11 +178,13 @@
           0,
           0,
           0,
-          1
+          1,
+          0,
+          0
         ],
         "r": 1,
-        "h": 3,
-        "e": 0
+        "h": 4,
+        "e": 2
       },
       "homeLine": {
         "team": "CIN",
@@ -177,14 +193,16 @@
           0,
           0,
           0,
+          3,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 2,
+        "r": 3,
+        "h": 5,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下5局",
+      "footerRight": "下7局",
       "gameDate": "2026-05-09T20:10:00Z"
     },
     {
@@ -209,12 +227,15 @@
         "logoKey": "MIA"
       },
       "awayScore": 4,
-      "homeScore": 2,
+      "homeScore": 3,
       "innings": [
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "WSH",
@@ -222,11 +243,14 @@
           3,
           0,
           1,
-          0
+          0,
+          0,
+          0,
+          "-"
         ],
         "r": 4,
-        "h": 5,
-        "e": 0
+        "h": 7,
+        "e": 2
       },
       "homeLine": {
         "team": "MIA",
@@ -234,14 +258,17 @@
           0,
           0,
           0,
-          2
+          2,
+          0,
+          1,
+          "-"
         ],
-        "r": 2,
-        "h": 4,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下4局",
+      "footerRight": "上7局",
       "gameDate": "2026-05-09T20:10:00Z"
     },
     {
@@ -251,7 +278,7 @@
       "date": "2026-05-09",
       "gamePk": 823468,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Delayed Start",
       "venue": "Citizens Bank Park",
       "awayTeam": {
         "id": 115,
@@ -288,7 +315,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Delayed Start",
       "footerRight": "上1局",
       "gameDate": "2026-05-09T22:05:00Z"
     },
@@ -299,7 +326,7 @@
       "date": "2026-05-09",
       "gamePk": 824444,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Delayed Start",
       "venue": "Progressive Field",
       "awayTeam": {
         "id": 142,
@@ -336,7 +363,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Delayed Start",
       "footerRight": "上1局",
       "gameDate": "2026-05-09T22:10:00Z"
     },
@@ -853,8 +880,8 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 822820,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Rogers Centre",
         "awayTeam": {
           "id": 108,
@@ -868,8 +895,8 @@
           "abbreviation": "TOR",
           "logoKey": "TOR"
         },
-        "awayScore": 0,
-        "homeScore": 9,
+        "awayScore": 1,
+        "homeScore": 14,
         "innings": [
           1,
           2,
@@ -877,7 +904,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "LAA",
@@ -888,10 +917,12 @@
             0,
             0,
             0,
+            0,
+            1,
             0
           ],
-          "r": 0,
-          "h": 4,
+          "r": 1,
+          "h": 10,
           "e": 1
         },
         "homeLine": {
@@ -903,14 +934,16 @@
             1,
             7,
             0,
-            1
+            2,
+            4,
+            "-"
           ],
-          "r": 9,
-          "h": 14,
+          "r": 14,
+          "h": 20,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-05-09T19:07:00Z"
       },
       {
@@ -934,13 +967,15 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 4,
+        "awayScore": 5,
         "homeScore": 0,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "ATH",
@@ -948,10 +983,12 @@
             1,
             0,
             3,
+            0,
+            1,
             0
           ],
-          "r": 4,
-          "h": 4,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -960,14 +997,16 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 4,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "End6局",
         "gameDate": "2026-05-09T20:05:00Z"
       },
       {
@@ -992,13 +1031,15 @@
           "logoKey": "CIN"
         },
         "awayScore": 1,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "HOU",
@@ -1007,11 +1048,13 @@
             0,
             0,
             0,
-            1
+            1,
+            0,
+            0
           ],
           "r": 1,
-          "h": 3,
-          "e": 0
+          "h": 4,
+          "e": 2
         },
         "homeLine": {
           "team": "CIN",
@@ -1020,14 +1063,16 @@
             0,
             0,
             0,
+            3,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 2,
+          "r": 3,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下5局",
+        "footerRight": "下7局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1052,12 +1097,15 @@
           "logoKey": "MIA"
         },
         "awayScore": 4,
-        "homeScore": 2,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "WSH",
@@ -1065,11 +1113,14 @@
             3,
             0,
             1,
-            0
+            0,
+            0,
+            0,
+            "-"
           ],
           "r": 4,
-          "h": 5,
-          "e": 0
+          "h": 7,
+          "e": 2
         },
         "homeLine": {
           "team": "MIA",
@@ -1077,14 +1128,17 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            1,
+            "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "上7局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1094,7 +1148,7 @@
         "date": "2026-05-09",
         "gamePk": 823468,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Citizens Bank Park",
         "awayTeam": {
           "id": 115,
@@ -1131,7 +1185,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-05-09T22:05:00Z"
       },
@@ -1142,7 +1196,7 @@
         "date": "2026-05-09",
         "gamePk": 824444,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Progressive Field",
         "awayTeam": {
           "id": 142,
@@ -1179,7 +1233,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-05-09T22:10:00Z"
       },
@@ -1697,8 +1751,8 @@
         "league": "MLB",
         "date": "2026-05-09",
         "gamePk": 822820,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Rogers Centre",
         "awayTeam": {
           "id": 108,
@@ -1712,8 +1766,8 @@
           "abbreviation": "TOR",
           "logoKey": "TOR"
         },
-        "awayScore": 0,
-        "homeScore": 9,
+        "awayScore": 1,
+        "homeScore": 14,
         "innings": [
           1,
           2,
@@ -1721,7 +1775,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "LAA",
@@ -1732,10 +1788,12 @@
             0,
             0,
             0,
+            0,
+            1,
             0
           ],
-          "r": 0,
-          "h": 4,
+          "r": 1,
+          "h": 10,
           "e": 1
         },
         "homeLine": {
@@ -1747,14 +1805,16 @@
             1,
             7,
             0,
-            1
+            2,
+            4,
+            "-"
           ],
-          "r": 9,
-          "h": 14,
+          "r": 14,
+          "h": 20,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-05-09T19:07:00Z"
       },
       {
@@ -1778,13 +1838,15 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 4,
+        "awayScore": 5,
         "homeScore": 0,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "ATH",
@@ -1792,10 +1854,12 @@
             1,
             0,
             3,
+            0,
+            1,
             0
           ],
-          "r": 4,
-          "h": 4,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -1804,14 +1868,16 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 4,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "End6局",
         "gameDate": "2026-05-09T20:05:00Z"
       },
       {
@@ -1836,13 +1902,15 @@
           "logoKey": "CIN"
         },
         "awayScore": 1,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "HOU",
@@ -1851,11 +1919,13 @@
             0,
             0,
             0,
-            1
+            1,
+            0,
+            0
           ],
           "r": 1,
-          "h": 3,
-          "e": 0
+          "h": 4,
+          "e": 2
         },
         "homeLine": {
           "team": "CIN",
@@ -1864,14 +1934,16 @@
             0,
             0,
             0,
+            3,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 2,
+          "r": 3,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下5局",
+        "footerRight": "下7局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1896,12 +1968,15 @@
           "logoKey": "MIA"
         },
         "awayScore": 4,
-        "homeScore": 2,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "WSH",
@@ -1909,11 +1984,14 @@
             3,
             0,
             1,
-            0
+            0,
+            0,
+            0,
+            "-"
           ],
           "r": 4,
-          "h": 5,
-          "e": 0
+          "h": 7,
+          "e": 2
         },
         "homeLine": {
           "team": "MIA",
@@ -1921,14 +1999,17 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            1,
+            "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "上7局",
         "gameDate": "2026-05-09T20:10:00Z"
       },
       {
@@ -1938,7 +2019,7 @@
         "date": "2026-05-09",
         "gamePk": 823468,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Citizens Bank Park",
         "awayTeam": {
           "id": 115,
@@ -1975,7 +2056,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-05-09T22:05:00Z"
       },
@@ -1986,7 +2067,7 @@
         "date": "2026-05-09",
         "gamePk": 824444,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Progressive Field",
         "awayTeam": {
           "id": 142,
@@ -2023,7 +2104,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-05-09T22:10:00Z"
       },
