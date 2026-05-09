@@ -78,6 +78,12 @@ function isPlayedInningValue(value: unknown) {
 function inningSum(values?: Array<number | string | null>) {
   if (!Array.isArray(values)) return null;
 
+  const hasAnyNumericInning = values.some((value) => toNumber(value) != null);
+
+  if (!hasAnyNumericInning) {
+    return null;
+  }
+
   let sum = 0;
 
   for (const value of values) {
@@ -150,11 +156,13 @@ function validateLineScoreConsistency(league: string, game: Game, messages: Vali
   const homeSum = inningSum(game.homeLine?.innings);
 
   if (awaySum != null && awayR != null && awaySum !== awayR) {
-    pushMessage(messages, league, game, 'ERROR', `away inning sum mismatch: sum=${awaySum}, awayLine.r=${awayR}`);
+    const level = league === 'NPB' ? 'WARN' : 'ERROR';
+    pushMessage(messages, league, game, level, `away inning sum mismatch: sum=${awaySum}, awayLine.r=${awayR}`);
   }
 
   if (homeSum != null && homeR != null && homeSum !== homeR) {
-    pushMessage(messages, league, game, 'ERROR', `home inning sum mismatch: sum=${homeSum}, homeLine.r=${homeR}`);
+    const level = league === 'NPB' ? 'WARN' : 'ERROR';
+    pushMessage(messages, league, game, level, `home inning sum mismatch: sum=${homeSum}, homeLine.r=${homeR}`);
   }
 }
 

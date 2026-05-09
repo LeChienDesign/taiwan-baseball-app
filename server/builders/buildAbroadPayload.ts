@@ -1,10 +1,11 @@
 
 
+import type { AbroadPlayerLike } from '../merge/mergeAbroadPlayers';
+
 import {
   buildSummary,
   type AbroadLiveSummary,
-  type AbroadPlayerLike,
-} from '../merge/mergeAbroadPlayers';
+} from '../merge/buildSummary';
 import { type ProviderRunResult } from '../providers/runAbroadProvider';
 
 export type AbroadLivePayload = {
