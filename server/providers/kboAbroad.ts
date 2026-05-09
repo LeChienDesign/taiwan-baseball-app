@@ -257,6 +257,58 @@ function candidateUrlsFromRegistry(registry: AbroadRegistryEntry) {
   );
 }
 
+function resolveUrl(baseUrl: string, value?: string | null) {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  try {
+    return new URL(trimmed, baseUrl).toString();
+  } catch {
+    return undefined;
+  }
+}
+
+function extractKboPhotoUrl(html: string, pageUrl: string) {
+  const metaPatterns = [
+    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["'][^>]*>/i,
+    /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["'][^>]*>/i,
+  ];
+
+  for (const pattern of metaPatterns) {
+    const match = html.match(pattern);
+    const resolved = resolveUrl(pageUrl, match?.[1]);
+    if (resolved) return resolved;
+  }
+
+  const imageMatches = Array.from(html.matchAll(/<img[^>]+(?:src|data-src)=["']([^"']+)["'][^>]*>/gi));
+  const candidates = imageMatches
+    .map((match) => resolveUrl(pageUrl, match[1]))
+    .filter((value): value is string => !!value)
+    .filter((url) => !/ico_|icon|logo|common|lang|flag|banner|btn|sns/i.test(url))
+    .filter((url) => /player|profile|photo|upload|person|member/i.test(url));
+
+  return candidates[0];
+}
+
+async function fetchKboOfficialPhotoUrl(registry: AbroadRegistryEntry) {
+  const urls = [registry.officialPlayerUrl, registry.officialRosterUrl].filter(
+    (value): value is string => !!value && !!value.trim()
+  );
+
+  for (const url of urls) {
+    const html = await fetchText(url);
+    if (!html) continue;
+
+    const photoUrl = extractKboPhotoUrl(html, url);
+    if (photoUrl) return photoUrl;
+  }
+
+  return undefined;
+}
+
 function parseDateFromLine(line: string, requestedDate: string) {
   const normalized = line.replace(/\s+/g, ' ');
 
@@ -378,6 +430,7 @@ function buildBasePatch(
     team: player.team ?? registry.officialTeam,
     league: 'KBO',
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
+    officialPhotoUrl: player.officialPhotoUrl,
     news: buildFallbackNews(player, registry, requestedDate),
     teamMeta: {
       ...(player.teamMeta ?? {}),
@@ -408,10 +461,13 @@ async function buildSingleKboPatch(
   );
   const recentGames = fetchedRecentGames.length > 0 ? fetchedRecentGames : player.recentGames ?? [];
 
+  const officialPhotoUrl = player.officialPhotoUrl ?? (await fetchKboOfficialPhotoUrl(registry));
+
   return {
     ...basePatch,
     recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
     recentNote: inferRecentNote(recentGames, player.recentNote),
+    officialPhotoUrl,
     news: buildFallbackNews(player, registry, requestedDate),
   };
 }
