@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 
 type UseLiveJsonOptions<TPayload> = {
-  remoteUrl: string;
+  remoteUrl?: string;
   fallbackPayload: TPayload;
   pollingIntervalMs?: number;
   enabled?: boolean;
@@ -39,6 +39,15 @@ export function useLiveJson<TPayload>({
     if (!enabled) {
       setLoading(false);
       setRefreshing(false);
+      return;
+    }
+
+    if (!remoteUrl) {
+      setPayload(fallbackPayload);
+      setLoading(false);
+      setRefreshing(false);
+      setError(undefined);
+      setIsUsingFallback(true);
       return;
     }
 
