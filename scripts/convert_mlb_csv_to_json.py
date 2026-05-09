@@ -1,5 +1,3 @@
-
-
 #!/usr/bin/env python3
 """Convert data/mlb-2026.csv into data/mlb-2026.json for the app calendar."""
 
@@ -7,7 +5,8 @@ from __future__ import annotations
 
 import csv
 import json
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,7 +32,25 @@ def format_display_time(value: str) -> str:
     except ValueError:
         return value
 
-    return parsed.strftime("%H:%M")
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+
+    return parsed.astimezone(ZoneInfo("Asia/Taipei")).strftime("%H:%M")
+
+
+def format_taipei_date(value: str, fallback: str = "") -> str:
+    if not value:
+        return fallback
+
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return fallback
+
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+
+    return parsed.astimezone(ZoneInfo("Asia/Taipei")).strftime("%Y-%m-%d")
 
 
 def build_empty_line(team_short: str, score: int) -> dict:
@@ -52,13 +69,14 @@ def normalize_row(row: dict) -> dict:
     away_short = row.get("awayShort") or row.get("awayTeam", "Away")[:3].upper()
     home_short = row.get("homeShort") or row.get("homeTeam", "Home")[:3].upper()
     official_date = row.get("officialDate", "")
+    game_date = format_taipei_date(official_date, row.get("gameDate", ""))
     display_time = format_display_time(row.get("displayTime") or official_date)
 
     return {
         "id": row.get("id") or f"mlb-{row.get('gamePk', '')}",
         "gamePk": parse_score(row.get("gamePk", "0")),
         "league": "MLB",
-        "gameDate": row.get("gameDate", ""),
+        "gameDate": game_date,
         "status": row.get("status") or "SCHEDULED",
         "awayTeam": {
             "name": row.get("awayTeam", "Away"),
