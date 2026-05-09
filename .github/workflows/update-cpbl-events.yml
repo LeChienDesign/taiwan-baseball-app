@@ -51,9 +51,9 @@ jobs:
         id: verify_cpbl
         run: test -f server/data/eventsCenter.cpbl.json
 
-      - name: Validate events center data
+      - name: Validate CPBL events center data
         id: validate_events
-        run: npm run validate:events
+        run: npm run validate:events -- --league=CPBL
 
       - name: Commit updated CPBL events
         if: >

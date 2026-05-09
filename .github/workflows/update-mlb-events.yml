@@ -60,9 +60,9 @@ jobs:
         id: verify_mlb
         run: test -f server/data/eventsCenter.mlb.json
 
-      - name: Validate events center data
+      - name: Validate MLB events center data
         id: validate_events
-        run: npm run validate:events
+        run: npm run validate:events -- --league=MLB
 
       - name: Commit updated MLB events
         if: >

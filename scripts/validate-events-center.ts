@@ -31,12 +31,32 @@ type ValidationMessage = {
   message: string;
 };
 
+
 const FILES = [
   ['CPBL', 'server/data/eventsCenter.cpbl.json'],
   ['MLB', 'server/data/eventsCenter.mlb.json'],
   ['NPB', 'server/data/eventsCenter.npb.json'],
   ['KBO', 'server/data/eventsCenter.kbo.json'],
 ] as const;
+
+type LeagueName = (typeof FILES)[number][0];
+
+function getSelectedLeague() {
+  const arg = process.argv.find((value) => value.startsWith('--league='));
+  const rawLeague = arg?.split('=')[1]?.trim().toUpperCase();
+
+  if (!rawLeague) return null;
+
+  const supportedLeagues = FILES.map(([league]) => league);
+
+  if (!supportedLeagues.includes(rawLeague as LeagueName)) {
+    console.error(`Unsupported league: ${rawLeague}`);
+    console.error(`Supported leagues: ${supportedLeagues.join(', ')}`);
+    process.exit(1);
+  }
+
+  return rawLeague as LeagueName;
+}
 
 function toNumber(value: unknown) {
   if (value === '' || value == null || value === '-') return null;
@@ -201,7 +221,12 @@ function main() {
   const allMessages: ValidationMessage[] = [];
   const counts: Record<string, number> = {};
 
-  for (const [league, relativePath] of FILES) {
+  const selectedLeague = getSelectedLeague();
+  const filesToValidate = selectedLeague
+    ? FILES.filter(([league]) => league === selectedLeague)
+    : FILES;
+
+  for (const [league, relativePath] of filesToValidate) {
     const filePath = path.resolve(process.cwd(), relativePath);
 
     if (!fs.existsSync(filePath)) {
@@ -244,7 +269,7 @@ function main() {
     console.error(formatMessage(error));
   }
 
-  for (const [league] of FILES) {
+  for (const [league] of filesToValidate) {
     const errorCount = errors.filter((message) => message.league === league).length;
     const warningCount = warnings.filter((message) => message.league === league).length;
     const suffix = warningCount ? ` (${warningCount} warnings)` : '';

@@ -51,9 +51,9 @@ jobs:
         id: verify_npb
         run: test -f server/data/eventsCenter.npb.json
 
-      - name: Validate events center data
+      - name: Validate NPB events center data
         id: validate_events
-        run: npm run validate:events
+        run: npm run validate:events -- --league=NPB
 
       - name: Commit updated NPB events
         if: >

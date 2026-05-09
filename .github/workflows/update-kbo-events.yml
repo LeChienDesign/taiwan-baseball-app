@@ -51,9 +51,9 @@ jobs:
         id: verify_kbo
         run: test -f server/data/eventsCenter.kbo.json
 
-      - name: Validate events center data
+      - name: Validate KBO events center data
         id: validate_events
-        run: npm run validate:events
+        run: npm run validate:events -- --league=KBO
 
       - name: Commit updated KBO events
         if: >
