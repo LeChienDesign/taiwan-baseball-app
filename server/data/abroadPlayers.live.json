@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-09T16:13:07.373Z",
+  "updatedAt": "2026-05-09T22:42:40.478Z",
   "requestedDate": "2026-05-09",
   "summary": {
     "totalPlayers": 31,
@@ -13,7 +13,7 @@
     "probableStarters": 0,
     "injured": 8,
     "withNews": 31,
-    "withRecentGames": 20
+    "withRecentGames": 19
   },
   "providers": [
     {
@@ -1116,6 +1116,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-09",
+          "opponent": "South Bend Cubs",
+          "result": "先發",
+          "detail1": "6.0局 / 3ER / 4K / 2BB",
+          "detail2": "H 5 / 用球 89"
+        },
+        {
           "date": "2026-05-03",
           "opponent": "Dayton Dragons",
           "result": "先發",
@@ -1142,13 +1149,6 @@
           "result": "先發",
           "detail1": "4.0局 / 3ER / 2K / 2BB",
           "detail2": "H 4 / 用球 68"
-        },
-        {
-          "date": "2026-04-07",
-          "opponent": "Fort Wayne TinCaps",
-          "result": "先發",
-          "detail1": "5.0局 / 1ER / 3K / 0BB",
-          "detail2": "H 4 / 用球 57"
         }
       ],
       "news": [
@@ -2235,7 +2235,7 @@
       "line1": "旅日先發右投",
       "line2": "日本火腿一軍 / 支配下",
       "intro": "旅日後話題與期待值都很高，是現階段最受關注的台灣旅日投手之一。",
-      "recentNote": "NPB 官方比分頁補充近 5 場比賽資料",
+      "recentNote": "優先同步一軍登板、先發預告、近 3 場投球內容與新聞異動。",
       "type": "pitcher",
       "seasonStats": {
         "pitcher": {
@@ -2248,16 +2248,17 @@
           "saves": 0
         }
       },
-      "recentGames": [
-        {
-          "date": "2026-05-02",
-          "opponent": "Nippon-Ham vs ORIX",
-          "result": "登板",
-          "detail1": "HR : [B] Seymour ( 3, 2nd inn. off RY.Gu Lin, 1 on )",
-          "detail2": "NPB 官方比分頁"
-        }
-      ],
+      "recentGames": [],
       "news": [
+        {
+          "id": "ruei-yang-gu-lin-fighters-official",
+          "title": "古林睿煬 Fighters 官方頁",
+          "date": "2026-05-09",
+          "tag": "官方頁",
+          "summary": "目前僅提供 2025 年度逐場資料，未納入 recentGames。",
+          "url": "https://www.fighters.co.jp/team/player/detail/2025_00001417.html",
+          "source": "Fighters Official"
+        },
         {
           "id": "ruei-yang-gu-lin-npb-sync",
           "title": "古林睿煬 官方資料同步",
@@ -2287,8 +2288,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://media.fighters.co.jp/player/37/",
-      "officialPhotoUrl": "https://media.fighters.co.jp/wp-content/uploads/2026/03/37.webp"
+      "officialPlayerUrl": "https://media.fighters.co.jp/player/37/"
     },
     {
       "id": "yi-lei-sun",
@@ -2367,8 +2367,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://media.fighters.co.jp/player/96/",
-      "officialPhotoUrl": "https://media.fighters.co.jp/wp-content/uploads/2026/03/96.webp"
+      "officialPlayerUrl": "https://media.fighters.co.jp/player/96/"
     },
     {
       "id": "chun-wei-chang",
@@ -2438,8 +2437,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://www.softbankhawks.co.jp/global/traditional-c/2026_153/",
-      "officialPhotoUrl": "https://www.softbankhawks.co.jp/media/sites/7/team/player/2025/153_02.jpg"
+      "officialPlayerUrl": "https://www.softbankhawks.co.jp/global/traditional-c/2026_153/"
     },
     {
       "id": "an-ko-lin",
@@ -2510,8 +2508,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://players.seibulions.jp/player/1098",
-      "officialPhotoUrl": "https://players.seibulions.jp/uploads/players/8c51cf1f/faa917eff848f710_1774508910.webp"
+      "officialPlayerUrl": "https://players.seibulions.jp/player/1098"
     },
     {
       "id": "yen-cheng-wang",
@@ -2686,8 +2683,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://www.softbankhawks.co.jp/team/player/detail/2026_00001589.html",
-      "officialPhotoUrl": "https://www.softbankhawks.co.jp/media/sites/7/team/player/2026/18_01.jpg"
+      "officialPlayerUrl": "https://www.softbankhawks.co.jp/team/player/detail/2026_00001589.html"
     },
     {
       "id": "chia-hao-sung",
@@ -2758,8 +2754,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://www.rakuteneagles.jp/team/player/detail/2026_00001013.html",
-      "officialPhotoUrl": "https://www.rakuteneagles.jp/media/sites/3/team/player/2026/43.jpg"
+      "officialPlayerUrl": "https://www.rakuteneagles.jp/team/player/detail/2026_00001013.html"
     },
     {
       "id": "chia-cheng-lin",
@@ -2840,8 +2835,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://media.fighters.co.jp/player/38/",
-      "officialPhotoUrl": "https://media.fighters.co.jp/wp-content/uploads/2026/03/38.png"
+      "officialPlayerUrl": "https://media.fighters.co.jp/player/38/"
     },
     {
       "id": "hsiang-sheng-hsu",
@@ -2911,8 +2905,7 @@
         }
       ],
       "career": [],
-      "officialPlayerUrl": "https://npb.jp/bis/players/53255159.html",
-      "officialPhotoUrl": "https://p.npb.jp/players_photo/2026/180/s/017_53255159.jpg"
+      "officialPlayerUrl": "https://npb.jp/bis/players/53255159.html"
     }
   ]
 }
