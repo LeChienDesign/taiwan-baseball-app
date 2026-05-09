@@ -100,13 +100,44 @@ function getEffectiveNpbStatus(game: any) {
   const hasFinalText =
     statusText.includes('FINAL') ||
     statusText.includes('GAMEOVER') ||
+    statusText.includes('GAME OVER') ||
     statusText.includes('試合終了') ||
+    statusText.includes('比賽結束') ||
+    statusText.includes('已完賽') ||
     footerLeft.includes('FINAL') ||
     footerLeft.includes('GAMEOVER') ||
+    footerLeft.includes('GAME OVER') ||
     footerLeft.includes('試合終了') ||
+    footerLeft.includes('比賽結束') ||
+    footerLeft.includes('已完賽') ||
     footerRight.includes('FINAL') ||
     footerRight.includes('GAMEOVER') ||
-    footerRight.includes('試合終了');
+    footerRight.includes('GAME OVER') ||
+    footerRight.includes('試合終了') ||
+    footerRight.includes('比賽結束') ||
+    footerRight.includes('已完賽');
+
+  const hasLineScoreData = [...awayInnings, ...homeInnings].some(
+    (value: any) => value !== '-' && value !== '' && value != null
+  );
+  const hasUnplayedLateInnings =
+    awayInnings.length < 9 ||
+    homeInnings.length < 9 ||
+    [...awayInnings.slice(6, 9), ...homeInnings.slice(6, 9)].some(
+      (value: any) => value === '-' || value === '' || value == null
+    );
+
+  // NPB sometimes carries stale FINAL flags while the line score is still in progress.
+  // For today's games, trust explicit final text first; otherwise incomplete late innings stay LIVE.
+  if (
+    (status === 'FINAL' || status === 'GAMEOVER') &&
+    gameDate === today &&
+    !hasFinalText &&
+    hasLineScoreData &&
+    hasUnplayedLateInnings
+  ) {
+    return 'LIVE';
+  }
 
   if (status === 'LIVE' && (hasNineInnings || hasFinalText)) {
     return 'FINAL';
@@ -118,11 +149,21 @@ function getEffectiveNpbStatus(game: any) {
 function normalizeExpiredNpbLiveStatus(game: any) {
   const effectiveStatus = getEffectiveNpbStatus(game);
 
+  const rawStatus = String(game?.status ?? '').toUpperCase();
+
+  if (effectiveStatus === 'LIVE' && (rawStatus === 'FINAL' || rawStatus === 'GAMEOVER')) {
+    return {
+      ...game,
+      status: 'LIVE',
+      statusText: 'Live',
+      footerLeft: 'Live',
+    };
+  }
+
   if (effectiveStatus !== 'FINAL') {
     return game;
   }
 
-  const rawStatus = String(game?.status ?? '').toUpperCase();
   if (rawStatus !== 'LIVE') {
     return game;
   }

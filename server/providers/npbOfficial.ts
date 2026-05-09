@@ -365,19 +365,6 @@ function parseLineScoreRowsFromDetailHtml(
   };
 }
 
-function hasNpbFinalText(html: string) {
-  const text = compactWhitespace(stripHtml(html));
-  return text.includes('試合終了') || text.includes('ゲームセット');
-}
-
-function hasCompletedNpbRegulation(lineScore: NonNullable<ReturnType<typeof parseLineScoreRowsFromDetailHtml>>) {
-  const awayInnings = lineScore.awayLine.innings;
-  const homeInnings = lineScore.homeLine.innings;
-  const reachedNinth = awayInnings.length >= 9 && homeInnings.length >= 9;
-  const hasWinner = lineScore.awayLine.r !== lineScore.homeLine.r;
-
-  return reachedNinth && hasWinner;
-}
 
 async function enrichGameWithLineScore(game: NpbScoreboardGame) {
   if (!game.officialUrl) return game;
@@ -395,8 +382,10 @@ async function enrichGameWithLineScore(game: NpbScoreboardGame) {
 
   if (!lineScore) return game;
 
-  const isFinal = hasNpbFinalText(html) || hasCompletedNpbRegulation(lineScore);
-  const nextStatus = isFinal ? 'FINAL' : game.status;
+  // The detail page is only used to enrich line score rows.
+  // Status must come from the header score box because scanning the full detail HTML can
+  // pick up unrelated "試合終了" text and falsely mark in-progress games as final.
+  const nextStatus = game.status;
 
   return {
     ...game,
@@ -420,6 +409,10 @@ async function enrichGameWithLineScore(game: NpbScoreboardGame) {
           : game.footerLeft,
     footerRight: nextStatus === 'FINAL' ? '' : game.footerRight,
   };
+}
+
+function hasNpbHeaderFinalText(stateText: string) {
+  return stateText.includes('試合終了') || stateText.includes('ゲームセット');
 }
 
 function extractHeaderScoreGames(html: string, date: string) {
@@ -453,9 +446,9 @@ function extractHeaderScoreGames(html: string, date: string) {
     const awayScore = scoreMatch ? Number(scoreMatch[1]) : 0;
     const homeScore = scoreMatch ? Number(scoreMatch[2]) : 0;
     const venueMatch = stateText.match(/（([^）]+)）/);
-    const inningMatch = stateText.match(/(\d+回[表裏])/);
+    const inningMatch = stateText.match(/(\d+回(?:表|裏|終了))/);
     const timeMatch = stateText.match(/\b(\d{1,2}:\d{2})\b/);
-    const isFinal = stateText.includes('終了') || stateText.includes('試合終了');
+    const isFinal = hasNpbHeaderFinalText(stateText);
     const isLive = !!scoreMatch && !!inningMatch && !isFinal;
     const status = isFinal ? 'FINAL' : isLive ? 'LIVE' : 'SCHEDULED';
     const officialDisplayTime = timeMatch?.[1] ?? '';
