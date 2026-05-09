@@ -135,7 +135,7 @@ function isClockText(value: any) {
   return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
 }
 
-function convertJapanTimeToTaiwanTime(value: any) {
+function convertNpbOfficialJapanTimeToTaipei(value: any) {
   const text = String(value ?? '').trim();
 
   if (!isClockText(text)) {
@@ -150,11 +150,13 @@ function convertJapanTimeToTaiwanTime(value: any) {
     return value;
   }
 
-  const taiwanHour = (hour + 23) % 24;
-  return `${String(taiwanHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  // NPB official schedule times are Japan time (JST / UTC+9).
+  // App display uses Taiwan time (CST / UTC+8), so convert by -1 hour.
+  const taipeiHour = (hour + 23) % 24;
+  return `${String(taipeiHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
-function normalizeNpbGameTaiwanDisplayTime(game: NpbScoreboardGame): NpbScoreboardGame {
+function normalizeNpbGameTaipeiDisplayTime(game: NpbScoreboardGame): NpbScoreboardGame {
   if (game.status !== 'SCHEDULED') {
     return game;
   }
@@ -162,7 +164,7 @@ function normalizeNpbGameTaiwanDisplayTime(game: NpbScoreboardGame): NpbScoreboa
   return {
     ...game,
     footerRight: isClockText(game.footerRight)
-      ? convertJapanTimeToTaiwanTime(game.footerRight)
+      ? convertNpbOfficialJapanTimeToTaipei(game.footerRight)
       : game.footerRight,
   };
 }
@@ -456,7 +458,7 @@ function extractHeaderScoreGames(html: string, date: string) {
     const isFinal = stateText.includes('終了') || stateText.includes('試合終了');
     const isLive = !!scoreMatch && !!inningMatch && !isFinal;
     const status = isFinal ? 'FINAL' : isLive ? 'LIVE' : 'SCHEDULED';
-    const taiwanDisplayTime = convertJapanTimeToTaiwanTime(timeMatch?.[1] ?? '');
+    const officialDisplayTime = timeMatch?.[1] ?? '';
     const awayTeam = buildTeamInfo(away);
     const homeTeam = buildTeamInfo(home);
     const innings = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -491,8 +493,8 @@ function extractHeaderScoreGames(html: string, date: string) {
       },
       footerLeft: status === 'LIVE' ? 'Live' : status === 'FINAL' ? 'Final' : 'Scheduled',
       footerRight:
-        status === 'SCHEDULED' && taiwanDisplayTime
-          ? taiwanDisplayTime
+        status === 'SCHEDULED' && officialDisplayTime
+          ? officialDisplayTime
           : inningMatch?.[1] ?? (stateText.replace(/（[^）]+）/g, '').trim() || '待更新'),
       gameDate: date,
       officialUrl: `${NPB_BASE}${href}`,
@@ -513,7 +515,7 @@ export async function fetchNpbScoreboardByDate(date: string) {
 
   if (games.length > 0) {
     const enrichedGames = (await Promise.all(games.map(enrichGameWithLineScore))).map(
-      normalizeNpbGameTaiwanDisplayTime
+      normalizeNpbGameTaipeiDisplayTime
     );
 
     return {

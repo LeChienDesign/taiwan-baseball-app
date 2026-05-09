@@ -383,43 +383,8 @@ function choosePreferredSnapshot(firstSnapshot: any, secondSnapshot: any, date: 
   return firstUpdatedAt >= secondUpdatedAt ? firstSnapshot : secondSnapshot;
 }
 
-function isClockText(value: any) {
-  return /^\d{1,2}:\d{2}$/.test(String(value ?? '').trim());
-}
-
-function convertJapanTimeToTaiwanTime(value: any) {
-  const text = String(value ?? '').trim();
-
-  if (!isClockText(text)) {
-    return value;
-  }
-
-  const [hourText, minuteText] = text.split(':');
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-
-  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
-    return value;
-  }
-
-  const taiwanHour = (hour + 23) % 24;
-  return `${String(taiwanHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-}
-
-function normalizeNpbTaiwanDisplayTime(game: any) {
-  const status = getEffectiveNpbStatus(game);
-  const shouldConvertTime = status === 'SCHEDULED' || status === 'PRE' || status === 'PREGAME' || status === '';
-
-  if (!shouldConvertTime) {
-    return game;
-  }
-
-  return {
-    ...game,
-    gameTime: isClockText(game?.gameTime) ? convertJapanTimeToTaiwanTime(game.gameTime) : game?.gameTime,
-    displayTime: isClockText(game?.displayTime) ? convertJapanTimeToTaiwanTime(game.displayTime) : game?.displayTime,
-    footerRight: isClockText(game?.footerRight) ? convertJapanTimeToTaiwanTime(game.footerRight) : game?.footerRight,
-  };
+function normalizeNpbDisplayTime(game: any) {
+  return game;
 }
 
 function snapshotHasDate(snapshot: any, date: string) {
@@ -465,7 +430,7 @@ export async function fetchNpbGamesByDate(
     .filter((game: any) => isUsableNpbLiveGame(game))
     .map(normalizeExpiredNpbLiveStatus)
     .map((game: any) => attachFallbackLogos(game, logoMap))
-    .map(normalizeNpbTaiwanDisplayTime);
+    .map(normalizeNpbDisplayTime);
 
   const localSnapshotHasDate = snapshotHasDate(npbLiveSnapshot, date);
 
@@ -481,7 +446,7 @@ export async function fetchNpbGamesByDate(
     return applyNpbManualOverrides(
       fallbackGames
         .map((game: any) => attachFallbackLogos(game, logoMap))
-        .map(normalizeNpbTaiwanDisplayTime)
+        .map(normalizeNpbDisplayTime)
     );
   }
 
@@ -493,7 +458,7 @@ export async function fetchNpbGamesByDate(
       .filter((game: any) => isUsableNpbLiveGame(game))
       .map(normalizeExpiredNpbLiveStatus)
       .map((game: any) => attachFallbackLogos(game, logoMap))
-      .map(normalizeNpbTaiwanDisplayTime);
+      .map(normalizeNpbDisplayTime);
 
     if (preferredSnapshotHasDate && payloadGames.length > 0) {
       return applyNpbManualOverrides(payloadGames);
@@ -521,7 +486,7 @@ export async function fetchNpbGamesByDate(
           return status === 'FINAL' || status === 'GAMEOVER';
         })
         .map((game: any) => attachFallbackLogos(game, logoMap))
-        .map(normalizeNpbTaiwanDisplayTime)
+        .map(normalizeNpbDisplayTime)
     );
   }
 
@@ -534,7 +499,7 @@ export async function fetchNpbGamesByDate(
       .filter((game: any) => isUsableNpbLiveGame(game))
       .map(normalizeExpiredNpbLiveStatus)
       .map((game: any) => attachFallbackLogos(game, logoMap))
-      .map(normalizeNpbTaiwanDisplayTime);
+      .map(normalizeNpbDisplayTime);
 
     if (preferredSnapshotHasDate && remoteGames.length > 0) {
       return applyNpbManualOverrides(remoteGames);
@@ -546,6 +511,6 @@ export async function fetchNpbGamesByDate(
   return applyNpbManualOverrides(
     fallbackGames
       .map((game: any) => attachFallbackLogos(game, logoMap))
-      .map(normalizeNpbTaiwanDisplayTime)
+      .map(normalizeNpbDisplayTime)
   );
 }
