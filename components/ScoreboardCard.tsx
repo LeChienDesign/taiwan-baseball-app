@@ -15,9 +15,9 @@ type TeamInfo = {
 type LineScoreRow = {
   team?: string;
   innings?: (number | string)[];
-  r?: number;
-  h?: number;
-  e?: number;
+  r?: number | string;
+  h?: number | string;
+  e?: number | string;
 };
 
 type ScoreboardCardProps = {

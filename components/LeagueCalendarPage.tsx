@@ -10,6 +10,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from './BackButton';
 import ScoreboardCard from './ScoreboardCard';
+import {
+  normalizeScoreboardStatus,
+  toScoreboardCardViewModel,
+} from '../lib/viewModels/scoreboardGameViewModel';
 
 type LeagueCalendarPageProps = {
   logo: any;
@@ -52,21 +56,14 @@ function makeDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-function normalizeStatus(status: any) {
-  const raw = String(status || '').toUpperCase();
-
-  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
-  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
-  return 'SCHEDULED';
-}
 
 function getDayPreview(games: any[]) {
   if (!games.length) return '';
 
-  const liveGame = games.find((game) => normalizeStatus(game.status) === 'LIVE');
+  const liveGame = games.find((game) => normalizeScoreboardStatus(game.status) === 'LIVE');
   if (liveGame) return 'LIVE';
 
-  const finalGame = games.find((game) => normalizeStatus(game.status) === 'FINAL');
+  const finalGame = games.find((game) => normalizeScoreboardStatus(game.status) === 'FINAL');
   if (finalGame) return `${finalGame.awayScore ?? 0}-${finalGame.homeScore ?? 0}`;
 
   const firstGame = games[0];
@@ -74,11 +71,11 @@ function getDayPreview(games: any[]) {
 }
 
 function hasLiveGame(games: any[]) {
-  return games.some((game) => normalizeStatus(game.status) === 'LIVE');
+  return games.some((game) => normalizeScoreboardStatus(game.status) === 'LIVE');
 }
 
 function getDisplayPriority(game: any) {
-  const status = normalizeStatus(game.status);
+  const status = normalizeScoreboardStatus(game.status);
 
   if (status === 'LIVE') return 0;
   if (status === 'SCHEDULED') return 1;
@@ -204,9 +201,9 @@ export default function LeagueCalendarPage({
 
         const nextMeta: DayMeta = {
           count: games.length,
-          hasScheduled: games.some((g) => normalizeStatus(g.status) === 'SCHEDULED'),
-          hasLive: games.some((g) => normalizeStatus(g.status) === 'LIVE'),
-          hasFinal: games.some((g) => normalizeStatus(g.status) === 'FINAL'),
+          hasScheduled: games.some((g) => normalizeScoreboardStatus(g.status) === 'SCHEDULED'),
+          hasLive: games.some((g) => normalizeScoreboardStatus(g.status) === 'LIVE'),
+          hasFinal: games.some((g) => normalizeScoreboardStatus(g.status) === 'FINAL'),
           preview: getDayPreview(games),
         };
 
@@ -268,9 +265,9 @@ export default function LeagueCalendarPage({
 
               const meta: DayMeta = {
                 count: games.length,
-                hasScheduled: games.some((g) => normalizeStatus(g.status) === 'SCHEDULED'),
-                hasLive: games.some((g) => normalizeStatus(g.status) === 'LIVE'),
-                hasFinal: games.some((g) => normalizeStatus(g.status) === 'FINAL'),
+                hasScheduled: games.some((g) => normalizeScoreboardStatus(g.status) === 'SCHEDULED'),
+                hasLive: games.some((g) => normalizeScoreboardStatus(g.status) === 'LIVE'),
+                hasFinal: games.some((g) => normalizeScoreboardStatus(g.status) === 'FINAL'),
                 preview: getDayPreview(games),
               };
 
@@ -529,22 +526,26 @@ export default function LeagueCalendarPage({
               <Text style={styles.emptyText}>這一天沒有比賽</Text>
             </View>
           ) : (
-            sortGamesForDisplay(realGames).map((game) => (
-              <ScoreboardCard
-                key={game.id}
-                status={game.status}
-                venue={game.venue}
-                awayTeam={game.awayTeam}
-                homeTeam={game.homeTeam}
-                awayScore={game.awayScore}
-                homeScore={game.homeScore}
-                innings={game.innings}
-                awayLine={game.awayLine}
-                homeLine={game.homeLine}
-                footerLeft={game.footerLeft}
-                footerRight={game.footerRight}
-              />
-            ))
+            sortGamesForDisplay(realGames).map((game) => {
+              const viewModel = toScoreboardCardViewModel(game);
+
+              return (
+                <ScoreboardCard
+                  key={viewModel.id}
+                  status={viewModel.normalizedStatus}
+                  venue={viewModel.venue}
+                  awayTeam={viewModel.awayTeam}
+                  homeTeam={viewModel.homeTeam}
+                  awayScore={viewModel.awayScore}
+                  homeScore={viewModel.homeScore}
+                  innings={viewModel.innings}
+                  awayLine={viewModel.awayLine}
+                  homeLine={viewModel.homeLine}
+                  footerLeft={viewModel.footerLeft}
+                  footerRight={viewModel.footerRight}
+                />
+              );
+            })
           )}
         </View>
       </ScrollView>
