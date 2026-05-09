@@ -1,24 +1,23 @@
-
-
-name: Update NPB Events
+name: Update Abroad Data
 
 on:
   schedule:
-    # Taipei 11:00-22:00 = UTC 03:00-13:59
-    - cron: '*/5 3-13 * * *'
+    # Taipei 06:00-24:00 = UTC 22:00-23:59 + 00:00-15:59
+    - cron: '*/30 22-23 * * *'
+    - cron: '*/30 0-15 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-npb-events
+  group: update-abroad-data
   cancel-in-progress: false
 
 jobs:
-  update-npb-events:
+  update-abroad-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -35,63 +34,57 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Resolve NPB event date
-        id: resolve_dates
-        shell: bash
+      - name: Export abroad seed
+        id: export_seed
+        run: npm run export:abroad-seed
+
+      - name: Fetch abroad live data
+        id: fetch_abroad
+        run: npm run fetch:abroad-live
+
+      - name: Verify abroad snapshots
+        id: verify_abroad
         run: |
-          TAIPEI_TODAY=$(TZ=Asia/Taipei date +%F)
-          echo "taipei_today=$TAIPEI_TODAY" >> "$GITHUB_OUTPUT"
-          echo "NPB date: $TAIPEI_TODAY"
+          test -f server/data/abroadPlayers.seed.json
+          test -f server/data/abroadPlayers.live.json
 
-      - name: Fetch NPB events center data
-        id: fetch_events_npb
-        run: npm run fetch:events-npb ${{ steps.resolve_dates.outputs.taipei_today }} ${{ steps.resolve_dates.outputs.taipei_today }}
-
-      - name: Verify NPB snapshot
-        id: verify_npb
-        run: test -f server/data/eventsCenter.npb.json
-
-      - name: Validate events center data
-        id: validate_events
-        run: npm run validate:events
-
-      - name: Commit updated NPB events
+      - name: Commit updated abroad data
         if: >
-          steps.fetch_events_npb.outcome == 'success' &&
-          steps.verify_npb.outcome == 'success' &&
-          steps.validate_events.outcome == 'success'
+          steps.export_seed.outcome == 'success' &&
+          steps.fetch_abroad.outcome == 'success' &&
+          steps.verify_abroad.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add server/data/eventsCenter.npb.json
+          git add server/data/abroadPlayers.seed.json
+          git add server/data/abroadPlayers.live.json
 
           if git diff --cached --quiet; then
-            echo "No NPB event changes to commit."
+            echo "No abroad data changes to commit."
             exit 0
           fi
 
-          git commit -m "chore: update NPB events data"
+          git commit -m "chore: update abroad players data"
           git pull --rebase origin main
           git push
 
       - name: Workflow summary
         if: always()
         run: |
-          echo "## Update NPB Events Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Update Abroad Data Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Step | Result |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| resolve date | ${{ steps.resolve_dates.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| fetch:events-npb | ${{ steps.fetch_events_npb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| verify NPB snapshot | ${{ steps.verify_npb.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| validate:events | ${{ steps.validate_events.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| export:abroad-seed | ${{ steps.export_seed.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fetch:abroad-live | ${{ steps.fetch_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| verify abroad snapshots | ${{ steps.verify_abroad.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Fail job if NPB update failed
+      - name: Fail job if abroad update failed
         if: >
-          steps.fetch_events_npb.outcome != 'success' ||
-          steps.verify_npb.outcome != 'success' ||
-          steps.validate_events.outcome != 'success'
+          steps.export_seed.outcome != 'success' ||
+          steps.fetch_abroad.outcome != 'success' ||
+          steps.verify_abroad.outcome != 'success'
         run: |
-          echo "NPB event update failed."
+          echo "Abroad data update failed."
           exit 1
