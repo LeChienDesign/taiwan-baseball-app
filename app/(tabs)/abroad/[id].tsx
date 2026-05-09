@@ -21,130 +21,18 @@ import {
   useAbroadFavorites,
 } from '../../../store/abroadFavorites';
 
-type PlayerLike = {
-  id: string;
-  name: string;
-  enName?: string;
-  team?: string;
-  league?: string;
-  level?: string;
-  position?: string;
-  bats?: string;
-  throws?: string;
-  age?: number;
-  number?: string;
-  status?: string;
-  intro?: string;
-  type?: 'pitcher' | 'hitter';
-  teamColor?: string;
-  teamMeta?: {
-    code?: string;
-    abbreviation?: string;
-    logoKey?: string;
-    logoUrl?: string;
-    displayName?: string;
-  };
-  officialPhotoUrl?: string;
-  officialPlayerUrl?: string;
-  recentNote?: string;
-  line1?: string;
-  line2?: string;
-  nextGame?: {
-    date?: string;
-    opponent?: string;
-    status?: string;
-    venue?: string;
-  };
-  seasonStats?: {
-    hitter?: Record<string, any>;
-    pitcher?: Record<string, any>;
-  };
-  recentGames?: Array<{
-    date?: string;
-    opponent?: string;
-    result?: string;
-    detail1?: string;
-    detail2?: string;
-  }>;
-  news?: Array<{
-    id?: string;
-    title?: string;
-    date?: string;
-    tag?: string;
-    summary?: string;
-    url?: string;
-    source?: string;
-  }>;
-};
+import {
+  type AbroadPlayerLike,
+  formatAbroadHandLine,
+  formatAbroadLevelLine,
+  formatAbroadSyncLabel,
+  formatAbroadTeamLine,
+  getAbroadPlayerStatus,
+  mergeAbroadPlayerViewModels,
+  normalizeAbroadPlayerId,
+} from '../../../lib/viewModels/abroadPlayerViewModel';
 
-function normalizeId(value?: string | string[] | null) {
-  const v = Array.isArray(value) ? value[0] : value;
-  if (!v) return '';
-  return decodeURIComponent(String(v)).trim().toLowerCase();
-}
 
-function formatUpdatedAt(value?: string) {
-  if (!value) return '本機資料';
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '已同步';
-
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mi = String(date.getMinutes()).padStart(2, '0');
-
-  return `同步 ${mm}/${dd} ${hh}:${mi}`;
-}
-
-function mergePlayers(seed: PlayerLike[], live: PlayerLike[]) {
-  const seedOrder = new Map<string, number>();
-  seed.forEach((player, index) => seedOrder.set(player.id, index));
-
-  const map = new Map<string, PlayerLike>();
-
-  for (const player of seed) {
-    map.set(player.id, player);
-  }
-
-  for (const player of live) {
-    const prev = map.get(player.id);
-    map.set(player.id, {
-      ...prev,
-      ...player,
-      teamMeta: {
-        ...(prev?.teamMeta ?? {}),
-        ...(player.teamMeta ?? {}),
-      },
-      nextGame: player.nextGame ?? prev?.nextGame,
-      seasonStats: player.seasonStats ?? prev?.seasonStats,
-      recentGames: player.recentGames ?? prev?.recentGames,
-      news: player.news ?? prev?.news,
-    });
-  }
-
-  return Array.from(map.values()).sort((a, b) => {
-    const ai = seedOrder.get(a.id) ?? 9999;
-    const bi = seedOrder.get(b.id) ?? 9999;
-    return ai - bi;
-  });
-}
-
-function formatTeamLine(player: PlayerLike) {
-  const code = player.teamMeta?.code ?? player.teamMeta?.abbreviation;
-  const team = player.team ?? '未設定球隊';
-  return code ? `${team} (${code})` : team;
-}
-
-function formatLevelLine(player: PlayerLike) {
-  const level = player.level ?? '—';
-  const position = player.position ?? '—';
-  return `${level} • ${position}`;
-}
-
-function formatHandLine(player: PlayerLike) {
-  return `${player.throws ?? '—'}投 / ${player.bats ?? '—'}打`;
-}
 
 function openExternalUrl(url?: string) {
   if (!url) return;
@@ -154,7 +42,7 @@ function openExternalUrl(url?: string) {
 export default function AbroadPlayerDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const routeId = normalizeId(params.id);
+  const routeId = normalizeAbroadPlayerId(params.id);
 
   const {
     players: livePlayers,
@@ -173,12 +61,16 @@ export default function AbroadPlayerDetailScreen() {
   };
 
   const mergedPlayers = useMemo(
-    () => mergePlayers(seedAbroadPlayers as PlayerLike[], livePlayers as PlayerLike[]),
+    () =>
+      mergeAbroadPlayerViewModels(
+        seedAbroadPlayers as AbroadPlayerLike[],
+        livePlayers as AbroadPlayerLike[]
+      ),
     [livePlayers]
   );
 
   const currentIndex = useMemo(
-    () => mergedPlayers.findIndex((player) => normalizeId(player.id) === routeId),
+    () => mergedPlayers.findIndex((player) => normalizeAbroadPlayerId(player.id) === routeId),
     [mergedPlayers, routeId]
   );
 
@@ -190,7 +82,7 @@ export default function AbroadPlayerDetailScreen() {
       : null;
 
   const favorite = player ? isFavorite(player.id) : false;
-  const syncLabel = isUsingFallback ? '本機資料' : formatUpdatedAt(updatedAt);
+  const syncLabel = formatAbroadSyncLabel(updatedAt, isUsingFallback);
 
   if (loading && mergedPlayers.length === 0) {
     return (
@@ -327,14 +219,14 @@ export default function AbroadPlayerDetailScreen() {
                   </View>
                 ) : null}
                 <View style={styles.statusBadge}>
-                  <Text style={styles.statusBadgeText}>{player.status ?? '待命'}</Text>
+                  <Text style={styles.statusBadgeText}>{getAbroadPlayerStatus(player)}</Text>
                 </View>
               </View>
 
               <Text style={styles.playerEnName}>{player.enName ?? ''}</Text>
-              <Text style={styles.heroMeta}>{`#${player.number ?? '—'} • ${formatTeamLine(player)}`}</Text>
-              <Text style={styles.heroMeta}>{formatLevelLine(player)}</Text>
-              <Text style={styles.heroMeta}>{formatHandLine(player)}</Text>
+              <Text style={styles.heroMeta}>{`#${player.number ?? '—'} • ${formatAbroadTeamLine(player)}`}</Text>
+              <Text style={styles.heroMeta}>{formatAbroadLevelLine(player)}</Text>
+              <Text style={styles.heroMeta}>{formatAbroadHandLine(player)}</Text>
             </View>
           </View>
 
@@ -487,7 +379,7 @@ export default function AbroadPlayerDetailScreen() {
             />
             <MiniCard
               title="下場同步"
-              value={player.nextGame?.status ?? player.status ?? '待更新'}
+              value={player.nextGame?.status ?? getAbroadPlayerStatus(player)}
               subValue={player.nextGame?.date ?? '—'}
             />
           </View>

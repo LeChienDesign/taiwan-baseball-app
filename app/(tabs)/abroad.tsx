@@ -22,185 +22,24 @@ import {
   useAbroadFavorites,
 } from '../../store/abroadFavorites';
 
-type PlayerLike = {
-  id: string;
-  name: string;
-  enName?: string;
-  team?: string;
-  league?: string;
-  level?: string;
-  position?: string;
-  bats?: string;
-  throws?: string;
-  age?: number;
-  number?: string;
-  status?: string;
-  intro?: string;
-  type?: 'pitcher' | 'hitter';
-  teamColor?: string;
-  trending?: boolean;
-  line1?: string;
-  line2?: string;
-  recentNote?: string;
-  teamMeta?: {
-    code?: string;
-    abbreviation?: string;
-    logoKey?: string;
-    logoUrl?: string;
-    displayName?: string;
-  };
-  officialPhotoUrl?: string;
-  officialPlayerUrl?: string;
-  nextGame?: {
-    date?: string;
-    opponent?: string;
-    status?: string;
-    venue?: string;
-  };
-  recentGames?: Array<{
-    date?: string;
-    opponent?: string;
-    result?: string;
-    detail1?: string;
-    detail2?: string;
-  }>;
-  seasonStats?: {
-    hitter?: Record<string, any>;
-    pitcher?: Record<string, any>;
-  };
-  news?: Array<{
-    id?: string;
-    title?: string;
-    date?: string;
-    tag?: string;
-    summary?: string;
-    url?: string;
-    source?: string;
-  }>;
-};
+import {
+  ABROAD_FILTERS,
+  type AbroadFilter,
+  type AbroadPlayerLike,
+  filterAndSortAbroadPlayers,
+  formatAbroadHandLine,
+  formatAbroadLevelLine,
+  formatAbroadSyncLabel,
+  formatAbroadTeamLine,
+  getAbroadPlayerStatus,
+  mergeAbroadPlayerViewModels,
+} from '../../lib/viewModels/abroadPlayerViewModel';
 
-const FILTERS = ['全部', '投手', '野手', '今日出賽', '預告先發'] as const;
 
-const LEAGUE_ORDER: Record<string, number> = {
-  MLB: 0,
-  NPB: 1,
-  KBO: 2,
-  MiLB: 3,
-  MILB: 3,
-  'Minor League': 3,
-  '小聯盟': 3,
-  '二軍': 4,
-};
-
-function normalizeSortText(value?: string | null) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/\([^)]*\)/g, '')
-    .replace(/[／/]/g, '')
-    .replace(/[\s\-_'.]/g, '');
-}
-
-function mergePlayers(seed: PlayerLike[], live: PlayerLike[]) {
-  const orderMap = new Map<string, number>();
-  seed.forEach((player, index) => orderMap.set(player.id, index));
-
-  const map = new Map<string, PlayerLike>();
-
-  for (const player of seed) {
-    map.set(player.id, player);
-  }
-
-  for (const player of live) {
-    const prev = map.get(player.id);
-    map.set(player.id, {
-      ...prev,
-      ...player,
-      teamMeta: {
-        ...(prev?.teamMeta ?? {}),
-        ...(player.teamMeta ?? {}),
-      },
-      nextGame: player.nextGame ?? prev?.nextGame,
-      seasonStats: player.seasonStats ?? prev?.seasonStats,
-      recentGames: player.recentGames ?? prev?.recentGames,
-      news: player.news ?? prev?.news,
-    });
-  }
-
-  return Array.from(map.values()).sort((a, b) => {
-    const ai = orderMap.get(a.id) ?? 9999;
-    const bi = orderMap.get(b.id) ?? 9999;
-    return ai - bi;
-  });
-}
-
-function getLeagueSortRank(player: PlayerLike) {
-  const league = player.league ?? '';
-  const level = player.level ?? '';
-  const normalizedLeague = league.trim();
-  const normalizedLevel = level.trim();
-
-  if (LEAGUE_ORDER[normalizedLeague] !== undefined) return LEAGUE_ORDER[normalizedLeague];
-
-  const combined = `${normalizedLeague} ${normalizedLevel}`.toLowerCase();
-
-  if (combined.includes('mlb')) return LEAGUE_ORDER.MLB;
-  if (combined.includes('npb') || combined.includes('日職')) return LEAGUE_ORDER.NPB;
-  if (combined.includes('kbo') || combined.includes('韓職')) return LEAGUE_ORDER.KBO;
-  if (combined.includes('milb') || combined.includes('minor') || combined.includes('小聯盟')) return LEAGUE_ORDER.MiLB;
-  if (combined.includes('二軍') || combined.includes('farm')) return LEAGUE_ORDER['二軍'];
-
-  return 99;
-}
-
-function getTeamGroupKey(player: PlayerLike) {
-  return normalizeSortText(
-    player.teamMeta?.displayName ||
-      player.teamMeta?.code ||
-      player.teamMeta?.abbreviation ||
-      player.team ||
-      ''
-  );
-}
-
-function getNumberSortValue(player: PlayerLike) {
-  const parsed = Number.parseInt(String(player.number ?? '').replace(/[^\d]/g, ''), 10);
-  return Number.isFinite(parsed) ? parsed : 9999;
-}
-
-function formatSyncLabel(updatedAt?: string, isUsingFallback?: boolean) {
-  if (isUsingFallback) return '本機資料';
-
-  if (!updatedAt) return '已同步';
-
-  const date = new Date(updatedAt);
-  if (Number.isNaN(date.getTime())) return '已同步';
-
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mi = String(date.getMinutes()).padStart(2, '0');
-
-  return `同步 ${mm}/${dd} ${hh}:${mi}`;
-}
-
-function formatTeamLine(player: PlayerLike) {
-  const code = player.teamMeta?.code ?? player.teamMeta?.abbreviation;
-  const team = player.team ?? '未設定球隊';
-  return code ? `${team} (${code})` : team;
-}
-
-function formatLevelLine(player: PlayerLike) {
-  return `${player.level ?? '—'} • ${player.position ?? '—'}`;
-}
-
-function formatHandLine(player: PlayerLike) {
-  return `${player.throws ?? '—'}投 / ${player.bats ?? '—'}打`;
-}
 
 export default function AbroadScreen() {
   const router = useRouter();
-  const [activeFilter, setActiveFilter] = useState<(typeof FILTERS)[number]>('全部');
+  const [activeFilter, setActiveFilter] = useState<AbroadFilter>('全部');
   const [searchText, setSearchText] = useState('');
 
   const {
@@ -216,50 +55,20 @@ export default function AbroadScreen() {
   const { isFavorite, isHydrated } = useAbroadFavorites();
 
   const mergedPlayers = useMemo(
-    () => mergePlayers(seedAbroadPlayers as PlayerLike[], livePlayers as PlayerLike[]),
+    () =>
+      mergeAbroadPlayerViewModels(
+        seedAbroadPlayers as AbroadPlayerLike[],
+        livePlayers as AbroadPlayerLike[]
+      ),
     [livePlayers]
   );
 
-  const sortedFilteredPlayers = useMemo(() => {
-    const keyword = searchText.trim().toLowerCase();
+  const sortedFilteredPlayers = useMemo(
+    () => filterAndSortAbroadPlayers(mergedPlayers, searchText, activeFilter),
+    [mergedPlayers, searchText, activeFilter]
+  );
 
-    const filtered = mergedPlayers.filter((player) => {
-      const matchesSearch =
-        !keyword ||
-        String(player.name ?? '').toLowerCase().includes(keyword) ||
-        String(player.enName ?? '').toLowerCase().includes(keyword) ||
-        String(player.team ?? '').toLowerCase().includes(keyword) ||
-        String(player.level ?? '').toLowerCase().includes(keyword) ||
-        String(player.teamMeta?.code ?? '').toLowerCase().includes(keyword);
-
-      const isPitcher = player.type === 'pitcher';
-      const isHitter = player.type === 'hitter';
-
-      const matchesFilter =
-        activeFilter === '全部' ||
-        (activeFilter === '投手' && isPitcher) ||
-        (activeFilter === '野手' && isHitter) ||
-        (activeFilter === '今日出賽' && player.status === '今日出賽') ||
-        (activeFilter === '預告先發' && player.status === '預告先發');
-
-      return matchesSearch && matchesFilter;
-    });
-
-    return [...filtered].sort((a, b) => {
-      const leagueDiff = getLeagueSortRank(a) - getLeagueSortRank(b);
-      if (leagueDiff !== 0) return leagueDiff;
-
-      const teamDiff = getTeamGroupKey(a).localeCompare(getTeamGroupKey(b), 'zh-Hant');
-      if (teamDiff !== 0) return teamDiff;
-
-      const numberDiff = getNumberSortValue(a) - getNumberSortValue(b);
-      if (numberDiff !== 0) return numberDiff;
-
-      return String(a.name ?? '').localeCompare(String(b.name ?? ''), 'zh-Hant');
-    });
-  }, [mergedPlayers, searchText, activeFilter]);
-
-  const syncLabel = formatSyncLabel(updatedAt, isUsingFallback);
+  const syncLabel = formatAbroadSyncLabel(updatedAt, isUsingFallback);
 
   if (loading && mergedPlayers.length === 0) {
     return (
@@ -333,7 +142,7 @@ export default function AbroadScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterRow}
         >
-          {FILTERS.map((filter) => {
+          {ABROAD_FILTERS.map((filter) => {
             const active = activeFilter === filter;
 
             return (
@@ -392,13 +201,13 @@ export default function AbroadScreen() {
                   <View style={styles.nameRow}>
                     <Text style={styles.playerName}>{item.name}</Text>
                     <View style={styles.statusBadge}>
-                      <Text style={styles.statusBadgeText}>{item.status ?? '待命'}</Text>
+                      <Text style={styles.statusBadgeText}>{getAbroadPlayerStatus(item)}</Text>
                     </View>
                   </View>
 
-                  <Text style={styles.teamText}>{`#${item.number ?? '—'} • ${formatTeamLine(item)}`}</Text>
-                  <Text style={styles.metaText}>{formatLevelLine(item)}</Text>
-                  <Text style={styles.metaText}>{formatHandLine(item)}</Text>
+                  <Text style={styles.teamText}>{`#${item.number ?? '—'} • ${formatAbroadTeamLine(item)}`}</Text>
+                  <Text style={styles.metaText}>{formatAbroadLevelLine(item)}</Text>
+                  <Text style={styles.metaText}>{formatAbroadHandLine(item)}</Text>
                 </View>
 
                 <TouchableOpacity

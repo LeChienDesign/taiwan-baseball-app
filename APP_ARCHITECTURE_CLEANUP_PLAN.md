@@ -144,6 +144,62 @@ merge 才決定：
 同日期 recentGames 擇優
 ```
 
+### 第三階段最小版已完成紀錄
+
+已完成：
+
+```txt
+server/merge/buildSummary.ts
+server/merge/mergeAbroadPlayers.ts
+server/builders/buildAbroadPayload.ts
+scripts/validate-events-center.ts
+.github/workflows/update-npb-events.yml
+```
+
+實際調整：
+
+```txt
+buildSummary / AbroadLiveSummary 已從 mergeAbroadPlayers.ts 拆出到 server/merge/buildSummary.ts
+mergeAbroadPlayers.ts 只保留 normalizePlayers / dedupePlayers / applyManualAbroadOverrides
+buildAbroadPayload.ts 改從 server/merge/buildSummary.ts 匯入 buildSummary
+NPB 局間比分若官方尚未提供每局分數，不再用 sum=0 擋 validate
+NPB inning sum mismatch 暫列 WARN，不阻擋 workflow
+update-npb-events.yml 改回 npm run fetch:events-npb，不再手動傳 --date
+```
+
+已驗證：
+
+```bash
+npx tsc --noEmit
+npm run validate:events -- --league=NPB
+npm run fetch:events-npb
+```
+
+結果：
+
+```txt
+tsc OK
+NPB validate OK
+NPB fetch OK - 6 games
+GitHub Actions NPB workflow OK
+main 已同步
+```
+
+重要 commit：
+
+```txt
+4f314be Relax NPB inning validation
+814f206 Update NPB events snapshot
+4efaaea Use default NPB fetch date in workflow
+```
+
+注意：
+
+```txt
+不要把 GitHub Actions 的 YAML 行，例如 run: npm run fetch:events-npb，貼到 Terminal 執行。
+run: 是 workflow 檔案內容，不是 shell 指令。
+```
+
 ## 第四階段：四聯盟賽事中心統一
 
 整理：
@@ -243,6 +299,23 @@ update-live-games.yml
 
 ## 第五階段：首頁 smart refresh
 
+進入條件已完成：
+
+```txt
+第三階段最小版已完成
+npx tsc --noEmit 通過
+npm run validate:events 通過
+NPB workflow 已修正並通過
+```
+
+下一步才開始處理：
+
+```txt
+hooks/useHomeGames.ts
+hooks/useSmartLeagueRefresh.ts
+lib/homeGameSelector.ts
+```
+
 整理：
 
 ```txt
@@ -259,6 +332,65 @@ hooks/useSmartLeagueRefresh.ts
 lib/homeGameSelector.ts
 ```
 
+### 第五階段已完成紀錄
+
+已完成：
+
+```txt
+hooks/useHomeGames.ts
+hooks/useSmartLeagueRefresh.ts
+lib/homeGameSelector.ts
+```
+
+調整內容：
+
+```txt
+app/(tabs)/index.tsx 已瘦身，只保留 UI render / logo animation / route navigation
+首頁四聯盟 fetch / normalize / featured selector / live selector 已搬到 useHomeGames.ts
+smart refresh 已搬到 useSmartLeagueRefresh.ts
+首頁 selector / 日期 / 排序 / 12 小時焦點賽事已集中到 homeGameSelector.ts
+Provider / Merge / UI 不再混在首頁
+```
+
+首頁目前資料流：
+
+```txt
+server/data/*.json
+↓
+lib/* league reader
+↓
+lib/homeGameSelector.ts
+↓
+hooks/useHomeGames.ts
+hooks/useSmartLeagueRefresh.ts
+↓
+app/(tabs)/index.tsx
+↓
+ScoreboardCard
+```
+
+首頁焦點賽事規則：
+
+```txt
+「今日焦點賽事」改為顯示現在起 12 小時內將進行的 SCHEDULED 比賽
+useHomeGames 會同時抓今天與明天四聯盟資料
+getUpcomingGamesWithinHours(featuredGames, 12) 負責挑選焦點賽事
+這樣晚上也能看到隔天早上的 MLB / 跨日比賽
+```
+
+已驗證：
+
+```bash
+npx tsc --noEmit
+```
+
+結果：
+
+```txt
+tsc OK
+```
+
+
 更新規則：
 
 ```txt
@@ -267,6 +399,52 @@ lib/homeGameSelector.ts
 比賽中抓
 開賽後最多追 4 小時
 每 5 分鐘更新一次
+```
+
+### NPB LIVE / FINAL 判斷修正紀錄
+
+問題：
+
+```txt
+NPB 官方狀態文字會出現「5回終了」「7回終了」
+這代表該局結束，不是比賽結束
+不能用單純 stateText.includes('終了') 判斷 FINAL
+```
+
+正確規則：
+
+```txt
+「回終了」仍應視為 LIVE
+只有「試合終了」或「ゲームセット」才可視為 FINAL
+```
+
+已修正位置：
+
+```txt
+server/providers/npbOfficial.ts
+```
+
+修正重點：
+
+```txt
+extractHeaderScoreGames() 負責判斷 LIVE / FINAL
+enrichGameWithLineScore() 只補 detail line score，不再改 status
+不可掃整個 detail HTML 找「試合終了」，避免抓到非本場或頁面其他文字造成誤判
+```
+
+驗證方式：
+
+```bash
+npm run fetch:events-npb
+npm run validate:events
+```
+
+目前狀態：
+
+```txt
+NPB LIVE 狀態可正確顯示
+validate:events 可通過
+NPB inning sum mismatch 仍可能出現 WARN，但不阻擋 workflow
 ```
 
 ## 第六階段：UI viewModel 化
@@ -344,11 +522,11 @@ rg "檔名或函式名" .
 ```txt
 1. 畫出目前資料流
 2. 整理 abroadPlayers / registry / manual
-3. 建立 merge 層
-4. 重整 abroad fetch
-5. 重整四聯盟 eventsCenter
-6. 重整首頁 smart refresh
-7. 重整 UI viewModel
+3. 第三階段最小版：buildSummary 拆分、mergeAbroadPlayers 瘦身（已完成）
+4. 修正 NPB validate / workflow，確認四聯盟驗證通過（已完成）
+5. 第五階段：useHomeGames / useSmartLeagueRefresh / homeGameSelector（已完成）
+6. 第三階段後續版：mergeRecentGames / mergeSeasonStats / mergeNews
+7. 第六階段：抽 shared scoreboard domain，再重整 UI viewModel
 8. 整理圖片路徑
 9. 刪除重複檔案
 10. 更新交接文件
