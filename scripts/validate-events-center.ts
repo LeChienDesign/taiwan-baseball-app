@@ -58,10 +58,14 @@ function isPlayedInningValue(value: unknown) {
 function inningSum(values?: Array<number | string | null>) {
   if (!Array.isArray(values)) return null;
 
-  return values.reduce((sum, value) => {
+  let sum = 0;
+
+  for (const value of values) {
     const n = toNumber(value);
-    return sum + (n ?? 0);
-  }, 0);
+    sum += n ?? 0;
+  }
+
+  return sum;
 }
 
 function normalizeStatus(value?: string) {

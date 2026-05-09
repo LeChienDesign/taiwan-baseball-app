@@ -536,12 +536,16 @@ export async function fetchNpbGamesByDate(
       .map((game: any) => attachFallbackLogos(game, logoMap))
       .map(normalizeNpbTaiwanDisplayTime);
 
-    if (preferredSnapshotHasDate) {
+    if (preferredSnapshotHasDate && remoteGames.length > 0) {
       return applyNpbManualOverrides(remoteGames);
     }
   } catch (error) {
     console.warn('Failed to load remote NPB snapshot', error);
   }
 
-  return [];
+  return applyNpbManualOverrides(
+    fallbackGames
+      .map((game: any) => attachFallbackLogos(game, logoMap))
+      .map(normalizeNpbTaiwanDisplayTime)
+  );
 }
