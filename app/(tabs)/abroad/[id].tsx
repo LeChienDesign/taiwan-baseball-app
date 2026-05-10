@@ -25,6 +25,7 @@ import {
   type AbroadPlayerLike,
   formatAbroadHandLine,
   formatAbroadLevelLine,
+  formatAbroadRecentGameDetail,
   formatAbroadSyncLabel,
   formatAbroadTeamLine,
   getAbroadPlayerStatus,
@@ -293,8 +294,12 @@ export default function AbroadPlayerDetailScreen() {
                   <Text style={styles.gameResult}>{game.result ?? '—'}</Text>
                 </View>
                 <Text style={styles.gameLine}>{game.opponent ?? '—'}</Text>
-                {game.detail1 ? <Text style={styles.gameSub}>{game.detail1}</Text> : null}
-                {game.detail2 ? <Text style={styles.gameSub}>{game.detail2}</Text> : null}
+                {game.detail1 ? (
+                  <Text style={styles.gameSub}>{formatAbroadRecentGameDetail(game.detail1)}</Text>
+                ) : null}
+                {game.detail2 ? (
+                  <Text style={styles.gameSub}>{formatAbroadRecentGameDetail(game.detail2)}</Text>
+                ) : null}
               </View>
             ))
           ) : (

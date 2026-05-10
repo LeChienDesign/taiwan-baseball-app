@@ -61,6 +61,26 @@ export const ABROAD_FILTERS = ['全部', '投手', '野手', '今日出賽', '�
 
 export type AbroadFilter = (typeof ABROAD_FILTERS)[number];
 
+const RECENT_GAME_STAT_LABELS: Record<string, string> = {
+  IP: '投球局數',
+  SO: '三振',
+  K: '三振',
+  BB: '保送',
+  H: '被安打',
+  HR: '被全壘打',
+  R: '失分',
+  ER: '自責分',
+  NP: '用球數',
+  ERA: '防禦率',
+  WHIP: '每局被上壘率',
+  AB: '打數',
+  RBI: '打點',
+  AVG: '打擊率',
+  OBP: '上壘率',
+  SLG: '長打率',
+  OPS: '攻擊指數',
+};
+
 const LEAGUE_ORDER: Record<string, number> = {
   MLB: 0,
   NPB: 1,
@@ -225,6 +245,30 @@ export function formatAbroadLevelLine(player: AbroadPlayerLike) {
 
 export function formatAbroadHandLine(player: AbroadPlayerLike) {
   return `${player.throws ?? '—'}投 / ${player.bats ?? '—'}打`;
+}
+
+function formatRecentGameDetailToken(token: string) {
+  const trimmed = token.trim();
+  if (!trimmed) return '';
+
+  const match = trimmed.match(/^([A-Za-z]+)\s+(.+)$/);
+  if (!match) return trimmed;
+
+  const key = match[1].toUpperCase();
+  const value = match[2].trim();
+  const label = RECENT_GAME_STAT_LABELS[key];
+
+  return label ? `${label} ${value}` : trimmed;
+}
+
+export function formatAbroadRecentGameDetail(value?: string | null) {
+  if (!value) return undefined;
+
+  return String(value)
+    .split('/')
+    .map(formatRecentGameDetailToken)
+    .filter(Boolean)
+    .join(' / ');
 }
 
 export function getAbroadPlayerStatus(player: AbroadPlayerLike) {

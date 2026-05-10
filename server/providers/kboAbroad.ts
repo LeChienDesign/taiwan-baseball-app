@@ -87,6 +87,21 @@ const KBO_PLAYER_ALIASES: Record<
   },
 };
 
+const MANUAL_KBO_PLAYER_PATCHES: Record<string, Partial<AbroadPlayerLike>> = {
+  'yen-cheng-wang': {
+    recentGames: [
+      {
+        date: '近期出賽',
+        opponent: 'Samsung Lions',
+        result: '登板',
+        detail1: '投球局數 5 / 三振 2 / 保送 3',
+        detail2: '被安打 5 / 自責分 1 / 被打擊率 0.238',
+      },
+    ],
+    recentNote: 'KBO 官方逐場紀錄尚未完整解析，先保留近期投球內容作為追蹤摘要。',
+  },
+};
+
 function normalizeText(value?: string) {
   return String(value ?? '').trim().toLowerCase();
 }
@@ -451,6 +466,7 @@ async function buildSingleKboPatch(
   maxGames: number
 ): Promise<AbroadPatch> {
   const basePatch = buildBasePatch(player, registry, requestedDate);
+  const manualPatch = MANUAL_KBO_PLAYER_PATCHES[player.id] ?? {};
 
   const fetchedRecentGames = await buildRecentGamesFromOfficialSources(
     player,
@@ -459,14 +475,19 @@ async function buildSingleKboPatch(
     daysBack,
     maxGames
   );
-  const recentGames = fetchedRecentGames.length > 0 ? fetchedRecentGames : player.recentGames ?? [];
+  const recentGames =
+    fetchedRecentGames.length > 0
+      ? fetchedRecentGames
+      : player.recentGames && player.recentGames.length > 0
+        ? player.recentGames
+        : manualPatch.recentGames ?? [];
 
   const officialPhotoUrl = player.officialPhotoUrl ?? (await fetchKboOfficialPhotoUrl(registry));
 
   return {
     ...basePatch,
     recentGames: recentGames.length > 0 ? recentGames : player.recentGames,
-    recentNote: inferRecentNote(recentGames, player.recentNote),
+    recentNote: inferRecentNote(recentGames, manualPatch.recentNote ?? player.recentNote),
     officialPhotoUrl,
     news: buildFallbackNews(player, registry, requestedDate),
   };

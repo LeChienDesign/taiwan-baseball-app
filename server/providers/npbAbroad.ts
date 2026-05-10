@@ -172,7 +172,7 @@ const NPB_PLAYER_ALIASES: Record<
       type: 'pitcher',
     },
     'an-ko-lin': {
-      aliases: ['An-Ko Lin', '林安可', 'りん・あんこー'],
+      aliases: ['An-Ko Lin', 'Lin An-Ko', '林安可', 'リン・アンクー', 'りん・あんこー'],
       type: 'hitter',
     },
     'jo-hsi-hsu': {
@@ -420,10 +420,13 @@ function extractGameLinksFromCalendarHtml(html: string) {
     const date = `${dateRaw.slice(0, 4)}-${dateRaw.slice(4, 6)}-${dateRaw.slice(6, 8)}`;
     const isFarm = slug.startsWith('f');
 
-    const start = Math.max(0, (match.index ?? 0) - 320);
-    const end = Math.min(html.length, regex.lastIndex + 320);
+    const start = Math.max(0, (match.index ?? 0) - 1600);
+    const end = Math.min(html.length, regex.lastIndex + 1600);
     const contextHtml = html.slice(start, end);
-    const contextText = compactWhitespace(stripHtml(contextHtml));
+    const contextAttributes = [...contextHtml.matchAll(/(?:title|alt|aria-label)=["']([^"']+)["']/gi)]
+      .map((attr) => attr[1])
+      .join(' ');
+    const contextText = compactWhitespace(`${stripHtml(contextHtml)} ${decodeHtml(contextAttributes)}`);
 
     results.push({
       url: `${NPB_BASE}${relative}`,
@@ -536,7 +539,13 @@ function filterLinksByTeamKeywords(
     playerId,
     'team keywords =',
     teamKeywords,
-    `filtered links = ${filtered.length}/${links.length}`
+    `filtered links = ${filtered.length}/${links.length}`,
+    filtered.slice(0, 5).map((item) => ({
+      date: item.date,
+      farm: item.isFarm,
+      url: item.url,
+      context: item.contextText?.slice(0, 120),
+    }))
   );
 
   return filtered;
@@ -1003,6 +1012,7 @@ function buildNpbScoreBoxUrl(item: NpbGameLink) {
   return `${NPB_BASE}/scores/${year}/${monthDay}/f-b-08/box.html`;
 }
 
+
 function buildNpbScoreBoxCandidateUrls(item: NpbGameLink, registry: AbroadRegistryEntry) {
   const match = item.url.match(/\/bis\/eng\/(\d{4})\/games\/[sf]?s?(\d{8})\d*\.html/i);
   if (!match) return [];
@@ -1038,6 +1048,42 @@ function buildNpbScoreBoxCandidateUrls(item: NpbGameLink, registry: AbroadRegist
     `${NPB_BASE}/scores/${year}/${monthDay}/${pair}-09/box.html`,
     `${NPB_BASE}/scores/${year}/${monthDay}/${pair}-08/box.html`,
   ]);
+}
+
+// --- NPB Score Box helper functions ---
+const NPB_SCORE_TEAM_NAMES: Record<string, string> = {
+  b: '歐力士猛牛',
+  c: '廣島鯉魚',
+  d: '中日龍',
+  e: '東北樂天金鷲',
+  f: '日本火腿鬥士',
+  g: '讀賣巨人',
+  h: '福岡軟銀鷹',
+  l: '埼玉西武獅',
+  m: '千葉羅德海洋',
+  s: '東京養樂多燕子',
+  t: '阪神虎',
+};
+
+function inferOpponentFromScoreBoxUrl(url?: string | null) {
+  if (!url) return undefined;
+
+  const match = url.match(/\/scores\/\d{4}\/\d{4}\/([a-z])-([a-z])-\d+\/box\.html/i);
+  if (!match) return undefined;
+
+  const away = NPB_SCORE_TEAM_NAMES[match[1].toLowerCase()];
+  const home = NPB_SCORE_TEAM_NAMES[match[2].toLowerCase()];
+
+  if (!away || !home) return undefined;
+  return `${away} vs ${home}`;
+}
+
+function withInferredOpponent<T extends Record<string, any>>(game: T, scoreBoxUrl?: string | null): T {
+  const opponent = game.opponent && game.opponent !== '—'
+    ? game.opponent
+    : inferOpponentFromScoreBoxUrl(scoreBoxUrl);
+
+  return opponent ? { ...game, opponent } : game;
 }
 
 function extractScoreBoxUrlFromGameHtml(html: string, baseUrl: string) {
@@ -1196,29 +1242,89 @@ function buildPitcherRecentGameFromBoxCells(
   meta: ReturnType<typeof extractGameMeta>,
   cells: string[]
 ) {
-    const name = cells[0] ?? '—';
-    const pitchCount = cells[1] ?? '—';
-    const batters = cells[2] ?? '—';
-    const ip = cells[3] ?? '—';
-    const hits = cells[4] ?? '0';
-    const hr = cells[5] ?? '0';
-    const bb = cells[6] ?? '0';
-    const hbp = cells[7] ?? '0';
-    const so = cells[8] ?? '0';
-    const balk = cells[9] ?? '0';
-    const wildPitch = cells[10] ?? '0';
-    const runs = cells[11] ?? '0';
-    const earnedRuns = cells[12] ?? '0';
-    
+  const name = cells[0] ?? '—';
+  const pitchCount = cells[1] ?? '—';
+  const batters = cells[2] ?? '—';
+  const ip = cells[3] ?? '—';
+  const hits = cells[4] ?? '0';
+  const hr = cells[5] ?? '0';
+  const bb = cells[6] ?? '0';
+  const hbp = cells[7] ?? '0';
+  const so = cells[8] ?? '0';
+  const balk = cells[9] ?? '0';
+  const wildPitch = cells[10] ?? '0';
+  const runs = cells[11] ?? '0';
+  const earnedRuns = cells[12] ?? '0';
+
   return {
-      
     date: meta.date,
     opponent: meta.away === '—' && meta.home === '—' ? '—' : `${meta.away} vs ${meta.home}`,
     result: '登板',
-      detail1: `IP ${ip} / SO ${so} / BB ${bb}`,
-      detail2: `NP ${pitchCount} / H ${hits} / HR ${hr} / R ${runs} / ER ${earnedRuns}`,
+    detail1: `IP ${ip} / SO ${so} / BB ${bb}`,
+    detail2: `NP ${pitchCount} / H ${hits} / HR ${hr} / R ${runs} / ER ${earnedRuns}`,
   };
 }
+
+function extractNpbHitterBoxCellsForAlias(html: string, aliases: string[]) {
+  const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = rowRegex.exec(html))) {
+    const rowHtml = match[1];
+    const rowText = normalizeLooseText(stripHtml(rowHtml));
+
+    const aliasHit = aliases.some((alias) => rowText.includes(normalizeLooseText(alias)));
+    if (!aliasHit) continue;
+
+    const cells = [...rowHtml.matchAll(/<(?:th|td)[^>]*>([\s\S]*?)<\/(?:th|td)>/gi)]
+      .map((cell) =>
+        compactWhitespace(
+          decodeHtml(
+            cell[1]
+              .replace(/<br\s*\/?>/gi, ' ')
+              .replace(/<[^>]+>/g, ' ')
+          )
+        )
+      )
+      .filter(Boolean);
+
+    const numericCount = cells.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell)).length;
+    const firstCell = cells[0] ?? '';
+    const isSummaryRow =
+      firstCell.includes('TEAM') ||
+      firstCell.includes('合計') ||
+      firstCell.includes('計');
+
+    if (cells.length >= 6 && numericCount >= 3 && !isSummaryRow) {
+      return cells;
+    }
+  }
+
+  return null;
+}
+
+function buildHitterRecentGameFromBoxCells(
+  meta: ReturnType<typeof extractGameMeta>,
+  cells: string[]
+) {
+  const numbers = cells.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell));
+  const atBats = numbers[0] ?? '—';
+  const runs = numbers[1] ?? '0';
+  const hits = numbers[2] ?? '0';
+  const rbi = numbers[3] ?? '0';
+  const walks = numbers[4] ?? '0';
+  const strikeouts = numbers[5] ?? '0';
+  const homeRuns = numbers[6] ?? '0';
+
+  return {
+    date: meta.date,
+    opponent: meta.away === '—' && meta.home === '—' ? '—' : `${meta.away} vs ${meta.home}`,
+    result: '出賽',
+    detail1: `${atBats}打數 / ${hits}安打 / ${rbi}打點`,
+    detail2: `得分${runs} / 全壘打${homeRuns} / 保送${walks} / 三振${strikeouts}`,
+  };
+}
+
 function buildPitcherRecentGame(meta: ReturnType<typeof extractGameMeta>, line: string) {
   const normalized = normalizeLineForDisplay(line);
 
@@ -1293,7 +1399,10 @@ async function findEntryFromGamePage(
           const boxCells = extractNpbBoxCellsForAlias(boxHtml, aliases);
           if (boxCells) {
             debugPlayerLog(player.id, 'box cells =', boxCells);
-            return buildPitcherRecentGameFromBoxCells(boxMeta, boxCells);
+            return withInferredOpponent(
+              buildPitcherRecentGameFromBoxCells(boxMeta, boxCells),
+              scoreBoxUrl
+            );
           }
         }
       }
@@ -1301,6 +1410,36 @@ async function findEntryFromGamePage(
   }
 
   if (!matchedAlias) {
+    for (const candidateUrl of buildNpbScoreBoxCandidateUrls(item, registry)) {
+      debugPlayerLog(player.id, 'trying candidate box page before alias skip =', candidateUrl);
+      const candidateHtml = await timeAsync(`player:${player.id}:fetchCandidateBoxBeforeSkip`, () =>
+        fetchText(candidateUrl)
+      );
+      if (!candidateHtml) continue;
+
+      const candidateMeta = extractGameMeta(candidateHtml, item.date);
+
+      if (configuredType === 'pitcher') {
+        const candidateCells = extractNpbBoxCellsForAlias(candidateHtml, aliases);
+        if (candidateCells) {
+          debugPlayerLog(player.id, 'candidate box cells before alias skip =', candidateCells);
+          return withInferredOpponent(
+            buildPitcherRecentGameFromBoxCells(candidateMeta, candidateCells),
+            candidateUrl
+          );
+        }
+      } else {
+        const hitterCells = extractNpbHitterBoxCellsForAlias(candidateHtml, aliases);
+        if (hitterCells) {
+          debugPlayerLog(player.id, 'candidate hitter box cells before alias skip =', hitterCells);
+          return withInferredOpponent(
+            buildHitterRecentGameFromBoxCells(candidateMeta, hitterCells),
+            candidateUrl
+          );
+        }
+      }
+    }
+
     debugPlayerLog(player.id, 'skip: alias not found in game page');
     return null;
   }
@@ -1309,7 +1448,10 @@ async function findEntryFromGamePage(
     const boxCells = extractNpbBoxCellsForAlias(activeHtml, aliases);
     if (boxCells) {
       debugPlayerLog(player.id, 'box cells =', boxCells);
-      return buildPitcherRecentGameFromBoxCells(activeMeta, boxCells);
+      return withInferredOpponent(
+        buildPitcherRecentGameFromBoxCells(activeMeta, boxCells),
+        null
+      );
     }
 
     const linkedBoxUrl = extractScoreBoxUrlFromGameHtml(activeHtml, item.url);
@@ -1321,7 +1463,10 @@ async function findEntryFromGamePage(
         const linkedBoxCells = extractNpbBoxCellsForAlias(linkedBoxHtml, aliases);
         if (linkedBoxCells) {
           debugPlayerLog(player.id, 'linked box cells =', linkedBoxCells);
-          return buildPitcherRecentGameFromBoxCells(linkedBoxMeta, linkedBoxCells);
+          return withInferredOpponent(
+            buildPitcherRecentGameFromBoxCells(linkedBoxMeta, linkedBoxCells),
+            linkedBoxUrl
+          );
         }
       }
     }
@@ -1336,7 +1481,49 @@ async function findEntryFromGamePage(
 
       const candidateMeta = extractGameMeta(candidateHtml, item.date);
       debugPlayerLog(player.id, 'candidate box cells =', candidateCells);
-      return buildPitcherRecentGameFromBoxCells(candidateMeta, candidateCells);
+      return withInferredOpponent(
+        buildPitcherRecentGameFromBoxCells(candidateMeta, candidateCells),
+        candidateUrl
+      );
+    }
+  }
+
+  if (configuredType === 'hitter') {
+    const linkedBoxUrl = extractScoreBoxUrlFromGameHtml(activeHtml, item.url);
+    if (linkedBoxUrl) {
+      debugPlayerLog(player.id, 'trying linked hitter box page =', linkedBoxUrl);
+      const linkedBoxHtml = await timeAsync(`player:${player.id}:fetchLinkedHitterBox`, () =>
+        fetchText(linkedBoxUrl)
+      );
+      if (linkedBoxHtml) {
+        const linkedBoxMeta = extractGameMeta(linkedBoxHtml, item.date);
+        const linkedBoxCells = extractNpbHitterBoxCellsForAlias(linkedBoxHtml, aliases);
+        if (linkedBoxCells) {
+          debugPlayerLog(player.id, 'linked hitter box cells =', linkedBoxCells);
+          return withInferredOpponent(
+            buildHitterRecentGameFromBoxCells(linkedBoxMeta, linkedBoxCells),
+            linkedBoxUrl
+          );
+        }
+      }
+    }
+
+    for (const candidateUrl of buildNpbScoreBoxCandidateUrls(item, registry)) {
+      debugPlayerLog(player.id, 'trying candidate hitter box page =', candidateUrl);
+      const candidateHtml = await timeAsync(`player:${player.id}:fetchCandidateHitterBox`, () =>
+        fetchText(candidateUrl)
+      );
+      if (!candidateHtml) continue;
+
+      const candidateCells = extractNpbHitterBoxCellsForAlias(candidateHtml, aliases);
+      if (!candidateCells) continue;
+
+      const candidateMeta = extractGameMeta(candidateHtml, item.date);
+      debugPlayerLog(player.id, 'candidate hitter box cells =', candidateCells);
+      return withInferredOpponent(
+        buildHitterRecentGameFromBoxCells(candidateMeta, candidateCells),
+        candidateUrl
+      );
     }
   }
 
@@ -1353,8 +1540,14 @@ async function findEntryFromGamePage(
   debugPlayerLog(player.id, 'target line =', targetLine);
 
   return configuredType === 'pitcher'
-    ? buildPitcherRecentGame(activeMeta, targetLine)
-    : buildHitterRecentGame(activeMeta, targetLine);
+    ? withInferredOpponent(
+        buildPitcherRecentGame(activeMeta, targetLine),
+        null
+      )
+    : withInferredOpponent(
+        buildHitterRecentGame(activeMeta, targetLine),
+        null
+      );
 }
 async function buildRecentGamesFromOfficialScores(
   player: AbroadPlayerLike,
