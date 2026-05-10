@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
-import {
-  getScoreboardStatusLabel,
-  normalizeScoreboardStatus,
-} from '../lib/viewModels/scoreboardGameViewModel';
+import { toScoreboardCardViewModel } from '../lib/viewModels/scoreboardGameViewModel';
+import type { ScoreboardGame } from '../lib/mlb';
 
 type TeamInfo = {
   name: string;
@@ -34,6 +32,63 @@ type ScoreboardCardProps = {
   footerRight?: string;
 };
 
+function toScoreboardGameInput({
+  status,
+  venue = '',
+  awayTeam,
+  homeTeam,
+  awayScore = 0,
+  homeScore = 0,
+  innings,
+  awayLine,
+  homeLine,
+  footerLeft,
+  footerRight,
+}: ScoreboardCardProps): ScoreboardGame {
+  const normalizedStatus = ['SCHEDULED', 'LIVE', 'FINAL', 'POSTPONED', 'SUSPENDED'].includes(status)
+    ? (status as ScoreboardGame['status'])
+    : 'SCHEDULED';
+
+  return {
+    id: `${awayTeam.name}-${homeTeam.name}-${venue || 'scoreboard'}`,
+    status: normalizedStatus,
+    venue,
+    awayTeam: {
+      ...awayTeam,
+      short: awayTeam.short || getTeamShort(awayTeam),
+      record: awayTeam.record ?? '',
+      logo: awayTeam.logo ?? null,
+    },
+    homeTeam: {
+      ...homeTeam,
+      short: homeTeam.short || getTeamShort(homeTeam),
+      record: homeTeam.record ?? '',
+      logo: homeTeam.logo ?? null,
+    },
+    awayScore,
+    homeScore,
+    innings: innings ?? [],
+    awayLine: {
+      team: awayLine?.team ?? getTeamShort(awayTeam),
+      innings: awayLine?.innings ?? [],
+      r: awayLine?.r ?? awayScore,
+      h: awayLine?.h ?? 0,
+      e: awayLine?.e ?? 0,
+    },
+    homeLine: {
+      team: homeLine?.team ?? getTeamShort(homeTeam),
+      innings: homeLine?.innings ?? [],
+      r: homeLine?.r ?? homeScore,
+      h: homeLine?.h ?? 0,
+      e: homeLine?.e ?? 0,
+    },
+    footerLeft: footerLeft ?? '',
+    footerRight: footerRight ?? '',
+  };
+}
+
+// Render helpers
+
 function getTeamShort(team: TeamInfo) {
   if (team.short && team.short.trim()) return team.short;
   if (team.name && team.name.trim()) return team.name.slice(0, 3).toUpperCase();
@@ -50,8 +105,6 @@ function normalizeInnings(source: unknown): (number | string)[] {
   if (!Array.isArray(source)) return [];
   return source.map((v) => (v === null || v === undefined || v === '' ? '-' : v));
 }
-
-
 function getPlayedInningLength(values?: (number | string)[]) {
   if (!Array.isArray(values)) return 0;
 
@@ -82,12 +135,9 @@ function buildInningHeaders(
 
 function padLine(values: (number | string)[], targetLength: number) {
   const trimmedValues = values.slice(0, targetLength);
-
   if (trimmedValues.length >= targetLength) return trimmedValues;
   return [...trimmedValues, ...Array.from({ length: targetLength - trimmedValues.length }, () => '-')];
 }
-
-
 function hasLineScoreData(awayInnings: (number | string)[], homeInnings: (number | string)[]) {
   return awayInnings.some((v) => v !== '-') || homeInnings.some((v) => v !== '-');
 }
@@ -127,10 +177,22 @@ export default function ScoreboardCard({
   footerLeft,
   footerRight,
 }: ScoreboardCardProps) {
-  const normalizedStatus = normalizeScoreboardStatus(status);
-  const isScheduled = normalizedStatus === 'SCHEDULED';
-  const isLive = normalizedStatus === 'LIVE';
-  const isFinal = normalizedStatus === 'FINAL';
+  const viewModel = toScoreboardCardViewModel(
+    toScoreboardGameInput({
+      status,
+      venue,
+      awayTeam,
+      homeTeam,
+      awayScore,
+      homeScore,
+      innings,
+      awayLine,
+      homeLine,
+      footerLeft,
+      footerRight,
+    })
+  );
+  const { isScheduled, isLive, isFinal, footerVenue, statusLabel, liveDetail } = viewModel;
   const livePulse = useRef(new Animated.Value(1)).current;
   const awayScorePulse = useRef(new Animated.Value(1)).current;
   const homeScorePulse = useRef(new Animated.Value(1)).current;
@@ -141,9 +203,6 @@ export default function ScoreboardCard({
 
   const awayWin = isFinal && awayScore > homeScore;
   const homeWin = isFinal && homeScore > awayScore;
-  const footerVenue = venue && venue !== '—' ? venue : '';
-  const statusLabel = getScoreboardStatusLabel(normalizedStatus, footerLeft, footerRight);
-  const liveDetail = isLive ? statusLabel : footerRight;
 
   useEffect(() => {
     if (!isLive) {
