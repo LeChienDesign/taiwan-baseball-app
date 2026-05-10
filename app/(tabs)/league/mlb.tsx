@@ -17,8 +17,7 @@ export default function MLBPage() {
   const initialDate = typeof date === 'string' ? date : getTodayKeyNewYork();
 
   const { payload } = useLiveJson({
-    remoteUrl:
-      'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json',
+    remoteUrl: undefined,
     fallbackPayload: require('../../../server/data/eventsCenter.mlb.json'),
     pollingIntervalMs: 60 * 1000,
   });

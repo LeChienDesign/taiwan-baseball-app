@@ -4,6 +4,8 @@ import { fetchMlbRealGamesByDate } from './mlb-real';
 const MLB_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.mlb.json';
 
+const USE_REMOTE_MLB_EVENTS = process.env.EXPO_PUBLIC_USE_REMOTE_MLB_EVENTS === '1';
+
 const localMlbPayload = require('../server/data/eventsCenter.mlb.json');
 
 let remoteMlbPayloadCache: any = null;
@@ -216,27 +218,25 @@ export async function fetchMlbGamesByDate(
     }
   }
 
-  const shouldFetchRemote = date === todayTaipei || date === todayNewYork;
-
-  if (!shouldFetchRemote) {
-    return fetchMlbRealGamesByDate(date);
-  }
-
-  try {
-    const remotePayload = await getRemoteMlbPayload();
-    const filteredRemoteGames = getGamesForDateFromPayload(remotePayload, date);
-
-    if (filteredRemoteGames.length > 0) {
-      return filteredRemoteGames;
-    }
-  } catch (error) {
-    console.warn('Failed to load remote MLB snapshot', error);
-  }
-
   const localLiveGames = getLocalGamesForDate(date);
 
   if (localLiveGames.length > 0) {
     return localLiveGames;
+  }
+
+  const shouldFetchRemote = USE_REMOTE_MLB_EVENTS && (date === todayTaipei || date === todayNewYork);
+
+  if (shouldFetchRemote) {
+    try {
+      const remotePayload = await getRemoteMlbPayload();
+      const filteredRemoteGames = getGamesForDateFromPayload(remotePayload, date);
+
+      if (filteredRemoteGames.length > 0) {
+        return filteredRemoteGames;
+      }
+    } catch (error) {
+      console.warn('Failed to load remote MLB snapshot', error);
+    }
   }
 
   return fetchMlbRealGamesByDate(date);
