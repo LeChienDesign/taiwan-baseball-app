@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -11,6 +11,14 @@ import { getTeamLogoSource } from '../constants/teamLogos';
 const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
   黃仲翔: require('../assets/abroad/huang-chung-hsiang.png'),
   徐若熙: require('../assets/abroad/jo-hsi-hsu.png'),
+
+  // Add these local portraits after the matching PNG files are placed in assets/abroad/.
+  // Do not enable a require before the file exists, or Metro will fail to bundle.
+  // 林安可: require('../assets/abroad/an-ko-lin.png'),
+  // 林家正: require('../assets/abroad/chia-cheng-lin.png'),
+  // 宋家豪: require('../assets/abroad/chia-hao-song.png'),
+  // 古林睿煬: require('../assets/abroad/ruei-yang-gu-lin.png'),
+  // 孫易磊: require('../assets/abroad/yi-lei-sun.png'),
 };
 
 type Props = {
@@ -52,6 +60,10 @@ export default function AbroadPlayerAvatar({
 }: Props) {
   const [remoteFailed, setRemoteFailed] = useState(false);
 
+  useEffect(() => {
+    setRemoteFailed(false);
+  }, [photoUri]);
+
   const localLogoSource = useMemo<ImageSourcePropType | null>(() => {
     return getTeamLogoSource({
       logoKey,
@@ -70,12 +82,11 @@ export default function AbroadPlayerAvatar({
 
   const radius = borderRadius ?? Math.round(size * 0.24);
 
-  if (showRemotePhoto) {
+  if (localPlayerPhoto) {
     return (
       <Image
-        source={{ uri: photoUri! }}
+        source={localPlayerPhoto}
         resizeMode="cover"
-        onError={() => setRemoteFailed(true)}
         style={[
           styles.avatar,
           {
@@ -88,11 +99,12 @@ export default function AbroadPlayerAvatar({
     );
   }
 
-  if (localPlayerPhoto) {
+  if (showRemotePhoto) {
     return (
       <Image
-        source={localPlayerPhoto}
+        source={{ uri: photoUri! }}
         resizeMode="cover"
+        onError={() => setRemoteFailed(true)}
         style={[
           styles.avatar,
           {
