@@ -722,6 +722,83 @@ unused mock
 rg "檔名或函式名" .
 ```
 
+```md
+
+### 第八階段已完成紀錄
+
+已清除：
+
+```txt
+components/parallax-scroll-view 2.tsx
+kbo.rtf
+app/abroad/live+api.tsx
+api/abroad/live.ts
+api/events-center/mlb.ts
+```
+
+判斷結果：
+
+```txt
+app/api/abroad/live+api.ts
+app/api/events-center/mlb+api.ts
+```
+
+為目前 Expo Router / web output server 合理 API route，保留。
+
+```txt
+api/abroad/live.ts
+api/events-center/mlb.ts
+```
+
+為舊式 Vercel / serverless API 入口，目前專案沒有部署線索引用，已移除。
+
+已驗證：
+
+```bash
+npx tsc --noEmit
+npm run fetch:abroad-live
+npm run fetch:events-mlb
+npm run fetch:events-npb
+npm run fetch:events-kbo
+npm run fetch:events-cpbl
+```
+
+驗證結果：
+
+```txt
+TypeScript OK
+四聯盟 fetch OK
+旅外 live fetch OK
+main 已同步 GitHub
+```
+
+收尾檢查：
+
+```bash
+git status --short
+npx tsc --noEmit
+find . -name ".DS_Store"
+find . -name "*.bak" -o -name "* 2.*" -o -name "*.rtf"
+```
+
+目前僅剩：
+
+```txt
+assets/brand/yaren-one-logo 2.png
+assets/brand/yaren-one-logo 2.ai
+```
+
+這兩個屬於品牌 Logo 備用 / 向量來源檔，暫時保留，不列為垃圾檔。
+
+重要 commit：
+
+```txt
+5385950 Clean duplicate and legacy project files
+1402165 Remove misplaced abroad API route duplicate
+6379039 Remove legacy API directory
+```
+```
+
 ## 禁止事項
 
 ```txt
@@ -933,4 +1010,314 @@ UI
 ```txt
 fetch 完直接東補西補
 UI 自己再修資料
+```
+
+```md
+
+---
+
+# 第九階段：交接文件與架構鐵則
+
+## 目的
+
+第九階段不是新增功能，而是防止架構再次分裂。
+
+目前專案已完成多輪重整：
+
+```txt
+資料流整理
+manual layer
+provider / merge 初步分離
+eventsCenter 四聯盟統一
+首頁 smart refresh
+UI viewModel 化方向
+重複與舊檔清理
+```
+
+後續任何對話或 AI 接手前，必須先讀本文件，再改檔案。
+
+## 下一個對話必讀順序
+
+```txt
+1. APP_ARCHITECTURE_CLEANUP_PLAN.md
+2. 專案交接規則.rtf / 交接規則摘要
+3. app-file-map.txt（若需要最新檔案表，重新產生）
+4. app-import-map.txt（若需要引用關係，重新產生）
+5. package.json
+6. app.json
+7. .github/workflows/update-baseball-data.yml
+```
+
+若沒有最新 `app-file-map.txt` 或 `app-import-map.txt`，不要靠猜測新增檔案。
+
+## 架構鐵則
+
+```txt
+server/providers = 抓資料 / parse / normalize
+server/fetch-*.ts = 組合 provider 並輸出 JSON
+server/merge = 決定覆蓋順序與資料保留
+server/data = 最終輸出 JSON
+lib = app 讀資料與轉換
+hooks = 畫面需要的狀態與 refresh 行為
+components = 純 UI 呈現
+app = route / page composition
+```
+
+禁止反向操作：
+
+```txt
+UI 不做 provider 判斷
+UI 不做資料 merge
+provider 不寫人工補丁
+data 不放 live 暫存邏輯
+server/data JSON 不手改當成長期資料來源
+```
+
+## API route 規則
+
+目前保留：
+
+```txt
+app/api/abroad/live+api.ts
+app/api/events-center/mlb+api.ts
+```
+
+原因：
+
+```txt
+package.json 使用 expo-router/entry
+app.json 設定 web.output = server
+所以 app/api/*+api.ts 是 Expo Router server output 的合理入口
+```
+
+已刪除：
+
+```txt
+api/abroad/live.ts
+api/events-center/mlb.ts
+app/abroad/live+api.tsx
+```
+
+禁止再新增平行 API：
+
+```txt
+api/xxx.ts
+app/abroad/xxx+api.tsx
+pages/api/xxx.ts
+```
+
+除非明確改變部署平台，並同步更新本文件。
+
+## 首頁規則
+
+首頁資料流固定：
+
+```txt
+server/data/*.json
+↓
+lib/* league reader
+↓
+lib/homeGameSelector.ts
+↓
+hooks/useHomeGames.ts
+hooks/useSmartLeagueRefresh.ts
+↓
+app/(tabs)/index.tsx
+↓
+ScoreboardCard
+```
+
+首頁不可再直接寫四聯盟 fetch / merge / sort。
+
+若首頁賽事顯示錯，排查順序：
+
+```txt
+1. server/data/eventsCenter.<league>.json 是否正確
+2. lib/<league>.ts 是否正確讀取
+3. lib/homeGameSelector.ts 是否挑選正確
+4. hooks/useHomeGames.ts 是否取得正確日期
+5. ScoreboardCard 是否只是顯示錯
+```
+
+不要第一步就改 UI。
+
+## eventsCenter 規則
+
+四聯盟 eventsCenter JSON 應統一：
+
+```ts
+{
+  updatedAt,
+  league,
+  games,
+  gamesByDate,
+  source,
+  dateRange
+}
+```
+
+狀態判斷注意：
+
+```txt
+SCHEDULED 不可被舊 box/live FINAL 覆蓋
+NPB 的「5回終了」「7回終了」是 LIVE，不是 FINAL
+只有「試合終了」「ゲームセット」才是 FINAL
+主隊是下半局 / homeLine
+客隊是上半局 / awayLine
+```
+
+## 旅外球員規則
+
+旅外資料流固定：
+
+```txt
+data/abroadPlayers.ts seed
+↓
+server/data/abroadPlayers.seed.json
+↓
+server/providers/*Abroad.ts
+↓
+server/fetch-abroad-data.ts
+↓
+server/data/abroadPlayers.live.json
+↓
+hooks/useAbroadLiveData.ts
+↓
+mergeAbroadPlayerViewModels(seed, live)
+↓
+AbroadPlayerAvatar / abroad UI
+```
+
+頭像規則：
+
+```txt
+AbroadPlayerAvatar 是唯一頭像顯示元件
+UI 不自行判斷 officialPhotoUrl / team logo / initials
+```
+
+remote/local merge 後續重點：
+
+```txt
+remote 缺欄位時，不可用 undefined 覆蓋 local 有值欄位
+特別是 officialPhotoUrl、teamMeta、recentGames、seasonStats
+```
+
+## GitHub Actions 規則
+
+目前主要 workflow：
+
+```txt
+.github/workflows/update-baseball-data.yml
+```
+
+目前仍偏重，後續應拆成：
+
+```txt
+update-live-games.yml
+update-abroad-data.yml
+update-static-data.yml
+```
+
+原則：
+
+```txt
+LIVE 資料才高頻更新
+旅外資料低頻更新
+靜態資料手動或每日更新
+manual 永遠優先
+```
+
+## 禁止新增的平行檔案
+
+沒有明確理由，不要新增：
+
+```txt
+ScoreboardCard2.tsx
+NewScoreboardCard.tsx
+LeagueCalendarPage2.tsx
+cpbl-new.tsx
+mlb-new.ts
+npb-new.ts
+kbo-new.ts
+home-new.tsx
+api/xxx.ts
+app/abroad/xxx+api.tsx
+backup-xxx.ts
+test-xxx.ts
+```
+
+應優先修改現有負責檔案。
+
+## 每次改動前必問
+
+```txt
+1. 這是 UI 問題、資料問題、抓資料問題、merge 問題，還是 route 問題？
+2. 現有哪個檔案已經負責這件事？
+3. 是否真的需要新增檔案？
+4. 改完要跑哪個驗證？
+```
+
+## 基本驗證指令
+
+一般改動：
+
+```bash
+npx tsc --noEmit
+```
+
+改四聯盟資料：
+
+```bash
+npm run fetch:events-mlb
+npm run fetch:events-npb
+npm run fetch:events-kbo
+npm run fetch:events-cpbl
+npx tsc --noEmit
+```
+
+改旅外資料：
+
+```bash
+npm run export:abroad-seed
+npm run fetch:abroad-live
+npx tsc --noEmit
+```
+
+改 GitHub Actions：
+
+```bash
+npx tsc --noEmit
+# 並到 GitHub Actions 頁面確認 workflow 結果
+```
+
+## 目前下一步建議
+
+第九階段完成後，下一階段建議處理：
+
+```txt
+remote/local smarter merge
+```
+
+原因：
+
+```txt
+目前曾因 remote GitHub raw 版本較舊，導致 local live 裡的 officialPhotoUrl 被 undefined 蓋掉
+後續應建立欄位級 merge 規則
+remote 缺值不可覆蓋 local 有值
+```
+
+優先檔案：
+
+```txt
+hooks/useAbroadLiveData.ts
+hooks/useLiveJson.ts
+lib/viewModels/abroadPlayerViewModel.ts
+```
+
+第九階段結論：
+
+```txt
+先穩架構，再加功能。
+任何新功能都必須接在既有資料流上，不新增平行世界。
+```
 ```
