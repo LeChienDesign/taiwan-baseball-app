@@ -199,8 +199,20 @@ function getScheduledGameStartMs(game: ScoreboardGame) {
   const [year, month, day] = dateKey.split('-').map(Number);
   const hour = Number(match[1]);
   const minute = Number(match[2]);
+  const scheduledDate = new Date(year, month - 1, day, hour, minute);
 
-  return new Date(year, month - 1, day, hour, minute).getTime();
+  // MLB games listed in Taiwan time can show as early-morning starts like 00:15 or 01:35.
+  // When viewed the previous evening, those should still count as upcoming focus games.
+  if (game.status === 'SCHEDULED' && hour < 6) {
+    const now = new Date();
+    const isSameLocalDate = toDateKey(scheduledDate) === toDateKey(now);
+
+    if (isSameLocalDate && scheduledDate.getTime() <= now.getTime()) {
+      scheduledDate.setDate(scheduledDate.getDate() + 1);
+    }
+  }
+
+  return scheduledDate.getTime();
 }
 
 export function getLiveInningValue(game: ScoreboardGame) {
