@@ -1,7 +1,12 @@
+// View model helpers for scoreboard cards.
+// Keep status normalization and display labels here so ScoreboardCard stays render-only.
+
 import type { ScoreboardGame } from '../mlb';
 
+export type NormalizedScoreboardStatus = 'FINAL' | 'LIVE' | 'SCHEDULED';
+
 export type ScoreboardCardViewModel = ScoreboardGame & {
-  normalizedStatus: 'FINAL' | 'LIVE' | 'SCHEDULED';
+  normalizedStatus: NormalizedScoreboardStatus;
   statusLabel: string;
   liveDetail?: string;
   footerVenue: string;
@@ -10,23 +15,35 @@ export type ScoreboardCardViewModel = ScoreboardGame & {
   isFinal: boolean;
 };
 
-export function normalizeScoreboardStatus(status?: string) {
-  const raw = String(status || '').toUpperCase();
+// Status helpers
 
-  if (raw.includes('LIVE') || raw.includes('比賽中')) return 'LIVE';
-  if (raw.includes('FINAL') || raw.includes('結束') || raw.includes('完賽')) return 'FINAL';
+export function normalizeScoreboardStatus(status?: string): NormalizedScoreboardStatus {
+  const rawStatus = String(status || '').toUpperCase();
+
+  if (rawStatus.includes('LIVE') || rawStatus.includes('比賽中')) return 'LIVE';
+  if (
+    rawStatus.includes('FINAL') ||
+    rawStatus.includes('結束') ||
+    rawStatus.includes('完賽')
+  ) {
+    return 'FINAL';
+  }
+
   return 'SCHEDULED';
 }
 
 export function getScoreboardStatusLabel(
-  status: ScoreboardCardViewModel['normalizedStatus'],
+  status: NormalizedScoreboardStatus,
   footerLeft?: string,
   footerRight?: string
 ) {
   if (status === 'LIVE') return footerLeft || footerRight || 'LIVE';
   if (status === 'FINAL') return 'FINAL';
+
   return footerRight || 'SCHEDULED';
 }
+
+// View model builders
 
 export function toScoreboardCardViewModel(game: ScoreboardGame): ScoreboardCardViewModel {
   const normalizedStatus = normalizeScoreboardStatus(game.status);
@@ -35,16 +52,17 @@ export function toScoreboardCardViewModel(game: ScoreboardGame): ScoreboardCardV
     game.footerLeft,
     game.footerRight
   );
+  const footerVenue = game.venue && game.venue !== '—' ? game.venue : '';
+  const isLive = normalizedStatus === 'LIVE';
 
   return {
     ...game,
     normalizedStatus,
     statusLabel,
-    liveDetail: normalizedStatus === 'LIVE' ? statusLabel : game.footerRight,
-    footerVenue: game.venue && game.venue !== '—' ? game.venue : '',
+    liveDetail: isLive ? statusLabel : game.footerRight,
+    footerVenue,
     isScheduled: normalizedStatus === 'SCHEDULED',
-    isLive: normalizedStatus === 'LIVE',
+    isLive,
     isFinal: normalizedStatus === 'FINAL',
   };
 }
-
