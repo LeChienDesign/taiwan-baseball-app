@@ -1,5 +1,6 @@
 import AppEmptyState from './AppEmptyState';
 import AppLoadingState from './AppLoadingState';
+import AbroadPlayerAvatar from './AbroadPlayerAvatar';
 import {
   View,
   Text,
@@ -8,16 +9,25 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { abroadPlayers } from '../data/abroadPlayers';
+import { abroadPlayers as seedAbroadPlayers } from '../data/abroadPlayers';
+import { useAbroadLiveData } from '../hooks/useAbroadLiveData';
 import {
+  type AbroadPlayerLike,
   formatAbroadTeamLine,
   getAbroadPlayerStatus,
+  mergeAbroadPlayerViewModels,
 } from '../lib/viewModels/abroadPlayerViewModel';
 import { useAbroadFavorites } from '../store/abroadFavorites';
 
 export default function TrackedAbroadSection() {
   const router = useRouter();
   const { favoriteIds, isHydrated } = useAbroadFavorites();
+
+  const { players: livePlayers } = useAbroadLiveData();
+  const abroadPlayers = mergeAbroadPlayerViewModels(
+    seedAbroadPlayers as AbroadPlayerLike[],
+    livePlayers as AbroadPlayerLike[]
+  );
 
   if (!isHydrated) {
   return (
@@ -78,9 +88,19 @@ export default function TrackedAbroadSection() {
             onPress={() => router.push(`/abroad/${player.id}`)}
             activeOpacity={0.9}
           >
-            <View style={[styles.avatar, { backgroundColor: player.teamColor }]}>
-              <Text style={styles.avatarText}>{player.name.slice(0, 1)}</Text>
-            </View>
+            <AbroadPlayerAvatar
+              name={player.name}
+              team={player.team}
+              league={player.league}
+              level={player.level}
+              teamCode={player.teamMeta?.code ?? player.teamMeta?.abbreviation}
+              logoKey={player.teamMeta?.logoKey}
+              photoUri={player.officialPhotoUrl}
+              teamColor={player.teamColor}
+              size={44}
+              textSize={16}
+              borderRadius={13}
+            />
 
             <View style={styles.info}>
               <View style={styles.topRow}>
@@ -161,21 +181,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    color: '#071226',
-    fontSize: 16,
-    fontWeight: '900',
-  },
   info: {
     flex: 1,
+    marginLeft: 12,
     marginRight: 10,
   },
   topRow: {
