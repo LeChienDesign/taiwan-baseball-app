@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-10T09:24:05.351Z",
+  "updatedAt": "2026-05-10T10:45:32.987Z",
   "requestedDate": "2026-05-10",
   "summary": {
     "totalPlayers": 31,
@@ -13,7 +13,7 @@
     "probableStarters": 0,
     "injured": 8,
     "withNews": 31,
-    "withRecentGames": 21
+    "withRecentGames": 22
   },
   "providers": [
     {
@@ -1741,7 +1741,7 @@
           "opponent": "ACL Mariners",
           "result": "先發",
           "detail1": "2.0局 / 1ER / 3K / 0BB",
-          "detail2": "H 3 / 用球 15"
+          "detail2": "H 3 / 用球 29"
         },
         {
           "date": "2026-05-02",
@@ -2464,20 +2464,26 @@
       "line2": "西武一軍外野手",
       "intro": "具備長打與國際賽知名度，是台灣旅日野手的重要代表。",
       "recentNote": "NPB 官方比分頁補充近 5 場比賽資料",
-      "type": "hitter",
       "seasonStats": {
         "hitter": {
-          "avg": "—",
-          "obp": "—",
-          "slg": "—",
-          "ops": "—",
-          "hr": 0,
-          "rbi": 0,
+          "avg": ".208",
+          "obp": ".266",
+          "slg": ".347",
+          "ops": ".613",
+          "hr": 2,
+          "rbi": 8,
           "sb": 0,
-          "hits": 0
+          "hits": 21
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-07",
+          "opponent": "NPB Pacific League / 埼玉西武獅",
+          "result": "一軍累計",
+          "detail1": "30場 / 101打數 / 21安打 / 8打點",
+          "detail2": "AVG .208 / OBP .266 / SLG .347 / OPS .613 / HR 2"
+        },
         {
           "date": "2026-05-06",
           "opponent": "埼玉西武獅 vs 福岡軟銀鷹",
@@ -2500,6 +2506,7 @@
           "detail2": "得分0 / 全壘打0 / 保送0 / 三振0"
         }
       ],
+      "type": "hitter",
       "news": [
         {
           "id": "an-ko-lin-npb-sync",
@@ -2811,31 +2818,30 @@
       "line1": "旅日捕手",
       "line2": "日本火腿捕手",
       "intro": "2026 年轉戰北海道日本火腿鬥士並登錄正式球員，有望與台灣投手形成旅日台灣投捕搭檔。",
-      "recentNote": "優先同步一軍 / 二軍出賽、先發捕手紀錄、打席內容與登錄異動。",
-      "type": "hitter",
+      "recentNote": "NPB 官方比分頁補充近 5 場比賽資料",
       "seasonStats": {
         "hitter": {
-          "avg": "—",
-          "obp": "—",
-          "slg": "—",
-          "ops": "—",
+          "avg": ".130",
+          "obp": ".231",
+          "slg": ".130",
+          "ops": ".361",
           "hr": 0,
-          "rbi": 0,
+          "rbi": 1,
           "sb": 0,
-          "hits": 0
+          "hits": 3
         }
       },
-      "recentGames": [],
-      "news": [
+      "recentGames": [
         {
-          "id": "chia-cheng-lin-fighters-official",
-          "title": "林家正 Fighters 官方頁",
-          "date": "2026-05-10",
-          "tag": "官方頁",
-          "summary": "已同步 Hokkaido Nippon-Ham Fighters 官方球員頁。",
-          "url": "https://www.fighters.co.jp/team/player/detail/2026_00001806.html",
-          "source": "Fighters Official"
-        },
+          "date": "2026-04-30",
+          "opponent": "NPB Farm League / 日本火腿二軍",
+          "result": "二軍累計",
+          "detail1": "14場 / 23打數 / 3安打 / 1打點",
+          "detail2": "AVG .130 / OBP .231 / SLG .130 / OPS .361"
+        }
+      ],
+      "type": "hitter",
+      "news": [
         {
           "id": "chia-cheng-lin-npb-sync",
           "title": "林家正 官方資料同步",
