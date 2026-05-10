@@ -390,6 +390,80 @@ npx tsc --noEmit
 tsc OK
 ```
 
+### 第五階段補充紀錄：首頁焦點賽事與 CPBL 尚未開賽修正
+
+問題：
+
+```txt
+首頁「今日焦點賽事」應顯示現在起 12 小時內即將開賽的所有 SCHEDULED 比賽
+CPBL 2026-05-10 三場 17:05 賽事中，台鋼雄鷹 vs 中信兄弟一度被誤判為 FINAL
+導致 CPBL 尚未開賽賽事沒有出現在首頁焦點賽事
+```
+
+確認原因：
+
+```txt
+server/data/eventsCenter.cpbl.json 原本第三場被 box/live endpoint 舊資料覆蓋為 FINAL 2-4
+CPBL 官網賽程頁顯示三場皆尚未開始
+fetch:events-cpbl 後仍可能從 live/box HTML fallback 把尚未開賽資料改成 FINAL
+lib/cpbl-real.ts 的 normalizeStatus 也會因 0-0 分數存在而把尚未開賽誤判 FINAL
+```
+
+已修正檔案：
+
+```txt
+server/providers/cpblOfficial.ts
+lib/cpbl-real.ts
+hooks/useHomeGames.ts
+lib/homeGameSelector.ts
+server/data/eventsCenter.cpbl.json
+server/data/eventsCenter.npb.json
+```
+
+修正重點：
+
+```txt
+cpblOfficial.ts 新增 schedule 尚未開始保護
+若 schedule/seed 顯示 SCHEDULED、尚未開始、未開賽或有 HH:mm 開賽時間
+則 live detail / box HTML 的舊 FINAL 不可覆蓋 schedule 狀態
+
+cpbl-real.ts 的 normalizeStatus 調整順序
+尚未開始 / 未開賽 / SCHEDULED 必須先於 FINAL 判斷
+避免 0-0 尚未開賽被誤判成 FINAL
+
+useHomeGames.ts 維持今日焦點賽事規則：
+getUpcomingGamesWithinHours(featuredGames, 12)
+不 slice，12 小時內即將開賽的所有 SCHEDULED 比賽都應顯示
+```
+
+已驗證：
+
+```bash
+npm run fetch:events-cpbl
+npx tsc --noEmit
+```
+
+驗證結果：
+
+```txt
+2026-05-10 CPBL 三場皆為 SCHEDULED / 17:05 / 0-0
+首頁今日焦點賽事可顯示 CPBL 尚未開賽賽事
+```
+
+重要 commit：
+
+```txt
+7e10dbe Fix home focus games and CPBL scheduled status
+```
+
+注意：
+
+```txt
+若首頁某聯盟賽事沒出現，先確認 server/data/eventsCenter.<league>.json 是否已更新到當日
+再確認該賽事是否為 SCHEDULED 且開賽時間在 12 小時內
+不要先改 UI
+```
+
 
 更新規則：
 
