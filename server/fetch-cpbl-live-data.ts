@@ -64,6 +64,21 @@ function flattenGamesByDate(gamesByDate: Record<string, CpblGame[]>) {
     .flatMap((date) => gamesByDate[date] ?? []);
 }
 
+function printCpblGamesForDate(date: string, games: CpblGame[]) {
+  const rows = games.map((game: any) => ({
+    id: game.id,
+    away: game.awayTeam?.name,
+    home: game.homeTeam?.name,
+    status: game.status,
+    score: `${game.awayScore ?? 0}-${game.homeScore ?? 0}`,
+    footer: game.footerRight,
+    officialUrl: game.officialUrl,
+  }));
+
+  console.log(`CPBL ${date} games snapshot:`);
+  console.table(rows);
+}
+
 async function main() {
   const { startDate, endDate } = resolveCpblEventsDateRange();
   const outputPath = path.resolve(process.cwd(), 'server/data/eventsCenter.cpbl.json');
@@ -82,6 +97,7 @@ async function main() {
     gamesByDate[date] = games;
 
     console.log(`Fetched CPBL schedule date: ${date} (${games.length} games)`);
+    printCpblGamesForDate(date, games);
 
     if (delayMs > 0) {
       await sleep(delayMs);

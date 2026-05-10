@@ -170,6 +170,21 @@ const OFFICIAL_GAME_META_MAP: Record<string, { gameSno: string; kindCode: string
     kindCode: 'A',
     year: '2026',
   },
+  '2026-05-10|Wei Chuan Dragons|Fubon Guardians': {
+    gameSno: '91',
+    kindCode: 'A',
+    year: '2026',
+  },
+  '2026-05-10|Uni-President Lions|Rakuten Monkeys': {
+    gameSno: '92',
+    kindCode: 'A',
+    year: '2026',
+  },
+  '2026-05-10|TSG Hawks|CTBC Brothers': {
+    gameSno: '93',
+    kindCode: 'A',
+    year: '2026',
+  },
 };
 
 let computedOfficialGameMetaMapCache: Record<string, { gameSno: string; kindCode: string; year: string }> | null = null;
@@ -350,6 +365,27 @@ function makeLiveDetailKeyFromDetail(detail: CpblLiveGameDetail) {
     detail.VisitingTeamName,
     detail.HomeTeamName
   );
+}
+
+function isLiveDetailForGame(
+  detail: CpblLiveGameDetail | undefined,
+  game: CpblEventsCenterGame,
+  seed?: CpblSeedGame
+) {
+  if (!detail) return false;
+
+  const detailDate = getOfficialDetailDate(detail);
+  const expectedDate = normalizeDate(seed?.strTimestamp || game.gameDate);
+  const detailAway = normalizeOfficialTeamName(detail.VisitingTeamName);
+  const detailHome = normalizeOfficialTeamName(detail.HomeTeamName);
+  const expectedAway = normalizeOfficialTeamName(seed?.['Away Team'] || game.awayTeam.name);
+  const expectedHome = normalizeOfficialTeamName(seed?.['Home Team'] || game.homeTeam.name);
+
+  if (detailDate && expectedDate && detailDate !== expectedDate) return false;
+  if (detailAway && expectedAway && detailAway !== expectedAway) return false;
+  if (detailHome && expectedHome && detailHome !== expectedHome) return false;
+
+  return true;
 }
 
 function mergeLiveDetails(base: CpblLiveGameDetail, patch: CpblLiveGameDetail): CpblLiveGameDetail {
@@ -931,11 +967,17 @@ export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEv
       const seed = sameDaySeedGames[index];
       const officialMeta = getOfficialGameMeta(seed);
       const officialLiveUrl = buildOfficialLiveUrl(seed, g.officialLiveUrl);
-      const liveDetail =
-        (officialMeta?.gameSno
-          ? officialLiveDetailsByGameSno.get(String(Number(officialMeta.gameSno)))
-          : undefined) ||
-        officialLiveDetails.get(makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team']));
+      const liveDetailByGameSno = officialMeta?.gameSno
+        ? officialLiveDetailsByGameSno.get(String(Number(officialMeta.gameSno)))
+        : undefined;
+      const liveDetailByTeamKey = officialLiveDetails.get(
+        makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team'])
+      );
+      const liveDetail = isLiveDetailForGame(liveDetailByGameSno, g, seed)
+        ? liveDetailByGameSno
+        : isLiveDetailForGame(liveDetailByTeamKey, g, seed)
+          ? liveDetailByTeamKey
+          : undefined;
       const manualLiveLineScore = getManualLiveLineScoreForGame(seed, g);
 
       if (liveDetail && !hasStaleFinalLiveDetail(seed, g, liveDetail)) {
