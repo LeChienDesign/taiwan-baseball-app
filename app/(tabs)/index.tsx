@@ -206,8 +206,8 @@ export default function HomePage() {
           <AppLoadingState text="載入今日焦點中…" />
         ) : displayedGames.length === 0 ? (
           <AppEmptyState
-            title="這個分類今天沒有焦點賽事"
-            description="換個聯盟篩選看看，或稍後再回來更新。"
+            title="未來 12 小時沒有即將開賽的焦點賽事"
+            description="目前比賽中會顯示在上方 LIVE 區塊，焦點賽事只顯示即將開賽的比賽。"
             icon="calendar-outline"
             compact
           />
