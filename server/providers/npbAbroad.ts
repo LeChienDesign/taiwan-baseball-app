@@ -1732,6 +1732,11 @@ function recentGameDetailScore(game: Record<string, any>) {
   if (/\bBB\b|四球|四壞/.test(text)) score += 1;
   if (/\bNP\b|投球数|投球數/.test(text)) score += 2;
   if (/\bH\b|安打/.test(text)) score += 1;
+  if (/打數|\bAB\b/.test(text)) score += 2;
+  if (/安打|\bH\b/.test(text)) score += 2;
+  if (/打點|\bRBI\b/.test(text)) score += 2;
+  if (/全壘打|\bHR\b/.test(text)) score += 1;
+  if (/得分/.test(text)) score += 1;
   if (/\bHR\b|本塁打|全壘打/.test(text)) score += 1;
   if (/\bER\b|自責|責失/.test(text)) score += 2;
   if (/\bLP\b|\bWP\b|NPB 官方比分頁/.test(text)) score -= 1;
@@ -1766,11 +1771,12 @@ function buildOfficialUrlsPatch(
   registry: AbroadRegistryEntry,
   officialPhotoUrl?: string
 ) {
-  return {
+  const safeOfficialPhotoUrl = officialPhotoUrl ?? player.officialPhotoUrl;
+
+  const patch: AbroadPatch = {
     team: player.team ?? registry.officialTeam,
     league: 'NPB',
     officialPlayerUrl: registry.officialPlayerUrl ?? player.officialPlayerUrl,
-    officialPhotoUrl: officialPhotoUrl ?? player.officialPhotoUrl,
     teamMeta: {
       ...(player.teamMeta ?? {}),
       code: registry.officialTeamCode ?? player.teamMeta?.code,
@@ -1780,6 +1786,12 @@ function buildOfficialUrlsPatch(
       leagueGroup: 'NPB' as const,
     },
   };
+
+  if (safeOfficialPhotoUrl) {
+    patch.officialPhotoUrl = safeOfficialPhotoUrl;
+  }
+
+  return patch;
 }
 
 async function buildSingleNpbPatch(
