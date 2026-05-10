@@ -160,25 +160,56 @@ const NPB_PLAYER_ALIASES: Record<
   }
 > = {
     'ruei-yang-gu-lin': {
-      aliases: ['Ruei-Yang Gu Lin', 'Gu Lin', '古林睿煬', '古林 睿煬', 'ぐーりん・るぇやん'],
+      aliases: [
+        'Ruei-Yang Gu Lin',
+        'Rui-Yang Gu Lin',
+        'Gu Lin Rui-Yang',
+        'Gu Lin',
+        '古林睿煬',
+        '古林 睿煬',
+        '古林睿炀',
+        'ぐーりん・るぇやん',
+      ],
       type: 'pitcher',
     },
     'yi-lei-sun': {
-      aliases: ['Yi-Lei Sun', '孫易磊', '孫 易磊', 'すん・いーれい'],
+      aliases: [
+        'Yi-Lei Sun',
+        'Yi Lei Sun',
+        'Sun Yi-Lei',
+        '孫易磊',
+        '孫 易磊',
+        '孙易磊',
+        'すん・いーれい',
+      ],
       type: 'pitcher',
     },
     'chun-wei-chang': {
-      aliases: ['Chun-Wei Chang', '張峻瑋'],
+      aliases: [
+        'Chun-Wei Chang',
+        'Chun Wei Chang',
+        'Chang Chun-Wei',
+        '張峻瑋',
+        '张峻玮',
+      ],
       type: 'pitcher',
     },
     'an-ko-lin': {
-      aliases: ['An-Ko Lin', 'Lin An-Ko', '林安可', 'リン・アンクー', 'りん・あんこー'],
+      aliases: [
+        'An-Ko Lin',
+        'An Ko Lin',
+        'Lin An-Ko',
+        '林安可',
+        'リン・アンクー',
+        'りん・あんこー',
+      ],
       type: 'hitter',
     },
     'jo-hsi-hsu': {
       aliases: [
         'Jo-Hsi Hsu',
         'Hsu Jo-Hsi',
+        'Jo Hsi Hsu',
         'J.Hsu',
         'J. Hsu',
         'JH.Hsu',
@@ -191,15 +222,36 @@ const NPB_PLAYER_ALIASES: Record<
       type: 'pitcher',
     },
     'chia-hao-sung': {
-      aliases: ['Chia-Hao Sung', 'Sung Chia-Hao', '宋家豪', '宋　家豪'],
+      aliases: [
+        'Chia-Hao Sung',
+        'Chia Hao Sung',
+        'Sung Chia-Hao',
+        'Song Chia-Hao',
+        'Chia-Hao Song',
+        '宋家豪',
+        '宋　家豪',
+      ],
       type: 'pitcher',
     },
     'chia-cheng-lin': {
-      aliases: ['Lyle Lin', 'Chia-Cheng Lin', '林家正', 'ライル・リン'],
+      aliases: [
+        'Lyle Lin',
+        'Chia-Cheng Lin',
+        'Chia Cheng Lin',
+        'Lin Chia-Cheng',
+        '林家正',
+        'ライル・リン',
+      ],
       type: 'hitter',
     },
     'hsiang-sheng-hsu': {
-      aliases: ['Hsiang-Sheng Hsu', '徐翔聖'],
+      aliases: [
+        'Hsiang-Sheng Hsu',
+        'Hsiang Sheng Hsu',
+        'Hsu Hsiang-Sheng',
+        '徐翔聖',
+        '徐翔圣',
+      ],
       type: 'pitcher',
     },
   };
