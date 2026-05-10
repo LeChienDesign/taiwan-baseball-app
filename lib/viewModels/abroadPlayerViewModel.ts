@@ -1,4 +1,8 @@
 
+// View model helpers for abroad-player list/detail screens.
+// Keep data shaping here so UI components stay focused on rendering.
+
+export type AbroadStatValue = string | number | null | undefined;
 
 export type AbroadPlayerLike = {
   id: string;
@@ -43,8 +47,8 @@ export type AbroadPlayerLike = {
     detail2?: string;
   }>;
   seasonStats?: {
-    hitter?: Record<string, any>;
-    pitcher?: Record<string, any>;
+    hitter?: Record<string, AbroadStatValue>;
+    pitcher?: Record<string, AbroadStatValue>;
   };
   news?: Array<{
     id?: string;
@@ -56,6 +60,8 @@ export type AbroadPlayerLike = {
     source?: string;
   }>;
 };
+
+// Filters / constants
 
 export const ABROAD_FILTERS = ['全部', '投手', '野手', '今日出賽', '預告先發'] as const;
 
@@ -80,6 +86,8 @@ const RECENT_GAME_STAT_LABELS: Record<string, string> = {
   SLG: '長打率',
   OPS: '攻擊指數',
 };
+
+// Normalization helpers
 
 const LEAGUE_ORDER: Record<string, number> = {
   MLB: 0,
@@ -107,38 +115,43 @@ export function normalizeAbroadPlayerId(value?: string | string[] | null) {
   return decodeURIComponent(String(v)).trim().toLowerCase();
 }
 
+// Data merging
+
 export function mergeAbroadPlayerViewModels(seed: AbroadPlayerLike[], live: AbroadPlayerLike[]) {
   const orderMap = new Map<string, number>();
   seed.forEach((player, index) => orderMap.set(player.id, index));
 
-  const map = new Map<string, AbroadPlayerLike>();
+  const playerMap = new Map<string, AbroadPlayerLike>();
 
   for (const player of seed) {
-    map.set(player.id, player);
+    playerMap.set(player.id, player);
   }
 
-  for (const player of live) {
-    const prev = map.get(player.id);
-    map.set(player.id, {
-      ...prev,
-      ...player,
+  for (const livePlayer of live) {
+    const seedPlayer = playerMap.get(livePlayer.id);
+
+    playerMap.set(livePlayer.id, {
+      ...seedPlayer,
+      ...livePlayer,
       teamMeta: {
-        ...(prev?.teamMeta ?? {}),
-        ...(player.teamMeta ?? {}),
+        ...(seedPlayer?.teamMeta ?? {}),
+        ...(livePlayer.teamMeta ?? {}),
       },
-      nextGame: player.nextGame ?? prev?.nextGame,
-      seasonStats: player.seasonStats ?? prev?.seasonStats,
-      recentGames: player.recentGames ?? prev?.recentGames,
-      news: player.news ?? prev?.news,
+      nextGame: livePlayer.nextGame ?? seedPlayer?.nextGame,
+      seasonStats: livePlayer.seasonStats ?? seedPlayer?.seasonStats,
+      recentGames: livePlayer.recentGames ?? seedPlayer?.recentGames,
+      news: livePlayer.news ?? seedPlayer?.news,
     });
   }
 
-  return Array.from(map.values()).sort((a, b) => {
+  return Array.from(playerMap.values()).sort((a, b) => {
     const ai = orderMap.get(a.id) ?? 9999;
     const bi = orderMap.get(b.id) ?? 9999;
     return ai - bi;
   });
 }
+
+// List filtering / sorting
 
 function getLeagueSortRank(player: AbroadPlayerLike) {
   const league = player.league ?? '';
@@ -217,9 +230,10 @@ export function filterAndSortAbroadPlayers(
   });
 }
 
+// Display formatting
+
 export function formatAbroadSyncLabel(updatedAt?: string, isUsingFallback?: boolean) {
   if (isUsingFallback) return '本機資料';
-
   if (!updatedAt) return '已同步';
 
   const date = new Date(updatedAt);
@@ -264,11 +278,13 @@ function formatRecentGameDetailToken(token: string) {
 export function formatAbroadRecentGameDetail(value?: string | null) {
   if (!value) return undefined;
 
-  return String(value)
+  const formatted = String(value)
     .split('/')
     .map(formatRecentGameDetailToken)
     .filter(Boolean)
     .join(' / ');
+
+  return formatted || undefined;
 }
 
 export function getAbroadPlayerStatus(player: AbroadPlayerLike) {
