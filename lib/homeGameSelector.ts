@@ -303,6 +303,26 @@ export function getUpcomingGamesWithinHours(items: FeaturedItem[], hours = 12) {
     .map(({ item }) => item);
 }
 
+export function getHomeDisplayedGames(items: FeaturedItem[], limit = 4) {
+  const liveItems = sortLiveGames(items.filter((item) => item.game.status === 'LIVE'));
+  const upcomingItems = getUpcomingGamesWithinHours(items, 12);
+  const scheduledFallback = sortFeatured(
+    items.filter((item) => item.game.status === 'SCHEDULED')
+  );
+
+  const merged = [...liveItems, ...upcomingItems, ...scheduledFallback];
+  const seen = new Set<string>();
+
+  return merged
+    .filter((item) => {
+      const key = `${item.league}:${item.game.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, limit);
+}
+
 export function buildFeaturedItems(league: LeagueKey, games: ScoreboardGame[]) {
   return games
     .filter((game) => game.status !== 'FINAL')

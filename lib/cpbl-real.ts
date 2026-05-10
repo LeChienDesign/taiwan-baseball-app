@@ -295,6 +295,14 @@ function normalizeStatus(
   if (s === 'POSTPONED' || s.includes('POSTPONED') || s.includes('延賽')) return 'POSTPONED';
   if (s === 'SUSPENDED' || s.includes('SUSPENDED') || s.includes('暫停') || s.includes('保留')) return 'SUSPENDED';
   if (s === 'LIVE' || s.includes('LIVE') || s.includes('比賽中')) return 'LIVE';
+  if (
+    s === 'SCHEDULED' ||
+    s.includes('SCHEDULED') ||
+    s.includes('尚未開始') ||
+    s.includes('未開賽')
+  ) {
+    return 'SCHEDULED';
+  }
   if (s === 'FINAL' || s.includes('FINAL') || s.includes('終場') || s.includes('比賽結束')) return 'FINAL';
 
   if (homeScore != null && awayScore != null) return 'FINAL';

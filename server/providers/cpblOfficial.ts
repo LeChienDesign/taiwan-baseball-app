@@ -561,6 +561,35 @@ function applyOfficialLiveDetail(game: CpblEventsCenterGame, detail: CpblLiveGam
   };
 }
 
+function isSeedScheduledNotStarted(seed?: CpblSeedGame, game?: CpblEventsCenterGame) {
+  const seedStatus = String(seed?.Status || '').trim();
+  const seedDisplayTime = String(seed?.DisplayTime || '').trim();
+  const gameStatusText = String(game?.statusText || '').trim();
+  const gameFooterRight = String(game?.footerRight || '').trim();
+
+  return (
+    game?.status === 'SCHEDULED' &&
+    (seedStatus.includes('尚未開始') ||
+      gameStatusText.includes('尚未開始') ||
+      gameStatusText.includes('未開賽') ||
+      /^\d{1,2}:\d{2}$/.test(seedDisplayTime) ||
+      /^\d{1,2}:\d{2}$/.test(gameFooterRight))
+  );
+}
+
+function hasStaleFinalLiveDetail(seed: CpblSeedGame | undefined, game: CpblEventsCenterGame, detail: CpblLiveGameDetail) {
+  if (!isSeedScheduledNotStarted(seed, game)) return false;
+
+  const status = normalizeOfficialGameStatus(detail);
+  if (status !== 'FINAL') return false;
+
+  const liveDate = getOfficialDetailDate(detail);
+  const seedDate = normalizeDate(seed?.strTimestamp || game.gameDate);
+  if (liveDate && seedDate && liveDate !== seedDate) return true;
+
+  return true;
+}
+
 function applyManualLiveLineScore(game: CpblEventsCenterGame, manualLiveLineScore: NonNullable<ReturnType<typeof getManualLiveLineScore>>): CpblEventsCenterGame {
   return {
     ...game,
@@ -909,7 +938,7 @@ export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEv
         officialLiveDetails.get(makeLiveDetailKey(g.gameDate, seed?.['Away Team'], seed?.['Home Team']));
       const manualLiveLineScore = getManualLiveLineScoreForGame(seed, g);
 
-      if (liveDetail) {
+      if (liveDetail && !hasStaleFinalLiveDetail(seed, g, liveDetail)) {
         const officialGame = applyOfficialLiveDetail(g, liveDetail);
         const correctedGame = manualLiveLineScore
           ? applyManualLiveLineScore(officialGame, manualLiveLineScore)
@@ -939,7 +968,12 @@ export async function fetchCpblOfficialGamesByDate(date: string): Promise<CpblEv
         };
       }
 
-      if (!officialLiveUrl) return g;
+      if (!officialLiveUrl || isSeedScheduledNotStarted(seed, g)) {
+        return {
+          ...g,
+          officialLiveUrl,
+        };
+      }
 
       try {
         const html = await fetchText(officialLiveUrl);

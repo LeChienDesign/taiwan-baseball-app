@@ -257,7 +257,7 @@ export function useHomeGames() {
   }, [featuredGames]);
 
   const displayedGames = useMemo(() => {
-    return getUpcomingGamesWithinHours(featuredGames, 12).slice(0, 4);
+    return getUpcomingGamesWithinHours(featuredGames, 12);
   }, [featuredGames]);
 
   return {
