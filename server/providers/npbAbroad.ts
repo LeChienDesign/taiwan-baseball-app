@@ -198,10 +198,19 @@ const NPB_PLAYER_ALIASES: Record<
       aliases: [
         'An-Ko Lin',
         'An Ko Lin',
+        'Anko Lin',
         'Lin An-Ko',
+        'Lin An Ko',
+        'Lin Anko',
+        'A.Lin',
+        'A. Lin',
+        'A Lin',
         '林安可',
+        '林 安可',
         'リン・アンクー',
+        'リン アンクー',
         'りん・あんこー',
+        'りん あんこー',
       ],
       type: 'hitter',
     },
@@ -1232,7 +1241,11 @@ function collectContextLines(text: string, aliases: string[]) {
 
   for (const line of lines) {
     const lower = line.toLowerCase();
-    const matched = aliases.some((alias) => alias && lower.includes(alias.toLowerCase()));
+    const normalizedLine = normalizeLooseText(line);
+    const matched = aliases.some((alias) => {
+      if (!alias) return false;
+      return lower.includes(alias.toLowerCase()) || normalizedLine.includes(normalizeLooseText(alias));
+    });
     if (matched) {
       hits.push(line);
     }
@@ -1340,7 +1353,7 @@ function extractNpbHitterBoxCellsForAlias(html: string, aliases: string[]) {
       )
       .filter(Boolean);
 
-    const numericCount = cells.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell)).length;
+    const numericCount = cells.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell) || cell === '-').length;
     const firstCell = cells[0] ?? '';
     const isSummaryRow =
       firstCell.includes('TEAM') ||
@@ -1348,6 +1361,10 @@ function extractNpbHitterBoxCellsForAlias(html: string, aliases: string[]) {
       firstCell.includes('計');
 
     if (cells.length >= 6 && numericCount >= 3 && !isSummaryRow) {
+      return cells;
+    }
+
+    if (cells.length >= 4 && aliasHit && !isSummaryRow) {
       return cells;
     }
   }
@@ -1359,19 +1376,25 @@ function buildHitterRecentGameFromBoxCells(
   meta: ReturnType<typeof extractGameMeta>,
   cells: string[]
 ) {
-  const numbers = cells.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell));
-  const atBats = numbers[0] ?? '—';
-  const runs = numbers[1] ?? '0';
-  const hits = numbers[2] ?? '0';
-  const rbi = numbers[3] ?? '0';
-  const walks = numbers[4] ?? '0';
-  const strikeouts = numbers[5] ?? '0';
-  const homeRuns = numbers[6] ?? '0';
+  // Find index of player name, then take stat cells after that.
+  const nameIndex = cells.findIndex((cell) => /林安可|Lin|An-Ko|Anko/i.test(cell));
+  const statCells = cells.slice(nameIndex >= 0 ? nameIndex + 1 : 0);
+  const normalizedStats = statCells.map((cell) => (cell === '-' ? '0' : cell));
+  const numericStats = normalizedStats.filter((cell) => /^-?\d+(?:\.\d+)?$/.test(cell));
+  const resultText = cells.slice(-3).join(' ');
+
+  const atBats = numericStats[0] ?? '—';
+  const runs = numericStats[1] ?? '0';
+  const hits = numericStats[2] ?? '0';
+  const rbi = numericStats[3] ?? '0';
+  const strikeouts = numericStats[4] ?? (resultText.includes('三') ? '1' : '0');
+  const walks = numericStats[5] ?? '0';
+  const homeRuns = numericStats[10] ?? '0';
 
   return {
     date: meta.date,
     opponent: meta.away === '—' && meta.home === '—' ? '—' : `${meta.away} vs ${meta.home}`,
-    result: '出賽',
+    result: resultText.includes('三') ? '出賽 / 三振' : '出賽',
     detail1: `${atBats}打數 / ${hits}安打 / ${rbi}打點`,
     detail2: `得分${runs} / 全壘打${homeRuns} / 保送${walks} / 三振${strikeouts}`,
   };
@@ -1655,6 +1678,7 @@ async function buildRecentGamesFromOfficialScores(
   }
 
   const results: Array<Record<string, any>> = [];
+  const seenResultKeys = new Set<string>();
 
   for (const item of linksToScan) {
     if (results.length >= maxGames) break;
@@ -1666,6 +1690,23 @@ async function buildRecentGamesFromOfficialScores(
 
     const entry = await findEntryFromGamePage(player, registry, item, aliases, configuredType);
     if (entry) {
+      const resultKey = [
+        entry.date,
+        entry.opponent,
+        entry.result,
+        entry.detail1,
+        entry.detail2,
+      ]
+        .map((value) => String(value ?? '').trim())
+        .join('|')
+        .toLowerCase();
+
+      if (seenResultKeys.has(resultKey)) {
+        debugPlayerLog(player.id, 'skip duplicate recent game =', resultKey);
+        continue;
+      }
+
+      seenResultKeys.add(resultKey);
       results.push(entry);
     }
   }
