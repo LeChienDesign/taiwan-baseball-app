@@ -447,6 +447,106 @@ validate:events 可通過
 NPB inning sum mismatch 仍可能出現 WARN，但不阻擋 workflow
 ```
 
+## 旅外球員頭像修正紀錄
+
+問題：
+
+```txt
+NPB / KBO 旅外球員在列表、詳情、首頁追蹤區頭像顯示不一致
+有些畫面只顯示球隊 logo 或姓名首字
+```
+
+確認結果：
+
+```txt
+components/AbroadPlayerAvatar.tsx 本身邏輯正確
+優先順序為 officialPhotoUrl → local player photo → team logo → 姓名首字
+app/(tabs)/abroad.tsx 與 app/(tabs)/abroad/[id].tsx 已正確傳入 officialPhotoUrl
+```
+
+NPB 修正：
+
+```txt
+server/providers/npbAbroad.ts 已能在 NPB_FETCH_PHOTOS=1 時抓官方照片
+NPB 預設非每月指定日期不抓照片，避免過度抓取
+需要補照片時可執行：NPB_FETCH_PHOTOS=1 npm run fetch:abroad-live
+```
+
+KBO 修正：
+
+```txt
+server/providers/kboAbroad.ts 已新增官方照片解析
+避免抓到韓華官網語言切換 icon，例如 ico_lang_ko.png
+王彥程官方照片可正確解析為 /KBO_IMAGE/person/middle/2026/56719.jpg
+```
+
+remote/local 覆蓋問題：
+
+```txt
+useAbroadLiveData 原本會先顯示 local fallback，接著 fetch GitHub raw remote
+如果 remote 的 abroadPlayers.live.json 較舊，會把 local 裡的 officialPhotoUrl 蓋成 undefined
+目前 hooks/useAbroadLiveData.ts 暫時改為 remoteUrl: undefined
+hooks/useLiveJson.ts 已允許 remoteUrl optional
+沒有 remoteUrl 時只使用 fallbackPayload，不 fetch remote
+```
+
+首頁追蹤區修正：
+
+```txt
+components/TrackedAbroadSection.tsx 已改用 AbroadPlayerAvatar
+首頁追蹤區也會 merge seedAbroadPlayers + livePlayers
+首頁、旅外列表、球員詳情頁目前共用同一套頭像邏輯
+```
+
+目前旅外頭像資料流：
+
+```txt
+server/providers/npbAbroad.ts / kboAbroad.ts
+↓
+server/data/abroadPlayers.live.json officialPhotoUrl
+↓
+hooks/useAbroadLiveData.ts
+↓
+mergeAbroadPlayerViewModels(seed, live)
+↓
+AbroadPlayerAvatar
+↓
+首頁追蹤區 / 旅外列表 / 球員詳情頁
+```
+
+已驗證：
+
+```bash
+npx tsc --noEmit
+npm run fetch:abroad-live
+NPB_FETCH_PHOTOS=1 npm run fetch:abroad-live
+```
+
+已推上 main：
+
+```txt
+KBO / NPB 官方照片可顯示
+首頁追蹤區可顯示 officialPhotoUrl
+main 已同步到 GitHub
+```
+
+後續建議：
+
+```txt
+不要長期停用 remoteUrl
+下一步應做 remote/local smarter merge
+remote 缺欄位時不可用 undefined 覆蓋 local 有值欄位
+特別是 officialPhotoUrl、teamMeta、recentGames、seasonStats
+```
+
+注意：
+
+```txt
+不要把頭像 fallback 分散寫在 UI
+AbroadPlayerAvatar 應維持為唯一頭像顯示元件
+UI 只傳 player viewModel，不自行判斷照片來源
+```
+
 ## 第六階段：UI viewModel 化
 
 整理：
