@@ -271,6 +271,47 @@ npm run fetch:events-npb
 npm run fetch:events-kbo
 ```
 
+目前確認：
+
+```txt
+這串流程主要跑 2026 當季資料，不是重爬去年以前的多年歷史資料。
+四聯盟目前開季約一個多月，資料量仍屬可控。
+真正可能拖慢的是 NPB / KBO 官方頁 response、NPB 旅外球員逐場 box page 候選頁嘗試、以及 abroad-live provider merge。
+```
+
+資料維護原則：
+
+```txt
+data/abroadPlayers.ts
+= 手動維護 seed / 穩定累計 / 歷史資料 / 當季人工校正資料
+
+server/data/abroadPlayers.seed.json
+= npm run export:abroad-seed 輸出
+
+server/data/abroadPlayers.live.json
+= npm run fetch:abroad-live 產生的 provider merge 結果
+```
+
+每日賽後資料策略：
+
+```txt
+每日比賽結束後可先跑 npm run fetch:abroad-live
+確認 provider 抓到的資料正確後，再把重要累計手動補回 data/abroadPlayers.ts
+過去資料、穩定累計、官方資料不穩的球員資料，不建議每次重爬整季歷史
+應以手動 seed 作為可靠基準，live provider 只負責每日近況與最近出賽補充
+```
+
+建議流程：
+
+```bash
+npm run fetch:abroad-live
+# 檢查 server/data/abroadPlayers.live.json
+# 手動把穩定累計補回 data/abroadPlayers.ts
+npm run export:abroad-seed
+npm run fetch:abroad-live
+npx tsc --noEmit
+```
+
 目前風險：
 
 ```txt

@@ -11,15 +11,26 @@ import { getTeamLogoSource } from '../constants/teamLogos';
 const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
   黃仲翔: require('../assets/abroad/huang-chung-hsiang.png'),
   徐若熙: require('../assets/abroad/jo-hsi-hsu.png'),
-
-  // Add these local portraits after the matching PNG files are placed in assets/abroad/.
-  // Do not enable a require before the file exists, or Metro will fail to bundle.
-  // 林安可: require('../assets/abroad/an-ko-lin.png'),
-  // 林家正: require('../assets/abroad/chia-cheng-lin.png'),
-  // 宋家豪: require('../assets/abroad/chia-hao-song.png'),
-  // 古林睿煬: require('../assets/abroad/ruei-yang-gu-lin.png'),
-  // 孫易磊: require('../assets/abroad/yi-lei-sun.png'),
+  林安可: require('../assets/abroad/an-ko-lin.png'),
+  林家正: require('../assets/abroad/chia-cheng-lin.png'),
+  宋家豪: require('../assets/abroad/chia-hao-song.png'),
+  古林睿煬: require('../assets/abroad/ruei-yang-gu-lin.png'),
+  孫易磊: require('../assets/abroad/yi-lei-sun.png'),
+  沙子宸: require('../assets/abroad/tzu-chen-sha.png'),
+  王彥程: require('../assets/abroad/yen-cheng-wang.png'),
+  張峻瑋: require('../assets/abroad/chun-wei-chang.png'),
 };
+
+function normalizeLocalPhotoKey(value?: string | null) {
+  return String(value ?? '')
+    .normalize('NFKC')
+    .replace(/[\s\u3000・･·．.\-‐‑‒–—―]/g, '')
+    .trim();
+}
+
+const NORMALIZED_LOCAL_PLAYER_PHOTOS = Object.fromEntries(
+  Object.entries(LOCAL_PLAYER_PHOTOS).map(([key, source]) => [normalizeLocalPhotoKey(key), source])
+);
 
 type Props = {
   name: string;
@@ -75,7 +86,7 @@ export default function AbroadPlayerAvatar({
   }, [logoKey, team, league, level, teamCode]);
 
   const localPlayerPhoto = useMemo<ImageSourcePropType | null>(() => {
-    return LOCAL_PLAYER_PHOTOS[name] ?? null;
+    return LOCAL_PLAYER_PHOTOS[name] ?? NORMALIZED_LOCAL_PLAYER_PHOTOS[normalizeLocalPhotoKey(name)] ?? null;
   }, [name]);
 
   const showRemotePhoto = isRemoteUrl(photoUri) && !remoteFailed;

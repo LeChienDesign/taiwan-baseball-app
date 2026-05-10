@@ -415,7 +415,7 @@ function makeHitter(input: PlayerSeedInput): AbroadPlayer {
     ...input,
     type: 'hitter',
     teamMeta: input.teamMeta ?? inferTeamMeta(input),
-    seasonStats: {
+    seasonStats: input.seasonStats ?? {
       hitter: {
         avg: '—',
         obp: '—',
@@ -964,6 +964,27 @@ export const abroadPlayers: AbroadPlayer[] = [
     line2: '西武一軍外野手',
     intro: '具備長打與國際賽知名度，是台灣旅日野手的重要代表。',
     recentNote: '優先同步一軍出賽、打席內容、長打表現與新聞異動。',
+    seasonStats: {
+      hitter: {
+        avg: '.208',
+        obp: '.266',
+        slg: '.347',
+        ops: '.613',
+        hr: 2,
+        rbi: 8,
+        sb: 0,
+        hits: 21,
+      },
+    },
+    recentGames: [
+      {
+        date: '2026-05-07',
+        opponent: 'NPB Pacific League / 埼玉西武獅',
+        result: '一軍累計',
+        detail1: '30場 / 101打數 / 21安打 / 8打點',
+        detail2: 'AVG .208 / OBP .266 / SLG .347 / OPS .613 / HR 2',
+      },
+    ],
   }),
 
   makePitcher({
@@ -1096,6 +1117,27 @@ export const abroadPlayers: AbroadPlayer[] = [
     line2: '日本火腿捕手',
     intro: '2026 年轉戰北海道日本火腿鬥士並登錄正式球員，有望與台灣投手形成旅日台灣投捕搭檔。',
     recentNote: '優先同步一軍 / 二軍出賽、先發捕手紀錄、打席內容與登錄異動。',
+    seasonStats: {
+      hitter: {
+        avg: '.130',
+        obp: '.231',
+        slg: '.130',
+        ops: '.361',
+        hr: 0,
+        rbi: 1,
+        sb: 0,
+        hits: 3,
+      },
+    },
+    recentGames: [
+      {
+        date: '2026-04-30',
+        opponent: 'NPB Farm League / 日本火腿二軍',
+        result: '二軍累計',
+        detail1: '14場 / 23打數 / 3安打 / 1打點',
+        detail2: 'AVG .130 / OBP .231 / SLG .130 / OPS .361',
+      },
+    ],
   }),
 
   makePitcher({
