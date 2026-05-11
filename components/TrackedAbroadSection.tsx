@@ -30,12 +30,12 @@ export default function TrackedAbroadSection() {
   );
 
   if (!isHydrated) {
-  return (
-    <View style={styles.section}>
-      <AppLoadingState text="正在讀取追蹤名單..." />
-    </View>
-  );
-}
+    return (
+      <View style={styles.section}>
+        <AppLoadingState text="正在讀取追蹤名單..." />
+      </View>
+    );
+  }
 
   const trackedPlayers = abroadPlayers.filter((player) =>
     favoriteIds.includes(player.id)
@@ -45,7 +45,7 @@ export default function TrackedAbroadSection() {
     return (
       <View style={styles.section}>
         <View style={styles.headerRow}>
-          <Text style={styles.sectionTitle}>我追蹤的旅外</Text>
+          <Text style={styles.sectionTitle}>PLAYER WATCH</Text>
 
           <TouchableOpacity
             onPress={() => router.push('/abroad/favorites')}
@@ -56,12 +56,12 @@ export default function TrackedAbroadSection() {
         </View>
 
         <AppEmptyState
-  title="還沒有追蹤球員"
-  description="到旅外球員頁按下星號收藏後，這裡就會顯示你的追蹤名單。"
-  icon="star-outline"
-  buttonLabel="前往旅外球員"
-  onPress={() => router.push('/(tabs)/abroad')}
-/>
+          title="還沒有追蹤球員"
+          description="到旅外球員頁按下星號收藏後，這裡就會顯示你的追蹤名單。"
+          icon="star-outline"
+          buttonLabel="前往旅外球員"
+          onPress={() => router.push('/(tabs)/abroad')}
+        />
        
       </View>
     );
@@ -70,7 +70,7 @@ export default function TrackedAbroadSection() {
   return (
     <View style={styles.section}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>我追蹤的旅外</Text>
+        <Text style={styles.sectionTitle}>PLAYER WATCH</Text>
 
         <TouchableOpacity
           onPress={() => router.push('/abroad/favorites')}
@@ -116,7 +116,9 @@ export default function TrackedAbroadSection() {
               <Text style={styles.line2} numberOfLines={1}>{player.line2}</Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={16} color="#7f95b4" />
+            <View style={styles.chevronBadge}>
+              <Ionicons name="chevron-forward" size={15} color="#0B2346" />
+            </View>
           </TouchableOpacity>
         ))}
       </View>
@@ -125,18 +127,18 @@ export default function TrackedAbroadSection() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { bg: string; color: string }> = {
-    今日出賽: { bg: '#0b2a4d', color: '#60a5fa' },
-    預告先發: { bg: '#3a2306', color: '#fbbf24' },
-    已完賽: { bg: '#0b2f1f', color: '#34d399' },
-    大聯盟出賽: { bg: '#0b2f1f', color: '#86efac' },
-    傷兵: { bg: '#3b1111', color: '#f87171' },
-    待命: { bg: '#1c2435', color: '#94a3b8' },
+  const map: Record<string, { bg: string; color: string; border: string }> = {
+    今日出賽: { bg: '#F0642B', color: '#FFF7E9', border: '#0B2346' },
+    預告先發: { bg: '#F7D9B8', color: '#0B2346', border: '#F0642B' },
+    已完賽: { bg: '#0B2346', color: '#FFF7E9', border: '#0B2346' },
+    大聯盟出賽: { bg: '#0B2346', color: '#FFF7E9', border: '#0B2346' },
+    傷兵: { bg: '#F0642B', color: '#FFF7E9', border: '#0B2346' },
+    待命: { bg: '#F2E4CF', color: '#0B2346', border: '#0B2346' },
   };
   const badge = map[status] ?? map['待命'];
 
   return (
-    <View style={[styles.badge, { backgroundColor: badge.bg }]}>
+    <View style={[styles.badge, { backgroundColor: badge.bg, borderColor: badge.border }]}> 
       <Text style={[styles.badgeText, { color: badge.color }]}>
         {status}
       </Text>
@@ -146,40 +148,45 @@ function StatusBadge({ status }: { status: string }) {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 12,
+    marginTop: 18,
     paddingHorizontal: 0,
   },
   headerRow: {
-    marginBottom: 7,
+    marginBottom: 12,
     paddingHorizontal: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   sectionTitle: {
-    color: '#ffffff',
-    fontSize: 15,
+    color: '#0B2346',
+    fontSize: 20,
     fontWeight: '900',
-    letterSpacing: -0.3,
+    letterSpacing: 0.5,
   },
   sectionAction: {
-    color: '#93c5fd',
+    color: '#F0642B',
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   listWrap: {
     gap: 10,
   },
   card: {
-    borderRadius: 20,
-    backgroundColor: '#071226',
-    borderWidth: 1,
-    borderColor: '#20304a',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    minHeight: 84,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#FFF7E9',
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    shadowColor: '#7B4F2A',
+    shadowOpacity: 0.13,
+    shadowRadius: 9,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 4,
   },
   info: {
     flex: 1,
@@ -193,38 +200,49 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   name: {
-    color: '#ffffff',
+    color: '#0B2346',
     fontSize: 15,
     fontWeight: '900',
     flex: 1,
   },
   meta: {
     marginTop: 4,
-    color: '#8ea0bb',
+    color: '#64748B',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   line1: {
     marginTop: 5,
-    color: '#dbeafe',
+    color: '#0B2346',
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   line2: {
     marginTop: 3,
-    color: '#8ea0bb',
+    color: '#64748B',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 14,
   },
   badge: {
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
+    borderWidth: 1.5,
     alignSelf: 'flex-start',
   },
   badgeText: {
     fontSize: 9,
     fontWeight: '900',
+  },
+  chevronBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: '#F2E4CF',
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -24,7 +24,7 @@ export default function AppEmptyState({
         <Ionicons
           name={icon}
           size={compact ? 20 : 24}
-          color="#8da2c0"
+          color="#0B2346"
         />
       </View>
 
@@ -51,22 +51,29 @@ export default function AppEmptyState({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 22,
-    backgroundColor: '#111b2a',
-    borderWidth: 1,
-    borderColor: '#1b2940',
+    borderRadius: 24,
+    backgroundColor: '#FFF7E9',
+    borderWidth: 2,
+    borderColor: '#0B2346',
     padding: 22,
     alignItems: 'center',
+    shadowColor: '#7B4F2A',
+    shadowOpacity: 0.13,
+    shadowRadius: 9,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 4,
   },
   cardCompact: {
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 16,
   },
   iconWrap: {
     width: 52,
     height: 52,
     borderRadius: 18,
-    backgroundColor: '#0d1625',
+    backgroundColor: '#F2E4CF',
+    borderWidth: 2,
+    borderColor: '#0B2346',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
@@ -78,17 +85,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    color: '#f8fbff',
+    color: '#0B2346',
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '900',
+    textAlign: 'center',
   },
   titleCompact: {
     fontSize: 16,
   },
   description: {
     marginTop: 8,
-    color: '#8da2c0',
+    color: '#64748B',
     fontSize: 13,
+    fontWeight: '700',
     lineHeight: 20,
     textAlign: 'center',
   },
@@ -97,14 +106,16 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     marginTop: 18,
-    backgroundColor: '#1f4f93',
+    backgroundColor: '#F0642B',
+    borderWidth: 2,
+    borderColor: '#0B2346',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderRadius: 14,
+    borderRadius: 999,
   },
   actionText: {
-    color: '#eef5ff',
+    color: '#FFF7E9',
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '900',
   },
 });

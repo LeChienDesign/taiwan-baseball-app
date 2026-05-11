@@ -99,39 +99,56 @@ export default function HomePage() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         <View style={styles.heroCard}>
+          <View style={styles.heroTicketMetaRow}>
+            <Text style={styles.heroTicketMeta}>YAREN ONE BASEBALL</Text>
+            <Text style={styles.heroTicketNo}>NO. 01</Text>
+          </View>
+
           <View style={styles.heroTopRow}>
-            <Animated.View style={[styles.brandLogoGlow, { transform: [{ scale: logoPulse }] }]}>
+            <View style={styles.heroTextWrap}>
+              <Text style={styles.heroEyebrow}>LIVE LOVE BASEBALL</Text>
+              <Text style={styles.heroTitle}>野人1號</Text>
+              <Text style={styles.heroSubtitle}>TAIWAN BASEBALL FIELD GUIDE</Text>
+            </View>
+
+            <Animated.View style={[styles.brandLogoGlow, { transform: [{ scale: logoPulse }] }]}> 
               <Image
                 source={require('../../assets/brand/yaren-one-logo.png')}
                 style={styles.brandLogo}
                 resizeMode="contain"
               />
             </Animated.View>
-            <View style={styles.heroTextWrap}>
-              <Text style={styles.heroEyebrow}>BASEBALL CONTROL ROOM</Text>
-              <Text style={styles.heroTitle}>野人1號</Text>
-              <Text style={styles.heroSubtitle}>台灣棒球即時情報站</Text>
-            </View>
           </View>
 
           <View style={styles.heroDivider} />
 
-          <Text style={styles.heroDesc}>
-            整合 CPBL、MLB、NPB、KBO 每日賽程、比賽中戰況與旅外球員動態。
-          </Text>
+          <View style={styles.heroBottomRow}>
+            <View style={styles.heroStamp}>
+              <Text style={styles.heroStampText}>GAME DAY</Text>
+            </View>
+            <Text style={styles.heroDesc}>
+              CPBL / MLB / NPB / KBO 即時賽程、Live 戰況與旅外球員動態。
+            </Text>
+          </View>
         </View>
 
-        <TrackedAbroadSection />
+        <View style={styles.playerWatchWrap}>
+          <TrackedAbroadSection />
+        </View>
 
         <View style={styles.summaryCard}>
+          <View style={styles.summaryLabelRow}>
+            <Text style={styles.summaryLabel}>TODAY SCOREBOARD</Text>
+          </View>
+
           <View style={styles.summaryRow}>
             <View style={styles.summaryPill}>
-              <Text style={styles.summaryPillText}>今日總場次 {totalGamesToday}</Text>
+              <Text style={styles.summaryPillNumber}>{totalGamesToday}</Text>
+              <Text style={styles.summaryPillText}>今日場次</Text>
             </View>
             <View style={[styles.summaryPill, styles.summaryPillLive]}>
-              <Text style={styles.summaryPillText}>
-                LIVE {totalLiveToday}
-              </Text>
+              <Text style={styles.summaryPillNumber}>{totalLiveToday}</Text>
+              <Text style={styles.summaryPillText}>LIVE</Text>
             </View>
           </View>
 
@@ -149,7 +166,7 @@ export default function HomePage() {
         {liveGames.length > 0 && (
           <>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>🔴 目前比賽中</Text>
+              <Text style={styles.sectionTitle}>LIVE GAMES</Text>
             </View>
 
             {visibleLiveGames.map((item, index) => (
@@ -187,7 +204,7 @@ export default function HomePage() {
         )}
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>今日焦點賽事</Text>
+          <Text style={styles.sectionTitle}>TODAY FOCUS</Text>
 
           <View style={styles.sectionActions}>
             <TouchableOpacity
@@ -241,114 +258,180 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#061124',
+    backgroundColor: '#F2E4CF',
   },
   content: {
     paddingHorizontal: 14,
-    paddingTop: 18,
-    paddingBottom: 28,
+    paddingTop: 12,
+    paddingBottom: 34,
   },
 
   heroCard: {
-    backgroundColor: '#071226',
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#20304a',
-    paddingHorizontal: 14,
+    backgroundColor: '#FFF7E9',
+    borderRadius: 28,
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 12,
-    marginBottom: 16,
-    shadowColor: '#000000',
-    shadowOpacity: 0.18,
+    marginBottom: 20,
+    shadowColor: '#7B4F2A',
+    shadowOpacity: 0.14,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 6 },
     elevation: 4,
   },
+  heroTicketMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  heroTicketMeta: {
+    color: '#0B2346',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1.8,
+  },
+  heroTicketNo: {
+    color: '#F0642B',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1.4,
+  },
   heroTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   heroTextWrap: {
     flex: 1,
   },
   brandLogoGlow: {
-    width: 92,
-    height: 92,
-    marginRight: 12,
-    borderRadius: 28,
-    shadowColor: '#f97316',
-    shadowOpacity: 0.34,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 6,
+    width: 78,
+    height: 78,
+    marginLeft: 10,
+    borderRadius: 26,
+    backgroundColor: '#F0642B',
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    shadowColor: '#F0642B',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
   },
   brandLogo: {
     width: '100%',
     height: '100%',
   },
   heroEyebrow: {
-    color: '#60a5fa',
-    fontSize: 8,
+    color: '#F0642B',
+    fontSize: 10,
     fontWeight: '900',
-    letterSpacing: 1.2,
+    letterSpacing: 1.4,
     marginBottom: 4,
   },
   heroTitle: {
-    color: '#ffffff',
-    fontSize: 30,
+    color: '#0B2346',
+    fontSize: 35,
     fontWeight: '900',
-    lineHeight: 33,
-    letterSpacing: -0.7,
+    lineHeight: 38,
+    letterSpacing: -1.2,
   },
   heroSubtitle: {
-    color: '#aab6ca',
-    fontSize: 11,
-    fontWeight: '800',
-    marginTop: 3,
+    color: '#2F4668',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.1,
+    marginTop: 4,
   },
   heroDivider: {
-    height: 1,
-    backgroundColor: '#1f2d45',
-    marginTop: 12,
-    marginBottom: 10,
+    height: 2,
+    backgroundColor: '#0B2346',
+    marginTop: 11,
+    marginBottom: 9,
+    opacity: 0.9,
+  },
+  playerWatchWrap: {
+    marginBottom: 4,
+  },
+  heroBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  heroStamp: {
+    borderWidth: 2,
+    borderColor: '#F0642B',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    transform: [{ rotate: '-4deg' }],
+  },
+  heroStampText: {
+    color: '#F0642B',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
   heroDesc: {
-    color: '#c7d2e5',
+    flex: 1,
+    color: '#344761',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 17,
   },
 
   summaryCard: {
-    backgroundColor: '#071226',
-    borderWidth: 1,
-    borderColor: '#20304a',
-    borderRadius: 22,
+    backgroundColor: '#0B2346',
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    borderRadius: 24,
     paddingHorizontal: 12,
-    paddingVertical: 11,
-    marginBottom: 16,
+    paddingVertical: 12,
+    marginTop: 6,
+    marginBottom: 18,
+  },
+  summaryLabelRow: {
+    marginBottom: 10,
+  },
+  summaryLabel: {
+    color: '#F7D9B8',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1.5,
   },
   summaryRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 10,
   },
   summaryPill: {
-    backgroundColor: '#172033',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 999,
+    flex: 1,
+    backgroundColor: '#FFF7E9',
+    borderWidth: 2,
+    borderColor: '#F7D9B8',
+    borderRadius: 20,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   summaryPillLive: {
-    backgroundColor: '#3b1016',
-    borderColor: '#ef4444',
+    backgroundColor: '#F0642B',
+    borderColor: '#F7D9B8',
+  },
+  summaryPillNumber: {
+    color: '#0B2346',
+    fontSize: 24,
+    fontWeight: '900',
+    lineHeight: 28,
   },
   summaryPillText: {
-    color: '#ffffff',
+    color: '#0B2346',
     fontSize: 10,
-    fontWeight: '800',
+    fontWeight: '900',
+    letterSpacing: 0.5,
+    marginTop: 2,
   },
   summaryMiniRow: {
     flexDirection: 'row',
@@ -356,12 +439,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   summaryMiniText: {
-    color: '#aab6ca',
+    color: '#F7D9B8',
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   summaryMiniDivider: {
-    color: '#5f6d88',
+    color: '#F0642B',
     fontSize: 10,
     marginHorizontal: 6,
   },
@@ -370,13 +453,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 4,
     marginBottom: 10,
   },
   sectionTitle: {
-    color: '#ffffff',
-    fontSize: 18,
+    color: '#0B2346',
+    fontSize: 20,
     fontWeight: '900',
-    marginBottom: 12,
+    letterSpacing: 0.4,
+    marginBottom: 10,
   },
   sectionActions: {
     flexDirection: 'row',
@@ -384,20 +469,20 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   seeMoreButton: {
-    backgroundColor: '#22304a',
-    borderWidth: 1,
-    borderColor: '#41506e',
-    borderRadius: 20,
+    backgroundColor: '#FFF7E9',
+    borderWidth: 2,
+    borderColor: '#0B2346',
+    borderRadius: 999,
     minWidth: 86,
-    paddingVertical: 10,
+    paddingVertical: 9,
     paddingHorizontal: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
   seeMoreButtonText: {
-    color: '#dce6f7',
+    color: '#0B2346',
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   // removed: refreshButton, refreshButtonText, filterRow, filterChip, filterChipActive, filterChipText, filterChipTextActive
 
@@ -405,9 +490,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   expandLiveButton: {
-    backgroundColor: '#172033',
-    borderWidth: 1,
-    borderColor: '#334155',
+    backgroundColor: '#FFF7E9',
+    borderWidth: 2,
+    borderColor: '#0B2346',
     borderRadius: 18,
     paddingVertical: 11,
     alignItems: 'center',
@@ -416,7 +501,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   expandLiveButtonText: {
-    color: '#dbeafe',
+    color: '#0B2346',
     fontSize: 11,
     fontWeight: '900',
   },
