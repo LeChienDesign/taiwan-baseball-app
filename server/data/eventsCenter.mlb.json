@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-10T23:14:28.314Z",
+  "updatedAt": "2026-05-11T00:10:45.430Z",
   "date": "2026-05-10",
   "startDate": "2026-05-10",
   "endDate": "2026-05-10",
@@ -730,8 +730,8 @@
       "league": "MLB",
       "date": "2026-05-10",
       "gamePk": 823221,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Game Over",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 134,
@@ -746,7 +746,7 @@
         "logoKey": "SF"
       },
       "awayScore": 6,
-      "homeScore": 4,
+      "homeScore": 7,
       "innings": [
         1,
         2,
@@ -757,7 +757,9 @@
         7,
         8,
         9,
-        10
+        10,
+        11,
+        12
       ],
       "awayLine": {
         "team": "PIT",
@@ -771,7 +773,9 @@
           0,
           0,
           0,
-          2
+          2,
+          0,
+          0
         ],
         "r": 6,
         "h": 7,
@@ -789,14 +793,16 @@
           0,
           0,
           0,
-          "-"
+          2,
+          0,
+          1
         ],
-        "r": 4,
-        "h": 10,
+        "r": 7,
+        "h": 13,
         "e": 2
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下10局",
+      "footerLeft": "Game Over",
+      "footerRight": "下12局",
       "gameDate": "2026-05-10T20:05:00Z"
     },
     {
@@ -1025,7 +1031,7 @@
       "date": "2026-05-10",
       "gamePk": 824113,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Kauffman Stadium",
       "awayTeam": {
         "id": 116,
@@ -1039,31 +1045,37 @@
         "abbreviation": "KC",
         "logoKey": "KC"
       },
-      "awayScore": 0,
+      "awayScore": 3,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2,
+        3
       ],
       "awayLine": {
         "team": "DET",
         "innings": [
+          0,
+          3,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
         "team": "KC",
         "innings": [
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
-        "e": 0
+        "h": 2,
+        "e": 1
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上3局",
       "gameDate": "2026-05-10T23:20:00Z"
     }
   ],
@@ -1795,8 +1807,8 @@
         "league": "MLB",
         "date": "2026-05-10",
         "gamePk": 823221,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 134,
@@ -1811,7 +1823,7 @@
           "logoKey": "SF"
         },
         "awayScore": 6,
-        "homeScore": 4,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -1822,7 +1834,9 @@
           7,
           8,
           9,
-          10
+          10,
+          11,
+          12
         ],
         "awayLine": {
           "team": "PIT",
@@ -1836,7 +1850,9 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            0
           ],
           "r": 6,
           "h": 7,
@@ -1854,14 +1870,16 @@
             0,
             0,
             0,
-            "-"
+            2,
+            0,
+            1
           ],
-          "r": 4,
-          "h": 10,
+          "r": 7,
+          "h": 13,
           "e": 2
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下10局",
+        "footerLeft": "Game Over",
+        "footerRight": "下12局",
         "gameDate": "2026-05-10T20:05:00Z"
       },
       {
@@ -2090,7 +2108,7 @@
         "date": "2026-05-10",
         "gamePk": 824113,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 116,
@@ -2104,31 +2122,37 @@
           "abbreviation": "KC",
           "logoKey": "KC"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "KC",
           "innings": [
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 2,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-05-10T23:20:00Z"
       }
     ]
@@ -2861,8 +2885,8 @@
         "league": "MLB",
         "date": "2026-05-10",
         "gamePk": 823221,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 134,
@@ -2877,7 +2901,7 @@
           "logoKey": "SF"
         },
         "awayScore": 6,
-        "homeScore": 4,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -2888,7 +2912,9 @@
           7,
           8,
           9,
-          10
+          10,
+          11,
+          12
         ],
         "awayLine": {
           "team": "PIT",
@@ -2902,7 +2928,9 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            0
           ],
           "r": 6,
           "h": 7,
@@ -2920,14 +2948,16 @@
             0,
             0,
             0,
-            "-"
+            2,
+            0,
+            1
           ],
-          "r": 4,
-          "h": 10,
+          "r": 7,
+          "h": 13,
           "e": 2
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下10局",
+        "footerLeft": "Game Over",
+        "footerRight": "下12局",
         "gameDate": "2026-05-10T20:05:00Z"
       },
       {
@@ -3156,7 +3186,7 @@
         "date": "2026-05-10",
         "gamePk": 824113,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 116,
@@ -3170,31 +3200,37 @@
           "abbreviation": "KC",
           "logoKey": "KC"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "KC",
           "innings": [
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 2,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-05-10T23:20:00Z"
       }
     ]
