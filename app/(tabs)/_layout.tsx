@@ -1,40 +1,62 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
+import { Image, StyleSheet, Text } from 'react-native';
+
+const tabBarBg = require('../../assets/home/bottom_tab_ticket.png');
+const CN_FONT = 'ZaoZiGongFangXingHei';
 
 export default function TabsLayout() {
+  const [fontsLoaded] = useFonts({
+    ZaoZiGongFangXingHei: require('../../assets/fonts/ZaoZiGongFangXingHei.ttf'),
+  });
+
+  if (!fontsLoaded) return null;
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarIcon: () => null,
+        tabBarIconStyle: {
+          display: 'none',
+          width: 0,
+          height: 0,
+          margin: 0,
+        },
         tabBarStyle: {
-          backgroundColor: '#07111F',
-          borderTopColor: '#0B2346',
-          borderTopWidth: 2,
-          height: 78,
-          paddingTop: 7,
-          paddingBottom: 10,
+          backgroundColor: 'transparent',
+          borderTopColor: 'transparent',
+          borderTopWidth: 0,
+          height: 66,
+          paddingTop: 0,
+          paddingBottom: 8,
           shadowColor: '#0B2346',
-          shadowOpacity: 0.2,
+          shadowOpacity: 0.16,
           shadowRadius: 8,
           shadowOffset: { width: 0, height: -3 },
           elevation: 10,
+          position: 'absolute',
+          overflow: 'hidden',
         },
-        tabBarActiveTintColor: '#F0642B',
-        tabBarInactiveTintColor: '#F7D9B8',
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '900',
-          letterSpacing: 0.1,
+        tabBarBackground: () => (
+          <Image source={tabBarBg} style={styles.tabBarBg} resizeMode="stretch" />
+        ),
+        tabBarItemStyle: {
+          paddingTop: 16,
+          paddingBottom: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
         },
+        tabBarActiveTintColor: '#0B2346',
+        tabBarInactiveTintColor: '#0B2346',
+        tabBarLabelStyle: styles.tabLabel,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: '首頁',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size + 1} color={color} />
-          ),
+          tabBarLabel: ({ color }) => <Text style={[styles.tabLabel, { color }]}>首頁</Text>,
         }}
       />
 
@@ -42,9 +64,7 @@ export default function TabsLayout() {
         name="events"
         options={{
           title: '賽事中心',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid" size={size + 1} color={color} />
-          ),
+          tabBarLabel: ({ color }) => <Text style={[styles.tabLabel, { color }]}>賽事中心</Text>,
         }}
       />
 
@@ -52,9 +72,7 @@ export default function TabsLayout() {
         name="community"
         options={{
           title: '社區棒球',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size + 1} color={color} />
-          ),
+          tabBarLabel: ({ color }) => <Text style={[styles.tabLabel, { color }]}>社區棒球</Text>,
         }}
       />
 
@@ -62,9 +80,7 @@ export default function TabsLayout() {
         name="abroad"
         options={{
           title: '旅外球員',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="airplane" size={size + 1} color={color} />
-          ),
+          tabBarLabel: ({ color }) => <Text style={[styles.tabLabel, { color }]}>旅外球員</Text>,
         }}
       />
 
@@ -84,3 +100,19 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarBg: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  tabLabel: {
+    fontFamily: CN_FONT,
+    fontSize: 13,
+    fontWeight: '400',
+    letterSpacing: 0.1,
+    marginLeft: 8,
+    color: '#0B2346',
+  },
+});
