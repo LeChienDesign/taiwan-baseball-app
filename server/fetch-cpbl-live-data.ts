@@ -9,6 +9,28 @@ type CpblGame = CpblPayload extends { games: infer Games }
     : never
   : never;
 
+const CPBL_SEASON_FALLBACK_PATHS = [
+  path.resolve(process.cwd(), 'data/cpbl-2026.json'),
+  path.resolve(process.cwd(), 'server/data/cpbl-2026.json'),
+  path.resolve(process.cwd(), 'server/data/cpblManualGames.json'),
+];
+
+const CPBL_FALLBACK_DATE_FIELDS = [
+  'date',
+  'gameDate',
+  'scheduledDate',
+  'startDate',
+  'gameDateLocal',
+  'actualDate',
+  'rescheduledDate',
+  'makeUpDate',
+  'makeupDate',
+  'playedDate',
+  'officialDate',
+  'calendarDate',
+  'localDate',
+];
+
 function formatDateInTimeZone(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
@@ -54,8 +76,129 @@ function toDateString(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function normalizeDateValue(value: unknown) {
+  if (!value) return undefined;
+
+  const text = String(value).trim();
+  const matched = text.match(/\d{4}-\d{2}-\d{2}/);
+  if (matched) return matched[0];
+
+  const slashMatched = text.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+  if (slashMatched) {
+    const [, year, month, day] = slashMatched;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  return undefined;
+}
+
+function getTeamName(game: any, side: 'away' | 'home') {
+  const team = side === 'away' ? game?.awayTeam : game?.homeTeam;
+
+  return String(
+    team?.name ??
+    team?.displayName ??
+    team?.shortName ??
+    game?.[`${side}TeamName`] ??
+    game?.[`${side}Name`] ??
+    ''
+  )
+    .replace(/\s+/g, '')
+    .toLowerCase();
+}
+
+function getGameIdentityKey(game: any) {
+  const id = game?.id ?? game?.gameId ?? game?.GameSno ?? game?.gameNo;
+  if (id) return `id:${id}`;
+
+  const away = getTeamName(game, 'away');
+  const home = getTeamName(game, 'home');
+  const time = String(game?.footerRight ?? game?.gameTime ?? game?.time ?? game?.scheduledTime ?? '').slice(0, 5);
+
+  return `match:${away}:${home}:${time}`;
+}
+
+function collectGamesFromPayload(payload: any, targetDate: string) {
+  const games: any[] = [];
+
+  if (Array.isArray(payload?.games)) games.push(...payload.games);
+  if (Array.isArray(payload?.eventsCenter?.cpbl)) games.push(...payload.eventsCenter.cpbl);
+  if (Array.isArray(payload?.gamesByDate?.[targetDate])) games.push(...payload.gamesByDate[targetDate]);
+
+  if (payload?.gamesByDate && typeof payload.gamesByDate === 'object') {
+    for (const [dateKey, dateGames] of Object.entries(payload.gamesByDate)) {
+      if (!Array.isArray(dateGames)) continue;
+
+      for (const game of dateGames) {
+        games.push({
+          ...(game as any),
+          __fallbackDateKey: normalizeDateValue(dateKey),
+        });
+      }
+    }
+  }
+
+  return games;
+}
+
+function isFallbackGameForDate(game: any, targetDate: string) {
+  const candidates = CPBL_FALLBACK_DATE_FIELDS
+    .map((field) => normalizeDateValue(game?.[field]))
+    .filter(Boolean);
+
+  if (game?.__fallbackDateKey) {
+    candidates.push(game.__fallbackDateKey);
+  }
+
+  return candidates.includes(targetDate);
+}
+
+function readCpblFallbackGamesByDate(targetDate: string) {
+  const fallbackGames: any[] = [];
+
+  for (const filePath of CPBL_SEASON_FALLBACK_PATHS) {
+    if (!fs.existsSync(filePath)) continue;
+
+    try {
+      const payload = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      const games = collectGamesFromPayload(payload, targetDate)
+        .filter((game) => isFallbackGameForDate(game, targetDate))
+        .map((game) => ({
+          ...game,
+          source: game?.source ?? 'cpbl-season-fallback',
+          status: game?.status ?? 'SCHEDULED',
+          league: game?.league ?? 'CPBL',
+          date: targetDate,
+          fallbackReason: game?.fallbackReason ?? 'season-schedule-date-match',
+        }));
+
+      fallbackGames.push(...games);
+    } catch (error) {
+      console.warn(`Skipped CPBL fallback file: ${filePath}`);
+      console.warn(error);
+    }
+  }
+
+  return fallbackGames;
+}
+
+function mergeCpblGamesByIdentity(officialGames: CpblGame[], fallbackGames: any[]) {
+  const merged = new Map<string, any>();
+
+  for (const game of fallbackGames) {
+    merged.set(getGameIdentityKey(game), game);
+  }
+
+  for (const game of officialGames) {
+    merged.set(getGameIdentityKey(game), game);
+  }
+
+  return Array.from(merged.values());
 }
 
 function flattenGamesByDate(gamesByDate: Record<string, CpblGame[]>) {
@@ -92,11 +235,15 @@ async function main() {
   ) {
     const date = toDateString(cursor);
     const payload = await fetchCpblOfficialGamesByDate(date);
-    const games = (payload as any)?.games ?? payload ?? [];
+    const officialGames = ((payload as any)?.games ?? payload ?? []) as CpblGame[];
+    const fallbackGames = readCpblFallbackGamesByDate(date);
+    const games = mergeCpblGamesByIdentity(officialGames, fallbackGames) as CpblGame[];
 
     gamesByDate[date] = games;
 
-    console.log(`Fetched CPBL schedule date: ${date} (${games.length} games)`);
+    console.log(
+      `Fetched CPBL schedule date: ${date} (${officialGames.length} official + ${Math.max(0, games.length - officialGames.length)} fallback = ${games.length} games)`
+    );
     printCpblGamesForDate(date, games);
 
     if (delayMs > 0) {
