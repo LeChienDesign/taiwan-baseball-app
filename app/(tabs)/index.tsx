@@ -36,15 +36,12 @@ import kboEventsCenter from '../../server/data/eventsCenter.kbo.json';
 
 const homeImages = {
   hero: require('../../assets/yaren_one_icons_png_pack/baseball_hat.png'),
-  bat: require('../../assets/yaren_one_icons_png_pack/baseball_bat.png'),
-  cap: require('../../assets/yaren_one_icons_png_pack/cap.png'),
   schedule: require('../../assets/yaren_one_icons_png_pack/calendar_schedule.png'),
   hat: require('../../assets/yaren_one_icons_png_pack/baseball_hat.png'),
-  profile: require('../../assets/yaren_one_icons_png_pack/player_profile.png'),
+  profile: require('../../assets/yaren_one_icons_png_pack/小長格.png'),
   jersey: require('../../assets/yaren_one_icons_png_pack/jersey_player.png'),
   map: require('../../assets/yaren_one_icons_png_pack/baseball_map.png'),
   ball: require('../../assets/yaren_one_icons_png_pack/baseball.png'),
-  ticket: require('../../assets/yaren_one_icons_png_pack/ticket.png'),
   horn: require('../../assets/yaren_one_icons_png_pack/horn.png'),
   paperBg: require('../../assets/yaren_one_icons_png_pack/paper_bg.png'),
   scoreTicketBg: require('../../assets/yaren_one_icons_png_pack/score_ticket_bg.png'),
@@ -80,10 +77,12 @@ export default function HomePage() {
     ZaoZiGongFangXingHei: require('../../assets/fonts/ZaoZiGongFangXingHei.ttf'),
   });
   const logoPulse = useRef(new Animated.Value(1)).current;
+  const heroFloat = useRef(new Animated.Value(0)).current;
   const livePulse = useRef(new Animated.Value(0.45)).current;
   const regularSeasonTickerX = useRef(new Animated.Value(0)).current;
   const liveTicketShake = useRef(new Animated.Value(0)).current;
   const playerCardShake = useRef(new Animated.Value(0)).current;
+  const playerCardOpacity = useRef(new Animated.Value(1)).current;
   const [todayGamesPage, setTodayGamesPage] = useState(0);
   const [focusPlayerPage, setFocusPlayerPage] = useState(0);
 
@@ -110,6 +109,23 @@ export default function HomePage() {
         Animated.timing(logoPulse, {
           toValue: 1,
           duration: 1200,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    const heroFloatLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(heroFloat, {
+          toValue: 1,
+          duration: 1800,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(heroFloat, {
+          toValue: 0,
+          duration: 1800,
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
@@ -164,19 +180,22 @@ export default function HomePage() {
     );
 
     logoLoop.start();
+    heroFloatLoop.start();
     liveLoop.start();
     shakeLoop.start();
 
     return () => {
       logoLoop.stop();
+      heroFloatLoop.stop();
       liveLoop.stop();
       shakeLoop.stop();
       logoPulse.setValue(1);
+      heroFloat.setValue(0);
       livePulse.setValue(0.45);
       liveTicketShake.setValue(0);
       playerCardShake.setValue(0);
     };
-  }, [logoPulse, livePulse, liveTicketShake, playerCardShake]);
+  }, [logoPulse, heroFloat, livePulse, liveTicketShake, playerCardShake]);
 
 
   const totalGamesToday =
@@ -369,6 +388,24 @@ export default function HomePage() {
     );
   }
 
+  function addDateKeyDays(dateKey: string, days: number) {
+    const parsed = new Date(`${dateKey}T00:00:00.000Z`);
+    if (Number.isNaN(parsed.getTime())) return dateKey;
+
+    parsed.setUTCDate(parsed.getUTCDate() + days);
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  function getMlbTaiwanDateKey(game: any, dateKey: string) {
+    const rawTime = `${game?.footerRight ?? game?.gameTime ?? game?.time ?? ''}`;
+    const timeMatch = rawTime.match(/^(\d{1,2})[:：](\d{2})/);
+    if (!timeMatch) return dateKey;
+
+    const hour = Number(timeMatch[1]);
+
+    return hour < 12 ? addDateKeyDays(dateKey, 1) : dateKey;
+  }
+
   const awayLogoSource = getTeamLogoSource(primaryGame?.awayTeam);
   const homeLogoSource = getTeamLogoSource(primaryGame?.homeTeam);
 
@@ -419,7 +456,7 @@ export default function HomePage() {
     const text = `${name ?? ''}`.trim().replace(/\s+/g, ' ');
     return text ? text.toUpperCase() : 'PLAYER';
   }
-  const focusPlayerNumber = focusPlayer?.number ?? '77';
+  const focusPlayerNumber = focusPlayer?.number ?? '-';
   const rawFocusPlayerNameEn =
     focusPlayer?.nameAbbrEn ??
     focusPlayer?.abbrNameEn ??
@@ -637,16 +674,22 @@ export default function HomePage() {
     ...getEventsCenterGames(cpblEventsCenter, todayKey, 'CPBL'),
     ...getEventsCenterGames(npbEventsCenter, todayKey, 'NPB'),
     ...getEventsCenterGames(kboEventsCenter, todayKey, 'KBO'),
-    ...getEventsCenterGames(mlbEventsCenter, mlbScheduleKey, 'MLB'),
+    ...getEventsCenterGames(mlbEventsCenter, mlbScheduleKey, 'MLB').map((item) => ({
+      ...item,
+      dateKey: getMlbTaiwanDateKey(item.game, item.dateKey),
+    })),
   ];
 
-  const todayGameSource = allTodayGames
+  const upcomingTodayGames = allTodayGames
     .filter((item) => isUpcomingWithin12Hours(item))
     .sort((a, b) => {
       const aTime = getGameStartDate(a.game, a.dateKey)?.getTime() ?? 0;
       const bTime = getGameStartDate(b.game, b.dateKey)?.getTime() ?? 0;
       return aTime - bTime;
     });
+
+  const todayGameSource = upcomingTodayGames;
+  const todayGamesEmptyMessage = allTodayGames.length > 0 ? '近期無賽事' : '停賽期';
 
   const todayGameRowsAll = todayGameSource.map((item) => {
     const away =
@@ -742,41 +785,51 @@ export default function HomePage() {
 
   useEffect(() => {
     playerCardShake.setValue(0);
+    playerCardOpacity.setValue(0.42);
 
-    const shake = Animated.sequence([
-      Animated.timing(playerCardShake, {
+    const cardChangeMotion = Animated.parallel([
+      Animated.sequence([
+        Animated.timing(playerCardShake, {
+          toValue: 1,
+          duration: 90,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerCardShake, {
+          toValue: -1,
+          duration: 90,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerCardShake, {
+          toValue: 0.65,
+          duration: 80,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerCardShake, {
+          toValue: 0,
+          duration: 90,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.timing(playerCardOpacity, {
         toValue: 1,
-        duration: 90,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(playerCardShake, {
-        toValue: -1,
-        duration: 90,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(playerCardShake, {
-        toValue: 0.65,
-        duration: 80,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(playerCardShake, {
-        toValue: 0,
-        duration: 90,
-        easing: Easing.linear,
+        duration: 420,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
     ]);
 
-    shake.start();
+    cardChangeMotion.start();
 
     return () => {
-      shake.stop();
+      cardChangeMotion.stop();
       playerCardShake.setValue(0);
+      playerCardOpacity.setValue(1);
     };
-  }, [focusPlayerPage, playerCardShake]);
+  }, [focusPlayerPage, playerCardShake, playerCardOpacity]);
 
   function openNav(route: string) {
     router.push(route as any);
@@ -822,11 +875,29 @@ export default function HomePage() {
               resizeMode="contain"
             />
 
-            <Image
+            <Animated.Image
               source={homeImages.hero}
-              style={styles.heroPosterImage}
+              style={[
+                styles.heroPosterImage,
+                {
+                  transform: [
+                    { rotate: '-4deg' },
+                    {
+                      translateY: heroFloat.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, -2],
+                      }),
+                    },
+                  ],
+                },
+              ]}
               resizeMode="contain"
             />
+          </View>
+          <View pointerEvents="none" style={styles.heroTicketTearLine}>
+            {Array.from({ length: 18 }).map((_, index) => (
+              <View key={`hero-tear-${index}`} style={styles.heroTicketTearHole} />
+            ))}
           </View>
         </View>
 
@@ -983,7 +1054,7 @@ export default function HomePage() {
               <View style={styles.todayGamesFixedList}>
                 {todayGameRows.length === 0 ? (
                   <View style={styles.todayGamesEmptyWrap}>
-                    <Text style={styles.todayGamesEmptyText}>未來 12 小時沒有未開賽賽事</Text>
+                    <Text style={styles.todayGamesEmptyText}>{todayGamesEmptyMessage}</Text>
                   </View>
                 ) : (
                   todayGameRows.map((row, index) => (
@@ -1016,6 +1087,7 @@ export default function HomePage() {
             style={[
               styles.playerFocusCardShakeWrap,
               {
+                opacity: playerCardOpacity,
                 transform: [
                   {
                     translateX: playerCardShake.interpolate({
@@ -1113,7 +1185,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 5,
     paddingTop: 1,
-    paddingBottom: 0,
+    paddingBottom: 75,
   },
   topBar: {
     height: 45,
@@ -1198,6 +1270,29 @@ const styles = StyleSheet.create({
     marginBottom: -0,
     overflow: 'hidden',
   },
+  heroTicketTearLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(11,35,70,0.16)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(232,95,42,0.22)',
+    backgroundColor: 'rgba(255,247,233,0.24)',
+  },
+  heroTicketTearHole: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: 'rgba(11,35,70,0.24)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,247,233,0.42)',
+  },
   heroCopyBlock: {
     width: '37%',
     justifyContent: 'center',
@@ -1241,7 +1336,7 @@ const styles = StyleSheet.create({
     right: -20,
     bottom:-25,
     zIndex: 4,
-    transform: [{ rotate: '-4deg' }],
+    // transform: [{ rotate: '-4deg' }],
   },
   heroFieldBadge: {
     width: 500,
