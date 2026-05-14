@@ -406,6 +406,22 @@ export default function HomePage() {
     return hour < 12 ? addDateKeyDays(dateKey, 1) : dateKey;
   }
 
+  function getRecentFinalGames(source: any, league: LeagueKey) {
+    const gamesByDate = source?.gamesByDate ?? {};
+
+    return Object.entries(gamesByDate).flatMap(([dateKey, games]) => {
+      if (!Array.isArray(games)) return [];
+
+      return games
+        .filter((game: any) => isGameFinalLike(game))
+        .map((game: any) => ({
+          league,
+          game,
+          dateKey: league === 'MLB' ? getMlbTaiwanDateKey(game, dateKey) : dateKey,
+        }));
+    });
+  }
+
   const awayLogoSource = getTeamLogoSource(primaryGame?.awayTeam);
   const homeLogoSource = getTeamLogoSource(primaryGame?.homeTeam);
 
@@ -688,42 +704,59 @@ export default function HomePage() {
       return aTime - bTime;
     });
 
+  const recentFinalGames = [
+    ...getRecentFinalGames(cpblEventsCenter, 'CPBL'),
+    ...getRecentFinalGames(mlbEventsCenter, 'MLB'),
+    ...getRecentFinalGames(npbEventsCenter, 'NPB'),
+    ...getRecentFinalGames(kboEventsCenter, 'KBO'),
+  ]
+    .sort((a, b) => {
+      const aTime = getGameStartDate(a.game, a.dateKey)?.getTime() ?? new Date(`${a.dateKey}T00:00:00+08:00`).getTime();
+      const bTime = getGameStartDate(b.game, b.dateKey)?.getTime() ?? new Date(`${b.dateKey}T00:00:00+08:00`).getTime();
+      return bTime - aTime;
+    })
+    .slice(0, 5);
+
   const todayGameSource = upcomingTodayGames;
   const todayGamesEmptyMessage = allTodayGames.length > 0 ? '近期無賽事' : '停賽期';
 
-  const todayGameRowsAll = todayGameSource.map((item) => {
-    const away =
-      item.game.awayTeam?.shortName ??
-      item.game.awayTeam?.name ??
-      '-';
+  const todayGamesPageCount = Math.max(1, Math.ceil(todayGameSource.length / 5));
+  const todayGameRows = todayGameSource
+    .slice(todayGamesPage * 5, todayGamesPage * 5 + 5)
+    .map((item) => {
+      const away =
+        item.game.awayTeam?.shortName ??
+        item.game.awayTeam?.name ??
+        '-';
 
-    const home =
-      item.game.homeTeam?.shortName ??
-      item.game.homeTeam?.name ??
-      '-';
+      const home =
+        item.game.homeTeam?.shortName ??
+        item.game.homeTeam?.name ??
+        '-';
 
-    return {
-      league: item.league,
-      away,
-      home,
-      time: formatUpcomingGameTime(item.game, item.dateKey),
-      awayLogo: getTeamLogoSource(item.game.awayTeam),
-      homeLogo: getTeamLogoSource(item.game.homeTeam),
-    };
-  });
-
-  const todayGamesPageCount = Math.max(1, Math.ceil(todayGameRowsAll.length / 5));
-  const todayGameRows = todayGameRowsAll.slice(todayGamesPage * 5, todayGamesPage * 5 + 5);
+      return {
+        league: item.league,
+        away,
+        home,
+        time: formatUpcomingGameTime(item.game, item.dateKey),
+        awayLogo: getTeamLogoSource(item.game.awayTeam),
+        homeLogo: getTeamLogoSource(item.game.homeTeam),
+      };
+    });
 
   const regularSeasonCardItems = (() => {
     const liveItems = allTodayGames.filter((item) => isGameLiveLike(item.game));
-    const sourceItems = liveItems.length > 0
-      ? liveItems
-      : todayGameSource.length > 0
-        ? todayGameSource
-        : allTodayGames;
 
-    return sourceItems.length > 0 ? sourceItems : displayedGames;
+    if (liveItems.length > 0) {
+      const finalFillers = recentFinalGames.filter((finalItem) => {
+        const finalGameId = finalItem?.game?.id;
+        return !finalGameId || !liveItems.some((liveItem) => liveItem?.game?.id === finalGameId);
+      });
+
+      return [...liveItems, ...finalFillers].slice(0, 3);
+    }
+
+    return recentFinalGames.length > 0 ? recentFinalGames.slice(0, 3) : displayedGames.slice(0, 3);
   })();
 
   const regularSeasonCardLoopItems = regularSeasonCardItems.length > 0
@@ -784,7 +817,7 @@ export default function HomePage() {
   }, [recentActivePlayers.length]);
 
   useEffect(() => {
-    playerCardShake.setValue(0);
+    playerCardShake.setValue(1);
     playerCardOpacity.setValue(0.42);
 
     const cardChangeMotion = Animated.parallel([
@@ -816,7 +849,7 @@ export default function HomePage() {
       ]),
       Animated.timing(playerCardOpacity, {
         toValue: 1,
-        duration: 420,
+        duration: 180,
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
@@ -1264,7 +1297,7 @@ const styles = StyleSheet.create({
     borderColor: '#F2E4CF',
   },
   posterHero: {
-    minHeight: 360,
+    minHeight: 0,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: -0,
@@ -1294,20 +1327,20 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,247,233,0.42)',
   },
   heroCopyBlock: {
-    width: '37%',
+    width: '33%',
     justifyContent: 'center',
     paddingLeft: 2,
-    zIndex: 8,
+    zIndex: 5,
   },
   posterTitle: {
     color: '#E85F2A',
     fontFamily: APP_FONT,
-    fontSize: 45,
+    fontSize: 38,
     fontWeight: '900',
-    letterSpacing: -0.1,
-    lineHeight: 50,
+    letterSpacing: -2,
+    lineHeight: 38,
     textShadowColor: '#FFF7E9',
-    textShadowRadius: 1,
+    textShadowRadius: 3,
     textShadowOffset: { width: 2, height: 2 },
     width: 555,
   },
@@ -1316,33 +1349,33 @@ const styles = StyleSheet.create({
     fontFamily: APP_FONT,
     fontSize: 24,
     fontWeight: '900',
-    letterSpacing: 0.6,
-    lineHeight: 30,
+    letterSpacing: 0.1,
+    lineHeight: 22,
     marginTop: 0,
-    width: 555,
+    width: 150,
   },
   heroIllustration: {
     flex: 1,
-    minHeight: 360,
+    minHeight: 1,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    marginLeft: -34,
+    marginLeft: -1,
   },
   heroPosterImage: {
     position: 'absolute',
-    width: 350,
+    width: 310,
     height: 428,
-    right: -20,
-    bottom:-25,
+    right: 1,
+    bottom:-50,
     zIndex: 4,
     // transform: [{ rotate: '-4deg' }],
   },
   heroFieldBadge: {
     width: 500,
-    height: 555,
-    marginLeft: -56,
-    marginTop: -120,
+    height: 288,
+    marginLeft: -10,
+    marginTop: 30,
     zIndex: 3,
   },
   heroOrangeCircle: {
