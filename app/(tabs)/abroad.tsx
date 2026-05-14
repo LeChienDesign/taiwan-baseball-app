@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
+  ImageBackground,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -16,7 +17,7 @@ import { abroadPlayers as seedAbroadPlayers } from '../../data/abroadPlayers';
 import { useAbroadLiveData } from '../../hooks/useAbroadLiveData';
 import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
-import AbroadPlayerAvatar from '../../components/AbroadPlayerAvatar';
+import VintagePlayerCard from '../../components/vintage/VintagePlayerCard';
 import {
   toggleAbroadFavorite,
   useAbroadFavorites,
@@ -27,15 +28,16 @@ import {
   type AbroadFilter,
   type AbroadPlayerLike,
   filterAndSortAbroadPlayers,
-  formatAbroadHandLine,
-  formatAbroadLevelLine,
   formatAbroadSyncLabel,
-  formatAbroadTeamLine,
-  getAbroadPlayerStatus,
   mergeAbroadPlayerViewModels,
 } from '../../lib/viewModels/abroadPlayerViewModel';
 
+const APP_FONT = 'CityBurn';
+const CN_FONT = 'ZaoZiGongFangXingHei';
 
+const abroadImages = {
+  paperBg: require('../../assets/yaren_one_icons_png_pack/paper_bg.png'),
+};
 
 export default function AbroadScreen() {
   const router = useRouter();
@@ -88,14 +90,19 @@ export default function AbroadScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
+      <ImageBackground
+        source={abroadImages.paperBg}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <ScrollView
         style={styles.screen}
         contentContainerStyle={styles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={refresh}
-            tintColor="#7fb0ff"
+            tintColor="#9B5A30"
           />
         }
       >
@@ -114,7 +121,7 @@ export default function AbroadScreen() {
             <Ionicons
               name="refresh-outline"
               size={22}
-              color={refreshing ? '#6d83a5' : '#eaf2ff'}
+              color={refreshing ? '#9B7B56' : '#10213D'}
             />
           </TouchableOpacity>
         </View>
@@ -127,12 +134,12 @@ export default function AbroadScreen() {
         </View>
 
         <View style={styles.searchWrap}>
-          <Ionicons name="search-outline" size={22} color="#8ea6c9" />
+          <Ionicons name="search-outline" size={22} color="#9B5A30" />
           <TextInput
             value={searchText}
             onChangeText={setSearchText}
             placeholder="搜尋球員、球隊、層級"
-            placeholderTextColor="#6f86a7"
+            placeholderTextColor="#9B7B56"
             style={styles.searchInput}
           />
         </View>
@@ -177,55 +184,18 @@ export default function AbroadScreen() {
             const favorite = isFavorite(item.id);
 
             return (
-              <TouchableOpacity
+              <VintagePlayerCard
                 key={item.id}
-                style={styles.card}
-                activeOpacity={0.9}
+                player={item}
+                favorite={favorite}
                 onPress={() => router.push(`/abroad/${item.id}`)}
-              >
-                <AbroadPlayerAvatar
-                  name={item.name}
-                  team={item.team}
-                  league={item.league}
-                  level={item.level}
-                  teamCode={item.teamMeta?.code ?? item.teamMeta?.abbreviation}
-                  logoKey={item.teamMeta?.logoKey}
-                  photoUri={item.officialPhotoUrl}
-                  teamColor={item.teamColor}
-                  size={86}
-                  textSize={28}
-                  borderRadius={26}
-                />
-
-                <View style={styles.cardBody}>
-                  <View style={styles.nameRow}>
-                    <Text style={styles.playerName}>{item.name}</Text>
-                    <View style={styles.statusBadge}>
-                      <Text style={styles.statusBadgeText}>{getAbroadPlayerStatus(item)}</Text>
-                    </View>
-                  </View>
-
-                  <Text style={styles.teamText}>{`#${item.number ?? '—'} • ${formatAbroadTeamLine(item)}`}</Text>
-                  <Text style={styles.metaText}>{formatAbroadLevelLine(item)}</Text>
-                  <Text style={styles.metaText}>{formatAbroadHandLine(item)}</Text>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.favoriteBtn}
-                  activeOpacity={0.88}
-                  onPress={() => toggleAbroadFavorite(item.id)}
-                >
-                  <Ionicons
-                    name={favorite ? 'star' : 'star-outline'}
-                    size={24}
-                    color={favorite ? '#fbbf24' : '#d5e3fb'}
-                  />
-                </TouchableOpacity>
-              </TouchableOpacity>
+                onToggleFavorite={() => toggleAbroadFavorite(item.id)}
+              />
             );
           })
         )}
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -233,15 +203,18 @@ export default function AbroadScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#09111f',
+    backgroundColor: '#F3E1BE',
+  },
+  backgroundImage: {
+    flex: 1,
   },
   screen: {
     flex: 1,
-    backgroundColor: '#09111f',
+    backgroundColor: 'transparent',
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: 14,
+    paddingTop: 12,
     paddingBottom: 120,
   },
 
@@ -252,23 +225,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   pageTitle: {
-    color: '#f7fbff',
-    fontSize: 28,
+    color: '#10213D',
+    fontFamily: CN_FONT,
+    fontSize: 34,
     fontWeight: '900',
+    letterSpacing: 1,
   },
   pageSubtitle: {
     marginTop: 4,
-    color: '#8ea6c9',
+    color: '#6E5131',
+    fontFamily: APP_FONT,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   headerRefreshBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: 18,
+    width: 48,
+    height: 48,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: '#1d2b42',
-    backgroundColor: '#101a29',
+    borderColor: '#B77945',
+    backgroundColor: 'rgba(255, 248, 232, 0.68)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -280,46 +256,49 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   syncBadge: {
-    borderRadius: 999,
-    backgroundColor: '#143768',
+    borderRadius: 0,
+    backgroundColor: 'rgba(255, 248, 232, 0.72)',
     borderWidth: 1,
-    borderColor: '#2a5ea1',
+    borderColor: '#B77945',
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
   syncBadgeFallback: {
-    backgroundColor: '#3b2506',
-    borderColor: '#7c5b17',
+    backgroundColor: 'rgba(179, 109, 49, 0.16)',
+    borderColor: '#B77945',
   },
   syncBadgeText: {
-    color: '#dbeafe',
+    color: '#10213D',
+    fontFamily: APP_FONT,
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   syncError: {
     marginLeft: 10,
-    color: '#fda4af',
+    color: '#9B3D2E',
+    fontFamily: CN_FONT,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 
   searchWrap: {
-    height: 60,
-    borderRadius: 22,
+    height: 54,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: '#1a2d48',
-    backgroundColor: '#101a29',
+    borderColor: '#B77945',
+    backgroundColor: 'rgba(255, 248, 232, 0.72)',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     marginBottom: 14,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
-    color: '#eef5ff',
-    fontSize: 18,
-    fontWeight: '700',
+    color: '#10213D',
+    fontFamily: CN_FONT,
+    fontSize: 16,
+    fontWeight: '800',
   },
 
   filterRow: {
@@ -327,27 +306,28 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   filterChip: {
-    height: 52,
-    paddingHorizontal: 22,
-    borderRadius: 22,
+    height: 46,
+    paddingHorizontal: 18,
+    borderRadius: 0,
     borderWidth: 1,
-    borderColor: '#22324b',
-    backgroundColor: '#101a29',
+    borderColor: '#B77945',
+    backgroundColor: 'rgba(255, 248, 232, 0.54)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: '#1f4d92',
-    borderColor: '#4277c9',
+    backgroundColor: '#10213D',
+    borderColor: '#10213D',
   },
   filterChipText: {
-    color: '#c7d7f0',
-    fontSize: 16,
+    color: '#6E5131',
+    fontFamily: CN_FONT,
+    fontSize: 15,
     fontWeight: '900',
   },
   filterChipTextActive: {
-    color: '#f4f9ff',
+    color: '#F8E7C7',
   },
 
   sectionHead: {
@@ -358,72 +338,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    color: '#f8fbff',
+    color: '#10213D',
+    fontFamily: CN_FONT,
     fontSize: 22,
     fontWeight: '900',
   },
   sectionCount: {
-    color: '#6cb2ff',
+    color: '#9B5A30',
+    fontFamily: CN_FONT,
     fontSize: 18,
     fontWeight: '900',
-  },
-
-  card: {
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: '#1c2d47',
-    backgroundColor: '#101a29',
-    padding: 16,
-    marginBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardBody: {
-    flex: 1,
-    marginLeft: 14,
-    paddingRight: 10,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  playerName: {
-    color: '#f8fbff',
-    fontSize: 28,
-    fontWeight: '900',
-  },
-  statusBadge: {
-    marginLeft: 10,
-    borderRadius: 999,
-    backgroundColor: '#113b73',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  statusBadgeText: {
-    color: '#9ec5ff',
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  teamText: {
-    marginTop: 8,
-    color: '#a9bddb',
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  metaText: {
-    marginTop: 6,
-    color: '#d4e2f6',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-
-  favoriteBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: 18,
-    backgroundColor: '#0d182a',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
