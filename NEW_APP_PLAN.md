@@ -923,6 +923,40 @@ npx tsc --noEmit
 git add 'app/(tabs)/index.tsx'
 ```
 
+## 13.1 近期旅外復古票券救援踩雷紀錄（2026-05-14）
+
+```txt
+1. 旅外票券卡如果已經做好但畫面沒出現，優先檢查 app/(tabs)/abroad.tsx 是否真的 import / render VintagePlayerCard；不要只改 components/vintage/VintagePlayerCard.tsx。
+2. grep 只看到 sortedFilteredPlayers.map、不看到 VintagePlayerCard，代表 abroad.tsx 還在舊卡片 render flow。
+3. 旅外頁面整體底色 / 搜尋框 / filter chip / 標題不在 VintagePlayerCard.tsx，而是在 app/(tabs)/abroad.tsx。
+4. 卡片有出現但外層仍是深藍科技風，表示 VintagePlayerCard 已接上，但 abroad.tsx 的 safeArea / screen / searchWrap / filterChip / pageTitle 還沒改乾淨。
+5. 背景底圖若要與首頁一致，旅外頁要用 ImageBackground 包 ScrollView，source 指向 assets/yaren_one_icons_png_pack/paper_bg.png，screen 背景改 transparent。
+6. fontFamily 不會自動套用到所有 Text；pageTitle、pageSubtitle、syncBadgeText、searchInput、filterChipText、sectionTitle、sectionCount 都要逐一加。
+7. 中文文字用 CN_FONT，英文 / 數字 / 同步時間用 APP_FONT；混合字串不要整行硬套同一個字體。
+8. oboe 有時會改到目前 Xcode 開啟的錯誤檔案；若 patch 結果只碰到不相關檔案，要立刻停下來，確認目標檔案是否是 app/(tabs)/abroad.tsx。
+9. React Native 本機圖片路徑與檔名大小寫要完全一致；中文檔名可以用，但 require map 必須明確寫在 TS/TSX。
+10. 不要用 git add . 做救援 commit；旅外 UI、刪除 PSD、live data snapshot 要分開 commit。
+11. server/data/*.json 是 live snapshot；若只是抓資料更新，應另開 commit，例如 Update baseball live data snapshots，不要混進 UI 修復 commit。
+12. 備份過的 PSD 可刪，但要單獨 commit；不確定用途的 assets/_recovered_* 先檢查再刪。
+13. 每次救援後先 npx tsc --noEmit，再 git status --short，再分檔 git add。
+14. commit 後仍要再 git status --short，確認是否還有 server/data 或 recovered assets 殘留。
+15. 未追蹤素材檔是最高風險區；若當天有大量 PNG / PSD / generated assets，禁止使用 git stash -u、git clean、reset --hard、整包 restore。
+16. 推送 code 前若有未追蹤素材，先把素材 commit / 複製到安全資料夾 / 或確認已備份；不要為了推單一 JSON 改動去 stash 整包素材。
+17. assets/_recovered_* 只能當臨時救援資料夾，不確定內容前不可刪；但也不要混進一般 UI / live data commit。
+18. 圖片缺檔造成 bundling failed 時，先改引用到既有穩定檔，或補回同名檔；不要連續大範圍切換首頁圖片 require，避免把 UI 狀態越改越亂。
+19. iOS 顯示 non-std C++ exception / RCTFatal 時，不要只看 Xcode stack；優先看 Metro 終端紅字、npx tsc --noEmit、JSON 是否有 conflict marker。
+20. server/data/*.json 若留下 <<<<<<< / ======= / >>>>>>>，可能造成 tsc 錯誤或 App runtime crash；修完一定要跑 npx tsc --noEmit。
+21. git restore --source=origin/main 不一定安全；若 origin/main 已經被壞 JSON 推上去，restore 會把 conflict marker 還原回本機。
+22. 修大型 JSON conflict 時，優先重新 fetch / 使用已知正常 commit 版本 / 使用 script 移除 marker；不要手動在檔案中段亂改球員資料。
+23. 救援時不要把首頁切成 Safe Mode 後忘記還原；任何暫時保命 UI 改動都要明確標記、驗證後立刻還原或單獨 commit。
+24. 旅外球員頁 code 是否真的壞，先用 git diff 比對 app/(tabs)/abroad.tsx 與 app/(tabs)/abroad/[id].tsx；若 diff 無輸出，問題通常在資料或素材，不在頁面 code。
+25. reflog 可用來判斷目前版本時間點；例如 c9ef47d 與現有 abroad.tsx 無差異，就代表旅外頁仍是該時間點版本，不要盲目重寫。
+26. push rejected 時只做 git pull --rebase origin main；若 rebase 衝突，先停下來看衝突檔，不要接著 stash / reset / restore。
+27. 救援 commit 必須小而準：JSON conflict、UI 修復、素材備份、live data snapshot 分開 commit，避免一個錯誤回滾時連素材一起被拖走。
+28. Oboe / 自動 patch 若連續失敗，不要繼續宣稱已修改；改用明確 terminal 指令或要求先貼檔案前 20 行確認。
+29. 當使用者情緒明顯焦慮時，先停手保護現狀：git status、tsc、可跑狀態、已推 commit 四件事優先，不要再提新功能或大重構。
+```
+
 ---
 
 # 14. 驗證流程
