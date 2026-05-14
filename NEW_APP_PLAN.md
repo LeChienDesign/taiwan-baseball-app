@@ -923,6 +923,31 @@ npx tsc --noEmit
 git add 'app/(tabs)/index.tsx'
 ```
 
+## 13.1 首頁效能與 Git 救援紀錄（2026-05-14）
+
+```txt
+1. 首頁 Reload 後 Today / Player 卡片顯示慢，不一定是下方卡片本身；本次真正瓶頸是上方 regularSeasonTicker 一次 render 太多票卡。
+2. Today’s Games 底圖 today_games_ticket_bg.png 移除後有變快，但不是主因；恢復底圖後仍慢，代表需往上層 render 量排查。
+3. 把 Today’s Games 隊徽改成文字沒有改善，代表單純 logo Image 不是主因。
+4. regularSeasonCardLoopItems 若用 [...regularSeasonCardItems, ...regularSeasonCardItems]，實際 render 量會翻倍；5 場會變 10 張票卡。
+5. 例行賽跑馬最多 5 場時，會拖慢下方 Today / Player 首次顯示；改成最多 3 場後速度明顯改善。
+6. 目前首頁例行賽跑馬規則：有 LIVE 時顯示 LIVE + 最近 FINAL 補滿最多 3 場；沒有 LIVE 時顯示最近 3 場 FINAL。
+7. LIVE 即使只剩 1 場，也不要只顯示 1 場；用最近 FINAL 補足跑馬內容，避免畫面太空。
+8. 若未來要恢復 5 場跑馬，應先改成只 render 可視範圍 / FlatList / 虛擬化，不要直接回到整排 ImageBackground map。
+9. score_ticket_bg.png 約 571KB 不算大；瓶頸更像多張 ImageBackground + 多張隊徽 + Animated.loop 同時啟動。
+10. 若首頁首次載入卡頓，排查順序：先看 render 張數，再看動畫，再看圖片大小；不要只看 PNG 檔案大小。
+11. regularSeason ticker 仍應維持跑馬模式；不要為了效能改成單張切換，除非 UI 需求明確改變。
+12. 修改 `app/(tabs)/index.tsx` 時，zsh 路徑要加引號：`git add "app/(tabs)/index.tsx"`。
+13. push rejected 時先 `git pull --rebase origin main`；若工作區有未暫存改動，rebase 會失敗。
+14. stash 前要先知道 stash 會把哪些改動收進去；`git stash push -u` 會連未追蹤檔一起收，素材多時高風險。
+15. 本次 rebase 卡在舊 live data snapshot commit，衝突檔為 server/data/*.json；此類大型 live JSON 衝突可用 `git rebase --skip` 跳過舊資料快照。
+16. `stash pop` 後若 server/data/*.json 衝突，且只想保留遠端最新資料，可用 `git restore --theirs server/data/...` 再 `git add` 解衝突。
+17. 圖片尺寸更新與首頁 code 優化要分開 commit；本次分成 `Optimize home ticker render performance` 與 `Update home ticket artwork sizes`。
+18. 若 commit 訊息說圖片尺寸，卻一起包含 server/data JSON，代表前面解衝突時把 data 也 staged；下次要先 `git status --short` 檢查 staged 清單。
+19. git status 空白才代表工作區完全乾淨；不要只看 push 成功。
+20. 本次首頁效能版本已推上 main，最新重點 commit：`Optimize home ticker render performance`、`Update home ticket artwork sizes`。
+```
+
 ## 13.1 近期旅外復古票券救援踩雷紀錄（2026-05-14）
 
 ```txt
