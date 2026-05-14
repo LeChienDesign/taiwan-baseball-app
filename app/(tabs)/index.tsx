@@ -12,6 +12,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  PanResponder,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -48,6 +49,7 @@ const homeImages = {
   todayGamesTicketBg: require('../../assets/yaren_one_icons_png_pack/today_games_ticket_bg.png'),
   playerFocusTicketBg: require('../../assets/yaren_one_icons_png_pack/player_focus_ticket_bg.png'),
   avatarRing: require('../../assets/yaren_one_icons_png_pack/avatar_ring.png'),
+  finalStamp: require('../../assets/yaren_one_icons_png_pack/FINAL.png'),
 };
 
 const REGULAR_SEASON_TICKET_WIDTH = Dimensions.get('window').width - 10;
@@ -80,11 +82,16 @@ export default function HomePage() {
   const heroFloat = useRef(new Animated.Value(0)).current;
   const livePulse = useRef(new Animated.Value(0.45)).current;
   const regularSeasonTickerX = useRef(new Animated.Value(0)).current;
+  const regularSeasonTickerAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const regularSeasonDragStartX = useRef(0);
   const liveTicketShake = useRef(new Animated.Value(0)).current;
   const playerCardShake = useRef(new Animated.Value(0)).current;
   const playerCardOpacity = useRef(new Animated.Value(1)).current;
+  const playerCardSlideX = useRef(new Animated.Value(0)).current;
   const [todayGamesPage, setTodayGamesPage] = useState(0);
   const [focusPlayerPage, setFocusPlayerPage] = useState(0);
+  const [regularSeasonTickerHydrated, setRegularSeasonTickerHydrated] = useState(false);
+  const [homeScrollEnabled, setHomeScrollEnabled] = useState(false);
 
   const {
     todayKey,
@@ -397,13 +404,48 @@ export default function HomePage() {
   }
 
   function getMlbTaiwanDateKey(game: any, dateKey: string) {
-    const rawTime = `${game?.footerRight ?? game?.gameTime ?? game?.time ?? ''}`;
-    const timeMatch = rawTime.match(/^(\d{1,2})[:：](\d{2})/);
+    const rawTime = `${
+      game?.gameTimeText ??
+      game?.timeText ??
+      game?.startTimeText ??
+      game?.startTimeLocal ??
+      game?.gameTime ??
+      game?.time ??
+      game?.scheduledTime ??
+      game?.footerRight ??
+      ''
+    }`;
+    const timeMatch = rawTime.match(/(\d{1,2})[:：](\d{2})\s*(AM|PM|上午|下午)?/i);
     if (!timeMatch) return dateKey;
 
     const hour = Number(timeMatch[1]);
+    const meridiem = `${timeMatch[3] ?? ''}`.toLowerCase();
+    const isMorningGame = meridiem === 'am' || meridiem === '上午' || (!meridiem && hour < 12);
 
-    return hour < 12 ? addDateKeyDays(dateKey, 1) : dateKey;
+    return isMorningGame ? addDateKeyDays(dateKey, 1) : dateKey;
+  }
+
+  function isFinalWithin12Hours(game: any, dateKey: string) {
+    if (!isGameFinalLike(game)) return false;
+
+    const now = new Date();
+    const todayTaipeiKey = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' });
+    const yesterdayTaipeiKey = addDateKeyDays(todayTaipeiKey, -1);
+    const gameDate = getGameStartDate(game, dateKey);
+    const gameTaipeiKey = gameDate
+      ? gameDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' })
+      : dateKey;
+
+    if (gameTaipeiKey !== todayTaipeiKey && gameTaipeiKey !== yesterdayTaipeiKey) {
+      return false;
+    }
+
+    const gameTime = gameDate?.getTime();
+    if (!gameTime) return true;
+
+    const diffMs = now.getTime() - gameTime;
+
+    return diffMs >= 0 && diffMs <= 18 * 60 * 60 * 1000;
   }
 
   function getRecentFinalGames(source: any, league: LeagueKey) {
@@ -413,12 +455,12 @@ export default function HomePage() {
       if (!Array.isArray(games)) return [];
 
       return games
-        .filter((game: any) => isGameFinalLike(game))
         .map((game: any) => ({
           league,
           game,
-          dateKey: league === 'MLB' ? getMlbTaiwanDateKey(game, dateKey) : dateKey,
-        }));
+          dateKey,
+        }))
+        .filter((item) => isFinalWithin12Hours(item.game, item.dateKey));
     });
   }
 
@@ -684,16 +726,18 @@ export default function HomePage() {
   const [rawFocusGameLineOne, rawFocusGameLineTwo] = buildFocusStatLines(focusPlayer, focusRecentGame);
   const [focusGameLineOne, focusGameLineTwo] = fitFocusStatLines(rawFocusGameLineOne, rawFocusGameLineTwo);
 
-  const mlbScheduleKey = Object.keys((mlbEventsCenter as any).gamesByDate ?? {}).slice(-1)[0] ?? mlbTodayKey;
+  const mlbScheduleKeys = Array.from(new Set([
+    addDateKeyDays(mlbTodayKey, -1),
+    mlbTodayKey,
+    addDateKeyDays(mlbTodayKey, 1),
+    ...Object.keys((mlbEventsCenter as any).gamesByDate ?? {}).slice(-2),
+  ]));
 
   const allTodayGames = [
     ...getEventsCenterGames(cpblEventsCenter, todayKey, 'CPBL'),
     ...getEventsCenterGames(npbEventsCenter, todayKey, 'NPB'),
     ...getEventsCenterGames(kboEventsCenter, todayKey, 'KBO'),
-    ...getEventsCenterGames(mlbEventsCenter, mlbScheduleKey, 'MLB').map((item) => ({
-      ...item,
-      dateKey: getMlbTaiwanDateKey(item.game, item.dateKey),
-    })),
+    ...mlbScheduleKeys.flatMap((dateKey) => getEventsCenterGames(mlbEventsCenter, dateKey, 'MLB')),
   ];
 
   const upcomingTodayGames = allTodayGames
@@ -744,7 +788,7 @@ export default function HomePage() {
       };
     });
 
-  const regularSeasonCardItems = (() => {
+  const regularSeasonCardSourceItems = (() => {
     const liveItems = allTodayGames.filter((item) => isGameLiveLike(item.game));
 
     if (liveItems.length > 0) {
@@ -753,11 +797,17 @@ export default function HomePage() {
         return !finalGameId || !liveItems.some((liveItem) => liveItem?.game?.id === finalGameId);
       });
 
-      return [...liveItems, ...finalFillers].slice(0, 3);
+      return [...liveItems, ...finalFillers];
     }
 
-    return recentFinalGames.length > 0 ? recentFinalGames.slice(0, 3) : displayedGames.slice(0, 3);
+    return recentFinalGames;
   })();
+
+  const regularSeasonInitialItems = regularSeasonCardSourceItems.slice(0, 3);
+  const regularSeasonHydratedItems = regularSeasonCardSourceItems.filter((item) => isGameLiveLike(item.game));
+  const regularSeasonCardItems = regularSeasonTickerHydrated && regularSeasonHydratedItems.length > 0
+    ? regularSeasonHydratedItems
+    : regularSeasonInitialItems;
 
   const regularSeasonCardLoopItems = regularSeasonCardItems.length > 0
     ? [...regularSeasonCardItems, ...regularSeasonCardItems]
@@ -766,26 +816,90 @@ export default function HomePage() {
   const regularSeasonTickerDistance =
     (REGULAR_SEASON_TICKET_WIDTH + REGULAR_SEASON_TICKET_GAP) * Math.max(1, regularSeasonCardItems.length);
 
-  useEffect(() => {
-    regularSeasonTickerX.setValue(0);
+  function normalizeRegularSeasonTickerX(value: number) {
+    if (regularSeasonTickerDistance <= 0) return 0;
+
+    const normalized = value % regularSeasonTickerDistance;
+    return normalized > 0 ? normalized - regularSeasonTickerDistance : normalized;
+  }
+
+  function startRegularSeasonTicker(fromValue = 0) {
+    regularSeasonTickerAnimationRef.current?.stop();
 
     if (regularSeasonCardItems.length <= 1) {
+      regularSeasonTickerX.setValue(0);
       return;
     }
 
-    const tickerLoop = Animated.loop(
-      Animated.timing(regularSeasonTickerX, {
-        toValue: -regularSeasonTickerDistance,
-        duration: Math.max(12000, regularSeasonCardItems.length * 5600),
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    );
+    const normalizedFrom = normalizeRegularSeasonTickerX(fromValue);
+    const remainingDistance = Math.max(1, regularSeasonTickerDistance + normalizedFrom);
+    const durationPerPixel = Math.max(12000, regularSeasonCardItems.length * 5600) / regularSeasonTickerDistance;
 
-    tickerLoop.start();
+    regularSeasonTickerX.setValue(normalizedFrom);
+
+    const animation = Animated.timing(regularSeasonTickerX, {
+      toValue: -regularSeasonTickerDistance,
+      duration: remainingDistance * durationPerPixel,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    });
+
+    regularSeasonTickerAnimationRef.current = animation;
+    animation.start(({ finished }) => {
+      if (!finished) return;
+      startRegularSeasonTicker(0);
+    });
+  }
+
+  const regularSeasonTickerPanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: () => true,
+      onPanResponderGrant: () => {
+        setHomeScrollEnabled(false);
+        regularSeasonTickerAnimationRef.current?.stop();
+        regularSeasonTickerX.stopAnimation((value) => {
+          regularSeasonDragStartX.current = value;
+        });
+      },
+      onPanResponderMove: (_, gestureState) => {
+        const nextValue = normalizeRegularSeasonTickerX(regularSeasonDragStartX.current + gestureState.dx);
+        regularSeasonTickerX.setValue(nextValue);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        setHomeScrollEnabled(false);
+        const nextValue = normalizeRegularSeasonTickerX(regularSeasonDragStartX.current + gestureState.dx);
+        startRegularSeasonTicker(nextValue);
+      },
+      onPanResponderTerminate: () => {
+        setHomeScrollEnabled(false);
+        regularSeasonTickerX.stopAnimation((value) => {
+          startRegularSeasonTicker(value);
+        });
+      },
+    })
+  ).current;
+
+
+  useEffect(() => {
+    setRegularSeasonTickerHydrated(false);
+
+    const timer = setTimeout(() => {
+      setRegularSeasonTickerHydrated(true);
+    }, 900);
+
+    return () => clearTimeout(timer);
+  }, [regularSeasonCardSourceItems.length]);
+
+  useEffect(() => {
+    startRegularSeasonTicker(0);
 
     return () => {
-      tickerLoop.stop();
+      regularSeasonTickerAnimationRef.current?.stop();
       regularSeasonTickerX.setValue(0);
     };
   }, [regularSeasonTickerDistance, regularSeasonCardItems.length, regularSeasonTickerX]);
@@ -817,40 +931,41 @@ export default function HomePage() {
   }, [recentActivePlayers.length]);
 
   useEffect(() => {
-    playerCardShake.setValue(1);
-    playerCardOpacity.setValue(0.42);
+    playerCardShake.setValue(0.8);
+    playerCardOpacity.setValue(0.35);
+    playerCardSlideX.setValue(120);
 
     const cardChangeMotion = Animated.parallel([
       Animated.sequence([
         Animated.timing(playerCardShake, {
           toValue: 1,
-          duration: 90,
+          duration: 80,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(playerCardShake, {
           toValue: -1,
-          duration: 90,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-        Animated.timing(playerCardShake, {
-          toValue: 0.65,
           duration: 80,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(playerCardShake, {
           toValue: 0,
-          duration: 90,
+          duration: 70,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]),
       Animated.timing(playerCardOpacity, {
         toValue: 1,
-        duration: 180,
+        duration: 240,
         easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(playerCardSlideX, {
+        toValue: 0,
+        duration: 380,
+        easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
     ]);
@@ -861,8 +976,9 @@ export default function HomePage() {
       cardChangeMotion.stop();
       playerCardShake.setValue(0);
       playerCardOpacity.setValue(1);
+      playerCardSlideX.setValue(0);
     };
-  }, [focusPlayerPage, playerCardShake, playerCardOpacity]);
+  }, [focusPlayerPage, playerCardShake, playerCardOpacity, playerCardSlideX]);
 
   function openNav(route: string) {
     router.push(route as any);
@@ -892,6 +1008,7 @@ export default function HomePage() {
         </View>
 
         <ScrollView
+          scrollEnabled={false}
           contentContainerStyle={styles.content}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
         >
@@ -934,7 +1051,7 @@ export default function HomePage() {
           </View>
         </View>
 
-        <View style={styles.regularSeasonTickerViewport}>
+        <View style={styles.regularSeasonTickerViewport} {...regularSeasonTickerPanResponder.panHandlers}>
           <Animated.View
             style={[
               styles.regularSeasonTickerRail,
@@ -947,7 +1064,16 @@ export default function HomePage() {
                 const league = item?.league ?? primaryLeague;
                 const awayLogo = getTeamLogoSource(game?.awayTeam);
                 const homeLogo = getTeamLogoSource(game?.homeTeam);
-                const isLive = game ? isGameLiveLike(game) : false;
+                const isFinal = game ? isGameFinalLike(game) : false;
+                const isLive = game ? isGameLiveLike(game) && !isFinal : false;
+                const awayScoreValue = Number(game?.awayScore);
+                const homeScoreValue = Number(game?.homeScore);
+                const hasFinalWinner = isFinal && Number.isFinite(awayScoreValue) && Number.isFinite(homeScoreValue) && awayScoreValue !== homeScoreValue;
+                const awayWon = hasFinalWinner && awayScoreValue > homeScoreValue;
+                const homeWon = hasFinalWinner && homeScoreValue > awayScoreValue;
+                const awayLost = hasFinalWinner && homeWon;
+                const homeLost = hasFinalWinner && awayWon;
+                const finalStampVariant = index % 3;
                 const itemAwayRecord = game?.awayTeam?.record ? `(${game.awayTeam.record})` : '';
                 const itemHomeRecord = game?.homeTeam?.record ? `(${game.homeTeam.record})` : '';
 
@@ -1026,9 +1152,25 @@ export default function HomePage() {
                           </View>
 
                           <View style={styles.bigScoreWrap}>
-                            <Text style={styles.awayBigScore}>{game.awayScore ?? '-'}</Text>
+                            <Text
+                              style={[
+                                styles.awayBigScore,
+                                awayWon ? styles.winningBigScore : null,
+                                awayLost ? styles.losingBigScore : null,
+                              ]}
+                            >
+                              {game.awayScore ?? '-'}
+                            </Text>
                             <Text style={styles.scoreDash}>−</Text>
-                            <Text style={styles.homeBigScore}>{game.homeScore ?? '-'}</Text>
+                            <Text
+                              style={[
+                                styles.homeBigScore,
+                                homeWon ? styles.winningBigScore : null,
+                                homeLost ? styles.losingBigScore : null,
+                              ]}
+                            >
+                              {game.homeScore ?? '-'}
+                            </Text>
                           </View>
 
                           <View style={styles.teamSideRight}>
@@ -1056,6 +1198,18 @@ export default function HomePage() {
                     <TouchableOpacity style={styles.moreGameButton} activeOpacity={0.85} onPress={handleSeeMore}>
                       <Text style={styles.moreGameText}>看更多賽事  ›</Text>
                     </TouchableOpacity>
+                    {isFinal ? (
+                      <Image
+                        source={homeImages.finalStamp}
+                        style={[
+                          styles.finalStampImage,
+                          homeLost ? styles.finalStampNearHomeScore : styles.finalStampNearAwayScore,
+                          finalStampVariant === 1 ? styles.finalStampImageAltOne : null,
+                          finalStampVariant === 2 ? styles.finalStampImageAltTwo : null,
+                        ]}
+                        resizeMode="contain"
+                      />
+                    ) : null}
                   </ImageBackground>
                   </Animated.View>
                 );
@@ -1123,10 +1277,13 @@ export default function HomePage() {
                 opacity: playerCardOpacity,
                 transform: [
                   {
-                    translateX: playerCardShake.interpolate({
-                      inputRange: [-1, 0, 1],
-                      outputRange: [-1.4, 0, 1.4],
-                    }),
+                    translateX: Animated.add(
+                      playerCardSlideX,
+                      playerCardShake.interpolate({
+                        inputRange: [-1, 0, 1],
+                        outputRange: [-1.4, 0, 1.4],
+                      })
+                    ),
                   },
                   {
                     rotate: playerCardShake.interpolate({
@@ -1532,6 +1689,29 @@ const styles = StyleSheet.create({
   liveScoreCardBg: {
     borderRadius: 20,
   },
+  finalStampImage: {
+    position: 'absolute',
+    top: 42,
+    width: 99,
+    height: 99,
+    opacity: 0.92,
+    transform: [{ rotate: '-9deg' }],
+    zIndex: 8,
+  },
+  finalStampNearAwayScore: {
+    left: '31%',
+  },
+  finalStampNearHomeScore: {
+    left: '45%',
+  },
+  finalStampImageAltOne: {
+    top: 37,
+    transform: [{ rotate: '7deg' }],
+  },
+  finalStampImageAltTwo: {
+    top: 47,
+    transform: [{ rotate: '-15deg' }],
+  },
   liveMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1713,6 +1893,12 @@ const styles = StyleSheet.create({
     fontSize: 46,
     fontWeight: '100',
     lineHeight: 50,
+  },
+  winningBigScore: {
+    color: '#E85F2A',
+  },
+  losingBigScore: {
+    color: '#0B2346',
   },
   scoreDash: {
     color: '#0B2346',
