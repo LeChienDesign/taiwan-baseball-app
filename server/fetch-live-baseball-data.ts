@@ -79,9 +79,20 @@ function flattenGamesByDate(
 }
 
 function resolveMlbEventsDateRange() {
+  const explicitStartDate = process.env.MLB_EVENTS_START_DATE || process.argv[2];
+  const explicitEndDate = process.env.MLB_EVENTS_END_DATE || process.argv[3];
   const singleDate = resolveMlbEventsDate();
-  const startDate = process.env.MLB_EVENTS_START_DATE || process.argv[2] || singleDate;
-  const endDate = process.env.MLB_EVENTS_END_DATE || process.argv[3] || startDate;
+
+  if (explicitStartDate || explicitEndDate) {
+    const startDate = explicitStartDate || singleDate;
+    const endDate = explicitEndDate || startDate;
+
+    return { startDate, endDate };
+  }
+
+  const baseDate = new Date(`${singleDate}T00:00:00.000Z`);
+  const startDate = toDateString(addDays(baseDate, -1));
+  const endDate = singleDate;
 
   return { startDate, endDate };
 }
