@@ -61,14 +61,14 @@ const localTeamLogoByKey: Record<string, ImageSourcePropType> = {
 
 
 const APP_FONT = 'CityBurn';
-const CN_FONT = 'ZaoZiGongFangXingHei';
+const CN_FONT = 'FangZhengHei';
 
 
 export default function HomePage() {
   const router = useRouter();
   const [fontsLoaded] = useFonts({
     CityBurn: require('../../assets/fonts/CityBurn.ttf'),
-    ZaoZiGongFangXingHei: require('../../assets/fonts/ZaoZiGongFangXingHei.ttf'),
+    FangZhengHei: require('../../assets/fonts/FangZhengHei.ttf'),
   });
   const logoPulse = useRef(new Animated.Value(1)).current;
   const heroFloat = useRef(new Animated.Value(0)).current;
@@ -1260,8 +1260,8 @@ export default function HomePage() {
                   logoKey={previousFocusPlayer?.teamMeta?.logoKey}
                   photoUri={previousFocusPlayer?.officialPhotoUrl}
                   teamColor={previousFocusPlayer?.teamColor}
-                  size={150}
-                  textSize={16}
+                  size={139}
+                  textSize={14}
                   borderRadius={0}
                 />
               </View>
@@ -1332,8 +1332,8 @@ export default function HomePage() {
                   logoKey={focusPlayer?.teamMeta?.logoKey}
                   photoUri={focusPlayer?.officialPhotoUrl}
                   teamColor={focusPlayer?.teamColor}
-                  size={150}
-                  textSize={16}
+                  size={139}
+                  textSize={14}
                   borderRadius={0}
                 />
               </View>
@@ -1471,7 +1471,7 @@ const styles = StyleSheet.create({
     top: 4,
     width: 11,
     height: 11,
-    borderRadius: 6,
+    borderRadius: 0,
     backgroundColor: '#E85F2A',
     borderWidth: 2,
     borderColor: '#F2E4CF',
@@ -1501,7 +1501,7 @@ const styles = StyleSheet.create({
   heroTicketTearHole: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: 0,
     backgroundColor: 'rgba(11,35,70,0.24)',
     borderWidth: 1,
     borderColor: 'rgba(255,247,233,0.42)',
@@ -1563,7 +1563,7 @@ const styles = StyleSheet.create({
   },
   liveScoreCardSlide: {
     width: REGULAR_SEASON_TICKET_WIDTH,
-    borderRadius: 20,
+    borderRadius: 0,
     paddingHorizontal: 34,
     paddingTop: 20,
     paddingBottom: 19,
@@ -1575,7 +1575,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   liveScoreCardBg: {
-    borderRadius: 20,
+    borderRadius: 0,
   },
   finalStampImage: {
     position: 'absolute',
@@ -1624,7 +1624,7 @@ const styles = StyleSheet.create({
   liveBadgeDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: 0,
     backgroundColor: '#FFF7E9',
     marginRight:3,
   },
@@ -1710,7 +1710,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     color: '#0B2346',
-    fontFamily: APP_FONT,
+    fontFamily: CN_FONT,
     fontSize: 9,
     fontWeight: '500',
     lineHeight: 10,
@@ -1781,7 +1781,7 @@ const styles = StyleSheet.create({
   todayGamesCard: {
     flex: 1,
     height: 310,
-    borderRadius: 15,
+    borderRadius: 0,
     overflow: 'hidden',
     position: 'relative',
   },
@@ -1789,7 +1789,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     width: '100%',
     height: '100%',
-    borderRadius: 15,
+    borderRadius: 0,
   },
   todayGamesContentLayer: {
     ...StyleSheet.absoluteFillObject,
@@ -1833,7 +1833,7 @@ const styles = StyleSheet.create({
   flipTimeCell: {
     width: 42,
     minHeight: 33,
-    borderRadius: 3,
+    borderRadius: 0,
     backgroundColor: 'rgba(7, 22, 45, 0.0)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1843,7 +1843,7 @@ const styles = StyleSheet.create({
   flipMatchupCell: {
     flex: 1,
     minHeight: 33,
-    borderRadius: 3,
+    borderRadius: 0,
     backgroundColor: 'rgba(7, 22, 45, 0)',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1866,7 +1866,7 @@ const styles = StyleSheet.create({
   gameLogoFallback: {
     width: 25,
     height: 25,
-    borderRadius: 13,
+    borderRadius: 1,
     backgroundColor: '#F7D9B8',
     color: '#0B2346',
     fontFamily: APP_FONT,
@@ -1908,14 +1908,14 @@ const styles = StyleSheet.create({
   },
   playerFocusCard: {
     flex: 1,
-    borderRadius: 15,
+    borderRadius: 0,
     overflow: 'hidden',
     minHeight: 178,
     position: 'relative',
     zIndex: 2,
   },
   playerFocusCardBg: {
-    borderRadius: 15,
+    borderRadius: 0,
     zIndex: 2,
   },
   playerCardTitle: {
@@ -1947,10 +1947,10 @@ const styles = StyleSheet.create({
   },
     playerAvatarBackLayer: {
       position: 'absolute',
-      left: 15,
-      top: 21,
-      width: 99,
-      height: 150,
+      left: 38,
+      top: 45,
+      width: 11,
+      height: 11,
       zIndex: 0,
     },
     playerAvatarStack: {

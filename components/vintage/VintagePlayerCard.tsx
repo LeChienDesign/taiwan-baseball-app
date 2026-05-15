@@ -9,7 +9,7 @@ import {
 } from '../../lib/viewModels/abroadPlayerViewModel';
 
 const APP_FONT = 'CityBurn';
-const CN_FONT = 'ZaoZiGongFangXingHei';
+const CN_FONT = 'FangZhengHei';
 
 const VINTAGE_COLOR = {
   ink: '#0B2346',
