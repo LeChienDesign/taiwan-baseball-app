@@ -116,7 +116,7 @@ function normalizeText(value?: string) {
   return String(value ?? '').trim().toLowerCase();
 }
 
-function isTrackedMlbPlayer(player: AbroadPlayerLike) {
+function isTrackedMlbOrMilbPlayer(player: AbroadPlayerLike) {
   const registry = getAbroadRegistry(player.id);
   if (registry?.provider === 'mlb') return true;
 
@@ -710,7 +710,7 @@ export async function buildMlbOfficialAbroadPatches(
   const patches: AbroadPatchMap = {};
 
   for (const player of players) {
-    if (!isTrackedMlbPlayer(player)) continue;
+    if (!isTrackedMlbOrMilbPlayer(player)) continue;
 
     const registry = getAbroadRegistry(player.id);
     if (!registry || registry.provider !== 'mlb') continue;
