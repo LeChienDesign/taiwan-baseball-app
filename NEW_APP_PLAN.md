@@ -252,6 +252,65 @@ AbroadPlayerAvatar
 abroad UI
 ```
 
+## MLB / MiLB provider 拆分紀錄（2026-05-15）
+
+目前狀態：
+
+```txt
+MLB / MiLB provider flow 已拆開
+runAbroadProvider.ts 已新增 milb provider name
+fetch-abroad-data.ts PROVIDERS 已分成 mlb / milb / npb / kbo
+mlbAbroad.ts 仍共用 MLB Stats API 處理 MLB + MiLB 官方資料
+milbAbroadFallback.ts 已從 mlbAbroadFallback.ts 改名
+MiLB fallback function 已改名為 buildMilbAbroadFallbackPatches / applyMilbAbroadFallbackPatches
+buildSingleMlbPatch 已改名為 buildSingleMlbOrMilbPatch
+isTrackedMlbPlayer 已改名為 isTrackedMlbOrMilbPlayer
+```
+
+目前正確 fetch log 應類似：
+
+```txt
+[provider:mlb] OK - MLB provider applied
+[provider:milb] OK - MILB provider applied
+[provider:npb] OK - NPB provider applied
+[provider:kbo] OK - KBO provider applied
+```
+
+原則：
+
+```txt
+MLB provider 只跑 leagueFilter: 'MLB'
+MiLB provider 只跑 leagueFilter: 'MILB'，再跑 MiLB fallback recentGames
+不要再把 MiLB fallback 掛在 mlbAbroadFallback.ts 名下
+mlbAbroad.ts 內仍可保留 MLB Stats API 共用工具，因為 MLB / MiLB 官方 API 來源相同
+未來若要完全拆檔，要先抽共用 MLB Stats API helper，不要直接複製整支 mlbAbroad.ts
+```
+
+MiLB 背號規則：
+
+```txt
+MLB Stats API people.primaryNumber 可能是舊背號
+MiLB roster API 也可能抓不到正確背號
+鄭宗哲 / 莊陳仲敖目前用 manual override 穩定：
+- tsung-che-cheng number 12
+- chen-zhong-ao-zhuang number 84
+manual override 仍應在 applyManualAbroadOverrides 後保證最高優先權
+不要再用手改 server/data/abroadPlayers.live.json 修背號，下一次 fetch 會覆蓋
+```
+
+踩雷紀錄：
+
+```txt
+1. provider 拆分要先拆 flow，再改檔名，再改 function name；不要一次搬整支檔。
+2. Oboe / 自動 patch 曾誤打到目前 Xcode 開啟的 manual JSON；若 patch 結果不對，立刻 git checkout 還原該檔，不要繼續套 patch。
+3. fetch-abroad-data.ts 曾被 patch 截斷到只剩 helper，導致 npm run fetch:abroad 安靜結束；若 fetch 沒 log，先檢查 main().catch 是否還在。
+4. rebase 衝突遇到 server/data/abroadPlayers.live.json，若本機剛 npm run fetch:abroad 且背號正確，可用 git checkout --ours 保留本機版本。
+5. rebase 衝突遇到 server/data/eventsCenter.*.json，若本機剛重新 fetch 且確認正確，可用 git checkout --ours 保留本機版本。
+6. GitHub HTTPS push 不能用密碼；token 過期時要重新產生 Personal Access Token，至少需要 repo，若要推 workflow 也要 workflow。
+7. GitHub PAT 只會顯示一次，不要貼到對話或 commit；只在 terminal password 欄位貼上。
+8. gh CLI 沒安裝時，可用 macOS Keychain 清除舊 github.com 憑證後重新 git push 登入。
+```
+
 ## 旅外 merge 鐵則
 
 ```txt
