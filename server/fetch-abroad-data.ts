@@ -24,6 +24,13 @@ const PROVIDERS = [
     fallback: true,
   },
   {
+    name: 'milb',
+    enabled: true,
+    retry: 2,
+    timeoutMs: 10000,
+    fallback: true,
+  },
+  {
     name: 'npb',
     enabled: true,
     retry: 1,

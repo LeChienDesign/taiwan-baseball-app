@@ -4,7 +4,7 @@ import { applyNpbAbroadPatches } from './npbAbroad';
 import { applyKboAbroadPatches } from './kboAbroad';
 import { type AbroadPlayerLike, dedupePlayers } from '../merge/mergeAbroadPlayers';
 
-export type AbroadProviderName = 'mlb' | 'npb' | 'kbo';
+export type AbroadProviderName = 'mlb' | 'milb' | 'npb' | 'kbo';
 
 export type ProviderRunResult = {
   name: AbroadProviderName;
@@ -43,8 +43,20 @@ async function runProviderOnce(
   date: string
 ) {
   if (name === 'mlb') {
-    let patched = await applyMlbOfficialAbroadPatches(players as any, { date });
+    return applyMlbOfficialAbroadPatches(players as any, {
+      date,
+      leagueFilter: 'MLB',
+    });
+  }
+
+  if (name === 'milb') {
+    let patched = await applyMlbOfficialAbroadPatches(players as any, {
+      date,
+      leagueFilter: 'MILB',
+    });
+
     patched = await applyMlbAbroadFallbackPatches(patched, { date });
+
     return patched;
   }
 

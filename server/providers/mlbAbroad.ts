@@ -66,6 +66,7 @@ type AbroadPatchMap = Record<string, AbroadPatch>;
 
 type ApplyOptions = {
   date?: string;
+  leagueFilter?: 'MLB' | 'MILB';
 };
 
 const STATS_API_BASE = 'https://statsapi.mlb.com/api/v1';
@@ -713,6 +714,12 @@ export async function buildMlbOfficialAbroadPatches(
 
     const registry = getAbroadRegistry(player.id);
     if (!registry || registry.provider !== 'mlb') continue;
+
+    const league = String(player.league ?? '').toUpperCase();
+
+    if (options.leagueFilter && league !== options.leagueFilter) {
+      continue;
+    }
 
     patches[player.id] = await buildSingleMlbPatch(player, registry, requestedDate);
   }
