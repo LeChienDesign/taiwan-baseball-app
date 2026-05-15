@@ -78,7 +78,6 @@ async function readSeedPlayers(seedPath: string) {
   return dedupePlayers(normalizePlayers(parsed));
 }
 
-
 async function readManualPayload(manualPath: string): Promise<AbroadManualPayload> {
   try {
     const raw = await fs.readFile(manualPath, 'utf8');
@@ -104,19 +103,34 @@ async function readManualPayload(manualPath: string): Promise<AbroadManualPayloa
   }
 }
 
-function isMissingPlayerNumber(value: unknown) {
-  if (typeof value !== 'string') return true;
-  const trimmed = value.trim();
-  return !trimmed || trimmed === '—' || trimmed === '-';
-}
-
 function shouldBackfillMlbMilbNumber(player: AbroadPlayerLike) {
   const league = String((player as any).league ?? '').toUpperCase();
   const hasOfficialPersonId = typeof (player as any).officialPersonId === 'number';
   return hasOfficialPersonId && (league === 'MLB' || league === 'MILB');
 }
 
-async function fetchMlbOfficialPlayerNumber(officialPersonId: number) {
+async function fetchMlbRosterPlayerNumber(teamId: number, officialPersonId: number) {
+  const url = `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return undefined;
+
+    const payload = await response.json();
+    const roster = Array.isArray(payload?.roster) ? payload.roster : [];
+    const rosterPlayer = roster.find((entry: any) => entry?.person?.id === officialPersonId);
+    const number = rosterPlayer?.jerseyNumber;
+
+    if (typeof number !== 'string') return undefined;
+
+    const trimmed = number.trim();
+    return trimmed ? trimmed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function fetchMlbOfficialPlayerNumber(officialPersonId: number, league: string) {
   const url = `https://statsapi.mlb.com/api/v1/people/${officialPersonId}`;
 
   try {
@@ -125,12 +139,23 @@ async function fetchMlbOfficialPlayerNumber(officialPersonId: number) {
 
     const payload = await response.json();
     const person = Array.isArray(payload?.people) ? payload.people[0] : undefined;
-    const number = person?.primaryNumber;
+    const currentTeamId = person?.currentTeam?.id;
 
-    if (typeof number !== 'string') return undefined;
+    if (typeof currentTeamId === 'number') {
+      const rosterNumber = await fetchMlbRosterPlayerNumber(currentTeamId, officialPersonId);
+      if (rosterNumber) return rosterNumber;
+    }
 
-    const trimmed = number.trim();
-    return trimmed ? trimmed : undefined;
+    if (league.toUpperCase() !== 'MILB') {
+      const primaryNumber = person?.primaryNumber;
+
+      if (typeof primaryNumber === 'string') {
+        const trimmed = primaryNumber.trim();
+        if (trimmed) return trimmed;
+      }
+    }
+
+    return undefined;
   } catch {
     return undefined;
   }
@@ -145,10 +170,11 @@ async function backfillMlbMilbOfficialNumbers(players: AbroadPlayerLike[]) {
 
       const currentNumber = (player as any).number;
       const officialPersonId = (player as any).officialPersonId as number;
-      const officialNumber = await fetchMlbOfficialPlayerNumber(officialPersonId);
+      const league = String((player as any).league ?? '').toUpperCase();
+      const officialNumber = await fetchMlbOfficialPlayerNumber(officialPersonId, league);
 
       if (!officialNumber) return;
-      if (!isMissingPlayerNumber(currentNumber) && currentNumber === officialNumber) return;
+      if (currentNumber === officialNumber) return;
 
       nextPlayers[index] = {
         ...player,
@@ -159,7 +185,6 @@ async function backfillMlbMilbOfficialNumbers(players: AbroadPlayerLike[]) {
 
   return nextPlayers;
 }
-
 
 async function writeLivePayload(outputPath: string, payload: AbroadLivePayload) {
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
