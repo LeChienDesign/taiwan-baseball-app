@@ -578,7 +578,7 @@ async function fetchSchedule(teamId: number, startDate: string, endDate: string)
   );
 }
 
-async function buildSingleMlbPatch(
+async function buildSingleMlbOrMilbPatch(
   player: AbroadPlayerLike,
   registry: AbroadRegistryEntry,
   requestedDate: string
@@ -721,7 +721,7 @@ export async function buildMlbOfficialAbroadPatches(
       continue;
     }
 
-    patches[player.id] = await buildSingleMlbPatch(player, registry, requestedDate);
+    patches[player.id] = await buildSingleMlbOrMilbPatch(player, registry, requestedDate);
   }
 
   return patches;
