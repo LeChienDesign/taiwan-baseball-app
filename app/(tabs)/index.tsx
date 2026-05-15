@@ -18,8 +18,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useFonts } from 'expo-font';
 
-import ScoreboardCard from '../../components/ScoreboardCard';
-import AppLoadingState from '../../components/AppLoadingState';
 import AppEmptyState from '../../components/AppEmptyState';
 import AbroadPlayerAvatar from '../../components/AbroadPlayerAvatar';
 
@@ -37,18 +35,12 @@ import kboEventsCenter from '../../server/data/eventsCenter.kbo.json';
 
 const homeImages = {
   hero: require('../../assets/yaren_one_icons_png_pack/baseball_hat.png'),
-  schedule: require('../../assets/yaren_one_icons_png_pack/calendar_schedule.png'),
-  hat: require('../../assets/yaren_one_icons_png_pack/baseball_hat.png'),
-  profile: require('../../assets/yaren_one_icons_png_pack/小長格.png'),
-  jersey: require('../../assets/yaren_one_icons_png_pack/jersey_player.png'),
   map: require('../../assets/yaren_one_icons_png_pack/baseball_map.png'),
-  ball: require('../../assets/yaren_one_icons_png_pack/baseball.png'),
   horn: require('../../assets/yaren_one_icons_png_pack/horn.png'),
   paperBg: require('../../assets/yaren_one_icons_png_pack/paper_bg.png'),
   scoreTicketBg: require('../../assets/yaren_one_icons_png_pack/score_ticket_bg.png'),
   todayGamesTicketBg: require('../../assets/yaren_one_icons_png_pack/today_games_ticket_bg.png'),
   playerFocusTicketBg: require('../../assets/yaren_one_icons_png_pack/player_focus_ticket_bg.png'),
-  avatarRing: require('../../assets/yaren_one_icons_png_pack/avatar_ring.png'),
   finalStamp: require('../../assets/yaren_one_icons_png_pack/FINAL.png'),
 };
 
@@ -88,18 +80,17 @@ export default function HomePage() {
   const playerCardShake = useRef(new Animated.Value(0)).current;
   const playerCardOpacity = useRef(new Animated.Value(1)).current;
   const playerCardSlideX = useRef(new Animated.Value(0)).current;
+  const playerCardEnterKey = useRef(0);
   const [todayGamesPage, setTodayGamesPage] = useState(0);
   const [focusPlayerPage, setFocusPlayerPage] = useState(0);
+  const [previousFocusPlayerPage, setPreviousFocusPlayerPage] = useState(0);
   const [regularSeasonTickerHydrated, setRegularSeasonTickerHydrated] = useState(false);
-  const [homeScrollEnabled, setHomeScrollEnabled] = useState(false);
 
   const {
     todayKey,
     mlbTodayKey,
-    displayedGames,
     liveGames,
     leagueStats,
-    loading,
     refreshing,
     refresh,
   } = useHomeGames();
@@ -226,13 +217,6 @@ export default function HomePage() {
   }
 
   // --- Inserted helper constants and functions ---
-  const finalHero = displayedGames.find((item: any) => isGameFinalLike(item?.game)) ?? displayedGames[0];
-  const liveHero = liveGames[0] ?? finalHero;
-  const primaryGame = liveHero?.game;
-  const primaryLeague = liveHero?.league ?? 'CPBL';
-  const showPrimaryLiveBadge = primaryGame ? isGameLiveLike(primaryGame) : false;
-  const awayRecord = primaryGame?.awayTeam?.record ? `(${primaryGame.awayTeam.record})` : '';
-  const homeRecord = primaryGame?.homeTeam?.record ? `(${primaryGame.homeTeam.record})` : '';
 
   function getTeamLogoSource(team?: any): ImageSourcePropType | undefined {
     const logo =
@@ -403,27 +387,6 @@ export default function HomePage() {
     return parsed.toISOString().slice(0, 10);
   }
 
-  function getMlbTaiwanDateKey(game: any, dateKey: string) {
-    const rawTime = `${
-      game?.gameTimeText ??
-      game?.timeText ??
-      game?.startTimeText ??
-      game?.startTimeLocal ??
-      game?.gameTime ??
-      game?.time ??
-      game?.scheduledTime ??
-      game?.footerRight ??
-      ''
-    }`;
-    const timeMatch = rawTime.match(/(\d{1,2})[:：](\d{2})\s*(AM|PM|上午|下午)?/i);
-    if (!timeMatch) return dateKey;
-
-    const hour = Number(timeMatch[1]);
-    const meridiem = `${timeMatch[3] ?? ''}`.toLowerCase();
-    const isMorningGame = meridiem === 'am' || meridiem === '上午' || (!meridiem && hour < 12);
-
-    return isMorningGame ? addDateKeyDays(dateKey, 1) : dateKey;
-  }
 
   function isFinalWithin12Hours(game: any, dateKey: string) {
     if (!isGameFinalLike(game)) return false;
@@ -464,16 +427,7 @@ export default function HomePage() {
     });
   }
 
-  const awayLogoSource = getTeamLogoSource(primaryGame?.awayTeam);
-  const homeLogoSource = getTeamLogoSource(primaryGame?.homeTeam);
 
-  const navItems = [
-    { image: homeImages.schedule, label: '賽程表', route: `/events/pro?date=${todayKey}` },
-    { image: homeImages.map, label: '賽事中心', route: `/events/pro?date=${todayKey}` },
-    { image: homeImages.profile, label: '旅外球員', route: '/abroad' },
-    { image: homeImages.ball, label: '最新消息', route: '/news' },
-    { image: homeImages.hat, label: '我的收藏', route: '/favorites' },
-  ];
 
 
   const abroadPlayers = Array.isArray((abroadPlayersLive as any)?.players)
@@ -508,8 +462,9 @@ export default function HomePage() {
     return playerText.includes('林安可') || playerText.includes('lin an-ko') || playerText.includes('an-ko-lin');
   });
 
-  const focusPlayer = recentActivePlayers[focusPlayerPage % Math.max(1, recentActivePlayers.length)] ?? fallbackFocusPlayer;
-
+  const focusPlayerCount = Math.max(1, recentActivePlayers.length);
+  const focusPlayer = recentActivePlayers[focusPlayerPage % focusPlayerCount] ?? fallbackFocusPlayer;
+  const previousFocusPlayer = recentActivePlayers[previousFocusPlayerPage % focusPlayerCount] ?? fallbackFocusPlayer;
   function formatPlayerEnglishName(name?: string) {
     const text = `${name ?? ''}`.trim().replace(/\s+/g, ' ');
     return text ? text.toUpperCase() : 'PLAYER';
@@ -725,6 +680,26 @@ export default function HomePage() {
 
   const [rawFocusGameLineOne, rawFocusGameLineTwo] = buildFocusStatLines(focusPlayer, focusRecentGame);
   const [focusGameLineOne, focusGameLineTwo] = fitFocusStatLines(rawFocusGameLineOne, rawFocusGameLineTwo);
+  const previousFocusPlayerNumber = previousFocusPlayer?.number ?? '-';
+  const rawPreviousFocusPlayerNameEn =
+    previousFocusPlayer?.nameAbbrEn ??
+    previousFocusPlayer?.abbrNameEn ??
+    previousFocusPlayer?.shortNameEn ??
+    previousFocusPlayer?.displayNameAbbr ??
+    previousFocusPlayer?.nameEn ??
+    previousFocusPlayer?.enName ??
+    previousFocusPlayer?.englishName ??
+    previousFocusPlayer?.displayNameEn ??
+    'LIN AN-KO';
+  const previousFocusPlayerNameEn = formatPlayerEnglishName(rawPreviousFocusPlayerNameEn);
+  const previousFocusPlayerNameZh = previousFocusPlayer?.nameZh ?? previousFocusPlayer?.name ?? previousFocusPlayer?.displayName ?? '林安可';
+  const previousFocusRecentGame = Array.isArray(previousFocusPlayer?.recentGames) ? previousFocusPlayer.recentGames[0] : undefined;
+  const previousFocusGameDateText = previousFocusRecentGame?.date ? String(previousFocusRecentGame.date).slice(5).replace('-', '/') : '05/10';
+  const rawPreviousFocusOpponentText = `${previousFocusRecentGame?.opponentAbbr ?? previousFocusRecentGame?.opponentCode ?? previousFocusRecentGame?.opponentShortName ?? previousFocusRecentGame?.opponent ?? previousFocusRecentGame?.matchup ?? '樂天'}`;
+  const previousFocusGameOpponentText = getTeamAbbr(rawPreviousFocusOpponentText);
+  const previousFocusGameTitleText = `${previousFocusGameDateText} vs ${previousFocusGameOpponentText}`;
+  const [rawPreviousFocusGameLineOne, rawPreviousFocusGameLineTwo] = buildFocusStatLines(previousFocusPlayer, previousFocusRecentGame);
+  const [previousFocusGameLineOne, previousFocusGameLineTwo] = fitFocusStatLines(rawPreviousFocusGameLineOne, rawPreviousFocusGameLineTwo);
 
   const mlbScheduleKeys = Array.from(new Set([
     addDateKeyDays(mlbTodayKey, -1),
@@ -860,23 +835,24 @@ export default function HomePage() {
       onPanResponderTerminationRequest: () => false,
       onShouldBlockNativeResponder: () => true,
       onPanResponderGrant: () => {
-        setHomeScrollEnabled(false);
         regularSeasonTickerAnimationRef.current?.stop();
         regularSeasonTickerX.stopAnimation((value) => {
           regularSeasonDragStartX.current = value;
         });
       },
       onPanResponderMove: (_, gestureState) => {
-        const nextValue = normalizeRegularSeasonTickerX(regularSeasonDragStartX.current + gestureState.dx);
+        const nextValue = normalizeRegularSeasonTickerX(
+          regularSeasonDragStartX.current + gestureState.dx
+        );
         regularSeasonTickerX.setValue(nextValue);
       },
       onPanResponderRelease: (_, gestureState) => {
-        setHomeScrollEnabled(false);
-        const nextValue = normalizeRegularSeasonTickerX(regularSeasonDragStartX.current + gestureState.dx);
+        const nextValue = normalizeRegularSeasonTickerX(
+          regularSeasonDragStartX.current + gestureState.dx
+        );
         startRegularSeasonTicker(nextValue);
       },
       onPanResponderTerminate: () => {
-        setHomeScrollEnabled(false);
         regularSeasonTickerX.stopAnimation((value) => {
           startRegularSeasonTicker(value);
         });
@@ -920,11 +896,16 @@ export default function HomePage() {
   useEffect(() => {
     if (recentActivePlayers.length <= 1) {
       setFocusPlayerPage(0);
+      setPreviousFocusPlayerPage(0);
       return;
     }
 
     const timer = setInterval(() => {
-      setFocusPlayerPage((page) => (page + 1) % recentActivePlayers.length);
+      playerCardEnterKey.current += 1;
+      setFocusPlayerPage((page) => {
+        setPreviousFocusPlayerPage(page);
+        return (page + 1) % recentActivePlayers.length;
+      });
     }, 4200);
 
     return () => clearInterval(timer);
@@ -933,7 +914,7 @@ export default function HomePage() {
   useEffect(() => {
     playerCardShake.setValue(0.8);
     playerCardOpacity.setValue(0.35);
-    playerCardSlideX.setValue(120);
+    playerCardSlideX.setValue(260);
 
     const cardChangeMotion = Animated.parallel([
       Animated.sequence([
@@ -980,9 +961,6 @@ export default function HomePage() {
     };
   }, [focusPlayerPage, playerCardShake, playerCardOpacity, playerCardSlideX]);
 
-  function openNav(route: string) {
-    router.push(route as any);
-  }
   // --- End inserted helper constants and functions ---
 
   if (!fontsLoaded) {
@@ -1061,7 +1039,7 @@ export default function HomePage() {
             {regularSeasonCardLoopItems.length > 0 ? (
               regularSeasonCardLoopItems.map((item: any, index: number) => {
                 const game = item?.game;
-                const league = item?.league ?? primaryLeague;
+                const league = item?.league ?? 'CPBL';
                 const awayLogo = getTeamLogoSource(game?.awayTeam);
                 const homeLogo = getTeamLogoSource(game?.homeTeam);
                 const isFinal = game ? isGameFinalLike(game) : false;
@@ -1270,40 +1248,81 @@ export default function HomePage() {
               </View>
             </View>
           </View>
-          <Animated.View
-            style={[
-              styles.playerFocusCardShakeWrap,
-              {
-                opacity: playerCardOpacity,
-                transform: [
-                  {
-                    translateX: Animated.add(
-                      playerCardSlideX,
-                      playerCardShake.interpolate({
+          <View style={styles.playerFocusCardStackWrap}>
+            <View style={styles.playerFocusCardBaseWrap}>
+              <View style={styles.playerAvatarBackLayer}>
+                <AbroadPlayerAvatar
+                  name={previousFocusPlayerNameZh}
+                  team={previousFocusPlayer?.team}
+                  league={previousFocusPlayer?.league}
+                  level={previousFocusPlayer?.level}
+                  teamCode={previousFocusPlayer?.teamMeta?.code ?? previousFocusPlayer?.teamMeta?.abbreviation}
+                  logoKey={previousFocusPlayer?.teamMeta?.logoKey}
+                  photoUri={previousFocusPlayer?.officialPhotoUrl}
+                  teamColor={previousFocusPlayer?.teamColor}
+                  size={150}
+                  textSize={16}
+                  borderRadius={0}
+                />
+              </View>
+              <ImageBackground
+                source={homeImages.playerFocusTicketBg}
+                style={styles.playerFocusCard}
+                imageStyle={styles.playerFocusCardBg}
+                resizeMode="stretch"
+              >
+                <Text style={styles.playerCardTitle}>★ PLAYER FOCUS ★</Text>
+                <View style={styles.playerFocusBody}>
+                  <View style={styles.playerAvatarStack}>
+                    <View style={styles.focusHeaderRow}>
+                      <Text style={styles.focusNumber}>{previousFocusPlayerNumber}</Text>
+                      <View style={styles.focusNameBlock}>
+                        <Text style={styles.focusName}>{previousFocusPlayerNameEn}</Text>
+                        <Text style={styles.focusSubName}>{previousFocusPlayerNameZh}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.playerTicketPanel}>
+                    <Text style={styles.focusGameTitle}>{previousFocusGameTitleText}</Text>
+                    <View style={styles.focusGameStatsBox}>
+                      <Text style={styles.focusGameLine} numberOfLines={1}>{previousFocusGameLineOne}</Text>
+                      <Text style={styles.focusGameLine} numberOfLines={1}>{previousFocusGameLineTwo}</Text>
+                    </View>
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.playerFooterButton} activeOpacity={0.85} onPress={() => router.push('/abroad' as any)}>
+                  <Text style={styles.playerFooter}>查看球員動態  ›</Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
+
+            <Animated.View
+              key={`player-focus-enter-${focusPlayerPage}-${playerCardEnterKey.current}`}
+              style={[
+                styles.playerFocusCardShakeWrap,
+                {
+                  opacity: playerCardOpacity,
+                  transform: [
+                    {
+                      translateX: Animated.add(
+                        playerCardSlideX,
+                        playerCardShake.interpolate({
+                          inputRange: [-1, 0, 1],
+                          outputRange: [-1.4, 0, 1.4],
+                        })
+                      ),
+                    },
+                    {
+                      rotate: playerCardShake.interpolate({
                         inputRange: [-1, 0, 1],
-                        outputRange: [-1.4, 0, 1.4],
-                      })
-                    ),
-                  },
-                  {
-                    rotate: playerCardShake.interpolate({
-                      inputRange: [-1, 0, 1],
-                      outputRange: ['-0.22deg', '0deg', '0.22deg'],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <ImageBackground
-              source={homeImages.playerFocusTicketBg}
-              style={styles.playerFocusCard}
-              imageStyle={styles.playerFocusCardBg}
-              resizeMode="stretch"
+                        outputRange: ['-0.22deg', '0deg', '0.22deg'],
+                      }),
+                    },
+                  ],
+                },
+              ]}
             >
-            <Text style={styles.playerCardTitle}>★ PLAYER FOCUS ★</Text>
-            <View style={styles.playerFocusBody}>
-              <View style={styles.playerAvatarStack}>
+              <View style={styles.playerAvatarBackLayer}>
                 <AbroadPlayerAvatar
                   name={focusPlayerNameZh}
                   team={focusPlayer?.team}
@@ -1315,36 +1334,40 @@ export default function HomePage() {
                   teamColor={focusPlayer?.teamColor}
                   size={150}
                   textSize={16}
-                  borderRadius={88}
+                  borderRadius={0}
                 />
-                <View pointerEvents="none" style={styles.playerAvatarRingWrap}>
-                  <Image
-                    source={homeImages.avatarRing}
-                    style={styles.playerAvatarRing}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View style={styles.focusHeaderRow}>
-                  <Text style={styles.focusNumber}>{focusPlayerNumber}</Text>
-                  <View style={styles.focusNameBlock}>
-                    <Text style={styles.focusName}>{focusPlayerNameEn}</Text>
-                    <Text style={styles.focusSubName}>{focusPlayerNameZh}</Text>
+              </View>
+              <ImageBackground
+                source={homeImages.playerFocusTicketBg}
+                style={styles.playerFocusCard}
+                imageStyle={styles.playerFocusCardBg}
+                resizeMode="stretch"
+              >
+                <Text style={styles.playerCardTitle}>★ PLAYER FOCUS ★</Text>
+                <View style={styles.playerFocusBody}>
+                  <View style={styles.playerAvatarStack}>
+                    <View style={styles.focusHeaderRow}>
+                      <Text style={styles.focusNumber}>{focusPlayerNumber}</Text>
+                      <View style={styles.focusNameBlock}>
+                        <Text style={styles.focusName}>{focusPlayerNameEn}</Text>
+                        <Text style={styles.focusSubName}>{focusPlayerNameZh}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.playerTicketPanel}>
+                    <Text style={styles.focusGameTitle}>{focusGameTitleText}</Text>
+                    <View style={styles.focusGameStatsBox}>
+                      <Text style={styles.focusGameLine} numberOfLines={1}>{focusGameLineOne}</Text>
+                      <Text style={styles.focusGameLine} numberOfLines={1}>{focusGameLineTwo}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <View style={styles.playerTicketPanel}>
-                <Text style={styles.focusGameTitle}>{focusGameTitleText}</Text>
-                <View style={styles.focusGameStatsBox}>
-                  <Text style={styles.focusGameLine} numberOfLines={1}>{focusGameLineOne}</Text>
-                  <Text style={styles.focusGameLine} numberOfLines={1}>{focusGameLineTwo}</Text>
-                </View>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.playerFooterButton} activeOpacity={0.85} onPress={() => openNav('/abroad')}>
-              <Text style={styles.playerFooter}>查看球員動態  ›</Text>
-            </TouchableOpacity>
-          </ImageBackground>
-        </Animated.View>
+                <TouchableOpacity style={styles.playerFooterButton} activeOpacity={0.85} onPress={() => router.push('/abroad' as any)}>
+                  <Text style={styles.playerFooter}>查看球員動態  ›</Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </Animated.View>
+          </View>
         </View>
 
 
@@ -1535,143 +1558,8 @@ const styles = StyleSheet.create({
     marginTop: 30,
     zIndex: 3,
   },
-  heroOrangeCircle: {
-    position: 'absolute',
-    width: 170,
-    height: 170,
-    borderRadius: 85,
-    backgroundColor: '#E85F2A',
-    right: 34,
-    top: 9,
-  },
-  fieldDiamond: {
-    position: 'absolute',
-    width: 145,
-    height: 145,
-    right: 63,
-    top: 46,
-    backgroundColor: '#0B2346',
-    borderWidth: 4,
-    borderColor: '#F2E4CF',
-    transform: [{ rotate: '45deg' }],
-  },
-  fieldInnerDiamond: {
-    position: 'absolute',
-    width: 76,
-    height: 76,
-    left: 31,
-    top: 31,
-    borderWidth: 6,
-    borderColor: '#E85F2A',
-  },
-  homePlate: {
-    position: 'absolute',
-    width: 20,
-    height: 16,
-    borderRadius: 4,
-    left: 60,
-    top: 61,
-    backgroundColor: '#F2E4CF',
-  },
-  capShape: {
-    position: 'absolute',
-    right: 9,
-    top: 0,
-    width: 134,
-    height: 78,
-    borderTopLeftRadius: 70,
-    borderTopRightRadius: 70,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    backgroundColor: '#0B2346',
-    borderWidth: 2,
-    borderColor: '#07162D',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transform: [{ rotate: '-9deg' }],
-  },
-  capLetter: {
-    color: '#F7D9B8',
-    fontFamily: APP_FONT,
-    fontSize: 43,
-    fontWeight: '900',
-    marginBottom: 8,
-  },
-  batShape: {
-    position: 'absolute',
-    right: 18,
-    top: 109,
-    width: 195,
-    height: 25,
-    borderRadius: 999,
-    backgroundColor: '#C98B47',
-    borderWidth: 2,
-    borderColor: '#875323',
-    transform: [{ rotate: '-28deg' }],
-  },
-  ballShape: {
-    position: 'absolute',
-    right: 41,
-    bottom: 7,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#FFF7E9',
-    borderWidth: 2,
-    borderColor: '#D7B98C',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ballStitch: {
-    color: '#E85F2A',
-    fontFamily: APP_FONT,
-    fontSize: 38,
-    fontWeight: '900',
-    transform: [{ rotate: '45deg' }],
-  },
-  ticketStamp: {
-    position: 'absolute',
-    right: 0,
-    bottom: 42,
-    width: 96,
-    minHeight: 72,
-    backgroundColor: '#F7D9B8',
-    borderWidth: 2,
-    borderColor: '#D0A87A',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ticketStampText: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 19,
-    fontWeight: '900',
-    lineHeight: 21,
-    textAlign: 'center',
-  },
-  ticketStampSmall: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 9,
-    fontWeight: '900',
-    marginTop: 5,
-  },
   liveScoreCardAnimatedWrap: {
     width: REGULAR_SEASON_TICKET_WIDTH,
-  },
-  liveScoreCard: {
-    borderRadius: 20,
-    paddingHorizontal: 34,
-    paddingTop: 20,
-    paddingBottom: 19,
-    marginTop: -40,
-    marginBottom: 8,
-    overflow: 'hidden',
-    shadowColor: '#7B4F2A',
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
   },
   liveScoreCardSlide: {
     width: REGULAR_SEASON_TICKET_WIDTH,
@@ -1718,16 +1606,6 @@ const styles = StyleSheet.create({
     minHeight: 32,
     gap: 7,
     paddingHorizontal: 22,
-  },
-  livePulseDot: {
-    width: 11,
-    height: 11,
-    borderRadius: 6,
-    backgroundColor: '#E85F2A',
-    shadowColor: '#E85F2A',
-    shadowOpacity: 0.6,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 0 },
   },
   liveBadge: {
     flexDirection: 'row',
@@ -1786,31 +1664,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     minWidth: 19,
     textAlign: 'right',
-  },
-  liveDivider: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 15,
-    fontWeight: '800',
-    marginHorizontal: 10,
-  },
-  inningText: {
-    color: '#E85F2A',
-    fontFamily: CN_FONT,
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  bsoWrap: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 6,
-  },
-  bsoText: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 9,
-    fontWeight: '900',
   },
   scoreDivider: {
     height: 1,
@@ -1920,39 +1773,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
   },
-  quickNavCard: {
-    flexDirection: 'row',
-    backgroundColor: '#FFF7E9',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#E2C9A5',
-    marginBottom: 10,
-    shadowColor: '#7B4F2A',
-    shadowOpacity: 0.11,
-    shadowRadius: 7,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  quickNavItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  quickNavItemBorder: {
-    borderRightWidth: 1,
-    borderRightColor: '#DAC09E',
-  },
-  quickNavImage: {
-    width: 34,
-    height: 34,
-    marginBottom: 5,
-  },
-  quickNavLabel: {
-    color: '#0B2346',
-    fontFamily: CN_FONT,
-    fontSize: 15,
-    fontWeight: '900',
-  },
   gridRow: {
     flexDirection: 'row',
     gap: 6,
@@ -2003,12 +1823,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 18,
   },
-  cardTitleUnderline: {
-    width: 0,
-    height: 0,
-    marginTop: 0,
-    marginBottom: 0,
-  },
   gameListRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -2038,14 +1852,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(247,217,184,0.22)',
   },
-  gameLeague: {
-    width: 34,
-    color: '#E85F2A',
-    fontFamily: APP_FONT,
-    fontSize: 15,
-    fontWeight: '900',
-    lineHeight: 17,
-  },
   gameLogoMatchupWrap: {
     flex: 1,
     flexDirection: 'row',
@@ -2069,20 +1875,6 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     textAlign: 'center',
   },
-  gameTeamText: {
-    color: '#F7D9B8',
-    fontFamily: APP_FONT,
-    fontSize: 16,
-    fontWeight: '900',
-    lineHeight: 22,
-    letterSpacing: 0.25,
-    minWidth: 48,
-    textAlign: 'center',
-  },
-  gameTeamTextCn: {
-    color: '#F7D9B8',
-    fontFamily: CN_FONT,
-  },
   gameVsText: {
     color: '#F7D9B8',
     fontFamily: APP_FONT,
@@ -2101,16 +1893,18 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     letterSpacing: -0,
   },
-  cardFooterLight: {
-    color: '#FFF7E9',
-    fontFamily: CN_FONT,
-    fontSize: 11,
-    fontWeight: '900',
-    marginTop: 2,
-  },
-  playerFocusCardShakeWrap: {
+  playerFocusCardStackWrap: {
     flex: 1,
     minHeight: 178,
+    position: 'relative',
+  },
+  playerFocusCardBaseWrap: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  playerFocusCardShakeWrap: {
+    ...StyleSheet.absoluteFillObject,
+    minHeight: 178,
+    zIndex: 3,
   },
   playerFocusCard: {
     flex: 1,
@@ -2118,9 +1912,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     minHeight: 178,
     position: 'relative',
+    zIndex: 2,
   },
   playerFocusCardBg: {
     borderRadius: 15,
+    zIndex: 2,
   },
   playerCardTitle: {
     color: '#0B2346',
@@ -2131,6 +1927,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginTop: 22,
     marginHorizontal: 8,
+    zIndex: 4,
   },
   playerFocusBody: {
     flex: 1,
@@ -2148,32 +1945,24 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     marginTop: 0,
   },
+    playerAvatarBackLayer: {
+      position: 'absolute',
+      left: 15,
+      top: 21,
+      width: 99,
+      height: 150,
+      zIndex: 0,
+    },
     playerAvatarStack: {
-      width: 150,
+      width: 99,
       height: 150,
       position: 'relative',
-      marginLeft: 13,
-      marginRight: -50,
+      marginLeft: 15,
+      marginRight: -100,
       transform: [{ translateY: -66 }],
-      zIndex: 3,
+      zIndex: 5,
     },
-    playerAvatarRingWrap: {
-      position: 'absolute',
-      width: 154,
-      height: 154,
-      left: -2,
-      top: -2,
-      zIndex: 4,
-    },
-    playerAvatarRing: {
-      position: 'absolute',
-      width: 195,
-      height: 195,
-      left: -20,
-      top: -13,
-      zIndex: 4,
-      opacity: 0.77,
-    },
+   
     playerTicketPanel: {
       position: 'absolute',
       left: 1,
@@ -2182,6 +1971,7 @@ const styles = StyleSheet.create({
       paddingVertical: 0,
       paddingLeft: 0,
       alignItems: 'flex-end',
+      zIndex: 4,
     },
   focusNumber: {
     color: '#0B2346',
@@ -2219,26 +2009,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 20,
   },
-  focusGameMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 2,
-  },
-  focusGameDate: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 12,
-    fontWeight: '900',
-    lineHeight: 13,
-  },
-  focusGameStatus: {
-    color: '#0B2346',
-    fontFamily: CN_FONT,
-    fontSize: 12,
-    fontWeight: '900',
-    lineHeight: 10,
-  },
   focusGameTitle: {
     color: '#0B2346',
     fontFamily: APP_FONT,
@@ -2248,13 +2018,6 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     textAlign: 'right',
   },
-  focusGameTitleEn: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 8,
-    fontWeight: '900',
-    lineHeight: 11,
-  },
   focusGameLine: {
     color: '#0B2346',
     fontFamily: APP_FONT,
@@ -2262,29 +2025,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 15,
     textAlign: 'right',
-  },
-  focusGameLineEn: {
-    color: '#F7D9B8',
-    fontFamily: APP_FONT,
-    fontSize: 13,
-    fontWeight: '900',
-    lineHeight: 17,
-  },
-  focusStatsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: '#D8BE9B',
-    marginTop: 8,
-    paddingTop: 6,
-  },
-  focusStat: {
-    color: '#0B2346',
-    fontFamily: APP_FONT,
-    fontSize: 10,
-    fontWeight: '900',
-    textAlign: 'center',
-    lineHeight: 14,
   },
   playerFooterButton: {
     position: 'absolute',
@@ -2298,10 +2038,5 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '900',
     textAlign: 'right',
-    opacity: 0.92,
   },
-  playerWatchWrap: {
-    marginBottom: 12,
-  },
-  // summaryCard, summaryLabelRow, summaryLabel, summaryRow, summaryPill, summaryPillLive, summaryPillNumber, summaryPillText, summaryMiniRow, summaryMiniText, summaryMiniDivider, sectionHeader, sectionActions, seeMoreButton, seeMoreButtonText styles removed
 });
