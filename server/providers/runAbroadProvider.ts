@@ -1,5 +1,5 @@
 import { applyMlbOfficialAbroadPatches } from './mlbAbroad';
-import { applyMlbAbroadFallbackPatches } from './mlbAbroadFallback';
+import { applyMlbAbroadFallbackPatches } from './milbAbroadFallback';
 import { applyNpbAbroadPatches } from './npbAbroad';
 import { applyKboAbroadPatches } from './kboAbroad';
 import { type AbroadPlayerLike, dedupePlayers } from '../merge/mergeAbroadPlayers';
