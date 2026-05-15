@@ -180,15 +180,15 @@ export default function AbroadPlayerAvatar({
 
 const styles = StyleSheet.create({
   avatarWrap: {
-    backgroundColor: '#09162d',
+    backgroundColor: '#F2E4CF',
     borderWidth: 1,
-    borderColor: '#193050',
+    borderColor: '#D8BE9B',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   avatar: {
-    backgroundColor: '#0b172d',
+    backgroundColor: '#F2E4CF',
   },
   fallback: {
     alignItems: 'center',
