@@ -1,5 +1,5 @@
 import { applyMlbOfficialAbroadPatches } from './mlbAbroad';
-import { applyMlbAbroadFallbackPatches } from './milbAbroadFallback';
+import { applyMilbAbroadFallbackPatches } from './milbAbroadFallback';
 import { applyNpbAbroadPatches } from './npbAbroad';
 import { applyKboAbroadPatches } from './kboAbroad';
 import { type AbroadPlayerLike, dedupePlayers } from '../merge/mergeAbroadPlayers';
@@ -55,7 +55,7 @@ async function runProviderOnce(
       leagueFilter: 'MILB',
     });
 
-    patched = await applyMlbAbroadFallbackPatches(patched, { date });
+    patched = await applyMilbAbroadFallbackPatches(patched, { date });
 
     return patched;
   }

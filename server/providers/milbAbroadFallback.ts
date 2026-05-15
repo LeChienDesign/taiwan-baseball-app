@@ -459,7 +459,7 @@ async function buildFallbackRecentGamesForPlayer(
   return results;
 }
 
-export async function buildMlbAbroadFallbackPatches(
+export async function buildMilbAbroadFallbackPatches(
   players: AbroadPlayerLike[],
   options: ApplyOptions = {}
 ): Promise<AbroadPatchMap> {
@@ -495,11 +495,11 @@ export async function buildMlbAbroadFallbackPatches(
   return patches;
 }
 
-export async function applyMlbAbroadFallbackPatches(
+export async function applyMilbAbroadFallbackPatches(
   players: AbroadPlayerLike[],
   options: ApplyOptions = {}
 ): Promise<AbroadPlayerLike[]> {
-  const patches = await buildMlbAbroadFallbackPatches(players, options);
+  const patches = await buildMilbAbroadFallbackPatches(players, options);
 
   return players.map((player) => {
     const patch = patches[player.id];
