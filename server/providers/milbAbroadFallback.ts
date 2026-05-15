@@ -481,15 +481,15 @@ export async function buildMilbAbroadFallbackPatches(
     );
 
     if (recentGames.length > 0) {
-  patches[player.id] = {
-    recentGames,
-    recentNote: 'MiLB 補充來源',
-  };
-} else {
-  patches[player.id] = {
-    recentNote: '近 45 日尚無可用官方出賽紀錄',
-  };
-}
+      patches[player.id] = {
+        recentGames,
+        recentNote: 'MiLB 補充來源',
+      };
+    } else {
+      patches[player.id] = {
+        recentNote: '近 45 日尚無可用官方出賽紀錄',
+      };
+    }
   }
 
   return patches;
