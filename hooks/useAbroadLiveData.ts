@@ -3,9 +3,6 @@ import { useMemo } from 'react';
 import localLivePayload from '../server/data/abroadPlayers.live.json';
 import { useLiveJson } from './useLiveJson';
 
-const REMOTE_ABROAD_LIVE_URL =
-  'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/abroadPlayers.live.json';
-
 type LivePlayer = {
   id: string;
   [key: string]: any;
@@ -45,9 +42,7 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
     isUsingFallback,
     refresh,
   } = useLiveJson<LivePayload>({
-    remoteUrl: REMOTE_ABROAD_LIVE_URL,
     fallbackPayload,
-    pollingIntervalMs: 60 * 1000,
   });
 
   const players = useMemo(() => {

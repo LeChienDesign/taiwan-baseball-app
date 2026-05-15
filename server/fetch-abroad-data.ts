@@ -78,6 +78,7 @@ async function readSeedPlayers(seedPath: string) {
   return dedupePlayers(normalizePlayers(parsed));
 }
 
+
 async function readManualPayload(manualPath: string): Promise<AbroadManualPayload> {
   try {
     const raw = await fs.readFile(manualPath, 'utf8');
@@ -101,6 +102,62 @@ async function readManualPayload(manualPath: string): Promise<AbroadManualPayloa
 
     throw error;
   }
+}
+
+function isMissingPlayerNumber(value: unknown) {
+  if (typeof value !== 'string') return true;
+  const trimmed = value.trim();
+  return !trimmed || trimmed === '—' || trimmed === '-';
+}
+
+function shouldBackfillMlbMilbNumber(player: AbroadPlayerLike) {
+  const league = String((player as any).league ?? '').toUpperCase();
+  const hasOfficialPersonId = typeof (player as any).officialPersonId === 'number';
+  return hasOfficialPersonId && (league === 'MLB' || league === 'MILB');
+}
+
+async function fetchMlbOfficialPlayerNumber(officialPersonId: number) {
+  const url = `https://statsapi.mlb.com/api/v1/people/${officialPersonId}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return undefined;
+
+    const payload = await response.json();
+    const person = Array.isArray(payload?.people) ? payload.people[0] : undefined;
+    const number = person?.primaryNumber;
+
+    if (typeof number !== 'string') return undefined;
+
+    const trimmed = number.trim();
+    return trimmed ? trimmed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function backfillMlbMilbOfficialNumbers(players: AbroadPlayerLike[]) {
+  const nextPlayers = [...players];
+
+  await Promise.all(
+    nextPlayers.map(async (player, index) => {
+      if (!shouldBackfillMlbMilbNumber(player)) return;
+
+      const currentNumber = (player as any).number;
+      const officialPersonId = (player as any).officialPersonId as number;
+      const officialNumber = await fetchMlbOfficialPlayerNumber(officialPersonId);
+
+      if (!officialNumber) return;
+      if (!isMissingPlayerNumber(currentNumber) && currentNumber === officialNumber) return;
+
+      nextPlayers[index] = {
+        ...player,
+        number: officialNumber,
+      };
+    })
+  );
+
+  return nextPlayers;
 }
 
 
@@ -136,6 +193,7 @@ async function main() {
     providerResults.push(run.result);
   }
 
+  players = await backfillMlbMilbOfficialNumbers(players);
   players = dedupePlayers(applyManualAbroadOverrides(players, manualPayload));
 
   const payload = buildAbroadPayload(players, providerResults, date);

@@ -17,7 +17,8 @@
     "fetch:events-all": "npm run fetch:events-mlb && npm run fetch:events-npb && npm run fetch:events-kbo && npm run fetch:events-cpbl",
     "watch:events": "while true; do npm run fetch:events-all; sleep 60; done",
     "watch:events:30": "while true; do npm run fetch:events-all; sleep 30; done",
-    "validate:events": "tsx scripts/validate-events-center.ts"
+    "validate:events": "tsx scripts/validate-events-center.ts",
+    "fetch:abroad": "tsx server/fetch-abroad-data.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
