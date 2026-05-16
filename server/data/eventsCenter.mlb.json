@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-16T19:13:17.228Z",
+  "updatedAt": "2026-05-16T20:07:58.907Z",
   "date": "2026-05-16",
   "startDate": "2026-05-16",
   "endDate": "2026-05-16",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-05-16",
       "gamePk": 824278,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 141,
@@ -25,7 +25,7 @@
         "abbreviation": "DET",
         "logoKey": "DET"
       },
-      "awayScore": 1,
+      "awayScore": 2,
       "homeScore": 1,
       "innings": [
         1,
@@ -35,7 +35,9 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "awayLine": {
         "team": "TOR",
@@ -47,10 +49,12 @@
           0,
           0,
           1,
-          0
+          0,
+          0,
+          1
         ],
-        "r": 1,
-        "h": 3,
+        "r": 2,
+        "h": 5,
         "e": 1
       },
       "homeLine": {
@@ -63,14 +67,16 @@
           0,
           1,
           0,
-          "-"
+          0,
+          0,
+          0
         ],
         "r": 1,
-        "h": 5,
+        "h": 7,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下8局",
+      "footerLeft": "Final",
+      "footerRight": "下10局",
       "gameDate": "2026-05-16T17:10:00Z"
     },
     {
@@ -94,31 +100,43 @@
         "abbreviation": "STL",
         "logoKey": "STL"
       },
-      "awayScore": 0,
+      "awayScore": 1,
       "homeScore": 1,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "KC",
         "innings": [
-          0
+          0,
+          0,
+          0,
+          0,
+          1
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 5,
         "e": 0
       },
       "homeLine": {
         "team": "STL",
         "innings": [
-          1
+          1,
+          0,
+          0,
+          0,
+          "-"
         ],
         "r": 1,
-        "h": 2,
+        "h": 3,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下1局",
+      "footerRight": "下5局",
       "gameDate": "2026-05-16T18:15:00Z"
     },
     {
@@ -128,7 +146,7 @@
       "date": "2026-05-16",
       "gamePk": 824359,
       "status": "LIVE",
-      "statusText": "Player challenge",
+      "statusText": "In Progress",
       "venue": "Coors Field",
       "awayTeam": {
         "id": 109,
@@ -142,31 +160,37 @@
         "abbreviation": "COL",
         "logoKey": "COL"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 1,
+      "homeScore": 3,
       "innings": [
-        1
+        1,
+        2,
+        3
       ],
       "awayLine": {
         "team": "AZ",
         "innings": [
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
         "team": "COL",
         "innings": [
+          2,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 7,
         "e": 0
       },
-      "footerLeft": "Player challenge",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上3局",
       "gameDate": "2026-05-16T19:10:00Z"
     },
     {
@@ -176,7 +200,7 @@
       "date": "2026-05-16",
       "gamePk": 822737,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Nationals Park",
       "awayTeam": {
         "id": 110,
@@ -213,7 +237,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "In Progress",
       "footerRight": "上1局",
       "gameDate": "2026-05-16T20:05:00Z"
     },
@@ -224,7 +248,7 @@
       "date": "2026-05-16",
       "gamePk": 823382,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "PNC Park",
       "awayTeam": {
         "id": 143,
@@ -261,7 +285,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "In Progress",
       "footerRight": "上1局",
       "gameDate": "2026-05-16T20:05:00Z"
     },
@@ -272,7 +296,7 @@
       "date": "2026-05-16",
       "gamePk": 822981,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Warmup",
       "venue": "Tropicana Field",
       "awayTeam": {
         "id": 146,
@@ -309,7 +333,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "上1局",
       "gameDate": "2026-05-16T20:10:00Z"
     },
@@ -367,7 +391,7 @@
       "league": "MLB",
       "date": "2026-05-16",
       "gamePk": 824193,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Daikin Park",
       "awayTeam": {
@@ -385,27 +409,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "TEX",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -415,14 +423,6 @@
       "homeLine": {
         "team": "HOU",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -430,7 +430,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:10",
+      "footerRight": "上1局",
       "gameDate": "2026-05-16T23:10:00Z"
     },
     {
@@ -583,7 +583,7 @@
       "league": "MLB",
       "date": "2026-05-16",
       "gamePk": 823139,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "T-Mobile Park",
       "awayTeam": {
@@ -601,27 +601,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "SD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -631,14 +615,6 @@
       "homeLine": {
         "team": "SEA",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -646,7 +622,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:15",
+      "footerRight": "上1局",
       "gameDate": "2026-05-16T23:15:00Z"
     },
     {
@@ -922,8 +898,8 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 824278,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 141,
@@ -937,7 +913,7 @@
           "abbreviation": "DET",
           "logoKey": "DET"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 1,
         "innings": [
           1,
@@ -947,7 +923,9 @@
           5,
           6,
           7,
-          8
+          8,
+          9,
+          10
         ],
         "awayLine": {
           "team": "TOR",
@@ -959,10 +937,12 @@
             0,
             0,
             1,
-            0
+            0,
+            0,
+            1
           ],
-          "r": 1,
-          "h": 3,
+          "r": 2,
+          "h": 5,
           "e": 1
         },
         "homeLine": {
@@ -975,14 +955,16 @@
             0,
             1,
             0,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 1,
-          "h": 5,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下8局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-05-16T17:10:00Z"
       },
       {
@@ -1006,31 +988,43 @@
           "abbreviation": "STL",
           "logoKey": "STL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
-            0
+            0,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 5,
           "e": 0
         },
         "homeLine": {
           "team": "STL",
           "innings": [
-            1
+            1,
+            0,
+            0,
+            0,
+            "-"
           ],
           "r": 1,
-          "h": 2,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "下5局",
         "gameDate": "2026-05-16T18:15:00Z"
       },
       {
@@ -1040,7 +1034,7 @@
         "date": "2026-05-16",
         "gamePk": 824359,
         "status": "LIVE",
-        "statusText": "Player challenge",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 109,
@@ -1054,31 +1048,37 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "AZ",
           "innings": [
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
+            2,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "Player challenge",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-05-16T19:10:00Z"
       },
       {
@@ -1088,7 +1088,7 @@
         "date": "2026-05-16",
         "gamePk": 822737,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 110,
@@ -1125,7 +1125,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:05:00Z"
       },
@@ -1136,7 +1136,7 @@
         "date": "2026-05-16",
         "gamePk": 823382,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 143,
@@ -1173,7 +1173,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:05:00Z"
       },
@@ -1184,7 +1184,7 @@
         "date": "2026-05-16",
         "gamePk": 822981,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 146,
@@ -1221,7 +1221,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:10:00Z"
       },
@@ -1279,7 +1279,7 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 824193,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Daikin Park",
         "awayTeam": {
@@ -1297,27 +1297,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1327,14 +1311,6 @@
         "homeLine": {
           "team": "HOU",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1342,7 +1318,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-16T23:10:00Z"
       },
       {
@@ -1495,7 +1471,7 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 823139,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "T-Mobile Park",
         "awayTeam": {
@@ -1513,27 +1489,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1543,14 +1503,6 @@
         "homeLine": {
           "team": "SEA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1558,7 +1510,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:15",
+        "footerRight": "上1局",
         "gameDate": "2026-05-16T23:15:00Z"
       },
       {
@@ -1835,8 +1787,8 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 824278,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 141,
@@ -1850,7 +1802,7 @@
           "abbreviation": "DET",
           "logoKey": "DET"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 1,
         "innings": [
           1,
@@ -1860,7 +1812,9 @@
           5,
           6,
           7,
-          8
+          8,
+          9,
+          10
         ],
         "awayLine": {
           "team": "TOR",
@@ -1872,10 +1826,12 @@
             0,
             0,
             1,
-            0
+            0,
+            0,
+            1
           ],
-          "r": 1,
-          "h": 3,
+          "r": 2,
+          "h": 5,
           "e": 1
         },
         "homeLine": {
@@ -1888,14 +1844,16 @@
             0,
             1,
             0,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 1,
-          "h": 5,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下8局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-05-16T17:10:00Z"
       },
       {
@@ -1919,31 +1877,43 @@
           "abbreviation": "STL",
           "logoKey": "STL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
-            0
+            0,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 5,
           "e": 0
         },
         "homeLine": {
           "team": "STL",
           "innings": [
-            1
+            1,
+            0,
+            0,
+            0,
+            "-"
           ],
           "r": 1,
-          "h": 2,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "下5局",
         "gameDate": "2026-05-16T18:15:00Z"
       },
       {
@@ -1953,7 +1923,7 @@
         "date": "2026-05-16",
         "gamePk": 824359,
         "status": "LIVE",
-        "statusText": "Player challenge",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 109,
@@ -1967,31 +1937,37 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "AZ",
           "innings": [
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
+            2,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "Player challenge",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-05-16T19:10:00Z"
       },
       {
@@ -2001,7 +1977,7 @@
         "date": "2026-05-16",
         "gamePk": 822737,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 110,
@@ -2038,7 +2014,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:05:00Z"
       },
@@ -2049,7 +2025,7 @@
         "date": "2026-05-16",
         "gamePk": 823382,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 143,
@@ -2086,7 +2062,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:05:00Z"
       },
@@ -2097,7 +2073,7 @@
         "date": "2026-05-16",
         "gamePk": 822981,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 146,
@@ -2134,7 +2110,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-05-16T20:10:00Z"
       },
@@ -2192,7 +2168,7 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 824193,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Daikin Park",
         "awayTeam": {
@@ -2210,27 +2186,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2240,14 +2200,6 @@
         "homeLine": {
           "team": "HOU",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2255,7 +2207,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-05-16T23:10:00Z"
       },
       {
@@ -2408,7 +2360,7 @@
         "league": "MLB",
         "date": "2026-05-16",
         "gamePk": 823139,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "T-Mobile Park",
         "awayTeam": {
@@ -2426,27 +2378,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2456,14 +2392,6 @@
         "homeLine": {
           "team": "SEA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2471,7 +2399,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:15",
+        "footerRight": "上1局",
         "gameDate": "2026-05-16T23:15:00Z"
       },
       {
