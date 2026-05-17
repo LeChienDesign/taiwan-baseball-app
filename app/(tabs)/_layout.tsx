@@ -10,7 +10,6 @@ export default function TabsLayout() {
     ZaoZiGongFangXingHei: require('../../assets/fonts/ZaoZiGongFangXingHei.ttf'),
   });
 
-  if (!fontsLoaded) return null;
 
   return (
     <Tabs

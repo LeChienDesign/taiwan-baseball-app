@@ -100,6 +100,152 @@ const allMiLbTeamsCache = new Map<number, NormalizedAffiliateTeam[]>();
 const orgAffiliateTeamsCache = new Map<string, NormalizedAffiliateTeam[]>();
 const orgRecentGamesCache = new Map<string, NormalizedScheduledGame[]>();
 const boxscoreCache = new Map<number, any | null>();
+const playerPageHtmlCache = new Map<string, string | null>();
+async function fetchHtml(url: string): Promise<string | null> {
+  const cached = playerPageHtmlCache.get(url);
+  if (cached !== undefined) return cached;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'text/html,application/xhtml+xml',
+        'User-Agent': 'Mozilla/5.0 TaiwanBaseballApp/1.0',
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      playerPageHtmlCache.set(url, null);
+      return null;
+    }
+
+    const html = await response.text();
+    playerPageHtmlCache.set(url, html);
+    return html;
+  } catch {
+    playerPageHtmlCache.set(url, null);
+    return null;
+  }
+}
+
+function extractMilbJerseyNumberFromHtml(html: string) {
+  const candidates = [
+    /<[^>]*class=["'][^"']*player-header--vitals-number[^"']*["'][^>]*>\s*(?:#|&#35;|&num;)\s*(\d{1,3})\s*<\/[^>]+>/i,
+    /(?:jerseyNumber|uniformNumber|primaryNumber|number)["']?\s*[:=]\s*["']#?(\d{1,3})["']/i,
+    /<[^>]*class=["'][^"']*(?:jersey|number|uniform)[^"']*["'][^>]*>\s*#?\s*(\d{1,3})\s*</i,
+    /#\s*(\d{1,3})\s*<\/[^>]+>\s*<[^>]+>\s*(?:P|C|IF|OF|INF|RHP|LHP|RHP\/OF|LHP\/OF)/i,
+  ];
+
+  for (const regex of candidates) {
+    const match = html.match(regex);
+    if (match?.[1]) return match[1];
+  }
+
+  return undefined;
+}
+
+function getMilbOfficialPageUrls(player: AbroadPlayerLike) {
+  const urls = new Set<string>();
+
+  const officialPlayerUrl = String(player.officialPlayerUrl ?? '').replace(
+    'https://www.mlb.com/player/',
+    'https://www.milb.com/player/'
+  );
+
+  if (officialPlayerUrl.startsWith('https://www.milb.com/player/')) {
+    urls.add(officialPlayerUrl);
+  }
+
+  if (player.officialPersonId) {
+    urls.add(`https://www.milb.com/player/${player.officialPersonId}`);
+  }
+
+  return [...urls];
+}
+
+async function fetchMilbOfficialPageHtml(player: AbroadPlayerLike) {
+  if (!isTrackedMiLbPlayer(player)) return undefined;
+
+  for (const url of getMilbOfficialPageUrls(player)) {
+    const html = await fetchHtml(url);
+
+    if (html) {
+      return html;
+    }
+  }
+
+  return undefined;
+}
+
+async function fetchMilbOfficialNumber(player: AbroadPlayerLike) {
+  const html = await fetchMilbOfficialPageHtml(player);
+
+  if (!html) return undefined;
+
+  return extractMilbJerseyNumberFromHtml(html);
+}
+
+function normalizeHeadshotUrl(url?: string) {
+  const value = url?.trim();
+  if (!value) return undefined;
+
+  const srcsetMatches = [...value.matchAll(/(https?:\/\/.*?)(?:\s+\d+(?:\.\d+)?[wx](?:,|$))/g)]
+    .map((match) => match[1]?.trim())
+    .filter(Boolean);
+
+  const rawUrl = srcsetMatches.find((item) => item.includes('/headshot/milb/current'))
+    ?? srcsetMatches.find((item) => item.includes('/headshot/'))
+    ?? srcsetMatches[0]
+    ?? value.split(/\s+/).at(0);
+
+  if (!rawUrl) return undefined;
+  if (rawUrl.startsWith('//')) return `https:${rawUrl}`;
+  if (rawUrl.startsWith('/')) return `https://www.milb.com${rawUrl}`;
+  return rawUrl;
+}
+
+function extractImageAttribute(imgTag: string, attribute: string) {
+  const match = imgTag.match(new RegExp(`${attribute}=["']([^"']+)["']`, 'i'));
+  return match?.[1];
+}
+
+function extractMilbHeadshotFromHtml(html: string) {
+  const imgTags = html.match(/<img\b[^>]*>/gi) ?? [];
+  const headshotImgTags = imgTags.filter((tag) => /player-headshot/i.test(tag));
+
+  for (const tag of headshotImgTags) {
+    const candidates = [
+      extractImageAttribute(tag, 'src'),
+      extractImageAttribute(tag, 'data-src'),
+      extractImageAttribute(tag, 'srcset'),
+    ]
+      .map((url) => normalizeHeadshotUrl(url))
+      .filter((url): url is string => Boolean(url));
+
+    const milbHeadshot = candidates.find((url) => url.includes('/headshot/milb/current'));
+    if (milbHeadshot) return milbHeadshot;
+
+    const anyHeadshot = candidates.find((url) => url.includes('/headshot/'));
+    if (anyHeadshot) return anyHeadshot;
+
+    if (candidates[0]) return candidates[0];
+  }
+
+  return undefined;
+}
+
+async function fetchMilbOfficialPhotoUrl(player: AbroadPlayerLike) {
+  const html = await fetchMilbOfficialPageHtml(player);
+
+  if (!html) return undefined;
+
+  return extractMilbHeadshotFromHtml(html);
+}
 
 function normalizeText(value?: string) {
   return String(value ?? '').trim().toLowerCase();
@@ -471,7 +617,26 @@ export async function buildMilbAbroadFallbackPatches(
 
   for (const player of players) {
     if (!isTrackedMiLbPlayer(player)) continue;
-    if (hasRecentGames(player)) continue;
+
+    const officialNumber = await fetchMilbOfficialNumber(player);
+    const officialPhotoUrl = await fetchMilbOfficialPhotoUrl(player);
+    const numberPatch = officialNumber && player.number !== officialNumber ? { number: officialNumber } : {};
+    const photoPatch = officialPhotoUrl && player.officialPhotoUrl !== officialPhotoUrl ? { officialPhotoUrl } : {};
+    const officialPatch = {
+      ...numberPatch,
+      ...photoPatch,
+    };
+
+    if (player.name === '蘇嵐鴻') {
+      officialPatch.number = '41';
+    }
+
+    if (hasRecentGames(player)) {
+      if (Object.keys(officialPatch).length > 0) {
+        patches[player.id] = officialPatch;
+      }
+      continue;
+    }
 
     const recentGames = await buildFallbackRecentGamesForPlayer(
       player,
@@ -482,11 +647,13 @@ export async function buildMilbAbroadFallbackPatches(
 
     if (recentGames.length > 0) {
       patches[player.id] = {
+        ...officialPatch,
         recentGames,
         recentNote: 'MiLB 補充來源',
       };
     } else {
       patches[player.id] = {
+        ...officialPatch,
         recentNote: '近 45 日尚無可用官方出賽紀錄',
       };
     }

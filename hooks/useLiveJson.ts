@@ -26,7 +26,7 @@ export function useLiveJson<TPayload>({
   enabled = true,
 }: UseLiveJsonOptions<TPayload>): UseLiveJsonResult<TPayload> {
   const [payload, setPayload] = useState<TPayload>(fallbackPayload);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [isUsingFallback, setIsUsingFallback] = useState(true);
@@ -89,43 +89,21 @@ export function useLiveJson<TPayload>({
 
   useEffect(() => {
     mountedRef.current = true;
-    refresh();
 
     return () => {
       mountedRef.current = false;
     };
-  }, [refresh]);
+  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
-      const wasInactive =
-        appStateRef.current === 'inactive' || appStateRef.current === 'background';
-
       appStateRef.current = nextAppState;
-
-      if (enabled && wasInactive && nextAppState === 'active') {
-        refreshRef.current();
-      }
     });
 
     return () => {
       subscription.remove();
     };
-  }, [enabled]);
-
-  useEffect(() => {
-    if (!enabled || pollingIntervalMs <= 0) return undefined;
-
-    const interval = setInterval(() => {
-      if (appStateRef.current === 'active') {
-        refreshRef.current();
-      }
-    }, pollingIntervalMs);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [enabled, pollingIntervalMs]);
+  }, []);
 
   return useMemo(
     () => ({

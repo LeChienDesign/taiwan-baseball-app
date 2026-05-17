@@ -9,7 +9,19 @@ import {
 import { getTeamLogoSource } from '../constants/teamLogos';
 
 const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
-  黃仲翔: require('../assets/abroad/huang-chung-hsiang.png'),
+  黃仲翔: require('../assets/abroad/chung-hsiang-huang.png'),
+  鄧愷威: require('../assets/abroad/kai-wei-teng.png'),
+  鄭宗哲: require('../assets/abroad/tsung-che-cheng.png'),
+  劉致榮: require('../assets/abroad/chih-jung-liu.png'),
+  陳柏毓: require('../assets/abroad/po-yu-chen.png'),
+  李灝宇: require('../assets/abroad/hao-yu-lee.png'),
+  莊陳仲敖: require('../assets/abroad/chen-zhong-ao-zhuang.png'),
+  林昱珉: require('../assets/abroad/yu-min-lin.png'),
+  潘文輝: require('../assets/abroad/wen-hui-pan.png'),
+  林盛恩: require('../assets/abroad/sheng-en-lin.png'),
+  林振瑋: require('../assets/abroad/chen-wei-lin.png'),
+  林維恩: require('../assets/abroad/wei-en-lin.png'),
+  柯敬賢: require('../assets/abroad/ching-hsien-ko.png'),
   徐若熙: require('../assets/abroad/jo-hsi-hsu.png'),
   林安可: require('../assets/abroad/an-ko-lin.png'),
   林家正: require('../assets/abroad/chia-cheng-lin.png'),
@@ -19,6 +31,9 @@ const LOCAL_PLAYER_PHOTOS: Record<string, any> = {
   沙子宸: require('../assets/abroad/tzu-chen-sha.png'),
   王彥程: require('../assets/abroad/yen-cheng-wang.png'),
   張峻瑋: require('../assets/abroad/chun-wei-chang.png'),
+  'Corbin Carroll': require('../assets/abroad/corbin-carroll.png'),
+  'Stuart Fairchild': require('../assets/abroad/stuart-fairchild.png'),
+  'Jonathon Long': require('../assets/abroad/jonathon-long.png'),
 };
 
 function normalizeLocalPhotoKey(value?: string | null) {
@@ -40,6 +55,7 @@ type Props = {
   teamCode?: string | null;
   logoKey?: string | null;
   photoUri?: string | null;
+  allowRemotePhoto?: boolean;
   teamColor?: string;
   size?: number;
   textSize?: number;
@@ -64,6 +80,7 @@ export default function AbroadPlayerAvatar({
   teamCode,
   logoKey,
   photoUri,
+  allowRemotePhoto = false,
   teamColor = '#123b7a',
   size = 84,
   textSize = 26,
@@ -89,7 +106,7 @@ export default function AbroadPlayerAvatar({
     return LOCAL_PLAYER_PHOTOS[name] ?? NORMALIZED_LOCAL_PLAYER_PHOTOS[normalizeLocalPhotoKey(name)] ?? null;
   }, [name]);
 
-  const showRemotePhoto = isRemoteUrl(photoUri) && !remoteFailed;
+  const showRemotePhoto = allowRemotePhoto && isRemoteUrl(photoUri) && !remoteFailed;
 
   const radius = borderRadius ?? Math.round(size * 0.24);
 

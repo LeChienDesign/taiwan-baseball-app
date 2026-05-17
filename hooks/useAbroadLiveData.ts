@@ -43,6 +43,7 @@ export function useAbroadLiveData(): UseAbroadLiveDataResult {
     refresh,
   } = useLiveJson<LivePayload>({
     fallbackPayload,
+    enabled: false,
   });
 
   const players = useMemo(() => {

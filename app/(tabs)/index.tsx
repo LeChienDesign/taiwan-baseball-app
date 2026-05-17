@@ -963,9 +963,6 @@ export default function HomePage() {
 
   // --- End inserted helper constants and functions ---
 
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <ImageBackground source={homeImages.paperBg} style={styles.pageBackground} resizeMode="cover">

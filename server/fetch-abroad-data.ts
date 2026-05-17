@@ -193,6 +193,33 @@ async function backfillMlbMilbOfficialNumbers(players: AbroadPlayerLike[]) {
   return nextPlayers;
 }
 
+function normalizeMilbOfficialUrls(player: AbroadPlayerLike): AbroadPlayerLike {
+  const league = String((player as any).league ?? '').toUpperCase();
+  if (league !== 'MILB') return player;
+
+  const toMilbPlayerUrl = (url?: string) => {
+    if (!url) return url;
+    return url.replace('https://www.mlb.com/player/', 'https://www.milb.com/player/');
+  };
+
+  return {
+    ...player,
+    officialPlayerUrl: toMilbPlayerUrl((player as any).officialPlayerUrl),
+    news: Array.isArray((player as any).news)
+      ? (player as any).news.map((item: any) => {
+          const nextUrl = toMilbPlayerUrl(item?.url);
+          const isMilbPlayerUrl = nextUrl?.startsWith('https://www.milb.com/player/');
+
+          return {
+            ...item,
+            url: nextUrl,
+            source: isMilbPlayerUrl && item?.source === 'MLB' ? 'MiLB' : item?.source,
+          };
+        })
+      : (player as any).news,
+  };
+}
+
 async function writeLivePayload(outputPath: string, payload: AbroadLivePayload) {
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify(payload, null, 2), 'utf8');
@@ -226,7 +253,7 @@ async function main() {
   }
 
   players = await backfillMlbMilbOfficialNumbers(players);
-  players = dedupePlayers(applyManualAbroadOverrides(players, manualPayload));
+  players = dedupePlayers(applyManualAbroadOverrides(players, manualPayload)).map(normalizeMilbOfficialUrls);
 
   const payload = buildAbroadPayload(players, providerResults, date);
 

@@ -1,4 +1,3 @@
-
 // View model helpers for abroad-player list/detail screens.
 // Keep data shaping here so UI components stay focused on rendering.
 
@@ -92,12 +91,36 @@ const RECENT_GAME_STAT_LABELS: Record<string, string> = {
 const LEAGUE_ORDER: Record<string, number> = {
   MLB: 0,
   NPB: 1,
+  NBP: 1,
   KBO: 2,
   MiLB: 3,
   MILB: 3,
   'Minor League': 3,
   '小聯盟': 3,
-  '二軍': 4,
+  Farm: 8,
+  FARM: 8,
+  '日職二軍': 8,
+  '二軍': 8,
+  '2軍': 8,
+};
+
+const MILB_LEVEL_ORDER: Record<string, number> = {
+  AAA: 0,
+  'TRIPLE-A': 0,
+  TRIPLEA: 0,
+  AA: 1,
+  'DOUBLE-A': 1,
+  DOUBLEA: 1,
+  'HIGH-A': 2,
+  HIGHA: 2,
+  'HIGH A': 2,
+  A: 3,
+  'SINGLE-A': 3,
+  SINGLEA: 3,
+  '育成選手': 4,
+  '育成': 4,
+  ROOKIE: 5,
+  RK: 5,
 };
 
 function normalizeSortText(value?: string | null) {
@@ -133,6 +156,10 @@ export function mergeAbroadPlayerViewModels(seed: AbroadPlayerLike[], live: Abro
     playerMap.set(livePlayer.id, {
       ...seedPlayer,
       ...livePlayer,
+      level: seedPlayer?.level ?? livePlayer.level,
+      position: seedPlayer?.position ?? livePlayer.position,
+      age: seedPlayer?.age ?? livePlayer.age,
+      number: seedPlayer?.number ?? livePlayer.number,
       teamMeta: {
         ...(seedPlayer?.teamMeta ?? {}),
         ...(livePlayer.teamMeta ?? {}),
@@ -159,15 +186,30 @@ function getLeagueSortRank(player: AbroadPlayerLike) {
   const normalizedLeague = league.trim();
   const normalizedLevel = level.trim();
 
-  if (LEAGUE_ORDER[normalizedLeague] !== undefined) return LEAGUE_ORDER[normalizedLeague];
-
   const combined = `${normalizedLeague} ${normalizedLevel}`.toLowerCase();
 
-  if (combined.includes('mlb')) return LEAGUE_ORDER.MLB;
-  if (combined.includes('npb') || combined.includes('日職')) return LEAGUE_ORDER.NPB;
-  if (combined.includes('kbo') || combined.includes('韓職')) return LEAGUE_ORDER.KBO;
-  if (combined.includes('milb') || combined.includes('minor') || combined.includes('小聯盟')) return LEAGUE_ORDER.MiLB;
-  if (combined.includes('二軍') || combined.includes('farm')) return LEAGUE_ORDER['二軍'];
+  if (combined.includes('日職二軍') || combined.includes('二軍') || combined.includes('2軍') || combined.includes('farm')) return LEAGUE_ORDER['二軍'];
+  if (combined.includes('育成選手') || combined.includes('育成')) return LEAGUE_ORDER.MiLB;
+
+  if (LEAGUE_ORDER[normalizedLeague] !== undefined) return LEAGUE_ORDER[normalizedLeague];
+
+  return 99;
+}
+
+function getMilbLevelSortRank(player: AbroadPlayerLike) {
+  const leagueRank = getLeagueSortRank(player);
+  if (leagueRank !== LEAGUE_ORDER.MiLB) return 0;
+
+  const combined = `${player.level ?? ''} ${player.league ?? ''}`.toUpperCase();
+  const chineseCombined = `${player.level ?? ''} ${player.league ?? ''}`;
+  const normalized = combined.replace(/[\s_]+/g, '-');
+
+  if (normalized.includes('TRIPLE-A') || normalized.includes('AAA')) return MILB_LEVEL_ORDER.AAA;
+  if (normalized.includes('DOUBLE-A') || normalized.includes('AA')) return MILB_LEVEL_ORDER.AA;
+  if (normalized.includes('HIGH-A') || normalized.includes('HIGHA')) return MILB_LEVEL_ORDER['HIGH-A'];
+  if (normalized.includes('SINGLE-A') || normalized === 'A' || normalized.includes('-A-')) return MILB_LEVEL_ORDER.A;
+  if (chineseCombined.includes('育成選手') || chineseCombined.includes('育成')) return MILB_LEVEL_ORDER['育成選手'];
+  if (normalized.includes('ROOKIE') || normalized.includes('RK')) return MILB_LEVEL_ORDER.ROOKIE;
 
   return 99;
 }
@@ -220,6 +262,9 @@ export function filterAndSortAbroadPlayers(
     const leagueDiff = getLeagueSortRank(a) - getLeagueSortRank(b);
     if (leagueDiff !== 0) return leagueDiff;
 
+    const milbLevelDiff = getMilbLevelSortRank(a) - getMilbLevelSortRank(b);
+    if (milbLevelDiff !== 0) return milbLevelDiff;
+
     const teamDiff = getTeamGroupKey(a).localeCompare(getTeamGroupKey(b), 'zh-Hant');
     if (teamDiff !== 0) return teamDiff;
 
@@ -253,8 +298,17 @@ export function formatAbroadTeamLine(player: AbroadPlayerLike) {
   return code ? `${team} (${code})` : team;
 }
 
+function hideFortyManText(value?: string | null) {
+  return String(value ?? '')
+    .replace(/40\s*-?\s*man/gi, '')
+    .replace(/^[\s・／/|｜,，()（）-]+|[\s・／/|｜,，()（）-]+$/g, '')
+    .trim();
+}
+
 export function formatAbroadLevelLine(player: AbroadPlayerLike) {
-  return `${player.level ?? '—'} • ${player.position ?? '—'}`;
+  const level = hideFortyManText(player.level) || '—';
+  const position = hideFortyManText(player.position) || '—';
+  return `${level} • ${position}`;
 }
 
 export function formatAbroadHandLine(player: AbroadPlayerLike) {

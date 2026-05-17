@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
 
 import AbroadPlayerAvatar from '../AbroadPlayerAvatar';
@@ -27,7 +28,7 @@ const VINTAGE_LAYER = {
 };
 
 const VINTAGE_LAYOUT = {
-  cardAspectRatio: 3.8,
+  cardAspectRatio: 3.35,
   radius: 0,
   photoLeft: 12,
   photoTop: 14,
@@ -42,7 +43,7 @@ const VINTAGE_LAYOUT = {
   statusTop: 10,
   statusWidth: 88,
   statusHeight: 122,
-  ticketScale: 1.02,
+  ticketScale: 1.04,
 };
 
 const VINTAGE_OPACITY = {
@@ -66,11 +67,24 @@ const vintageImages = {
 };
 
 const localAbroadPhotos: Record<string, ImageSourcePropType> = {
+  'kai-wei-teng': require('../../assets/abroad/kai-wei-teng.png'),
+  'tsung-che-cheng': require('../../assets/abroad/tsung-che-cheng.png'),
+  'chih-jung-liu': require('../../assets/abroad/chih-jung-liu.png'),
+  'po-yu-chen': require('../../assets/abroad/po-yu-chen.png'),
+  'hao-yu-lee': require('../../assets/abroad/hao-yu-lee.png'),
+  'chen-zhong-ao-zhuang': require('../../assets/abroad/chen-zhong-ao-zhuang.png'),
+  'yu-min-lin': require('../../assets/abroad/yu-min-lin.png'),
+  'wen-hui-pan': require('../../assets/abroad/wen-hui-pan.png'),
+  'sheng-en-lin': require('../../assets/abroad/sheng-en-lin.png'),
+  'chen-wei-lin': require('../../assets/abroad/chen-wei-lin.png'),
+  'wei-en-lin': require('../../assets/abroad/wei-en-lin.png'),
+  'ching-hsien-ko': require('../../assets/abroad/ching-hsien-ko.png'),
+  'chung-hsiang-huang': require('../../assets/abroad/chung-hsiang-huang.png'),
+  'huang-chung-hsiang': require('../../assets/abroad/chung-hsiang-huang.png'),
   'an-ko-lin': require('../../assets/abroad/an-ko-lin.png'),
   'chia-cheng-lin': require('../../assets/abroad/chia-cheng-lin.png'),
   'chia-hao-song': require('../../assets/abroad/chia-hao-song.png'),
   'chun-wei-chang': require('../../assets/abroad/chun-wei-chang.png'),
-  'huang-chung-hsiang': require('../../assets/abroad/huang-chung-hsiang.png'),
   'jo-hsi-hsu': require('../../assets/abroad/jo-hsi-hsu.png'),
   'shosei-hsu': require('../../assets/abroad/Shosei徐翔聖.png'),
   'hsiang-sheng-hsu': require('../../assets/abroad/Shosei徐翔聖.png'),
@@ -78,7 +92,19 @@ const localAbroadPhotos: Record<string, ImageSourcePropType> = {
   'tzu-chen-sha': require('../../assets/abroad/tzu-chen-sha.png'),
   'yen-cheng-wang': require('../../assets/abroad/yen-cheng-wang.png'),
   'yi-lei-sun': require('../../assets/abroad/yi-lei-sun.png'),
+  'corbin-carroll': require('../../assets/abroad/corbin-carroll.png'),
+  'stuart-fairchild': require('../../assets/abroad/stuart-fairchild.png'),
+  'jonathon-long': require('../../assets/abroad/jonathon-long.png'),
 };
+
+function getLocalPhotoKey(value?: string | null) {
+  return String(value ?? '')
+    .normalize('NFKD')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 
 type VintagePlayerCardProps = {
   player: AbroadPlayerLike;
@@ -139,17 +165,84 @@ function normalizeVintageInfoText(value?: string | null) {
   return positionAliases[normalized] ?? normalized;
 }
 
-function buildVintagePlayerSubLine(player: AbroadPlayerLike) {
-  const levelLine = formatAbroadLevelLine(player);
-  const positionText = player.position ?? '';
+function formatVintageInfoPart(value: string) {
+  const trimmed = value.trim();
+  const normalized = trimmed.toLowerCase().replace(/[\s-]+/g, '');
+
+  if (normalized === 'triplea') return 'AAA';
+  if (normalized === 'doublea') return 'AA';
+  if (normalized === 'higha') return 'High-A';
+
+  return trimmed;
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getVintageHiddenTeamTexts(player: AbroadPlayerLike) {
+  return [
+    player.team,
+    player.teamMeta?.displayName,
+    player.teamMeta?.code,
+    player.teamMeta?.abbreviation,
+    '北海道日本火腿鬥士',
+    '日本火腿',
+    '福岡軟銀鷹',
+    '軟銀',
+    '埼玉西武獅',
+    '西武',
+    '東北樂天金鷲',
+    '東北樂天',
+    '樂天金鷲',
+    '樂天',
+    '東京養樂多燕子',
+    '養樂多',
+    '韓華鷹',
+    '韓華',
+    '三星獅',
+    '三星',
+  ]
+    .map((value) => String(value ?? '').trim())
+    .filter(Boolean);
+}
+
+function getVintageHiddenTeamRegex(player: AbroadPlayerLike) {
+  const pattern = getVintageHiddenTeamTexts(player)
+    .map(escapeRegExp)
+    .filter(Boolean)
+    .join('|');
+
+  return pattern ? new RegExp(pattern, 'g') : null;
+}
+
+function stripVintageTeamText(text: string, hiddenTeamRegex: RegExp | null) {
+  return hiddenTeamRegex ? text.replace(hiddenTeamRegex, '') : text;
+}
+
+function buildVintagePlayerSubLine(player: AbroadPlayerLike, hiddenTeamRegex: RegExp | null) {
+  const levelLine = stripVintageTeamText(formatAbroadLevelLine(player), hiddenTeamRegex);
+  const positionText = stripVintageTeamText(player.position ?? '', hiddenTeamRegex);
+  const hiddenTeamTexts = [
+    player.team,
+    player.teamMeta?.displayName,
+    player.teamMeta?.code,
+    player.teamMeta?.abbreviation,
+  ]
+    .flatMap((value) => String(value ?? '').split(/[・／/|｜,，()（）\s]+/).concat(String(value ?? '')))
+    .map(normalizeVintageInfoText)
+    .filter(Boolean);
+
   const parts = levelLine
     .split(/[・／/|｜,，()（）\s]+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+    .map((item) => formatVintageInfoPart(item))
+    .filter(Boolean)
+    .filter((item) => normalizeVintageInfoText(item) !== '40man')
+    .filter((item) => !hiddenTeamTexts.includes(normalizeVintageInfoText(item)));
   const normalizedParts = new Set(parts.map(normalizeVintageInfoText));
   const positionParts = positionText
     .split(/[・／/|｜,，()（）\s]+/)
-    .map((item) => item.trim())
+    .map((item) => formatVintageInfoPart(item))
     .filter(Boolean);
 
   positionParts.forEach((positionPart) => {
@@ -161,49 +254,68 @@ function buildVintagePlayerSubLine(player: AbroadPlayerLike) {
     }
   });
 
-  return parts.join('');
+  if (player.age) {
+    parts.push(`AGE ${player.age}`);
+  }
+
+  return parts.join('  ');
 }
 
-function splitVintageMixedText(text: string) {
-  return text.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]+|[^\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]+/g) ?? [];
-}
 
-function isChineseText(text: string) {
-  return /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(text);
-}
-
-function renderVintageMixedText(text: string, chineseStyle: object, englishStyle: object) {
-  return splitVintageMixedText(text).map((part, index) => (
-    <Text key={`${part}-${index}`} style={isChineseText(part) ? chineseStyle : englishStyle}>
-      {part}
-    </Text>
-  ));
-}
-
-export default function VintagePlayerCard({
+function VintagePlayerCard({
   player,
   favorite,
   onPress,
   onToggleFavorite,
 }: VintagePlayerCardProps) {
-  const localPhotoSource = localAbroadPhotos[player.id];
-  const remotePhotoSource: ImageSourcePropType | undefined = player.officialPhotoUrl
-    ? { uri: player.officialPhotoUrl }
-    : undefined;
-  const portraitSource = localPhotoSource ?? remotePhotoSource;
-  const leagueStampSource = getVintageLeagueStampSource(player);
-  const teamLogoSource = getTeamLogoSource({
-    logoKey: player.teamMeta?.logoKey,
-  });
+  const localPhotoSource = useMemo(
+    () =>
+      localAbroadPhotos[player.id] ??
+      localAbroadPhotos[getLocalPhotoKey(player.enName)] ??
+      localAbroadPhotos[getLocalPhotoKey(player.name)],
+    [player.id, player.enName, player.name],
+  );
+
+  const hiddenTeamRegex = useMemo(() => getVintageHiddenTeamRegex(player), [player]);
+
+  const teamMetaLine = useMemo(
+    () => formatAbroadTeamLine(player).trim(),
+    [player],
+  );
+
+  const playerSubLine = useMemo(
+    () => buildVintagePlayerSubLine(player, hiddenTeamRegex),
+    [player, hiddenTeamRegex],
+  );
+
+  const leagueStampSource = useMemo(
+    () => getVintageLeagueStampSource(player),
+    [player],
+  );
+
+  const teamLogoSource = useMemo(
+    () =>
+      getTeamLogoSource({
+        logoKey: player.teamMeta?.logoKey,
+      }),
+    [player.teamMeta?.logoKey],
+  );
+
 
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={onPress}>
       <View style={styles.cardTicketBg}>
         <View style={styles.avatarSlot}>
-          {portraitSource ? (
+          {localPhotoSource ? (
             <Image
-              source={portraitSource}
+              source={localPhotoSource}
               style={styles.portraitImage}
+              resizeMode="contain"
+            />
+          ) : teamLogoSource ? (
+            <Image
+              source={teamLogoSource}
+              style={styles.fallbackTeamLogo}
               resizeMode="contain"
             />
           ) : (
@@ -214,7 +326,6 @@ export default function VintagePlayerCard({
               level={player.level}
               teamCode={player.teamMeta?.code ?? player.teamMeta?.abbreviation}
               logoKey={player.teamMeta?.logoKey}
-              photoUri={player.officialPhotoUrl}
               teamColor={player.teamColor}
               size={VINTAGE_LAYOUT.photoSize}
               textSize={24}
@@ -236,22 +347,19 @@ export default function VintagePlayerCard({
         />
 
         <View style={styles.contentBlock}>
-          <Text style={styles.playerName} numberOfLines={1}>{player.name}</Text>
-          <Text style={styles.playerMeta} numberOfLines={1}>
-            {renderVintageMixedText(formatAbroadTeamLine(player), styles.playerMetaChinese, styles.playerMetaEnglish)}
+          <Text style={styles.playerName} numberOfLines={1}>
+            {player.name}
           </Text>
+          {teamMetaLine ? (
+            <Text style={styles.playerMeta} numberOfLines={1}>
+              {teamMetaLine}
+            </Text>
+          ) : null}
           <Text style={styles.playerLine} numberOfLines={1}>
-            {renderVintageMixedText(buildVintagePlayerSubLine(player), styles.playerLineChinese, styles.playerLineEnglish)}
+            {playerSubLine}
           </Text>
         </View>
 
-        {teamLogoSource ? (
-          <Image
-            source={teamLogoSource}
-            style={styles.teamLogoStamp}
-            resizeMode="contain"
-          />
-        ) : null}
 
         <TouchableOpacity
           style={[styles.statusTicket, favorite && styles.statusTicketActive]}
@@ -307,6 +415,11 @@ const styles = StyleSheet.create({
     width: VINTAGE_LAYOUT.photoSize,
     height: VINTAGE_LAYOUT.photoSize,
   },
+  fallbackTeamLogo: {
+    width: VINTAGE_LAYOUT.photoSize * 0.72,
+    height: VINTAGE_LAYOUT.photoSize * 0.72,
+    opacity: 0.82,
+  },
   passportStamp: {
     position: 'absolute',
     left: VINTAGE_LAYOUT.stampLeft,
@@ -324,15 +437,6 @@ const styles = StyleSheet.create({
     width: VINTAGE_LAYOUT.contentWidth,
     zIndex: VINTAGE_LAYER.title,
   },
-  teamLogoStamp: {
-    position: 'absolute',
-    left: VINTAGE_LAYOUT.contentLeft + 145,
-    top: VINTAGE_LAYOUT.contentTop - 2,
-    width: 34,
-    height: 34,
-    opacity: VINTAGE_OPACITY.teamLogo,
-    zIndex: VINTAGE_LAYER.title,
-  },
   playerName: {
     color: '#111111',
     fontFamily: CN_FONT,
@@ -345,51 +449,21 @@ const styles = StyleSheet.create({
   },
   playerMeta: {
     color: VINTAGE_COLOR.ink,
+    fontFamily: CN_FONT,
     fontSize: 12,
     fontWeight: '900',
     lineHeight: 14,
     letterSpacing: 0.7,
     marginTop: 4,
-  },
-  playerMetaChinese: {
-    color: VINTAGE_COLOR.ink,
-    fontFamily: CN_FONT,
-    fontSize: 12,
-    fontWeight: '900',
-    lineHeight: 14,
-    letterSpacing: 0.7,
-    opacity: VINTAGE_OPACITY.text,
-  },
-  playerMetaEnglish: {
-    color: VINTAGE_COLOR.ink,
-    fontFamily: APP_FONT,
-    fontSize: 12,
-    fontWeight: '900',
-    lineHeight: 14,
-    letterSpacing: 0.7,
     opacity: VINTAGE_OPACITY.text,
   },
   playerLine: {
     color: '#111111',
-    fontSize: 11,
-    fontWeight: '900',
-    lineHeight: 14,
-    marginTop: 5,
-  },
-  playerLineChinese: {
-    color: '#111111',
     fontFamily: CN_FONT,
     fontSize: 11,
     fontWeight: '900',
     lineHeight: 14,
-    opacity: VINTAGE_OPACITY.text,
-  },
-  playerLineEnglish: {
-    color: '#111111',
-    fontFamily: APP_FONT,
-    fontSize: 11,
-    fontWeight: '900',
-    lineHeight: 14,
+    marginTop: 5,
     opacity: VINTAGE_OPACITY.text,
   },
   statusTicket: {
@@ -415,3 +489,5 @@ const styles = StyleSheet.create({
     opacity: VINTAGE_OPACITY.number,
   },
 });
+
+export default memo(VintagePlayerCard);

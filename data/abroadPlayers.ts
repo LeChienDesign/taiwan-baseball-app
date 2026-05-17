@@ -236,6 +236,22 @@ export const TEAM_META = {
     displayName: 'St. Louis Cardinals',
     leagueGroup: 'MLB',
   } satisfies AbroadTeamMeta,
+  guardians: {
+    id: 114,
+    code: 'CLE',
+    abbreviation: 'CLE',
+    logoKey: 'guardians',
+    displayName: 'Cleveland Guardians',
+    leagueGroup: 'MLB',
+  } satisfies AbroadTeamMeta,
+  cubs: {
+    id: 112,
+    code: 'CHC',
+    abbreviation: 'CHC',
+    logoKey: 'cubs',
+    displayName: 'Chicago Cubs',
+    leagueGroup: 'MLB',
+  } satisfies AbroadTeamMeta,
 
   // NPB
   fighters: {
@@ -321,6 +337,8 @@ function inferTeamMeta(player: Pick<AbroadPlayer, 'team' | 'league' | 'level'>):
   if (team.includes('padres')) return TEAM_META.padres;
   if (team.includes('reds')) return TEAM_META.reds;
   if (team.includes('cardinals')) return TEAM_META.cardinals;
+  if (team.includes('guardians') || team.includes('clevelandguardians')) return TEAM_META.guardians;
+  if (team.includes('cubs') || team.includes('chicagocubs')) return TEAM_META.cubs;
 
   // NPB
   if (
@@ -434,4 +452,80 @@ function makeHitter(input: PlayerSeedInput): AbroadPlayer {
   };
 }
 
-export const abroadPlayers = abroadPlayersLivePayload.players as AbroadPlayer[];
+function normalizeAbroadPlayer(player: AbroadPlayer): AbroadPlayer {
+  return {
+    ...player,
+    number: player.number === '—' ? '' : player.number,
+  };
+}
+
+const supplementalAbroadPlayers: AbroadPlayer[] = [
+  makeHitter({
+    id: 'corbin-carroll',
+    name: 'Corbin Carroll',
+    enName: 'Corbin Carroll',
+    team: 'Arizona Diamondbacks',
+    league: 'MLB',
+    level: 'MLB',
+    position: 'OF',
+    bats: 'L',
+    throws: 'L',
+    age: 25,
+    number: '7',
+    status: '待命',
+    intro: '台裔外野手，效力亞利桑那響尾蛇。',
+    teamColor: '#A71930',
+    teamMeta: TEAM_META.diamondbacks,
+    officialPlayerUrl: 'https://www.mlb.com/player/corbin-carroll-682998',
+    officialPhotoUrl: 'https://img.mlbstatic.com/mlb-photos/image/upload/w_360,q_auto:best/v1/people/682998/headshot/67/current',
+    officialPersonId: 682998,
+  }),
+  makeHitter({
+    id: 'stuart-fairchild',
+    name: 'Stuart Fairchild',
+    enName: 'Stuart Fairchild',
+    team: 'Cleveland Guardians',
+    league: 'MiLB',
+    level: 'AAA',
+    position: 'OF',
+    bats: 'R',
+    throws: 'R',
+    age: 30,
+    number: '—',
+    status: '待命',
+    intro: '台裔外野手，目前列入旅外觀察名單。',
+    teamColor: '#00385D',
+    teamMeta: TEAM_META.guardians,
+    officialPlayerUrl: 'https://www.mlb.com/player/stuart-fairchild-656413',
+    officialPhotoUrl: 'https://img.mlbstatic.com/mlb-photos/image/upload/w_360,q_auto:best/v1/people/656413/headshot/67/current',
+    officialPersonId: 656413,
+  }),
+  makeHitter({
+    id: 'jonathon-long',
+    name: 'Jonathon Long',
+    enName: 'Jonathon Long',
+    team: 'Chicago Cubs',
+    league: 'MiLB',
+    level: 'Triple-A',
+    position: '1B/IF',
+    bats: 'R',
+    throws: 'R',
+    age: 24,
+    number: '—',
+    status: '待命',
+    intro: '台裔內野手，小熊體系旅外觀察球員。',
+    teamColor: '#0E3386',
+    teamMeta: TEAM_META.cubs,
+    officialPlayerUrl: 'https://www.milb.com/player/jonathon-long-675085',
+    officialPhotoUrl: 'https://img.mlbstatic.com/mlb-photos/image/upload/c_fill,g_auto/w_180/v1/people/675085/headshot/milb/current',
+    officialPersonId: 675085,
+  }),
+];
+
+const liveAbroadPlayers = (abroadPlayersLivePayload.players as AbroadPlayer[]).map(normalizeAbroadPlayer);
+const livePlayerIds = new Set(liveAbroadPlayers.map((player) => player.id));
+
+export const abroadPlayers = [
+  ...liveAbroadPlayers,
+  ...supplementalAbroadPlayers.filter((player) => !livePlayerIds.has(player.id)).map(normalizeAbroadPlayer),
+];
