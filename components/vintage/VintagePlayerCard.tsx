@@ -68,13 +68,6 @@ const vintageImages = {
 };
 
 
-function getLocalPhotoKey(value?: string | null) {
-  return String(value ?? '')
-    .normalize('NFKD')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
 
 function getVintageTextFont(value?: string | number | null) {
   const text = String(value ?? '');
@@ -237,12 +230,8 @@ function VintagePlayerCard({
 }: VintagePlayerCardProps) {
 
   const localPhotoSource = useMemo(
-    () =>
-      getAbroadPlayerPhotoSource(player.photoKey) ??
-      getAbroadPlayerPhotoSource(player.id) ??
-      getAbroadPlayerPhotoSource(getLocalPhotoKey(player.enName)) ??
-      getAbroadPlayerPhotoSource(getLocalPhotoKey(player.name)),
-    [player.photoKey, player.id, player.enName, player.name],
+    () => getAbroadPlayerPhotoSource(player.photoKey),
+    [player.photoKey],
   );
 
   const hiddenTeamRegex = useMemo(() => getVintageHiddenTeamRegex(player), [player]);
