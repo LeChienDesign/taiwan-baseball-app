@@ -31,6 +31,7 @@ export type AbroadPlayerLike = {
     displayName?: string;
   };
   officialPhotoUrl?: string;
+  photoKey?: string;
   officialPlayerUrl?: string;
   nextGame?: {
     date?: string;

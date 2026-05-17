@@ -238,10 +238,11 @@ function VintagePlayerCard({
 
   const localPhotoSource = useMemo(
     () =>
+      getAbroadPlayerPhotoSource(player.photoKey) ??
       getAbroadPlayerPhotoSource(player.id) ??
       getAbroadPlayerPhotoSource(getLocalPhotoKey(player.enName)) ??
       getAbroadPlayerPhotoSource(getLocalPhotoKey(player.name)),
-    [player.id, player.enName, player.name],
+    [player.photoKey, player.id, player.enName, player.name],
   );
 
   const hiddenTeamRegex = useMemo(() => getVintageHiddenTeamRegex(player), [player]);

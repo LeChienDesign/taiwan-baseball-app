@@ -103,6 +103,7 @@ export type AbroadPlayer = {
 
   officialPlayerUrl?: string;
   officialPhotoUrl?: string;
+  photoKey?: string;
   officialPersonId?: number;
 };
 
@@ -470,6 +471,7 @@ function applyManualPatch(player: AbroadPlayer): AbroadPlayer {
   return {
     ...player,
     number: patch.number ?? player.number,
+    photoKey: patch.photoKey ?? player.photoKey,
     teamMeta: patch.teamMeta
       ? {
           ...player.teamMeta,
