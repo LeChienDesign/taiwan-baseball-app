@@ -159,7 +159,7 @@ export function mergeAbroadPlayerViewModels(seed: AbroadPlayerLike[], live: Abro
       level: seedPlayer?.level ?? livePlayer.level,
       position: seedPlayer?.position ?? livePlayer.position,
       age: seedPlayer?.age ?? livePlayer.age,
-      number: seedPlayer?.number ?? livePlayer.number,
+      number: String(seedPlayer?.number ?? '').trim() || livePlayer.number,
       teamMeta: {
         ...(seedPlayer?.teamMeta ?? {}),
         ...(livePlayer.teamMeta ?? {}),

@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type ComponentType } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
   FlatList,
   ImageBackground,
-  InteractionManager,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -12,13 +11,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { abroadPlayers as seedAbroadPlayers } from '../../data/abroadPlayers';
+
 import { useAbroadLiveData } from '../../hooks/useAbroadLiveData';
-import AppLoadingState from '../../components/AppLoadingState';
-import AppEmptyState from '../../components/AppEmptyState';
+import VintagePlayerCard from '../../components/vintage/VintagePlayerCard';
 
 import {
   toggleAbroadFavorite,
@@ -40,40 +39,20 @@ const abroadImages = {
   paperBg: require('../../assets/yaren_one_icons_png_pack/paper_bg.png'),
 };
 
-type VintagePlayerCardComponent = ComponentType<{
-  player: AbroadPlayerLike;
-  favorite: boolean;
-  onPress: () => void;
-  onToggleFavorite: () => void;
-}>;
+const VISIBLE_ABROAD_FILTERS = ABROAD_FILTERS.filter((filter) => filter !== '今日出賽');
 
 export default function AbroadScreen() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<AbroadFilter>('全部');
   const [searchText, setSearchText] = useState('');
-  const [VintagePlayerCard, setVintagePlayerCard] = useState<VintagePlayerCardComponent | null>(null);
 
   const {
     players: livePlayers,
-    loading,
     refreshing,
     refresh,
   } = useAbroadLiveData();
 
   const { isFavorite, isHydrated } = useAbroadFavorites();
-
-  useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
-      const cardModule = require('../../components/vintage/VintagePlayerCard') as {
-        default: VintagePlayerCardComponent;
-      };
-      setVintagePlayerCard(() => cardModule.default);
-    });
-
-    return () => {
-      task.cancel();
-    };
-  }, []);
 
   const mergedPlayers = useMemo(
     () =>
@@ -91,9 +70,6 @@ export default function AbroadScreen() {
 
   const renderPlayerItem = useCallback(
     ({ item }: { item: AbroadPlayerLike }) => {
-      if (!VintagePlayerCard) {
-        return <View style={styles.cardPlaceholder} />;
-      }
       const favorite = isHydrated ? isFavorite(item.id) : false;
       return (
         <VintagePlayerCard
@@ -104,7 +80,7 @@ export default function AbroadScreen() {
         />
       );
     },
-    [VintagePlayerCard, isFavorite, isHydrated, router]
+    [isFavorite, isHydrated, router]
   );
 
   const listHeaderComponent = useMemo(
@@ -149,7 +125,7 @@ export default function AbroadScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterRow}
         >
-          {ABROAD_FILTERS.map((filter) => {
+          {VISIBLE_ABROAD_FILTERS.map((filter) => {
             const active = activeFilter === filter;
 
             return (
@@ -171,62 +147,63 @@ export default function AbroadScreen() {
     [activeFilter, refresh, refreshing, searchText, sortedFilteredPlayers.length]
   );
 
-  if (loading && mergedPlayers.length === 0) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <AppLoadingState text="正在讀取旅外資料..." variant="screen" />
-      </SafeAreaView>
-    );
-  }
-
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ImageBackground
         source={abroadImages.paperBg}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <FlatList
-          style={styles.screen}
-          contentContainerStyle={styles.content}
-          data={sortedFilteredPlayers}
-          keyExtractor={(item) => item.id}
-          initialNumToRender={5}
-          maxToRenderPerBatch={2}
-          updateCellsBatchingPeriod={80}
-          windowSize={3}
-          removeClippedSubviews
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={refresh}
-              tintColor="#9B5A30"
-            />
-          }
-          ListHeaderComponent={listHeaderComponent}
-          ListEmptyComponent={
-            <AppEmptyState
-              title="目前沒有符合條件的球員"
-              description="可以試試其他篩選，或清空搜尋關鍵字。"
-              icon="search-outline"
-              compact
-            />
-          }
-          renderItem={renderPlayerItem}
-        />
+        <SafeAreaView style={styles.listSafeArea}>
+          <FlatList
+            style={styles.screen}
+            contentContainerStyle={styles.content}
+            data={sortedFilteredPlayers}
+            keyExtractor={(item) => item.id}
+            initialNumToRender={2}
+            maxToRenderPerBatch={1}
+            updateCellsBatchingPeriod={120}
+            windowSize={2}
+            removeClippedSubviews
+            legacyImplementation={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={refresh}
+                tintColor="#9B5A30"
+              />
+            }
+            ListHeaderComponent={listHeaderComponent}
+            ListEmptyComponent={
+              <View style={styles.emptyTicket}>
+                <View style={styles.emptyIconBox}>
+                  <Ionicons name="search-outline" size={24} color="#10213D" />
+                </View>
+                <Text style={styles.emptyTitle}>查無符合條件的球員</Text>
+                <Text style={styles.emptyDescription}>換個篩選條件，或清空搜尋關鍵字再試一次。</Text>
+              </View>
+            }
+            renderItem={renderPlayerItem}
+          />
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F3E1BE',
+    backgroundColor: 'transparent',
+  },
+  listSafeArea: {
+    flex: 1,
   },
   backgroundImage: {
     flex: 1,
+    marginTop: 0,
+    backgroundColor: '#F3E1BE',
   },
   screen: {
     flex: 1,
@@ -238,13 +215,43 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
 
-  cardPlaceholder: {
-    width: '100%',
-    aspectRatio: 2.45,
-    marginBottom: 10,
-    backgroundColor: 'rgba(255, 248, 232, 0.34)',
+  emptyTicket: {
+    marginTop: 12,
+    marginBottom: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 22,
     borderWidth: 1,
-    borderColor: 'rgba(183, 121, 69, 0.32)',
+    borderColor: '#B77945',
+    backgroundColor: 'rgba(255, 248, 232, 0.66)',
+    alignItems: 'center',
+  },
+  emptyIconBox: {
+    width: 46,
+    height: 46,
+    borderWidth: 1,
+    borderColor: '#10213D',
+    backgroundColor: 'rgba(255, 248, 232, 0.54)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    color: '#10213D',
+    fontFamily: CN_FONT,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  emptyDescription: {
+    color: '#6E5131',
+    fontFamily: CN_FONT,
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+    lineHeight: 20,
+    textAlign: 'center',
   },
 
   headerRow: {

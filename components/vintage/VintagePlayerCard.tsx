@@ -30,12 +30,12 @@ const VINTAGE_LAYER = {
 const VINTAGE_LAYOUT = {
   cardAspectRatio: 3.35,
   radius: 0,
-  photoLeft: 12,
-  photoTop: 14,
-  photoSize: 90,
-  stampLeft: 100,
-  stampTop: 15,
-  stampSize: 32,
+  photoLeft: -8,
+  photoTop: 5,
+  photoSize: 117,
+  stampLeft: 66,
+  stampTop: 1,
+  stampSize: 77,
   contentLeft: 124,
   contentTop: 15,
   contentWidth: 250,
@@ -84,6 +84,8 @@ const localAbroadPhotos: Record<string, ImageSourcePropType> = {
   'an-ko-lin': require('../../assets/abroad/an-ko-lin.png'),
   'chia-cheng-lin': require('../../assets/abroad/chia-cheng-lin.png'),
   'chia-hao-song': require('../../assets/abroad/chia-hao-song.png'),
+  'chia-hao-sung': require('../../assets/abroad/chia-hao-song.png'),
+  'sung-chia-hao': require('../../assets/abroad/chia-hao-song.png'),
   'chun-wei-chang': require('../../assets/abroad/chun-wei-chang.png'),
   'jo-hsi-hsu': require('../../assets/abroad/jo-hsi-hsu.png'),
   'shosei-hsu': require('../../assets/abroad/Shosei徐翔聖.png'),
@@ -103,6 +105,11 @@ function getLocalPhotoKey(value?: string | null) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+function getVintageTextFont(value?: string | number | null) {
+  const text = String(value ?? '');
+  return /[\u4e00-\u9fff]/.test(text) ? CN_FONT : APP_FONT;
 }
 
 
@@ -186,22 +193,13 @@ function getVintageHiddenTeamTexts(player: AbroadPlayerLike) {
     player.teamMeta?.displayName,
     player.teamMeta?.code,
     player.teamMeta?.abbreviation,
-    '北海道日本火腿鬥士',
     '日本火腿',
-    '福岡軟銀鷹',
-    '軟銀',
-    '埼玉西武獅',
-    '西武',
-    '東北樂天金鷲',
-    '東北樂天',
+    '軟銀鷹',
+    '西武獅',
     '樂天金鷲',
-    '樂天',
-    '東京養樂多燕子',
     '養樂多',
     '韓華鷹',
-    '韓華',
     '三星獅',
-    '三星',
   ]
     .map((value) => String(value ?? '').trim())
     .filter(Boolean);
@@ -268,6 +266,7 @@ function VintagePlayerCard({
   onPress,
   onToggleFavorite,
 }: VintagePlayerCardProps) {
+
   const localPhotoSource = useMemo(
     () =>
       localAbroadPhotos[player.id] ??
@@ -347,15 +346,15 @@ function VintagePlayerCard({
         />
 
         <View style={styles.contentBlock}>
-          <Text style={styles.playerName} numberOfLines={1}>
+          <Text style={[styles.playerName, { fontFamily: getVintageTextFont(player.name) }]} numberOfLines={1}>
             {player.name}
           </Text>
           {teamMetaLine ? (
-            <Text style={styles.playerMeta} numberOfLines={1}>
+            <Text style={[styles.playerMeta, { fontFamily: getVintageTextFont(teamMetaLine) }]} numberOfLines={1}>
               {teamMetaLine}
             </Text>
           ) : null}
-          <Text style={styles.playerLine} numberOfLines={1}>
+          <Text style={[styles.playerLine, { fontFamily: getVintageTextFont(playerSubLine) }]} numberOfLines={1}>
             {playerSubLine}
           </Text>
         </View>
@@ -366,7 +365,7 @@ function VintagePlayerCard({
           activeOpacity={0.88}
           onPress={onToggleFavorite}
         >
-          <Text style={styles.statusNumber}>{String(player.number ?? '').replace(/[#＃]/g, '')}</Text>
+          <Text style={[styles.statusNumber, { fontFamily: APP_FONT }]}>{String(player.number ?? '').replace(/[#＃]/g, '')}</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -389,6 +388,9 @@ const styles = StyleSheet.create({
   cardTicketBg: {
     ...StyleSheet.absoluteFillObject,
     overflow: 'visible',
+    backgroundColor: 'rgba(255, 248, 232, 0.42)',
+    borderWidth: 1,
+    borderColor: 'rgba(183, 121, 69, 0.34)',
   },
   ticketOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -480,11 +482,11 @@ const styles = StyleSheet.create({
     opacity: 0.96,
   },
   statusNumber: {
-    color: VINTAGE_COLOR.ink,
+      color: '#E8D7B4',
     fontFamily: APP_FONT,
-    fontSize: 42,
+    fontSize: 60,
     fontWeight: '900',
-    lineHeight: 44,
+    lineHeight: 99,
     letterSpacing: -1,
     opacity: VINTAGE_OPACITY.number,
   },

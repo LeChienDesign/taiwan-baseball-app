@@ -491,7 +491,7 @@ const supplementalAbroadPlayers: AbroadPlayer[] = [
     bats: 'R',
     throws: 'R',
     age: 30,
-    number: '—',
+    number: '7',
     status: '待命',
     intro: '台裔外野手，目前列入旅外觀察名單。',
     teamColor: '#00385D',
@@ -511,7 +511,7 @@ const supplementalAbroadPlayers: AbroadPlayer[] = [
     bats: 'R',
     throws: 'R',
     age: 24,
-    number: '—',
+    number: '24',
     status: '待命',
     intro: '台裔內野手，小熊體系旅外觀察球員。',
     teamColor: '#0E3386',
@@ -522,7 +522,20 @@ const supplementalAbroadPlayers: AbroadPlayer[] = [
   }),
 ];
 
-const liveAbroadPlayers = (abroadPlayersLivePayload.players as AbroadPlayer[]).map(normalizeAbroadPlayer);
+const supplementalAbroadPlayerMap = new Map(
+  supplementalAbroadPlayers.map((player) => [player.id, normalizeAbroadPlayer(player)])
+);
+
+const liveAbroadPlayers = (abroadPlayersLivePayload.players as AbroadPlayer[]).map((player) => {
+  const livePlayer = normalizeAbroadPlayer(player);
+  const supplementalPlayer = supplementalAbroadPlayerMap.get(livePlayer.id);
+
+  return {
+    ...livePlayer,
+    number: String(supplementalPlayer?.number ?? '').trim() || livePlayer.number,
+  };
+});
+
 const livePlayerIds = new Set(liveAbroadPlayers.map((player) => player.id));
 
 export const abroadPlayers = [
