@@ -32,7 +32,6 @@ import {
   mergeAbroadPlayerViewModels,
 } from '../../lib/viewModels/abroadPlayerViewModel';
 
-const APP_FONT = 'CityBurn';
 const CN_FONT = 'FangZhengHei';
 
 const abroadImages = {
@@ -166,7 +165,6 @@ export default function AbroadScreen() {
             updateCellsBatchingPeriod={120}
             windowSize={2}
             removeClippedSubviews
-            legacyImplementation={false}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}

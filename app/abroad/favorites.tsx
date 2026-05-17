@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -19,19 +18,19 @@ import {
 
 export default function AbroadFavoritesScreen() {
   const router = useRouter();
-  const { favoriteIds, isFavorite, isHydrated } = useAbroadFavorites();
+  const { favoriteIds, isHydrated } = useAbroadFavorites();
 
   const favoritePlayers = abroadPlayers.filter((player) =>
     favoriteIds.includes(player.id)
   );
 
   if (!isHydrated) {
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <AppLoadingState text="正在讀取收藏資料..." variant="screen" />
-    </SafeAreaView>
-  );
-}
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <AppLoadingState text="正在讀取收藏資料..." variant="screen" />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -54,7 +53,7 @@ export default function AbroadFavoritesScreen() {
             <Ionicons name="star" size={20} color="#fbbf24" />
           </View>
 
-          <View style={{ flex: 1 }}>
+          <View style={styles.heroTextBlock}>
             <Text style={styles.heroTitle}>我的旅外追蹤名單</Text>
             <Text style={styles.heroSubtitle}>
               集中查看你收藏的旅外球員，之後接通知功能也會很順。
@@ -70,8 +69,6 @@ export default function AbroadFavoritesScreen() {
         <View style={styles.listWrap}>
           {favoritePlayers.length > 0 ? (
             favoritePlayers.map((player) => {
-              const favorite = isFavorite(player.id);
-
               return (
                 <TouchableOpacity
                   key={player.id}
@@ -110,22 +107,22 @@ export default function AbroadFavoritesScreen() {
                     activeOpacity={0.85}
                   >
                     <Ionicons
-                      name={favorite ? 'star' : 'star-outline'}
+                      name="star"
                       size={20}
-                      color={favorite ? '#fbbf24' : '#9db0c9'}
+                      color="#fbbf24"
                     />
                   </TouchableOpacity>
                 </TouchableOpacity>
               );
             })
           ) : (
-           <AppEmptyState
-  title="還沒有收藏球員"
-  description="先到旅外球員頁按星號收藏，這裡就會自動出現。"
-  icon="star-outline"
-  buttonLabel="前往旅外球員"
-  onPress={() => router.push('/(tabs)/abroad')}
-/>
+            <AppEmptyState
+              title="還沒有收藏球員"
+              description="先到旅外球員頁按星號收藏，這裡就會自動出現。"
+              icon="star-outline"
+              buttonLabel="前往旅外球員"
+              onPress={() => router.push('/(tabs)/abroad')}
+            />
           )}
         </View>
       </ScrollView>
@@ -248,6 +245,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2f240a',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  heroTextBlock: {
+    flex: 1,
   },
   heroTitle: {
     color: '#f8fbff',

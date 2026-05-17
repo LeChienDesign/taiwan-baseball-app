@@ -23,11 +23,11 @@ export async function GET(request: Request) {
     }
 
     return Response.json(parsed);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return Response.json(
       {
         error: 'Failed to read MLB events center data',
-        detail: error?.message ?? 'Unknown error',
+        detail: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

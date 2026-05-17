@@ -66,7 +66,7 @@ const CN_FONT = 'FangZhengHei';
 
 export default function HomePage() {
   const router = useRouter();
-  const [fontsLoaded] = useFonts({
+  useFonts({
     CityBurn: require('../../assets/fonts/CityBurn.ttf'),
     FangZhengHei: require('../../assets/fonts/FangZhengHei.ttf'),
   });
@@ -216,7 +216,6 @@ export default function HomePage() {
     router.push(`/events/pro?date=${todayKey}`);
   }
 
-  // --- Inserted helper constants and functions ---
 
   function getTeamLogoSource(team?: any): ImageSourcePropType | undefined {
     const logo =
@@ -961,7 +960,6 @@ export default function HomePage() {
     };
   }, [focusPlayerPage, playerCardShake, playerCardOpacity, playerCardSlideX]);
 
-  // --- End inserted helper constants and functions ---
 
 
   return (
@@ -1477,7 +1475,7 @@ const styles = StyleSheet.create({
     minHeight: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: -0,
+    marginBottom: 0,
     overflow: 'hidden',
   },
   heroTicketTearLine: {
@@ -1546,7 +1544,6 @@ const styles = StyleSheet.create({
     right: 1,
     bottom:-50,
     zIndex: 4,
-    // transform: [{ rotate: '-4deg' }],
   },
   heroFieldBadge: {
     width: 500,
@@ -1888,7 +1885,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     lineHeight: 15,
-    letterSpacing: -0,
+    letterSpacing: 0,
   },
   playerFocusCardStackWrap: {
     flex: 1,
