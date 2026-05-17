@@ -1,4 +1,5 @@
 import abroadPlayersLivePayload from '../server/data/abroadPlayers.live.json';
+import { abroadPlayerManualPatches } from './manual/abroadPlayerManualPatches';
 export type PlayerStatus = '今日出賽' | '預告先發' | '已完賽' | '傷兵' | '待命' | '大聯盟出賽';
 export type PlayerType = 'pitcher' | 'hitter';
 
@@ -459,6 +460,25 @@ function normalizeAbroadPlayer(player: AbroadPlayer): AbroadPlayer {
   };
 }
 
+function applyManualPatch(player: AbroadPlayer): AbroadPlayer {
+  const patch = abroadPlayerManualPatches[player.id];
+
+  if (!patch) {
+    return player;
+  }
+
+  return {
+    ...player,
+    number: patch.number ?? player.number,
+    teamMeta: patch.teamMeta
+      ? {
+          ...player.teamMeta,
+          ...patch.teamMeta,
+        }
+      : player.teamMeta,
+  };
+}
+
 const supplementalAbroadPlayers: AbroadPlayer[] = [
   makeHitter({
     id: 'corbin-carroll',
@@ -530,15 +550,18 @@ const liveAbroadPlayers = (abroadPlayersLivePayload.players as AbroadPlayer[]).m
   const livePlayer = normalizeAbroadPlayer(player);
   const supplementalPlayer = supplementalAbroadPlayerMap.get(livePlayer.id);
 
-  return {
+  return applyManualPatch({
     ...livePlayer,
     number: String(supplementalPlayer?.number ?? '').trim() || livePlayer.number,
-  };
+  });
 });
 
 const livePlayerIds = new Set(liveAbroadPlayers.map((player) => player.id));
 
 export const abroadPlayers = [
   ...liveAbroadPlayers,
-  ...supplementalAbroadPlayers.filter((player) => !livePlayerIds.has(player.id)).map(normalizeAbroadPlayer),
+  ...supplementalAbroadPlayers
+    .filter((player) => !livePlayerIds.has(player.id))
+    .map(normalizeAbroadPlayer)
+    .map(applyManualPatch),
 ];

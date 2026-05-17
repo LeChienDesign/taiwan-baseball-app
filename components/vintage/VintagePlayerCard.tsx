@@ -1,8 +1,9 @@
 import { memo, useMemo } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import AbroadPlayerAvatar from '../AbroadPlayerAvatar';
 import { getTeamLogoSource } from '../../constants/teamLogos';
+import { getAbroadPlayerPhotoSource } from '../../constants/abroadPlayerImages';
 import {
   formatAbroadLevelLine,
   formatAbroadTeamLine,
@@ -66,38 +67,6 @@ const vintageImages = {
   kboStamp: require('../../assets/yaren_one_icons_png_pack/KBOstamp.png'),
 };
 
-const localAbroadPhotos: Record<string, ImageSourcePropType> = {
-  'kai-wei-teng': require('../../assets/abroad/kai-wei-teng.png'),
-  'tsung-che-cheng': require('../../assets/abroad/tsung-che-cheng.png'),
-  'chih-jung-liu': require('../../assets/abroad/chih-jung-liu.png'),
-  'po-yu-chen': require('../../assets/abroad/po-yu-chen.png'),
-  'hao-yu-lee': require('../../assets/abroad/hao-yu-lee.png'),
-  'chen-zhong-ao-zhuang': require('../../assets/abroad/chen-zhong-ao-zhuang.png'),
-  'yu-min-lin': require('../../assets/abroad/yu-min-lin.png'),
-  'wen-hui-pan': require('../../assets/abroad/wen-hui-pan.png'),
-  'sheng-en-lin': require('../../assets/abroad/sheng-en-lin.png'),
-  'chen-wei-lin': require('../../assets/abroad/chen-wei-lin.png'),
-  'wei-en-lin': require('../../assets/abroad/wei-en-lin.png'),
-  'ching-hsien-ko': require('../../assets/abroad/ching-hsien-ko.png'),
-  'chung-hsiang-huang': require('../../assets/abroad/chung-hsiang-huang.png'),
-  'huang-chung-hsiang': require('../../assets/abroad/chung-hsiang-huang.png'),
-  'an-ko-lin': require('../../assets/abroad/an-ko-lin.png'),
-  'chia-cheng-lin': require('../../assets/abroad/chia-cheng-lin.png'),
-  'chia-hao-song': require('../../assets/abroad/chia-hao-song.png'),
-  'chia-hao-sung': require('../../assets/abroad/chia-hao-song.png'),
-  'sung-chia-hao': require('../../assets/abroad/chia-hao-song.png'),
-  'chun-wei-chang': require('../../assets/abroad/chun-wei-chang.png'),
-  'jo-hsi-hsu': require('../../assets/abroad/jo-hsi-hsu.png'),
-  'shosei-hsu': require('../../assets/abroad/Shosei徐翔聖.png'),
-  'hsiang-sheng-hsu': require('../../assets/abroad/Shosei徐翔聖.png'),
-  'ruei-yang-gu-lin': require('../../assets/abroad/ruei-yang-gu-lin.png'),
-  'tzu-chen-sha': require('../../assets/abroad/tzu-chen-sha.png'),
-  'yen-cheng-wang': require('../../assets/abroad/yen-cheng-wang.png'),
-  'yi-lei-sun': require('../../assets/abroad/yi-lei-sun.png'),
-  'corbin-carroll': require('../../assets/abroad/corbin-carroll.png'),
-  'stuart-fairchild': require('../../assets/abroad/stuart-fairchild.png'),
-  'jonathon-long': require('../../assets/abroad/jonathon-long.png'),
-};
 
 function getLocalPhotoKey(value?: string | null) {
   return String(value ?? '')
@@ -269,9 +238,9 @@ function VintagePlayerCard({
 
   const localPhotoSource = useMemo(
     () =>
-      localAbroadPhotos[player.id] ??
-      localAbroadPhotos[getLocalPhotoKey(player.enName)] ??
-      localAbroadPhotos[getLocalPhotoKey(player.name)],
+      getAbroadPlayerPhotoSource(player.id) ??
+      getAbroadPlayerPhotoSource(getLocalPhotoKey(player.enName)) ??
+      getAbroadPlayerPhotoSource(getLocalPhotoKey(player.name)),
     [player.id, player.enName, player.name],
   );
 
