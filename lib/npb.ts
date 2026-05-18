@@ -1,3 +1,4 @@
+import { getTodayKeyTaipei } from './date';
 import { fetchNpbGamesByDate as fetchFallback } from './npb-real';
 import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 
@@ -57,15 +58,6 @@ const NPB_CONFIRMED_NO_GAME_DATES = new Set([
   '2026-05-25',
 ]);
 
-
-function getTodayKeyTaipei() {
-  return new Intl.DateTimeFormat('sv-SE', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-}
 
 function isFutureOrTodayInTaipei(date: string) {
   const today = getTodayKeyTaipei();

@@ -1,4 +1,5 @@
 import { getMlbTeamLogo } from '../constants/mlbTeamLogos';
+import { getTodayKeyTaipei } from './date';
 import { fetchMlbRealGamesByDate } from './mlb-real';
 
 const MLB_REMOTE_EVENTS_URL =
@@ -59,14 +60,6 @@ function getDateKey(value?: string) {
   }
 }
 
-function getTodayKeyTaipei() {
-  return new Intl.DateTimeFormat('sv-SE', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-}
 
 function getTodayKeyNewYork() {
   return new Intl.DateTimeFormat('sv-SE', {

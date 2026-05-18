@@ -1,3 +1,4 @@
+import { getTodayKeyTaipei } from './date';
 import { fetchKboGamesByDate as fallback } from './kbo-real';
 import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 
@@ -10,15 +11,6 @@ const kboManualSnapshot = require('../server/data/manual/kbo.manual.json');
 let remoteKboSnapshotCache: any = null;
 let remoteKboSnapshotFetchedAt = 0;
 const REMOTE_KBO_CACHE_MS = 60 * 1000;
-
-function getTodayKeyTaipei() {
-  return new Intl.DateTimeFormat('sv-SE', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-}
 
 function getCanonicalKboTeamName(name: string) {
   const value = String(name ?? '').toLowerCase();
