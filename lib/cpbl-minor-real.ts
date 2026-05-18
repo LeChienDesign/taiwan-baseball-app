@@ -43,18 +43,18 @@ function mapMinorShort(name: string) {
   return map[name] ?? name.slice(0, 2);
 }
 
-function getMinorLogo(name: string) {
-  const map: Record<string, any> = {
-    '中信兄弟二軍': require('../assets/cpbl/中信兄弟.png'),
-    '富邦悍將二軍': require('../assets/cpbl/富邦悍將.png'),
-    '樂天桃猿二軍': require('../assets/cpbl/樂天桃猿.png'),
-    '統一7-ELEVEn獅二軍': require('../assets/cpbl/統一7-ELEVEn獅.png'),
-    '味全龍二軍': require('../assets/cpbl/味全龍.png'),
-    '台鋼雄鷹二軍': require('../assets/cpbl/台鋼雄鷹.png'),
-    '嘉鋼': require('../assets/league/cpbl.png'),
-  };
+const MINOR_TEAM_LOGOS: Record<string, any> = {
+  '中信兄弟二軍': require('../assets/cpbl/中信兄弟.png'),
+  '富邦悍將二軍': require('../assets/cpbl/富邦悍將.png'),
+  '樂天桃猿二軍': require('../assets/cpbl/樂天桃猿.png'),
+  '統一7-ELEVEn獅二軍': require('../assets/cpbl/統一7-ELEVEn獅.png'),
+  '味全龍二軍': require('../assets/cpbl/味全龍.png'),
+  '台鋼雄鷹二軍': require('../assets/cpbl/台鋼雄鷹.png'),
+  '嘉鋼': require('../assets/league/cpbl.png'),
+};
 
-  return map[name] ?? require('../assets/league/cpbl.png');
+function getMinorLogo(name: string) {
+  return MINOR_TEAM_LOGOS[name] ?? require('../assets/league/cpbl.png');
 }
 
 function buildEmptyLine(team: string) {
@@ -75,18 +75,20 @@ function rowToGame(row: CpblMinorRow): ScoreboardGame {
 
   const homeName = row['Home Team'];
   const awayName = row['Away Team'];
+  const homeShort = mapMinorShort(homeName);
+  const awayShort = mapMinorShort(awayName);
 
   return {
     id: row.idEvent,
     awayTeam: {
       name: awayName,
-      short: mapMinorShort(awayName),
+      short: awayShort,
       record: '',
       logo: getMinorLogo(awayName),
     },
     homeTeam: {
       name: homeName,
-      short: mapMinorShort(homeName),
+      short: homeShort,
       record: '',
       logo: getMinorLogo(homeName),
     },
@@ -96,18 +98,18 @@ function rowToGame(row: CpblMinorRow): ScoreboardGame {
     venue: row.Venue ?? '',
     innings: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     awayLine: isScheduled
-      ? buildEmptyLine(mapMinorShort(awayName))
+      ? buildEmptyLine(awayShort)
       : {
-          team: mapMinorShort(awayName),
+          team: awayShort,
           innings: ['', '', '', '', '', '', '', '', ''],
           r: awayScore ?? 0,
           h: '',
           e: '',
         },
     homeLine: isScheduled
-      ? buildEmptyLine(mapMinorShort(homeName))
+      ? buildEmptyLine(homeShort)
       : {
-          team: mapMinorShort(homeName),
+          team: homeShort,
           innings: ['', '', '', '', '', '', '', '', ''],
           r: homeScore ?? 0,
           h: '',

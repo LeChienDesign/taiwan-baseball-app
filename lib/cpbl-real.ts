@@ -467,9 +467,3 @@ export async function fetchCpblMajorGamesByDate(
   return sameDayRows.map((row) => rowToScoreboardGame(row, recordMap));
 }
 
-export async function fetchCpblMinorGamesByDate(
-  _date: string,
-  _options?: { localOnly?: boolean }
-): Promise<ScoreboardGame[]> {
-  return [];
-}

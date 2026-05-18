@@ -1,7 +1,5 @@
-import {
-  fetchCpblMajorGamesByDate as fetchCpblMajorFallback,
-  fetchCpblMinorGamesByDate,
-} from './cpbl-real';
+import { fetchCpblMajorGamesByDate as fetchCpblMajorFallback } from './cpbl-real';
+import { fetchCpblMinorGamesByDate } from './cpbl-minor-real';
 import { CPBL_TEAM_LOGOS } from '../constants/cpblTeamLogos';
 import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 
