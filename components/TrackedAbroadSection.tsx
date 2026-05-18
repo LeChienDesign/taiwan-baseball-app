@@ -62,7 +62,6 @@ export default function TrackedAbroadSection() {
           buttonLabel="前往旅外球員"
           onPress={() => router.push('/(tabs)/abroad')}
         />
-       
       </View>
     );
   }
