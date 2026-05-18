@@ -10,7 +10,6 @@ export default function NPBPage() {
     remoteUrl:
       'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.npb.json',
     fallbackPayload: require('../../../server/data/eventsCenter.npb.json'),
-    pollingIntervalMs: 60 * 1000,
   });
 
   return (

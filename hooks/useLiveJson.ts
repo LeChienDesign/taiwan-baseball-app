@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, type AppStateStatus } from 'react-native';
 
 type UseLiveJsonOptions<TPayload> = {
   remoteUrl?: string;
   fallbackPayload: TPayload;
-  pollingIntervalMs?: number;
   enabled?: boolean;
 };
 
@@ -17,12 +15,9 @@ type UseLiveJsonResult<TPayload> = {
   refresh: () => Promise<void>;
 };
 
-const DEFAULT_POLLING_INTERVAL_MS = 60 * 1000;
-
 export function useLiveJson<TPayload>({
   remoteUrl,
   fallbackPayload,
-  pollingIntervalMs = DEFAULT_POLLING_INTERVAL_MS,
   enabled = true,
 }: UseLiveJsonOptions<TPayload>): UseLiveJsonResult<TPayload> {
   const [payload, setPayload] = useState<TPayload>(fallbackPayload);
@@ -31,9 +26,7 @@ export function useLiveJson<TPayload>({
   const [error, setError] = useState<string | undefined>();
   const [isUsingFallback, setIsUsingFallback] = useState(true);
 
-  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
   const mountedRef = useRef(true);
-  const refreshRef = useRef<() => Promise<void>>(async () => {});
 
   const refresh = useCallback(async () => {
     if (!enabled) {
@@ -84,24 +77,10 @@ export function useLiveJson<TPayload>({
   }, [enabled, fallbackPayload, remoteUrl]);
 
   useEffect(() => {
-    refreshRef.current = refresh;
-  }, [refresh]);
-
-  useEffect(() => {
     mountedRef.current = true;
 
     return () => {
       mountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      appStateRef.current = nextAppState;
-    });
-
-    return () => {
-      subscription.remove();
     };
   }, []);
 

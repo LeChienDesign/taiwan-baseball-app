@@ -19,7 +19,6 @@ export default function MLBPage() {
   const { payload } = useLiveJson({
     remoteUrl: undefined,
     fallbackPayload: require('../../../server/data/eventsCenter.mlb.json'),
-    pollingIntervalMs: 60 * 1000,
   });
 
   return (

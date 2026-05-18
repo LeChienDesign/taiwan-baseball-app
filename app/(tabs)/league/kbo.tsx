@@ -10,7 +10,6 @@ export default function KBOPage() {
     remoteUrl:
       'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.kbo.json',
     fallbackPayload: require('../../../server/data/eventsCenter.kbo.json'),
-    pollingIntervalMs: 60 * 1000,
   });
 
   return (
