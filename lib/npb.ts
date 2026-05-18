@@ -5,13 +5,13 @@ import { applyGameManualOverrides } from './manual/applyGameManualOverrides';
 const NPB_REMOTE_EVENTS_URL =
   'https://raw.githubusercontent.com/LeChienDesign/taiwan-baseball-app/main/server/data/eventsCenter.npb.json';
 
-
 const npbLiveSnapshot = require('../server/data/eventsCenter.npb.json');
 const npbManualSnapshot = require('../server/data/manual/npb.manual.json');
 
 let remoteNpbSnapshotCache: any = null;
 let remoteNpbSnapshotFetchedAt = 0;
 const REMOTE_NPB_CACHE_MS = 60 * 1000;
+
 async function getRemoteNpbSnapshot() {
   const now = Date.now();
 
@@ -57,7 +57,6 @@ const NPB_CONFIRMED_NO_GAME_DATES = new Set([
   '2026-05-18',
   '2026-05-25',
 ]);
-
 
 function isFutureOrTodayInTaipei(date: string) {
   const today = getTodayKeyTaipei();
@@ -377,7 +376,6 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
-
 function applyNpbManualOverrides(games: any[]) {
   return applyGameManualOverrides(games, npbManualSnapshot);
 }
@@ -417,6 +415,7 @@ function choosePreferredSnapshot(firstSnapshot: any, secondSnapshot: any, date: 
 }
 
 function normalizeNpbDisplayTime(game: any) {
+  // Keep as an extension point for NPB-specific display time adjustments.
   return game;
 }
 

@@ -63,7 +63,6 @@ function attachFallbackLogos(game: any, logoMap: Map<string, any>) {
   };
 }
 
-
 function applyKboManualOverrides(games: any[]) {
   return applyGameManualOverrides(games, kboManualSnapshot);
 }
@@ -126,7 +125,7 @@ export async function fetchKboGamesByDate(
   options?: {
     localOnly?: boolean;
     payload?: any;
-  }
+  },
 ) {
   const fallbackGames = await fallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);

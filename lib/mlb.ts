@@ -11,7 +11,7 @@ const localMlbPayload = require('../server/data/eventsCenter.mlb.json');
 
 let remoteMlbPayloadCache: any = null;
 let remoteMlbPayloadFetchedAt = 0;
-const REMOTE_CACHE_MS = 60 * 1000;
+const REMOTE_MLB_CACHE_MS = 60 * 1000;
 
 export type TeamCardInfo = {
   name: string;
@@ -45,7 +45,7 @@ export type ScoreboardGame = {
   gameDate?: string;
 };
 
-function getDateKey(value?: string) {
+function getTaipeiDateKey(value?: string) {
   if (!value) return '';
 
   try {
@@ -59,7 +59,6 @@ function getDateKey(value?: string) {
     return value.slice(0, 10);
   }
 }
-
 
 function getTodayKeyNewYork() {
   return new Intl.DateTimeFormat('sv-SE', {
@@ -102,7 +101,7 @@ function getGamesForDateFromPayload(payload: any, date: string): ScoreboardGame[
   }
 
   return getSnapshotGames(payload).filter((game) => {
-    const key = getDateKey(game.gameDate);
+    const key = getTaipeiDateKey(game.gameDate);
     return key === date;
   });
 }
@@ -110,10 +109,11 @@ function getGamesForDateFromPayload(payload: any, date: string): ScoreboardGame[
 function getLocalGamesForDate(date: string): ScoreboardGame[] {
   return getGamesForDateFromPayload(localMlbPayload, date);
 }
+
 async function getRemoteMlbPayload() {
   const now = Date.now();
 
-  if (remoteMlbPayloadCache && now - remoteMlbPayloadFetchedAt < REMOTE_CACHE_MS) {
+  if (remoteMlbPayloadCache && now - remoteMlbPayloadFetchedAt < REMOTE_MLB_CACHE_MS) {
     return remoteMlbPayloadCache;
   }
 
@@ -144,7 +144,7 @@ function normalizeStatus(value?: string): ScoreboardGame['status'] {
 
 function normalizeGame(game: any): ScoreboardGame {
   const status = normalizeStatus(game.status);
-  const gameTaipeiDate = getDateKey(game.gameDate);
+  const gameTaipeiDate = getTaipeiDateKey(game.gameDate);
   const todayTaipei = getTodayKeyTaipei();
   const safeStatus =
     status === 'LIVE' && gameTaipeiDate && gameTaipeiDate < todayTaipei ? 'FINAL' : status;
