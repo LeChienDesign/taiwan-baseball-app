@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { fetchMlbGamesByDate } from '../lib/mlb';
-import { fetchCpblMajorGamesByDate } from '../lib/cpbl-real';
+import { fetchCpblMajorGamesByDate } from '../lib/cpbl';
 import { fetchNpbGamesByDate } from '../lib/npb';
 import { fetchKboGamesByDate } from '../lib/kbo';
 
