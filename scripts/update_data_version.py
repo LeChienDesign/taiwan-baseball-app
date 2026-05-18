@@ -22,7 +22,7 @@ data = {
     },
     "mlb": {
         "version": now_iso,
-        "source": "mock"
+        "source": "local+live"
     }
 }
 
