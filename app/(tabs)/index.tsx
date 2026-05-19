@@ -1210,7 +1210,7 @@ export default function HomePage() {
           <View style={styles.todayGamesCard}>
             <Image source={homeImages.todayGamesTicketBg} style={styles.todayGamesCardBgImage} resizeMode="stretch" />
             <View style={styles.todayGamesContentLayer}>
-              <Text style={styles.cardTitleLight}>TODAY'S GAMES</Text>
+              <Text style={styles.cardTitleLight}>TODAY’S GAMES</Text>
               <View style={styles.todayGamesFixedList}>
                 {todayGameRows.length === 0 ? (
                   <View style={styles.todayGamesEmptyWrap}>
