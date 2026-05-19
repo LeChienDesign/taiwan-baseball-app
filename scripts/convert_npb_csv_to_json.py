@@ -33,6 +33,9 @@ def clean_score(v: str):
     return v if v != "" else ""
 
 def main():
+    if not INPUT.exists():
+        raise FileNotFoundError(f"Missing input file: {INPUT}")
+
     rows = []
 
     with INPUT.open("r", encoding="utf-8-sig", newline="") as f:
