@@ -455,7 +455,6 @@ export async function fetchNpbGamesByDate(
 ) {
   const fallbackGames = await fetchFallback(date);
   const logoMap = buildFallbackLogoMap(fallbackGames);
-  const todayTaipei = getTodayKeyTaipei();
   const shouldFetchRemote = isFutureOrTodayInTaipei(date);
 
   const localGames = getSnapshotGamesByDate(npbLiveSnapshot, date)

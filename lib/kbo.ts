@@ -17,7 +17,7 @@ function getCanonicalKboTeamName(name: string) {
 
   if (value.includes('hanwha') || value.includes('韓華') || value.includes('한화')) return '韓華鷹';
   if (value.includes('doosan') || value.includes('斗山') || value.includes('두산')) return '斗山熊';
-  if (value.includes('kia') || value.includes('kia虎')) return 'KIA虎';
+  if (value.includes('kia')) return 'KIA虎';
   if (value.includes('kiwoom') || value.includes('培證') || value.includes('키움')) return '培證英雄';
   if (value.includes('kt') || value.includes('巫師')) return 'KT巫師';
   if (value.includes('lg') || value.includes('雙子')) return 'LG雙子';

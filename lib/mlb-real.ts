@@ -1,5 +1,3 @@
-
-
 import mlb2026 from '../data/mlb-2026.json';
 import { getMlbTeamLogo } from '../constants/mlbTeamLogos';
 import type { ScoreboardGame } from './mlb';
@@ -31,13 +29,13 @@ function normalizeGame(game: any): ScoreboardGame {
       name: awayTeam.name ?? 'Away',
       short: awayTeam.short ?? 'AWY',
       record: awayTeam.record ?? '',
-      logo: awayTeam.logo ?? getMlbTeamLogo(awayTeam),
+      logo: awayTeam.logo ?? getMlbTeamLogo(awayTeam.name),
     },
     homeTeam: {
       name: homeTeam.name ?? 'Home',
       short: homeTeam.short ?? 'HME',
       record: homeTeam.record ?? '',
-      logo: homeTeam.logo ?? getMlbTeamLogo(homeTeam),
+      logo: homeTeam.logo ?? getMlbTeamLogo(homeTeam.name),
     },
     awayScore: Number(game.awayScore ?? 0),
     homeScore: Number(game.homeScore ?? 0),

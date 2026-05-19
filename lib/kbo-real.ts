@@ -25,20 +25,7 @@ function parseScore(value: string | number | null | undefined) {
 }
 
 function normalizeTeamName(name: string) {
-  const map: Record<string, string> = {
-    'Doosan Bears': 'Doosan Bears',
-    'Hanwha Eagles': 'Hanwha Eagles',
-    'KIA Tigers': 'KIA Tigers',
-    'Kiwoom Heroes': 'Kiwoom Heroes',
-    'KT Wiz': 'KT Wiz',
-    'LG Twins': 'LG Twins',
-    'Lotte Giants': 'Lotte Giants',
-    'NC Dinos': 'NC Dinos',
-    'Samsung Lions': 'Samsung Lions',
-    'SSG Landers': 'SSG Landers',
-  };
-
-  return map[name] ?? name;
+  return name;
 }
 
 function displayTeamName(name: string) {

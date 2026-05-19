@@ -313,14 +313,8 @@ export async function fetchKboOfficialGamesByDate(date: string): Promise<Scorebo
 
   const html = await response.text();
 
-  console.log('KBO official html preview =', html.slice(0, 2000));
-  console.log('KBO official html has DOOSAN =', html.includes('DOOSAN'));
-  console.log('KBO official html has JAMSIL =', html.includes('JAMSIL'));
-  console.log('KBO official html has Scoreboard =', html.includes('Scoreboard'));
 
   const parsedGames = parseScoreboardBlocksFromHtml(html);
-
-  console.log('KBO official parsed count =', parsedGames.length, 'date =', date);
 
   return parsedGames.map((game, index) => toScoreboardGame(date, index, game));
 }

@@ -33,22 +33,7 @@ function parseScore(value: string | number | null | undefined) {
 }
 
 function normalizeTeamName(name: string) {
-  const map: Record<string, string> = {
-    '阪神虎': '阪神虎',
-    '讀賣巨人': '讀賣巨人',
-    '中日龍': '中日龍',
-    '廣島東洋鯉魚': '廣島東洋鯉魚',
-    '東京養樂多燕子': '東京養樂多燕子',
-    '橫濱 DeNA 海灣之星': '橫濱 DeNA 海灣之星',
-    '福岡軟銀鷹': '福岡軟銀鷹',
-    '北海道日本火腿鬥士': '北海道日本火腿鬥士',
-    '千葉羅德海洋': '千葉羅德海洋',
-    '東北樂天金鷲': '東北樂天金鷲',
-    '埼玉西武獅': '埼玉西武獅',
-    '歐力士猛牛': '歐力士猛牛',
-  };
-
-  return map[name] ?? name;
+  return name;
 }
 
 function teamShort(name: string) {
