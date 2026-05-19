@@ -92,7 +92,6 @@ const RECENT_GAME_STAT_LABELS: Record<string, string> = {
 const LEAGUE_ORDER: Record<string, number> = {
   MLB: 0,
   NPB: 1,
-  NBP: 1,
   KBO: 2,
   MiLB: 3,
   MILB: 3,
