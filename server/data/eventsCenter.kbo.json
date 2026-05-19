@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-19T08:29:40.817Z",
+  "updatedAt": "2026-05-19T11:41:51.143Z",
   "date": "2026-05-19",
   "startDate": "2026-05-19",
   "endDate": "2026-05-19",
@@ -8,11 +8,11 @@
       "id": "20260519NCOB0",
       "date": "2026-05-19",
       "league": "KBO",
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "venue": "잠실",
       "source": "kbo-official",
       "gamePk": 1,
-      "statusText": "Scheduled",
+      "statusText": "Live",
       "awayTeam": {
         "name": "NC恐龍",
         "short": "NC",
@@ -23,8 +23,8 @@
         "short": "DOO",
         "logoKey": "doosan-bears"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 1,
+      "homeScore": 9,
       "innings": [
         1,
         2,
@@ -46,12 +46,12 @@
         "team": "NC",
         "innings": [
           "0",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "0",
           "-",
           "-",
           "-",
@@ -61,19 +61,19 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 2,
+        "e": 1
       },
       "homeLine": {
         "team": "DOO",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
+          "0",
+          "1",
+          "1",
+          "1",
+          "1",
+          "5",
           "-",
           "-",
           "-",
@@ -84,12 +84,12 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 9,
+        "h": 11,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "18:30",
+      "footerLeft": "Live",
+      "footerRight": "7回表",
       "gameDate": "2026-05-19",
       "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519NCOB0"
     },
@@ -97,11 +97,11 @@
       "id": "20260519LGHT0",
       "date": "2026-05-19",
       "league": "KBO",
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "venue": "광주",
       "source": "kbo-official",
       "gamePk": 2,
-      "statusText": "Scheduled",
+      "statusText": "Live",
       "awayTeam": {
         "name": "LG雙子",
         "short": "LG",
@@ -113,7 +113,7 @@
         "logoKey": "kia-tigers"
       },
       "awayScore": 0,
-      "homeScore": 0,
+      "homeScore": 7,
       "innings": [
         1,
         2,
@@ -135,11 +135,11 @@
         "team": "LG",
         "innings": [
           "0",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
           "-",
           "-",
           "-",
@@ -151,18 +151,18 @@
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
         "team": "KIA",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
+          "1",
+          "0",
+          "0",
+          "3",
+          "0",
+          "3",
           "-",
           "-",
           "-",
@@ -173,12 +173,12 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 7,
+        "h": 9,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "18:30",
+      "footerLeft": "Live",
+      "footerRight": "6回裏",
       "gameDate": "2026-05-19",
       "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LGHT0"
     },
@@ -186,11 +186,11 @@
       "id": "20260519SKWO0",
       "date": "2026-05-19",
       "league": "KBO",
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "venue": "고척",
       "source": "kbo-official",
       "gamePk": 3,
-      "statusText": "Scheduled",
+      "statusText": "Live",
       "awayTeam": {
         "name": "SSG登陸者",
         "short": "SSG",
@@ -201,8 +201,8 @@
         "short": "KIW",
         "logoKey": "kiwoom-heroes"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 5,
+      "homeScore": 4,
       "innings": [
         1,
         2,
@@ -223,6 +223,34 @@
       "awayLine": {
         "team": "SSG",
         "innings": [
+          "2",
+          "1",
+          "0",
+          "0",
+          "0",
+          "2",
+          "0",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 5,
+        "h": 8,
+        "e": 1
+      },
+      "homeLine": {
+        "team": "KIW",
+        "innings": [
+          "2",
+          "2",
+          "0",
+          "0",
+          "0",
           "0",
           "-",
           "-",
@@ -232,42 +260,14 @@
           "-",
           "-",
           "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 8,
         "e": 0
       },
-      "homeLine": {
-        "team": "KIW",
-        "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "footerLeft": "Scheduled",
-      "footerRight": "18:30",
+      "footerLeft": "Live",
+      "footerRight": "7回表",
       "gameDate": "2026-05-19",
       "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519SKWO0"
     },
@@ -275,11 +275,11 @@
       "id": "20260519LTHH0",
       "date": "2026-05-19",
       "league": "KBO",
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "venue": "대전",
       "source": "kbo-official",
       "gamePk": 4,
-      "statusText": "Scheduled",
+      "statusText": "Live",
       "awayTeam": {
         "name": "樂天巨人",
         "short": "LOT",
@@ -290,8 +290,8 @@
         "short": "HAN",
         "logoKey": "hanwha-eagles"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 2,
+      "homeScore": 4,
       "innings": [
         1,
         2,
@@ -301,12 +301,24 @@
         6,
         7,
         8,
-        9
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
       ],
       "awayLine": {
         "team": "LOT",
         "innings": [
-          "-",
+          "0",
+          "2",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
           "-",
           "-",
           "-",
@@ -316,13 +328,19 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 2,
+        "h": 8,
         "e": 0
       },
       "homeLine": {
         "team": "HAN",
         "innings": [
+          "1",
+          "0",
+          "1",
+          "2",
+          "0",
+          "0",
           "-",
           "-",
           "-",
@@ -333,12 +351,12 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 5,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "18:30",
+      "footerLeft": "Live",
+      "footerRight": "7回表",
       "gameDate": "2026-05-19",
       "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LTHH0"
     },
@@ -346,11 +364,11 @@
       "id": "20260519KTSS0",
       "date": "2026-05-19",
       "league": "KBO",
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "venue": "포항",
       "source": "kbo-official",
       "gamePk": 5,
-      "statusText": "Scheduled",
+      "statusText": "Live",
       "awayTeam": {
         "name": "KT巫師",
         "short": "KT",
@@ -361,8 +379,8 @@
         "short": "SAM",
         "logoKey": "samsung-lions"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 1,
+      "homeScore": 4,
       "innings": [
         1,
         2,
@@ -372,12 +390,24 @@
         6,
         7,
         8,
-        9
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
       ],
       "awayLine": {
         "team": "KT",
         "innings": [
-          "-",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "0",
           "-",
           "-",
           "-",
@@ -387,13 +417,19 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 6,
+        "e": 1
       },
       "homeLine": {
         "team": "SAM",
         "innings": [
+          "0",
+          "0",
+          "2",
+          "1",
+          "1",
+          "0",
           "-",
           "-",
           "-",
@@ -404,12 +440,12 @@
           "-",
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 11,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "18:30",
+      "footerLeft": "Live",
+      "footerRight": "7回表",
       "gameDate": "2026-05-19",
       "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519KTSS0"
     }
@@ -420,11 +456,11 @@
         "id": "20260519NCOB0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "잠실",
         "source": "kbo-official",
         "gamePk": 1,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "NC恐龍",
           "short": "NC",
@@ -435,8 +471,8 @@
           "short": "DOO",
           "logoKey": "doosan-bears"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 9,
         "innings": [
           1,
           2,
@@ -458,12 +494,12 @@
           "team": "NC",
           "innings": [
             "0",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -473,19 +509,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 2,
+          "e": 1
         },
         "homeLine": {
           "team": "DOO",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "1",
+            "1",
+            "1",
+            "1",
+            "5",
             "-",
             "-",
             "-",
@@ -496,12 +532,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 9,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519NCOB0"
       },
@@ -509,11 +545,11 @@
         "id": "20260519LGHT0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "광주",
         "source": "kbo-official",
         "gamePk": 2,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "LG雙子",
           "short": "LG",
@@ -525,7 +561,7 @@
           "logoKey": "kia-tigers"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -547,11 +583,11 @@
           "team": "LG",
           "innings": [
             "0",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -563,18 +599,18 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "KIA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "1",
+            "0",
+            "0",
+            "3",
+            "0",
+            "3",
             "-",
             "-",
             "-",
@@ -585,12 +621,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 9,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "6回裏",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LGHT0"
       },
@@ -598,11 +634,11 @@
         "id": "20260519SKWO0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "고척",
         "source": "kbo-official",
         "gamePk": 3,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "SSG登陸者",
           "short": "SSG",
@@ -613,8 +649,8 @@
           "short": "KIW",
           "logoKey": "kiwoom-heroes"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -635,6 +671,34 @@
         "awayLine": {
           "team": "SSG",
           "innings": [
+            "2",
+            "1",
+            "0",
+            "0",
+            "0",
+            "2",
+            "0",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 5,
+          "h": 8,
+          "e": 1
+        },
+        "homeLine": {
+          "team": "KIW",
+          "innings": [
+            "2",
+            "2",
+            "0",
+            "0",
+            "0",
             "0",
             "-",
             "-",
@@ -644,42 +708,14 @@
             "-",
             "-",
             "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 8,
           "e": 0
         },
-        "homeLine": {
-          "team": "KIW",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519SKWO0"
       },
@@ -687,11 +723,11 @@
         "id": "20260519LTHH0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "대전",
         "source": "kbo-official",
         "gamePk": 4,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "樂天巨人",
           "short": "LOT",
@@ -702,8 +738,8 @@
           "short": "HAN",
           "logoKey": "hanwha-eagles"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -713,12 +749,24 @@
           6,
           7,
           8,
-          9
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
         ],
         "awayLine": {
           "team": "LOT",
           "innings": [
-            "-",
+            "0",
+            "2",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -728,13 +776,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
           "team": "HAN",
           "innings": [
+            "1",
+            "0",
+            "1",
+            "2",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -745,12 +799,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LTHH0"
       },
@@ -758,11 +812,11 @@
         "id": "20260519KTSS0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "포항",
         "source": "kbo-official",
         "gamePk": 5,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "KT巫師",
           "short": "KT",
@@ -773,8 +827,8 @@
           "short": "SAM",
           "logoKey": "samsung-lions"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -784,12 +838,24 @@
           6,
           7,
           8,
-          9
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
         ],
         "awayLine": {
           "team": "KT",
           "innings": [
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -799,13 +865,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 6,
+          "e": 1
         },
         "homeLine": {
           "team": "SAM",
           "innings": [
+            "0",
+            "0",
+            "2",
+            "1",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -816,12 +888,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519KTSS0"
       }
@@ -833,11 +905,11 @@
         "id": "20260519NCOB0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "잠실",
         "source": "kbo-official",
         "gamePk": 1,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "NC恐龍",
           "short": "NC",
@@ -848,8 +920,8 @@
           "short": "DOO",
           "logoKey": "doosan-bears"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 9,
         "innings": [
           1,
           2,
@@ -871,12 +943,12 @@
           "team": "NC",
           "innings": [
             "0",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -886,19 +958,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 2,
+          "e": 1
         },
         "homeLine": {
           "team": "DOO",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "1",
+            "1",
+            "1",
+            "1",
+            "5",
             "-",
             "-",
             "-",
@@ -909,12 +981,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 9,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519NCOB0"
       },
@@ -922,11 +994,11 @@
         "id": "20260519LGHT0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "광주",
         "source": "kbo-official",
         "gamePk": 2,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "LG雙子",
           "short": "LG",
@@ -938,7 +1010,7 @@
           "logoKey": "kia-tigers"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -960,11 +1032,11 @@
           "team": "LG",
           "innings": [
             "0",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -976,18 +1048,18 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "KIA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
+            "1",
+            "0",
+            "0",
+            "3",
+            "0",
+            "3",
             "-",
             "-",
             "-",
@@ -998,12 +1070,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 9,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "6回裏",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LGHT0"
       },
@@ -1011,11 +1083,11 @@
         "id": "20260519SKWO0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "고척",
         "source": "kbo-official",
         "gamePk": 3,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "SSG登陸者",
           "short": "SSG",
@@ -1026,8 +1098,8 @@
           "short": "KIW",
           "logoKey": "kiwoom-heroes"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -1048,6 +1120,34 @@
         "awayLine": {
           "team": "SSG",
           "innings": [
+            "2",
+            "1",
+            "0",
+            "0",
+            "0",
+            "2",
+            "0",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 5,
+          "h": 8,
+          "e": 1
+        },
+        "homeLine": {
+          "team": "KIW",
+          "innings": [
+            "2",
+            "2",
+            "0",
+            "0",
+            "0",
             "0",
             "-",
             "-",
@@ -1057,42 +1157,14 @@
             "-",
             "-",
             "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 8,
           "e": 0
         },
-        "homeLine": {
-          "team": "KIW",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519SKWO0"
       },
@@ -1100,11 +1172,11 @@
         "id": "20260519LTHH0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "대전",
         "source": "kbo-official",
         "gamePk": 4,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "樂天巨人",
           "short": "LOT",
@@ -1115,8 +1187,8 @@
           "short": "HAN",
           "logoKey": "hanwha-eagles"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -1126,12 +1198,24 @@
           6,
           7,
           8,
-          9
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
         ],
         "awayLine": {
           "team": "LOT",
           "innings": [
-            "-",
+            "0",
+            "2",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -1141,13 +1225,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
           "team": "HAN",
           "innings": [
+            "1",
+            "0",
+            "1",
+            "2",
+            "0",
+            "0",
             "-",
             "-",
             "-",
@@ -1158,12 +1248,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519LTHH0"
       },
@@ -1171,11 +1261,11 @@
         "id": "20260519KTSS0",
         "date": "2026-05-19",
         "league": "KBO",
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "venue": "포항",
         "source": "kbo-official",
         "gamePk": 5,
-        "statusText": "Scheduled",
+        "statusText": "Live",
         "awayTeam": {
           "name": "KT巫師",
           "short": "KT",
@@ -1186,8 +1276,8 @@
           "short": "SAM",
           "logoKey": "samsung-lions"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 4,
         "innings": [
           1,
           2,
@@ -1197,12 +1287,24 @@
           6,
           7,
           8,
-          9
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
         ],
         "awayLine": {
           "team": "KT",
           "innings": [
-            "-",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -1212,13 +1314,19 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 6,
+          "e": 1
         },
         "homeLine": {
           "team": "SAM",
           "innings": [
+            "0",
+            "0",
+            "2",
+            "1",
+            "1",
+            "0",
             "-",
             "-",
             "-",
@@ -1229,12 +1337,12 @@
             "-",
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "18:30",
+        "footerLeft": "Live",
+        "footerRight": "7回表",
         "gameDate": "2026-05-19",
         "officialUrl": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameId=20260519KTSS0"
       }
