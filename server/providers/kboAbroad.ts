@@ -186,9 +186,6 @@ function isTrackedKboPlayer(player: AbroadPlayerLike) {
   return normalizeText(player.league) === 'kbo';
 }
 
-function hasRecentGames(player: AbroadPlayerLike) {
-  return Array.isArray(player.recentGames) && player.recentGames.length > 0;
-}
 
 function buildFallbackNews(
   player: AbroadPlayerLike,

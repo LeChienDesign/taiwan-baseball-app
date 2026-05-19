@@ -140,51 +140,6 @@ const OFFICIAL_GAME_META_MAP: Record<string, { gameSno: string; kindCode: string
     statusOverride: 'SCHEDULED',
     labelOverride: '延賽',
   },
-  '2026-05-05|CTBC Brothers|Wei Chuan Dragons': {
-    gameSno: '81',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-06|TSG Hawks|Uni-President Lions': {
-    gameSno: '84',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-06|CTBC Brothers|Wei Chuan Dragons': {
-    gameSno: '83',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-08|Wei Chuan Dragons|Fubon Guardians': {
-    gameSno: '85',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-08|Uni-President Lions|Rakuten Monkeys': {
-    gameSno: '86',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-08|TSG Hawks|CTBC Brothers': {
-    gameSno: '87',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-10|Wei Chuan Dragons|Fubon Guardians': {
-    gameSno: '91',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-10|Uni-President Lions|Rakuten Monkeys': {
-    gameSno: '92',
-    kindCode: 'A',
-    year: '2026',
-  },
-  '2026-05-10|TSG Hawks|CTBC Brothers': {
-    gameSno: '93',
-    kindCode: 'A',
-    year: '2026',
-  },
 };
 
 let computedOfficialGameMetaMapCache: Record<string, { gameSno: string; kindCode: string; year: string }> | null = null;
