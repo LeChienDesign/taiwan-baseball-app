@@ -10,8 +10,6 @@ type CpblGame = CpblPayload extends { games: infer Games }
   : never;
 
 const CPBL_SEASON_FALLBACK_PATHS = [
-  path.resolve(process.cwd(), 'data/cpbl-2026.json'),
-  path.resolve(process.cwd(), 'server/data/cpbl-2026.json'),
   path.resolve(process.cwd(), 'server/data/cpblManualGames.json'),
 ];
 
