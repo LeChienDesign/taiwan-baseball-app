@@ -16,10 +16,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useFonts } from 'expo-font';
 
 import AppEmptyState from '../../components/AppEmptyState';
 import AbroadPlayerAvatar from '../../components/AbroadPlayerAvatar';
+import { APP_FONT, CN_FONT } from '../../constants/fonts';
 
 import { useHomeGames, type LeagueKey } from '../../hooks/useHomeGames';
 import { buildLeagueHref } from '../../lib/homeGameSelector';
@@ -60,16 +60,10 @@ const localTeamLogoByKey: Record<string, ImageSourcePropType> = {
 };
 
 
-const APP_FONT = 'CityBurn';
-const CN_FONT = 'FangZhengHei';
 
 
 export default function HomePage() {
   const router = useRouter();
-  useFonts({
-    CityBurn: require('../../assets/fonts/CityBurn.ttf'),
-    FangZhengHei: require('../../assets/fonts/FangZhengHei.ttf'),
-  });
   const logoPulse = useRef(new Animated.Value(1)).current;
   const heroFloat = useRef(new Animated.Value(0)).current;
   const livePulse = useRef(new Animated.Value(0.45)).current;

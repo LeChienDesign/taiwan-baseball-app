@@ -31,8 +31,8 @@ import {
   filterAndSortAbroadPlayers,
   mergeAbroadPlayerViewModels,
 } from '../../lib/viewModels/abroadPlayerViewModel';
+import { CN_FONT } from '../../constants/fonts';
 
-const CN_FONT = 'FangZhengHei';
 
 const abroadImages = {
   paperBg: require('../../assets/yaren_one_icons_png_pack/paper_bg.png'),

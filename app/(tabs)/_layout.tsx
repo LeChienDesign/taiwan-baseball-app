@@ -1,16 +1,10 @@
 import { Tabs } from 'expo-router';
-import { useFonts } from 'expo-font';
 import { Image, StyleSheet, Text } from 'react-native';
+import { CN_FONT } from '../../constants/fonts';
 
 const tabBarBg = require('../../assets/home/bottom_tab_ticket.png');
-const CN_FONT = 'ZaoZiGongFangXingHei';
 
 export default function TabsLayout() {
-  const [fontsLoaded] = useFonts({
-    ZaoZiGongFangXingHei: require('../../assets/fonts/ZaoZiGongFangXingHei.ttf'),
-  });
-
-
   return (
     <Tabs
       screenOptions={{

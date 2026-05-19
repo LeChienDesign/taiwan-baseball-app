@@ -9,9 +9,8 @@ import {
   formatAbroadTeamLine,
   type AbroadPlayerLike,
 } from '../../lib/viewModels/abroadPlayerViewModel';
+import { APP_FONT, CN_FONT } from '../../constants/fonts';
 
-const APP_FONT = 'CityBurn';
-const CN_FONT = 'FangZhengHei';
 
 const VINTAGE_COLOR = {
   ink: '#0B2346',
