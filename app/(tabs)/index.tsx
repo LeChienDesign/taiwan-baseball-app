@@ -26,10 +26,10 @@ import { buildLeagueHref } from '../../lib/homeGameSelector';
 import { getMlbTeamLogo, getMlbTeamLogoByKey } from '../../constants/mlbTeamLogos';
 import * as TeamLogoConstants from '../../constants/teamLogos';
 import abroadPlayersLive from '../../server/data/abroadPlayers.live.json';
-import cpblEventsCenter from '../../server/data/eventsCenter.cpbl.json';
-import mlbEventsCenter from '../../server/data/eventsCenter.mlb.json';
-import npbEventsCenter from '../../server/data/eventsCenter.npb.json';
-import kboEventsCenter from '../../server/data/eventsCenter.kbo.json';
+import initialCpblEventsCenter from '../../server/data/eventsCenter.cpbl.json';
+import initialMlbEventsCenter from '../../server/data/eventsCenter.mlb.json';
+import initialNpbEventsCenter from '../../server/data/eventsCenter.npb.json';
+import initialKboEventsCenter from '../../server/data/eventsCenter.kbo.json';
 
 
 
@@ -80,6 +80,18 @@ export default function HomePage() {
   const [previousFocusPlayerPage, setPreviousFocusPlayerPage] = useState(0);
   const [regularSeasonTickerHydrated, setRegularSeasonTickerHydrated] = useState(false);
 
+  const [eventsCenterData, setEventsCenterData] = useState({
+    CPBL: initialCpblEventsCenter as any,
+    MLB: initialMlbEventsCenter as any,
+    NPB: initialNpbEventsCenter as any,
+    KBO: initialKboEventsCenter as any,
+  });
+
+  const cpblEventsCenter = eventsCenterData.CPBL;
+  const mlbEventsCenter = eventsCenterData.MLB;
+  const npbEventsCenter = eventsCenterData.NPB;
+  const kboEventsCenter = eventsCenterData.KBO;
+
   const {
     todayKey,
     mlbTodayKey,
@@ -88,6 +100,37 @@ export default function HomePage() {
     refreshing,
     refresh,
   } = useHomeGames();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchLatestEventsCenterData() {
+      try {
+        const response = await fetch('/api/events-center/mlb?league=all');
+        if (!response.ok) return;
+
+        const latest = await response.json();
+        if (!isMounted) return;
+
+        setEventsCenterData((current) => ({
+          CPBL: latest?.cpbl ?? current.CPBL,
+          MLB: latest?.mlb ?? current.MLB,
+          NPB: latest?.npb ?? current.NPB,
+          KBO: latest?.kbo ?? current.KBO,
+        }));
+      } catch {
+        // Keep bundled fallback data when the local events API is unavailable.
+      }
+    }
+
+    fetchLatestEventsCenterData();
+    const timer = setInterval(fetchLatestEventsCenterData, 30 * 1000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const logoLoop = Animated.loop(
@@ -381,7 +424,7 @@ export default function HomePage() {
   }
 
 
-  function isFinalWithin12Hours(game: any, dateKey: string) {
+  function isFinalWithin6Hours(game: any, dateKey: string) {
     if (!isGameFinalLike(game)) return false;
 
     const now = new Date();
@@ -401,7 +444,7 @@ export default function HomePage() {
 
     const diffMs = now.getTime() - gameTime;
 
-    return diffMs >= 0 && diffMs <= 18 * 60 * 60 * 1000;
+    return diffMs >= 0 && diffMs <= 6 * 60 * 60 * 1000;
   }
 
   function getRecentFinalGames(source: any, league: LeagueKey) {
@@ -416,7 +459,7 @@ export default function HomePage() {
           game,
           dateKey,
         }))
-        .filter((item) => isFinalWithin12Hours(item.game, item.dateKey));
+        .filter((item) => isFinalWithin6Hours(item.game, item.dateKey));
     });
   }
 
@@ -727,7 +770,7 @@ export default function HomePage() {
       const bTime = getGameStartDate(b.game, b.dateKey)?.getTime() ?? new Date(`${b.dateKey}T00:00:00+08:00`).getTime();
       return bTime - aTime;
     })
-    .slice(0, 5);
+    .slice(0, 10);
 
   const todayGameSource = upcomingTodayGames;
   const todayGamesEmptyMessage = allTodayGames.length > 0 ? '近期無賽事' : '停賽期';
@@ -760,18 +803,13 @@ export default function HomePage() {
     const liveItems = allTodayGames.filter((item) => isGameLiveLike(item.game));
 
     if (liveItems.length > 0) {
-      const finalFillers = recentFinalGames.filter((finalItem) => {
-        const finalGameId = finalItem?.game?.id;
-        return !finalGameId || !liveItems.some((liveItem) => liveItem?.game?.id === finalGameId);
-      });
-
-      return [...liveItems, ...finalFillers];
+      return liveItems.slice(0, 10);
     }
 
-    return recentFinalGames;
+    return recentFinalGames.slice(0, 10);
   })();
 
-  const regularSeasonInitialItems = regularSeasonCardSourceItems.slice(0, 3);
+  const regularSeasonInitialItems = regularSeasonCardSourceItems.slice(0, 10);
   const regularSeasonHydratedItems = regularSeasonCardSourceItems.filter((item) => isGameLiveLike(item.game));
   const regularSeasonCardItems = regularSeasonTickerHydrated && regularSeasonHydratedItems.length > 0
     ? regularSeasonHydratedItems
