@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "export:abroad-seed": "tsx scripts/export-abroad-seed.ts",
+    "merge:npb-results": "tsx scripts/merge-npb-results.ts",
     "fetch:abroad-live": "tsx server/fetch-abroad-data.ts",
     "fetch:events-mlb": "tsx server/fetch-live-baseball-data.ts",
     "fetch:events-npb": "tsx server/fetch-npb-live-data.ts",
