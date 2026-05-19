@@ -12,7 +12,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -61,11 +61,6 @@ TEAM_SHORTS = {
 }
 
 
-def daterange(start: date, end: date):
-    current = start
-    while current <= end:
-        yield current
-        current += timedelta(days=1)
 
 
 def fetch_json(url: str) -> dict:
