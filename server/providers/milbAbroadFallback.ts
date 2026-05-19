@@ -182,13 +182,6 @@ async function fetchMilbOfficialPageHtml(player: AbroadPlayerLike) {
   return undefined;
 }
 
-async function fetchMilbOfficialNumber(player: AbroadPlayerLike) {
-  const html = await fetchMilbOfficialPageHtml(player);
-
-  if (!html) return undefined;
-
-  return extractMilbJerseyNumberFromHtml(html);
-}
 
 function normalizeHeadshotUrl(url?: string) {
   const value = url?.trim();
@@ -239,12 +232,15 @@ function extractMilbHeadshotFromHtml(html: string) {
   return undefined;
 }
 
-async function fetchMilbOfficialPhotoUrl(player: AbroadPlayerLike) {
+async function fetchMilbOfficialProfilePatch(player: AbroadPlayerLike) {
   const html = await fetchMilbOfficialPageHtml(player);
 
-  if (!html) return undefined;
+  if (!html) return {};
 
-  return extractMilbHeadshotFromHtml(html);
+  return {
+    officialNumber: extractMilbJerseyNumberFromHtml(html),
+    officialPhotoUrl: extractMilbHeadshotFromHtml(html),
+  };
 }
 
 function normalizeText(value?: string) {
@@ -618,8 +614,7 @@ export async function buildMilbAbroadFallbackPatches(
   for (const player of players) {
     if (!isTrackedMiLbPlayer(player)) continue;
 
-    const officialNumber = await fetchMilbOfficialNumber(player);
-    const officialPhotoUrl = await fetchMilbOfficialPhotoUrl(player);
+    const { officialNumber, officialPhotoUrl } = await fetchMilbOfficialProfilePatch(player);
     const numberPatch = officialNumber && player.number !== officialNumber ? { number: officialNumber } : {};
     const photoPatch = officialPhotoUrl && player.officialPhotoUrl !== officialPhotoUrl ? { officialPhotoUrl } : {};
     const officialPatch = {

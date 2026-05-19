@@ -227,6 +227,36 @@ function buildTeam(team: any): ScoreboardTeam {
   };
 }
 
+function mapMlbGameToScoreboardGame(game: any, date: string): ScoreboardGame {
+  const status = getEffectiveMlbStatus(game);
+
+  const awayShort = safeTeamAbbr(game?.teams?.away?.team);
+  const homeShort = safeTeamAbbr(game?.teams?.home?.team);
+  const lines = buildInningLines(game?.linescore, awayShort, homeShort);
+  const footer = buildFooter(game);
+
+  return {
+    id: `mlb-${game.gamePk}`,
+    source: 'mlb-official',
+    league: 'MLB',
+    date,
+    gamePk: game.gamePk,
+    status,
+    statusText: game?.status?.detailedState ?? '待更新',
+    venue: game?.venue?.name ?? '待更新',
+    awayTeam: buildTeam(game?.teams?.away?.team),
+    homeTeam: buildTeam(game?.teams?.home?.team),
+    awayScore: game?.teams?.away?.score ?? 0,
+    homeScore: game?.teams?.home?.score ?? 0,
+    innings: lines.headers,
+    awayLine: lines.awayLine,
+    homeLine: lines.homeLine,
+    footerLeft: footer.footerLeft,
+    footerRight: footer.footerRight,
+    gameDate: game?.gameDate,
+  };
+}
+
 export async function fetchMlbScoreboardByDate(date: string): Promise<ScoreboardGame[]> {
   const url =
     `${MLB_BASE}/schedule?sportId=1&date=${encodeURIComponent(date)}` +
@@ -235,35 +265,7 @@ export async function fetchMlbScoreboardByDate(date: string): Promise<Scoreboard
   const data = await fetchJson<any>(url);
   const games = data?.dates?.[0]?.games ?? [];
 
-  return games.map((game: any) => {
-    const status = getEffectiveMlbStatus(game);
-
-    const awayShort = safeTeamAbbr(game?.teams?.away?.team);
-    const homeShort = safeTeamAbbr(game?.teams?.home?.team);
-    const lines = buildInningLines(game?.linescore, awayShort, homeShort);
-    const footer = buildFooter(game);
-
-    return {
-      id: `mlb-${game.gamePk}`,
-      source: 'mlb-official',
-      league: 'MLB',
-      date,
-      gamePk: game.gamePk,
-      status,
-      statusText: game?.status?.detailedState ?? '待更新',
-      venue: game?.venue?.name ?? '待更新',
-      awayTeam: buildTeam(game?.teams?.away?.team),
-      homeTeam: buildTeam(game?.teams?.home?.team),
-      awayScore: game?.teams?.away?.score ?? 0,
-      homeScore: game?.teams?.home?.score ?? 0,
-      innings: lines.headers,
-      awayLine: lines.awayLine,
-      homeLine: lines.homeLine,
-      footerLeft: footer.footerLeft,
-      footerRight: footer.footerRight,
-      gameDate: game?.gameDate,
-    };
-  });
+  return games.map((game: any) => mapMlbGameToScoreboardGame(game, date));
 }
 
 export async function fetchMlbTeamGames(args: {
@@ -281,35 +283,9 @@ export async function fetchMlbTeamGames(args: {
   const dates = data?.dates ?? [];
   const games = dates.flatMap((d: any) => d?.games ?? []);
 
-  return games.map((game: any) => {
-    const status = getEffectiveMlbStatus(game);
-
-    const awayShort = safeTeamAbbr(game?.teams?.away?.team);
-    const homeShort = safeTeamAbbr(game?.teams?.home?.team);
-    const lines = buildInningLines(game?.linescore, awayShort, homeShort);
-    const footer = buildFooter(game);
-
-    return {
-      id: `mlb-${game.gamePk}`,
-      source: 'mlb-official',
-      league: 'MLB',
-      date: game?.officialDate ?? args.startDate,
-      gamePk: game.gamePk,
-      status,
-      statusText: game?.status?.detailedState ?? '待更新',
-      venue: game?.venue?.name ?? '待更新',
-      awayTeam: buildTeam(game?.teams?.away?.team),
-      homeTeam: buildTeam(game?.teams?.home?.team),
-      awayScore: game?.teams?.away?.score ?? 0,
-      homeScore: game?.teams?.home?.score ?? 0,
-      innings: lines.headers,
-      awayLine: lines.awayLine,
-      homeLine: lines.homeLine,
-      footerLeft: footer.footerLeft,
-      footerRight: footer.footerRight,
-      gameDate: game?.gameDate,
-    };
-  });
+  return games.map((game: any) =>
+    mapMlbGameToScoreboardGame(game, game?.officialDate ?? args.startDate)
+  );
 }
 
 export async function fetchMlbPerson(personId: number): Promise<MlbPerson | null> {

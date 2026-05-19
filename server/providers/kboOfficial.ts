@@ -146,20 +146,20 @@ export async function fetchKboScoreboardByDate(date: string) {
     // Keep total-score-only fallback when the English scoreboard is unavailable.
   }
 
-  const games = (json.game || []).map((g: any, i: number) => {
-    const TEAM_MAP: Record<string, { name: string; short: string; logoKey?: string }> = {
-      한화: { name: '韓華鷹', short: 'HAN', logoKey: 'hanwha-eagles' },
-      두산: { name: '斗山熊', short: 'DOO', logoKey: 'doosan-bears' },
-      KIA: { name: 'KIA虎', short: 'KIA', logoKey: 'kia-tigers' },
-      키움: { name: '培證英雄', short: 'KIW', logoKey: 'kiwoom-heroes' },
-      KT: { name: 'KT巫師', short: 'KT', logoKey: 'kt-wiz' },
-      LG: { name: 'LG雙子', short: 'LG', logoKey: 'lg-twins' },
-      롯데: { name: '樂天巨人', short: 'LOT', logoKey: 'lotte-giants' },
-      NC: { name: 'NC恐龍', short: 'NC', logoKey: 'nc-dinos' },
-      삼성: { name: '三星獅', short: 'SAM', logoKey: 'samsung-lions' },
-      SSG: { name: 'SSG登陸者', short: 'SSG', logoKey: 'ssg-landers' },
-    };
+  const TEAM_MAP: Record<string, { name: string; short: string; logoKey?: string }> = {
+    한화: { name: '韓華鷹', short: 'HAN', logoKey: 'hanwha-eagles' },
+    두산: { name: '斗山熊', short: 'DOO', logoKey: 'doosan-bears' },
+    KIA: { name: 'KIA虎', short: 'KIA', logoKey: 'kia-tigers' },
+    키움: { name: '培證英雄', short: 'KIW', logoKey: 'kiwoom-heroes' },
+    KT: { name: 'KT巫師', short: 'KT', logoKey: 'kt-wiz' },
+    LG: { name: 'LG雙子', short: 'LG', logoKey: 'lg-twins' },
+    롯데: { name: '樂天巨人', short: 'LOT', logoKey: 'lotte-giants' },
+    NC: { name: 'NC恐龍', short: 'NC', logoKey: 'nc-dinos' },
+    삼성: { name: '三星獅', short: 'SAM', logoKey: 'samsung-lions' },
+    SSG: { name: 'SSG登陸者', short: 'SSG', logoKey: 'ssg-landers' },
+  };
 
+  const games = (json.game || []).map((g: any, i: number) => {
     const toTeam = (name: string) => {
       const key = String(name ?? '').trim();
       return TEAM_MAP[key] ?? { name: key, short: key.slice(0, 4).toUpperCase() };
