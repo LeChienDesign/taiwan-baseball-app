@@ -1,6 +1,4 @@
 import { getAbroadRegistry, type AbroadRegistryEntry } from '../../data/abroadRegistry';
-import { writeFile } from 'node:fs/promises';
-import path from 'node:path';
 
 type AbroadNewsItem = {
   id: string;
@@ -386,9 +384,6 @@ function isTrackedNpbPlayer(player: AbroadPlayerLike) {
   return normalizeText(player.league) === 'npb';
 }
 
-function hasRecentGames(player: AbroadPlayerLike) {
-  return Array.isArray(player.recentGames) && player.recentGames.length > 0;
-}
 
 function buildFallbackNews(
   player: AbroadPlayerLike,

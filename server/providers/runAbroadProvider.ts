@@ -15,8 +15,6 @@ export type ProviderRunResult = {
 
 export type AbroadProviderRunOptions = {
   retry?: number;
-  timeoutMs?: number;
-  fallback?: boolean;
 };
 
 function countAffectedPlayers(
