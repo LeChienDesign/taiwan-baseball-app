@@ -5,6 +5,9 @@ from pathlib import Path
 INPUT_PATH = Path("data/kbo-2026.csv")
 OUTPUT_PATH = Path("data/kbo-2026.json")
 
+if not INPUT_PATH.exists():
+    raise FileNotFoundError(f"Missing input file: {INPUT_PATH}")
+
 rows = []
 
 with INPUT_PATH.open("r", encoding="utf-8-sig", newline="") as f:
