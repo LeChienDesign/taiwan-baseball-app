@@ -73,7 +73,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add server/data/eventsCenter.mlb.json
+          git add -f server/data/eventsCenter.mlb.json
 
           if git diff --cached --quiet; then
             echo "No MLB event changes to commit."
