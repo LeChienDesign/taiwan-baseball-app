@@ -17,9 +17,12 @@ export async function fetchKboScoreboardByDate(date: string) {
   let json: any;
   try {
     json = JSON.parse(text.trim());
-  } catch {
+  } catch (firstError) {
     const start = text.indexOf('{');
-    if (start < 0) throw new Error('KBO response does not contain JSON');
+    if (start < 0) {
+      console.warn('[kboOfficial] KBO response does not contain JSON. Returning empty scoreboard.');
+      return { date, games: [] };
+    }
 
     let depth = 0;
     let inString = false;
@@ -55,8 +58,17 @@ export async function fetchKboScoreboardByDate(date: string) {
       }
     }
 
-    if (end < 0) throw new Error('KBO response JSON is incomplete');
-    json = JSON.parse(text.slice(start, end + 1));
+    if (end < 0) {
+      console.warn('[kboOfficial] KBO response JSON is incomplete. Returning empty scoreboard.');
+      return { date, games: [] };
+    }
+
+    try {
+      json = JSON.parse(text.slice(start, end + 1));
+    } catch {
+      console.warn('[kboOfficial] Failed to parse extracted KBO JSON. Returning empty scoreboard.', firstError);
+      return { date, games: [] };
+    }
   }
 
   const stripHtml = (html: string) =>
