@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-21T19:55:12.795Z",
+  "updatedAt": "2026-05-21T21:26:27.447Z",
   "date": "2026-05-21",
   "startDate": "2026-05-21",
   "endDate": "2026-05-21",
@@ -11,7 +11,7 @@
       "date": "2026-05-21",
       "gamePk": 824274,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 114,
@@ -72,7 +72,7 @@
         "h": 6,
         "e": 0
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下9局",
       "gameDate": "2026-05-21T17:10:00Z"
     },
@@ -83,7 +83,7 @@
       "date": "2026-05-21",
       "gamePk": 823056,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Busch Stadium",
       "awayTeam": {
         "id": 134,
@@ -144,7 +144,7 @@
         "h": 8,
         "e": 0
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下9局",
       "gameDate": "2026-05-21T17:15:00Z"
     },
@@ -155,7 +155,7 @@
       "date": "2026-05-21",
       "gamePk": 822733,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Nationals Park",
       "awayTeam": {
         "id": 121,
@@ -169,31 +169,43 @@
         "abbreviation": "WSH",
         "logoKey": "WSH"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 2,
+      "homeScore": 1,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "NYM",
         "innings": [
-          "-"
+          0,
+          0,
+          2,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 2,
+        "h": 4,
+        "e": 1
       },
       "homeLine": {
         "team": "WSH",
         "innings": [
-          "-"
+          0,
+          0,
+          0,
+          0,
+          1
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 4,
+        "e": 1
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下5局",
       "gameDate": "2026-05-21T20:05:00Z"
     },
     {
@@ -250,7 +262,7 @@
       "league": "MLB",
       "date": "2026-05-21",
       "gamePk": 823545,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Yankee Stadium",
       "awayTeam": {
@@ -268,27 +280,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "TOR",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -298,14 +294,6 @@
       "homeLine": {
         "team": "NYY",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -313,7 +301,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:05",
+      "footerRight": "上1局",
       "gameDate": "2026-05-21T23:05:00Z"
     },
     {
@@ -470,7 +458,7 @@
         "date": "2026-05-21",
         "gamePk": 824274,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 114,
@@ -531,7 +519,7 @@
           "h": 6,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-05-21T17:10:00Z"
       },
@@ -542,7 +530,7 @@
         "date": "2026-05-21",
         "gamePk": 823056,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 134,
@@ -603,7 +591,7 @@
           "h": 8,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-05-21T17:15:00Z"
       },
@@ -614,7 +602,7 @@
         "date": "2026-05-21",
         "gamePk": 822733,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 121,
@@ -628,31 +616,43 @@
           "abbreviation": "WSH",
           "logoKey": "WSH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "NYM",
           "innings": [
-            "-"
+            0,
+            0,
+            2,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 2,
+          "h": 4,
+          "e": 1
         },
         "homeLine": {
           "team": "WSH",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下5局",
         "gameDate": "2026-05-21T20:05:00Z"
       },
       {
@@ -709,7 +709,7 @@
         "league": "MLB",
         "date": "2026-05-21",
         "gamePk": 823545,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Yankee Stadium",
         "awayTeam": {
@@ -727,27 +727,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -757,14 +741,6 @@
         "homeLine": {
           "team": "NYY",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -772,7 +748,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:05",
+        "footerRight": "上1局",
         "gameDate": "2026-05-21T23:05:00Z"
       },
       {
@@ -930,7 +906,7 @@
         "date": "2026-05-21",
         "gamePk": 824274,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 114,
@@ -991,7 +967,7 @@
           "h": 6,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-05-21T17:10:00Z"
       },
@@ -1002,7 +978,7 @@
         "date": "2026-05-21",
         "gamePk": 823056,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 134,
@@ -1063,7 +1039,7 @@
           "h": 8,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-05-21T17:15:00Z"
       },
@@ -1074,7 +1050,7 @@
         "date": "2026-05-21",
         "gamePk": 822733,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 121,
@@ -1088,31 +1064,43 @@
           "abbreviation": "WSH",
           "logoKey": "WSH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "NYM",
           "innings": [
-            "-"
+            0,
+            0,
+            2,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 2,
+          "h": 4,
+          "e": 1
         },
         "homeLine": {
           "team": "WSH",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下5局",
         "gameDate": "2026-05-21T20:05:00Z"
       },
       {
@@ -1169,7 +1157,7 @@
         "league": "MLB",
         "date": "2026-05-21",
         "gamePk": 823545,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Yankee Stadium",
         "awayTeam": {
@@ -1187,27 +1175,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1217,14 +1189,6 @@
         "homeLine": {
           "team": "NYY",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1232,7 +1196,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:05",
+        "footerRight": "上1局",
         "gameDate": "2026-05-21T23:05:00Z"
       },
       {
