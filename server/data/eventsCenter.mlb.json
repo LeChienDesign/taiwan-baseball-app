@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-21T23:45:21.082Z",
+  "updatedAt": "2026-05-22T01:51:19.050Z",
   "date": "2026-05-21",
   "startDate": "2026-05-21",
   "endDate": "2026-05-21",
@@ -226,8 +226,8 @@
       "league": "MLB",
       "date": "2026-05-21",
       "gamePk": 823864,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "loanDepot park",
       "awayTeam": {
         "id": 144,
@@ -241,14 +241,18 @@
         "abbreviation": "MIA",
         "logoKey": "MIA"
       },
-      "awayScore": 3,
-      "homeScore": 2,
+      "awayScore": 9,
+      "homeScore": 3,
       "innings": [
         1,
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "ATL",
@@ -257,10 +261,14 @@
           1,
           0,
           0,
-          "-"
+          2,
+          1,
+          0,
+          2,
+          1
         ],
-        "r": 3,
-        "h": 4,
+        "r": 9,
+        "h": 13,
         "e": 0
       },
       "homeLine": {
@@ -270,14 +278,18 @@
           0,
           1,
           1,
-          "-"
+          0,
+          0,
+          1,
+          0,
+          0
         ],
-        "r": 2,
-        "h": 3,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上5局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-05-21T22:40:00Z"
     },
     {
@@ -301,34 +313,55 @@
         "abbreviation": "NYY",
         "logoKey": "NYY"
       },
-      "awayScore": 1,
+      "awayScore": 2,
       "homeScore": 0,
       "innings": [
         1,
-        2
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "TOR",
         "innings": [
           1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
           0
         ],
-        "r": 1,
-        "h": 1,
+        "r": 2,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
         "team": "NYY",
         "innings": [
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 1,
+        "h": 3,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下2局",
+      "footerRight": "下9局",
       "gameDate": "2026-05-21T23:05:00Z"
     },
     {
@@ -338,7 +371,7 @@
       "date": "2026-05-21",
       "gamePk": 824031,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 133,
@@ -360,7 +393,7 @@
       "awayLine": {
         "team": "ATH",
         "innings": [
-          "-"
+          0
         ],
         "r": 0,
         "h": 0,
@@ -372,11 +405,11 @@
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下1局",
       "gameDate": "2026-05-22T01:38:00Z"
     },
     {
@@ -386,7 +419,7 @@
       "date": "2026-05-21",
       "gamePk": 825083,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Chase Field",
       "awayTeam": {
         "id": 115,
@@ -408,7 +441,7 @@
       "awayLine": {
         "team": "COL",
         "innings": [
-          "-"
+          0
         ],
         "r": 0,
         "h": 0,
@@ -423,8 +456,8 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下1局",
       "gameDate": "2026-05-22T01:40:00Z"
     }
   ],
@@ -652,8 +685,8 @@
         "league": "MLB",
         "date": "2026-05-21",
         "gamePk": 823864,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 144,
@@ -667,14 +700,18 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 3,
-        "homeScore": 2,
+        "awayScore": 9,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "ATL",
@@ -683,10 +720,14 @@
             1,
             0,
             0,
-            "-"
+            2,
+            1,
+            0,
+            2,
+            1
           ],
-          "r": 3,
-          "h": 4,
+          "r": 9,
+          "h": 13,
           "e": 0
         },
         "homeLine": {
@@ -696,14 +737,18 @@
             0,
             1,
             1,
-            "-"
+            0,
+            0,
+            1,
+            0,
+            0
           ],
-          "r": 2,
-          "h": 3,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上5局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-05-21T22:40:00Z"
       },
       {
@@ -727,34 +772,55 @@
           "abbreviation": "NYY",
           "logoKey": "NYY"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
             1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 1,
-          "h": 1,
+          "r": 2,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "NYY",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下9局",
         "gameDate": "2026-05-21T23:05:00Z"
       },
       {
@@ -764,7 +830,7 @@
         "date": "2026-05-21",
         "gamePk": 824031,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 133,
@@ -786,7 +852,7 @@
         "awayLine": {
           "team": "ATH",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -798,11 +864,11 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-22T01:38:00Z"
       },
       {
@@ -812,7 +878,7 @@
         "date": "2026-05-21",
         "gamePk": 825083,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 115,
@@ -834,7 +900,7 @@
         "awayLine": {
           "team": "COL",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -849,8 +915,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-22T01:40:00Z"
       }
     ]
@@ -1079,8 +1145,8 @@
         "league": "MLB",
         "date": "2026-05-21",
         "gamePk": 823864,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 144,
@@ -1094,14 +1160,18 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 3,
-        "homeScore": 2,
+        "awayScore": 9,
+        "homeScore": 3,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "ATL",
@@ -1110,10 +1180,14 @@
             1,
             0,
             0,
-            "-"
+            2,
+            1,
+            0,
+            2,
+            1
           ],
-          "r": 3,
-          "h": 4,
+          "r": 9,
+          "h": 13,
           "e": 0
         },
         "homeLine": {
@@ -1123,14 +1197,18 @@
             0,
             1,
             1,
-            "-"
+            0,
+            0,
+            1,
+            0,
+            0
           ],
-          "r": 2,
-          "h": 3,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上5局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-05-21T22:40:00Z"
       },
       {
@@ -1154,34 +1232,55 @@
           "abbreviation": "NYY",
           "logoKey": "NYY"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
             1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 1,
-          "h": 1,
+          "r": 2,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "NYY",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下9局",
         "gameDate": "2026-05-21T23:05:00Z"
       },
       {
@@ -1191,7 +1290,7 @@
         "date": "2026-05-21",
         "gamePk": 824031,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 133,
@@ -1213,7 +1312,7 @@
         "awayLine": {
           "team": "ATH",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -1225,11 +1324,11 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-22T01:38:00Z"
       },
       {
@@ -1239,7 +1338,7 @@
         "date": "2026-05-21",
         "gamePk": 825083,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 115,
@@ -1261,7 +1360,7 @@
         "awayLine": {
           "team": "COL",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -1276,8 +1375,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-05-22T01:40:00Z"
       }
     ]
