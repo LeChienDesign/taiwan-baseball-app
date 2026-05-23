@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-23T15:39:49.021Z",
+  "updatedAt": "2026-05-23T22:53:51.356Z",
   "requestedDate": "2026-05-23",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -72,16 +72,23 @@
       },
       "seasonStats": {
         "pitcher": {
-          "era": "2.61",
-          "whip": "1.10",
-          "ip": "31.0",
-          "so": 30,
-          "bb": 12,
-          "wins": 2,
+          "era": "2.19",
+          "whip": "1.05",
+          "ip": "37.0",
+          "so": 36,
+          "bb": 15,
+          "wins": 3,
           "saves": 0
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-23",
+          "opponent": "Chicago Cubs",
+          "result": "先發",
+          "detail1": "6.0局 / 責失0 / 三振6 / 保送3",
+          "detail2": "被安打2 / 用球數89"
+        },
         {
           "date": "2026-05-16",
           "opponent": "Texas Rangers",
@@ -109,13 +116,6 @@
           "result": "登板",
           "detail1": "1.1局 / 責失0 / 三振2 / 保送1",
           "detail2": "被安打0 / 用球數23"
-        },
-        {
-          "date": "2026-04-28",
-          "opponent": "Baltimore Orioles",
-          "result": "先發",
-          "detail1": "3.0局 / 責失2 / 三振2 / 保送0",
-          "detail2": "被安打5 / 用球數42"
         }
       ],
       "news": [
