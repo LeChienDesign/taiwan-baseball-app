@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-24T15:42:54.425Z",
+  "updatedAt": "2026-05-24T22:58:45.286Z",
   "requestedDate": "2026-05-24",
   "summary": {
     "totalPlayers": 34,
@@ -13,14 +13,14 @@
     "probableStarters": 0,
     "injured": 10,
     "withNews": 31,
-    "withRecentGames": 24
+    "withRecentGames": 25
   },
   "providers": [
     {
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -32,7 +32,7 @@
       "name": "npb",
       "ok": true,
       "message": "NPB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 3
     },
     {
       "name": "kbo",
@@ -474,10 +474,10 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".222",
-          "obp": ".269",
-          "slg": ".349",
-          "ops": ".618",
+          "avg": ".219",
+          "obp": ".265",
+          "slg": ".344",
+          "ops": ".609",
           "hr": 1,
           "rbi": 8,
           "sb": 0,
@@ -485,6 +485,20 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-24",
+          "opponent": "Baltimore Orioles",
+          "result": "出賽",
+          "detail1": "0打數 / 0安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振0"
+        },
+        {
+          "date": "2026-05-24",
+          "opponent": "Baltimore Orioles",
+          "result": "出賽",
+          "detail1": "1打數 / 0安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振0"
+        },
         {
           "date": "2026-05-22",
           "opponent": "Baltimore Orioles",
@@ -504,20 +518,6 @@
           "opponent": "Cleveland Guardians",
           "result": "出賽",
           "detail1": "4打數 / 1安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振1"
-        },
-        {
-          "date": "2026-05-19",
-          "opponent": "Cleveland Guardians",
-          "result": "出賽",
-          "detail1": "3打數 / 1安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振0"
-        },
-        {
-          "date": "2026-05-16",
-          "opponent": "Toronto Blue Jays",
-          "result": "出賽",
-          "detail1": "1打數 / 0安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振1"
         }
       ],
@@ -2270,6 +2270,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-24",
+          "opponent": "Nippon-Ham vs Yakult",
+          "result": "登板",
+          "detail1": "LP : RY.Gu Lin ( 0 - 2 )",
+          "detail2": "NPB 官方比分頁"
+        },
+        {
           "date": "2026-05-12",
           "opponent": "Nippon-Ham vs Rakuten",
           "result": "登板",
@@ -2496,6 +2503,13 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-24",
+          "opponent": "埼玉西武獅 vs 歐力士猛牛",
+          "result": "出賽",
+          "detail1": "1打數 / 0安打 / 0打點",
+          "detail2": "得分0 / 全壘打0 / 保送0 / 三振0"
+        },
         {
           "date": "2026-05-16",
           "opponent": "日本火腿鬥士 vs 埼玉西武獅",
@@ -2773,7 +2787,7 @@
       "line1": "旅日後援右投",
       "line2": "樂天金鷲一軍牛棚",
       "intro": "長年效力東北樂天金鷲，是旅日資歷最完整的台灣投手之一。",
-      "recentNote": "優先同步中繼登板、防禦率、近 3 場牛棚內容與勝敗中繼救援紀錄。",
+      "recentNote": "NPB 官方比分頁補充近 5 場比賽資料",
       "type": "pitcher",
       "seasonStats": {
         "pitcher": {
@@ -2786,7 +2800,15 @@
           "saves": 0
         }
       },
-      "recentGames": [],
+      "recentGames": [
+        {
+          "date": "2026-05-24",
+          "opponent": "—",
+          "result": "登板",
+          "detail1": "宋家豪 1",
+          "detail2": "NPB 官方比分頁"
+        }
+      ],
       "news": [
         {
           "id": "chia-hao-sung-npb-sync",
