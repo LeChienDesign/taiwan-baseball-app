@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-31T15:47:18.607Z",
+  "updatedAt": "2026-05-31T23:00:24.637Z",
   "requestedDate": "2026-05-31",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -32,7 +32,7 @@
       "name": "npb",
       "ok": true,
       "message": "NPB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 2
     },
     {
       "name": "kbo",
@@ -474,10 +474,10 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".195",
-          "obp": ".235",
-          "slg": ".299",
-          "ops": ".534",
+          "avg": ".192",
+          "obp": ".232",
+          "slg": ".295",
+          "ops": ".527",
           "hr": 1,
           "rbi": 8,
           "sb": 0,
@@ -485,6 +485,13 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-05-31",
+          "opponent": "Chicago White Sox",
+          "result": "出賽",
+          "detail1": "1打數 / 0安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振1"
+        },
         {
           "date": "2026-05-30",
           "opponent": "Chicago White Sox",
@@ -512,13 +519,6 @@
           "result": "出賽",
           "detail1": "2打數 / 0安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振1"
-        },
-        {
-          "date": "2026-05-24",
-          "opponent": "Baltimore Orioles",
-          "result": "出賽",
-          "detail1": "0打數 / 0安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振0"
         }
       ],
       "news": [
@@ -2270,6 +2270,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-31",
+          "opponent": "ORIX vs Nippon-Ham",
+          "result": "登板",
+          "detail1": "RY.Gu Lin 5 .2 23 3 4 0 8 1",
+          "detail2": "NPB 官方比分頁"
+        },
+        {
           "date": "2026-05-24",
           "opponent": "Nippon-Ham vs Yakult",
           "result": "登板",
@@ -2694,6 +2701,13 @@
       },
       "recentGames": [
         {
+          "date": "2026-05-31",
+          "opponent": "SoftBank vs Hiroshima",
+          "result": "登板",
+          "detail1": "WP : JH.Hsu ( 2 - 3 )",
+          "detail2": "NPB 官方比分頁"
+        },
+        {
           "date": "2026-05-22",
           "opponent": "Hiroshima vs SoftBank",
           "result": "登板",
@@ -2720,13 +2734,6 @@
           "result": "先發",
           "detail1": "IP 7 / SO 5 / BB 2",
           "detail2": "NP 90 / H 6 / HR 1 / R 1 / ER 1"
-        },
-        {
-          "date": "2026-04-01",
-          "opponent": "福岡軟銀鷹 vs 東北楽天",
-          "result": "先發",
-          "detail1": "IP 6 / SO 6 / BB 2",
-          "detail2": "NP 86 / H 3 / HR 0 / R 0 / ER 0"
         }
       ],
       "type": "pitcher",
