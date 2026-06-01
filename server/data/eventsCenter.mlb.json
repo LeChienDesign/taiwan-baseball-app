@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-01T22:38:23.737Z",
+  "updatedAt": "2026-06-01T23:56:35.375Z",
   "date": "2026-06-01",
   "startDate": "2026-06-01",
   "endDate": "2026-06-01",
@@ -11,7 +11,7 @@
       "date": "2026-06-01",
       "gamePk": 822974,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Tropicana Field",
       "awayTeam": {
         "id": 116,
@@ -25,31 +25,43 @@
         "abbreviation": "TB",
         "logoKey": "TB"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 7,
+      "homeScore": 2,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "DET",
         "innings": [
-          "-"
+          2,
+          0,
+          4,
+          0,
+          1
         ],
-        "r": 0,
-        "h": 0,
+        "r": 7,
+        "h": 8,
         "e": 0
       },
       "homeLine": {
         "team": "TB",
         "innings": [
+          0,
+          0,
+          0,
+          2,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 2,
+        "h": 3,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上5局",
       "gameDate": "2026-06-01T22:40:00Z"
     },
     {
@@ -59,7 +71,7 @@
       "date": "2026-06-01",
       "gamePk": 822730,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Nationals Park",
       "awayTeam": {
         "id": 146,
@@ -73,31 +85,40 @@
         "abbreviation": "WSH",
         "logoKey": "WSH"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 1,
+      "homeScore": 3,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4
       ],
       "awayLine": {
         "team": "MIA",
         "innings": [
-          "-"
+          1,
+          0,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 3,
+        "e": 1
       },
       "homeLine": {
         "team": "WSH",
         "innings": [
+          0,
+          2,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 4,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下4局",
       "gameDate": "2026-06-01T22:45:00Z"
     },
     {
@@ -107,7 +128,7 @@
       "date": "2026-06-01",
       "gamePk": 824510,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Great American Ball Park",
       "awayTeam": {
         "id": 118,
@@ -121,31 +142,37 @@
         "abbreviation": "CIN",
         "logoKey": "CIN"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 4,
+      "homeScore": 1,
       "innings": [
-        1
+        1,
+        2,
+        3
       ],
       "awayLine": {
         "team": "KC",
         "innings": [
+          4,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 3,
         "e": 0
       },
       "homeLine": {
         "team": "CIN",
         "innings": [
+          1,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 1,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上3局",
       "gameDate": "2026-06-01T23:10:00Z"
     },
     {
@@ -155,7 +182,7 @@
       "date": "2026-06-01",
       "gamePk": 823702,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Target Field",
       "awayTeam": {
         "id": 145,
@@ -177,10 +204,10 @@
       "awayLine": {
         "team": "CWS",
         "innings": [
-          "-"
+          0
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
@@ -189,11 +216,11 @@
           "-"
         ],
         "r": 0,
-        "h": 0,
-        "e": 0
+        "h": 1,
+        "e": 1
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下1局",
       "gameDate": "2026-06-01T23:40:00Z"
     },
     {
@@ -203,7 +230,7 @@
       "date": "2026-06-01",
       "gamePk": 823781,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "American Family Field",
       "awayTeam": {
         "id": 137,
@@ -220,11 +247,13 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "SF",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
@@ -234,14 +263,15 @@
       "homeLine": {
         "team": "MIL",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上2局",
       "gameDate": "2026-06-01T23:40:00Z"
     },
     {
@@ -251,7 +281,7 @@
       "date": "2026-06-01",
       "gamePk": 823050,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Busch Stadium",
       "awayTeam": {
         "id": 140,
@@ -273,7 +303,7 @@
       "awayLine": {
         "team": "TEX",
         "innings": [
-          "-"
+          0
         ],
         "r": 0,
         "h": 0,
@@ -288,8 +318,8 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下1局",
       "gameDate": "2026-06-01T23:45:00Z"
     },
     {
@@ -446,7 +476,7 @@
         "date": "2026-06-01",
         "gamePk": 822974,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 116,
@@ -460,31 +490,43 @@
           "abbreviation": "TB",
           "logoKey": "TB"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 2,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
-            "-"
+            2,
+            0,
+            4,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
           "team": "TB",
           "innings": [
+            0,
+            0,
+            0,
+            2,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上5局",
         "gameDate": "2026-06-01T22:40:00Z"
       },
       {
@@ -494,7 +536,7 @@
         "date": "2026-06-01",
         "gamePk": 822730,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 146,
@@ -508,31 +550,40 @@
           "abbreviation": "WSH",
           "logoKey": "WSH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "MIA",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 3,
+          "e": 1
         },
         "homeLine": {
           "team": "WSH",
           "innings": [
+            0,
+            2,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下4局",
         "gameDate": "2026-06-01T22:45:00Z"
       },
       {
@@ -542,7 +593,7 @@
         "date": "2026-06-01",
         "gamePk": 824510,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 118,
@@ -556,31 +607,37 @@
           "abbreviation": "CIN",
           "logoKey": "CIN"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
+            4,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            1,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-06-01T23:10:00Z"
       },
       {
@@ -590,7 +647,7 @@
         "date": "2026-06-01",
         "gamePk": 823702,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Target Field",
         "awayTeam": {
           "id": 145,
@@ -612,10 +669,10 @@
         "awayLine": {
           "team": "CWS",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
@@ -624,11 +681,11 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-06-01T23:40:00Z"
       },
       {
@@ -638,7 +695,7 @@
         "date": "2026-06-01",
         "gamePk": 823781,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 137,
@@ -655,11 +712,13 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "SF",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
@@ -669,14 +728,15 @@
         "homeLine": {
           "team": "MIL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-06-01T23:40:00Z"
       },
       {
@@ -686,7 +746,7 @@
         "date": "2026-06-01",
         "gamePk": 823050,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 140,
@@ -708,7 +768,7 @@
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -723,8 +783,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-06-01T23:45:00Z"
       },
       {
@@ -882,7 +942,7 @@
         "date": "2026-06-01",
         "gamePk": 822974,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 116,
@@ -896,31 +956,43 @@
           "abbreviation": "TB",
           "logoKey": "TB"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 2,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "DET",
           "innings": [
-            "-"
+            2,
+            0,
+            4,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
           "team": "TB",
           "innings": [
+            0,
+            0,
+            0,
+            2,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上5局",
         "gameDate": "2026-06-01T22:40:00Z"
       },
       {
@@ -930,7 +1002,7 @@
         "date": "2026-06-01",
         "gamePk": 822730,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Nationals Park",
         "awayTeam": {
           "id": 146,
@@ -944,31 +1016,40 @@
           "abbreviation": "WSH",
           "logoKey": "WSH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "MIA",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 3,
+          "e": 1
         },
         "homeLine": {
           "team": "WSH",
           "innings": [
+            0,
+            2,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下4局",
         "gameDate": "2026-06-01T22:45:00Z"
       },
       {
@@ -978,7 +1059,7 @@
         "date": "2026-06-01",
         "gamePk": 824510,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 118,
@@ -992,31 +1073,37 @@
           "abbreviation": "CIN",
           "logoKey": "CIN"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
+            4,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            1,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上3局",
         "gameDate": "2026-06-01T23:10:00Z"
       },
       {
@@ -1026,7 +1113,7 @@
         "date": "2026-06-01",
         "gamePk": 823702,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Target Field",
         "awayTeam": {
           "id": 145,
@@ -1048,10 +1135,10 @@
         "awayLine": {
           "team": "CWS",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
@@ -1060,11 +1147,11 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-06-01T23:40:00Z"
       },
       {
@@ -1074,7 +1161,7 @@
         "date": "2026-06-01",
         "gamePk": 823781,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 137,
@@ -1091,11 +1178,13 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "SF",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
@@ -1105,14 +1194,15 @@
         "homeLine": {
           "team": "MIL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上2局",
         "gameDate": "2026-06-01T23:40:00Z"
       },
       {
@@ -1122,7 +1212,7 @@
         "date": "2026-06-01",
         "gamePk": 823050,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 140,
@@ -1144,7 +1234,7 @@
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
           "h": 0,
@@ -1159,8 +1249,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下1局",
         "gameDate": "2026-06-01T23:45:00Z"
       },
       {
