@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-06T23:31:37.140Z",
+  "updatedAt": "2026-06-07T01:39:52.114Z",
   "date": "2026-06-06",
   "startDate": "2026-06-06",
   "endDate": "2026-06-06",
@@ -734,7 +734,7 @@
       "date": "2026-06-06",
       "gamePk": 822891,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Globe Life Field",
       "awayTeam": {
         "id": 114,
@@ -748,79 +748,49 @@
         "abbreviation": "TEX",
         "logoKey": "TEX"
       },
-      "awayScore": 0,
+      "awayScore": 5,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "CLE",
         "innings": [
-          "-"
+          0,
+          0,
+          0,
+          1,
+          4,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 5,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
         "team": "TEX",
         "innings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
-        "e": 0
+        "h": 3,
+        "e": 1
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
-      "gameDate": "2026-06-06T23:35:00Z"
-    },
-    {
-      "id": "mlb-823539",
-      "source": "mlb-official",
-      "league": "MLB",
-      "date": "2026-06-06",
-      "gamePk": 823539,
-      "status": "LIVE",
-      "statusText": "Delayed Start",
-      "venue": "Yankee Stadium",
-      "awayTeam": {
-        "id": 111,
-        "name": "Boston Red Sox",
-        "abbreviation": "BOS",
-        "logoKey": "BOS"
-      },
-      "homeTeam": {
-        "id": 147,
-        "name": "New York Yankees",
-        "abbreviation": "NYY",
-        "logoKey": "NYY"
-      },
-      "awayScore": 0,
-      "homeScore": 0,
-      "innings": [
-        1
-      ],
-      "awayLine": {
-        "team": "BOS",
-        "innings": [
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "homeLine": {
-        "team": "NYY",
-        "innings": [
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "footerLeft": "Delayed Start",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下7局",
       "gameDate": "2026-06-06T23:35:00Z"
     },
     {
@@ -830,7 +800,7 @@
       "date": "2026-06-06",
       "gamePk": 824351,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Coors Field",
       "awayTeam": {
         "id": 158,
@@ -844,31 +814,34 @@
         "abbreviation": "COL",
         "logoKey": "COL"
       },
-      "awayScore": 0,
+      "awayScore": 2,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "MIL",
         "innings": [
-          "-"
+          1,
+          1
         ],
-        "r": 0,
-        "h": 0,
+        "r": 2,
+        "h": 3,
         "e": 0
       },
       "homeLine": {
         "team": "COL",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "Middle2局",
       "gameDate": "2026-06-07T01:10:00Z"
     },
     {
@@ -926,7 +899,7 @@
       "date": "2026-06-06",
       "gamePk": 823292,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Warmup",
       "venue": "Petco Park",
       "awayTeam": {
         "id": 121,
@@ -963,9 +936,81 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "上1局",
       "gameDate": "2026-06-07T02:10:00Z"
+    },
+    {
+      "id": "mlb-823539",
+      "source": "mlb-official",
+      "league": "MLB",
+      "date": "2026-06-06",
+      "gamePk": 823539,
+      "status": "FINAL",
+      "statusText": "Postponed",
+      "venue": "Yankee Stadium",
+      "awayTeam": {
+        "id": 111,
+        "name": "Boston Red Sox",
+        "abbreviation": "BOS",
+        "logoKey": "BOS"
+      },
+      "homeTeam": {
+        "id": 147,
+        "name": "New York Yankees",
+        "abbreviation": "NYY",
+        "logoKey": "NYY"
+      },
+      "awayScore": 0,
+      "homeScore": 0,
+      "innings": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "awayLine": {
+        "team": "BOS",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "homeLine": {
+        "team": "NYY",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "footerLeft": "Postponed",
+      "footerRight": "07:35",
+      "gameDate": "2026-06-06T23:35:00Z"
     }
   ],
   "gamesByDate": {
@@ -1700,7 +1745,7 @@
         "date": "2026-06-06",
         "gamePk": 822891,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Globe Life Field",
         "awayTeam": {
           "id": 114,
@@ -1714,79 +1759,49 @@
           "abbreviation": "TEX",
           "logoKey": "TEX"
         },
-        "awayScore": 0,
+        "awayScore": 5,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "CLE",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            1,
+            4,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "TEX",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 3,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
-        "gameDate": "2026-06-06T23:35:00Z"
-      },
-      {
-        "id": "mlb-823539",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-06-06",
-        "gamePk": 823539,
-        "status": "LIVE",
-        "statusText": "Delayed Start",
-        "venue": "Yankee Stadium",
-        "awayTeam": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "abbreviation": "BOS",
-          "logoKey": "BOS"
-        },
-        "homeTeam": {
-          "id": 147,
-          "name": "New York Yankees",
-          "abbreviation": "NYY",
-          "logoKey": "NYY"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1
-        ],
-        "awayLine": {
-          "team": "BOS",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "NYY",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Delayed Start",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下7局",
         "gameDate": "2026-06-06T23:35:00Z"
       },
       {
@@ -1796,7 +1811,7 @@
         "date": "2026-06-06",
         "gamePk": 824351,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 158,
@@ -1810,31 +1825,34 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
+        "awayScore": 2,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-"
+            1,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "Middle2局",
         "gameDate": "2026-06-07T01:10:00Z"
       },
       {
@@ -1892,7 +1910,7 @@
         "date": "2026-06-06",
         "gamePk": 823292,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 121,
@@ -1929,9 +1947,81 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-06-07T02:10:00Z"
+      },
+      {
+        "id": "mlb-823539",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-06-06",
+        "gamePk": 823539,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Yankee Stadium",
+        "awayTeam": {
+          "id": 111,
+          "name": "Boston Red Sox",
+          "abbreviation": "BOS",
+          "logoKey": "BOS"
+        },
+        "homeTeam": {
+          "id": 147,
+          "name": "New York Yankees",
+          "abbreviation": "NYY",
+          "logoKey": "NYY"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "BOS",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "NYY",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "07:35",
+        "gameDate": "2026-06-06T23:35:00Z"
       }
     ]
   },
@@ -2667,7 +2757,7 @@
         "date": "2026-06-06",
         "gamePk": 822891,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Globe Life Field",
         "awayTeam": {
           "id": 114,
@@ -2681,79 +2771,49 @@
           "abbreviation": "TEX",
           "logoKey": "TEX"
         },
-        "awayScore": 0,
+        "awayScore": 5,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "CLE",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            1,
+            4,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "TEX",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 3,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
-        "gameDate": "2026-06-06T23:35:00Z"
-      },
-      {
-        "id": "mlb-823539",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-06-06",
-        "gamePk": 823539,
-        "status": "LIVE",
-        "statusText": "Delayed Start",
-        "venue": "Yankee Stadium",
-        "awayTeam": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "abbreviation": "BOS",
-          "logoKey": "BOS"
-        },
-        "homeTeam": {
-          "id": 147,
-          "name": "New York Yankees",
-          "abbreviation": "NYY",
-          "logoKey": "NYY"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1
-        ],
-        "awayLine": {
-          "team": "BOS",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "NYY",
-          "innings": [
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Delayed Start",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下7局",
         "gameDate": "2026-06-06T23:35:00Z"
       },
       {
@@ -2763,7 +2823,7 @@
         "date": "2026-06-06",
         "gamePk": 824351,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 158,
@@ -2777,31 +2837,34 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
+        "awayScore": 2,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-"
+            1,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "Middle2局",
         "gameDate": "2026-06-07T01:10:00Z"
       },
       {
@@ -2859,7 +2922,7 @@
         "date": "2026-06-06",
         "gamePk": 823292,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 121,
@@ -2896,9 +2959,81 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-06-07T02:10:00Z"
+      },
+      {
+        "id": "mlb-823539",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-06-06",
+        "gamePk": 823539,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Yankee Stadium",
+        "awayTeam": {
+          "id": 111,
+          "name": "Boston Red Sox",
+          "abbreviation": "BOS",
+          "logoKey": "BOS"
+        },
+        "homeTeam": {
+          "id": 147,
+          "name": "New York Yankees",
+          "abbreviation": "NYY",
+          "logoKey": "NYY"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "BOS",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "NYY",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "07:35",
+        "gameDate": "2026-06-06T23:35:00Z"
       }
     ]
   }
