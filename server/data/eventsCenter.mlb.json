@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-11T22:58:32.076Z",
+  "updatedAt": "2026-06-12T00:22:05.592Z",
   "date": "2026-06-11",
   "startDate": "2026-06-11",
   "endDate": "2026-06-11",
@@ -227,7 +227,7 @@
       "date": "2026-06-11",
       "gamePk": 824101,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Kauffman Stadium",
       "awayTeam": {
         "id": 140,
@@ -288,7 +288,7 @@
         "h": 6,
         "e": 0
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下9局",
       "gameDate": "2026-06-11T18:10:00Z"
     },
@@ -385,31 +385,43 @@
         "abbreviation": "PIT",
         "logoKey": "PIT"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 5,
+      "homeScore": 3,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "LAD",
         "innings": [
+          0,
+          0,
+          3,
+          2,
           0
         ],
-        "r": 0,
-        "h": 1,
+        "r": 5,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
         "team": "PIT",
         "innings": [
-          "-"
+          0,
+          0,
+          0,
+          0,
+          3
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下1局",
+      "footerRight": "下5局",
       "gameDate": "2026-06-11T22:40:00Z"
     },
     {
@@ -419,7 +431,7 @@
       "date": "2026-06-11",
       "gamePk": 824827,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Oriole Park at Camden Yards",
       "awayTeam": {
         "id": 136,
@@ -433,31 +445,40 @@
         "abbreviation": "BAL",
         "logoKey": "BAL"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 4,
+      "homeScore": 6,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4
       ],
       "awayLine": {
         "team": "SEA",
         "innings": [
-          "-"
+          1,
+          0,
+          0,
+          3
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 5,
         "e": 0
       },
       "homeLine": {
         "team": "BAL",
         "innings": [
+          0,
+          0,
+          6,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 6,
+        "h": 5,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上4局",
       "gameDate": "2026-06-11T23:05:00Z"
     },
     {
@@ -467,7 +488,7 @@
       "date": "2026-06-11",
       "gamePk": 824589,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Delayed Start",
       "venue": "Rate Field",
       "awayTeam": {
         "id": 144,
@@ -504,7 +525,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Delayed Start",
       "footerRight": "上1局",
       "gameDate": "2026-06-11T23:40:00Z"
     }
@@ -734,7 +755,7 @@
         "date": "2026-06-11",
         "gamePk": 824101,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 140,
@@ -795,7 +816,7 @@
           "h": 6,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-06-11T18:10:00Z"
       },
@@ -892,31 +913,43 @@
           "abbreviation": "PIT",
           "logoKey": "PIT"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            3,
+            2,
             0
           ],
-          "r": 0,
-          "h": 1,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "下5局",
         "gameDate": "2026-06-11T22:40:00Z"
       },
       {
@@ -926,7 +959,7 @@
         "date": "2026-06-11",
         "gamePk": 824827,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Oriole Park at Camden Yards",
         "awayTeam": {
           "id": 136,
@@ -940,31 +973,40 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 6,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "SEA",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 5,
           "e": 0
         },
         "homeLine": {
           "team": "BAL",
           "innings": [
+            0,
+            0,
+            6,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 6,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上4局",
         "gameDate": "2026-06-11T23:05:00Z"
       },
       {
@@ -974,7 +1016,7 @@
         "date": "2026-06-11",
         "gamePk": 824589,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Rate Field",
         "awayTeam": {
           "id": 144,
@@ -1011,7 +1053,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-06-11T23:40:00Z"
       }
@@ -1242,7 +1284,7 @@
         "date": "2026-06-11",
         "gamePk": 824101,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 140,
@@ -1303,7 +1345,7 @@
           "h": 6,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-06-11T18:10:00Z"
       },
@@ -1400,31 +1442,43 @@
           "abbreviation": "PIT",
           "logoKey": "PIT"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            3,
+            2,
             0
           ],
-          "r": 0,
-          "h": 1,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-"
+            0,
+            0,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "下5局",
         "gameDate": "2026-06-11T22:40:00Z"
       },
       {
@@ -1434,7 +1488,7 @@
         "date": "2026-06-11",
         "gamePk": 824827,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Oriole Park at Camden Yards",
         "awayTeam": {
           "id": 136,
@@ -1448,31 +1502,40 @@
           "abbreviation": "BAL",
           "logoKey": "BAL"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 6,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "SEA",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 5,
           "e": 0
         },
         "homeLine": {
           "team": "BAL",
           "innings": [
+            0,
+            0,
+            6,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 6,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上4局",
         "gameDate": "2026-06-11T23:05:00Z"
       },
       {
@@ -1482,7 +1545,7 @@
         "date": "2026-06-11",
         "gamePk": 824589,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Delayed Start",
         "venue": "Rate Field",
         "awayTeam": {
           "id": 144,
@@ -1519,7 +1582,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Delayed Start",
         "footerRight": "上1局",
         "gameDate": "2026-06-11T23:40:00Z"
       }
