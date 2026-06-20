@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-20T17:25:19.227Z",
+  "updatedAt": "2026-06-20T18:54:10.567Z",
   "date": "2026-06-20",
   "startDate": "2026-06-20",
   "endDate": "2026-06-20",
@@ -26,33 +26,48 @@
         "logoKey": "DET"
       },
       "awayScore": 1,
-      "homeScore": 0,
+      "homeScore": 3,
       "innings": [
         1,
-        2
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "CWS",
         "innings": [
           1,
+          0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 1,
         "h": 1,
-        "e": 0
+        "e": 1
       },
       "homeLine": {
         "team": "DET",
         "innings": [
           0,
+          0,
+          0,
+          0,
+          1,
+          2,
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 3,
+        "h": 5,
+        "e": 1
       },
       "footerLeft": "In Progress",
-      "footerRight": "上2局",
+      "footerRight": "上7局",
       "gameDate": "2026-06-20T17:10:00Z"
     },
     {
@@ -62,7 +77,7 @@
       "date": "2026-06-20",
       "gamePk": 823532,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Yankee Stadium",
       "awayTeam": {
         "id": 113,
@@ -76,31 +91,43 @@
         "abbreviation": "NYY",
         "logoKey": "NYY"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 2,
+      "homeScore": 1,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "CIN",
         "innings": [
+          0,
+          0,
+          2,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 2,
+        "h": 5,
+        "e": 1
       },
       "homeLine": {
         "team": "NYY",
         "innings": [
+          1,
+          0,
+          0,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 1,
+        "e": 1
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上5局",
       "gameDate": "2026-06-20T17:35:00Z"
     },
     {
@@ -110,7 +137,7 @@
       "date": "2026-06-20",
       "gamePk": 824665,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Wrigley Field",
       "awayTeam": {
         "id": 141,
@@ -125,14 +152,16 @@
         "logoKey": "CHC"
       },
       "awayScore": 0,
-      "homeScore": 0,
+      "homeScore": 3,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "TOR",
         "innings": [
-          "-"
+          0,
+          0
         ],
         "r": 0,
         "h": 0,
@@ -141,14 +170,15 @@
       "homeLine": {
         "team": "CHC",
         "innings": [
-          "-"
+          0,
+          3
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 4,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "End2局",
       "gameDate": "2026-06-20T18:20:00Z"
     },
     {
@@ -223,27 +253,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "WSH",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -253,14 +267,6 @@
       "homeLine": {
         "team": "TB",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -349,7 +355,7 @@
       "league": "MLB",
       "date": "2026-06-20",
       "gamePk": 824909,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Truist Park",
       "awayTeam": {
@@ -367,27 +373,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "MIL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -397,14 +387,6 @@
       "homeLine": {
         "team": "ATL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -412,7 +394,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "04:10",
+      "footerRight": "上1局",
       "gameDate": "2026-06-20T20:10:00Z"
     },
     {
@@ -944,33 +926,48 @@
           "logoKey": "DET"
         },
         "awayScore": 1,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "CWS",
           "innings": [
             1,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 1,
           "h": 1,
-          "e": 0
+          "e": 1
         },
         "homeLine": {
           "team": "DET",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            1,
+            2,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 5,
+          "e": 1
         },
         "footerLeft": "In Progress",
-        "footerRight": "上2局",
+        "footerRight": "上7局",
         "gameDate": "2026-06-20T17:10:00Z"
       },
       {
@@ -980,7 +977,7 @@
         "date": "2026-06-20",
         "gamePk": 823532,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Yankee Stadium",
         "awayTeam": {
           "id": 113,
@@ -994,31 +991,43 @@
           "abbreviation": "NYY",
           "logoKey": "NYY"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
+            0,
+            0,
+            2,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 2,
+          "h": 5,
+          "e": 1
         },
         "homeLine": {
           "team": "NYY",
           "innings": [
+            1,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上5局",
         "gameDate": "2026-06-20T17:35:00Z"
       },
       {
@@ -1028,7 +1037,7 @@
         "date": "2026-06-20",
         "gamePk": 824665,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Wrigley Field",
         "awayTeam": {
           "id": 141,
@@ -1043,14 +1052,16 @@
           "logoKey": "CHC"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-"
+            0,
+            0
           ],
           "r": 0,
           "h": 0,
@@ -1059,14 +1070,15 @@
         "homeLine": {
           "team": "CHC",
           "innings": [
-            "-"
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End2局",
         "gameDate": "2026-06-20T18:20:00Z"
       },
       {
@@ -1141,27 +1153,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1171,14 +1167,6 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1267,7 +1255,7 @@
         "league": "MLB",
         "date": "2026-06-20",
         "gamePk": 824909,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Truist Park",
         "awayTeam": {
@@ -1285,27 +1273,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1315,14 +1287,6 @@
         "homeLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1330,7 +1294,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "04:10",
+        "footerRight": "上1局",
         "gameDate": "2026-06-20T20:10:00Z"
       },
       {
@@ -1863,33 +1827,48 @@
           "logoKey": "DET"
         },
         "awayScore": 1,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "CWS",
           "innings": [
             1,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 1,
           "h": 1,
-          "e": 0
+          "e": 1
         },
         "homeLine": {
           "team": "DET",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            1,
+            2,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 5,
+          "e": 1
         },
         "footerLeft": "In Progress",
-        "footerRight": "上2局",
+        "footerRight": "上7局",
         "gameDate": "2026-06-20T17:10:00Z"
       },
       {
@@ -1899,7 +1878,7 @@
         "date": "2026-06-20",
         "gamePk": 823532,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Yankee Stadium",
         "awayTeam": {
           "id": 113,
@@ -1913,31 +1892,43 @@
           "abbreviation": "NYY",
           "logoKey": "NYY"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
+            0,
+            0,
+            2,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 2,
+          "h": 5,
+          "e": 1
         },
         "homeLine": {
           "team": "NYY",
           "innings": [
+            1,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上5局",
         "gameDate": "2026-06-20T17:35:00Z"
       },
       {
@@ -1947,7 +1938,7 @@
         "date": "2026-06-20",
         "gamePk": 824665,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Wrigley Field",
         "awayTeam": {
           "id": 141,
@@ -1962,14 +1953,16 @@
           "logoKey": "CHC"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-"
+            0,
+            0
           ],
           "r": 0,
           "h": 0,
@@ -1978,14 +1971,15 @@
         "homeLine": {
           "team": "CHC",
           "innings": [
-            "-"
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End2局",
         "gameDate": "2026-06-20T18:20:00Z"
       },
       {
@@ -2060,27 +2054,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2090,14 +2068,6 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2186,7 +2156,7 @@
         "league": "MLB",
         "date": "2026-06-20",
         "gamePk": 824909,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Truist Park",
         "awayTeam": {
@@ -2204,27 +2174,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2234,14 +2188,6 @@
         "homeLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2249,7 +2195,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "04:10",
+        "footerRight": "上1局",
         "gameDate": "2026-06-20T20:10:00Z"
       },
       {
