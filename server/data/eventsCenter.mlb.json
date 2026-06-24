@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-24T17:53:04.558Z",
+  "updatedAt": "2026-06-24T19:27:17.325Z",
   "date": "2026-06-24",
   "startDate": "2026-06-24",
   "endDate": "2026-06-24",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-06-24",
       "gamePk": 823850,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "loanDepot park",
       "awayTeam": {
         "id": 140,
@@ -25,15 +25,18 @@
         "abbreviation": "MIA",
         "logoKey": "MIA"
       },
-      "awayScore": 1,
-      "homeScore": 2,
+      "awayScore": 2,
+      "homeScore": 4,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "TEX",
@@ -43,10 +46,13 @@
           0,
           1,
           0,
-          0
+          0,
+          0,
+          0,
+          1
         ],
-        "r": 1,
-        "h": 5,
+        "r": 2,
+        "h": 6,
         "e": 0
       },
       "homeLine": {
@@ -57,14 +63,17 @@
           0,
           1,
           1,
+          0,
+          0,
+          2,
           "-"
         ],
-        "r": 2,
-        "h": 4,
+        "r": 4,
+        "h": 6,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下6局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-06-24T16:10:00Z"
     },
     {
@@ -88,22 +97,32 @@
         "abbreviation": "NYM",
         "logoKey": "NYM"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 6,
+      "homeScore": 3,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
       ],
       "awayLine": {
         "team": "CHC",
         "innings": [
           0,
           0,
-          0
+          0,
+          0,
+          3,
+          3,
+          0,
+          "-"
         ],
-        "r": 0,
-        "h": 1,
+        "r": 6,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
@@ -111,14 +130,19 @@
         "innings": [
           0,
           0,
+          0,
+          3,
+          0,
+          0,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 1,
+        "r": 3,
+        "h": 7,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Middle3局",
+      "footerRight": "上8局",
       "gameDate": "2026-06-24T17:10:00Z"
     },
     {
@@ -248,7 +272,7 @@
       "date": "2026-06-24",
       "gamePk": 824341,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Coors Field",
       "awayTeam": {
         "id": 111,
@@ -262,7 +286,7 @@
         "abbreviation": "COL",
         "logoKey": "COL"
       },
-      "awayScore": 0,
+      "awayScore": 1,
       "homeScore": 0,
       "innings": [
         1
@@ -270,23 +294,23 @@
       "awayLine": {
         "team": "BOS",
         "innings": [
-          "-"
+          1
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
         "team": "COL",
         "innings": [
-          "-"
+          0
         ],
         "r": 0,
-        "h": 0,
-        "e": 0
+        "h": 1,
+        "e": 1
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "End1局",
       "gameDate": "2026-06-24T19:10:00Z"
     },
     {
@@ -295,7 +319,7 @@
       "league": "MLB",
       "date": "2026-06-24",
       "gamePk": 824018,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Angel Stadium",
       "awayTeam": {
@@ -313,27 +337,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "BAL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -343,14 +351,6 @@
       "homeLine": {
         "team": "LAA",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -358,7 +358,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "04:07",
+      "footerRight": "上1局",
       "gameDate": "2026-06-24T20:07:00Z"
     },
     {
@@ -368,7 +368,7 @@
       "date": "2026-06-24",
       "gamePk": 823367,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "PNC Park",
       "awayTeam": {
         "id": 136,
@@ -429,7 +429,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "06:40",
       "gameDate": "2026-06-24T22:40:00Z"
     },
@@ -439,8 +439,8 @@
       "league": "MLB",
       "date": "2026-06-24",
       "gamePk": 822965,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "Tropicana Field",
       "awayTeam": {
         "id": 118,
@@ -457,27 +457,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "KC",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -487,22 +471,14 @@
       "homeLine": {
         "team": "TB",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "06:40",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-06-24T22:40:00Z"
     },
     {
@@ -512,7 +488,7 @@
       "date": "2026-06-24",
       "gamePk": 824259,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 147,
@@ -573,7 +549,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "06:40",
       "gameDate": "2026-06-24T22:40:00Z"
     },
@@ -656,7 +632,7 @@
       "date": "2026-06-24",
       "gamePk": 822798,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Rogers Centre",
       "awayTeam": {
         "id": 117,
@@ -717,7 +693,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:07",
       "gameDate": "2026-06-24T23:07:00Z"
     },
@@ -728,7 +704,7 @@
       "date": "2026-06-24",
       "gamePk": 824500,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Great American Ball Park",
       "awayTeam": {
         "id": 158,
@@ -789,7 +765,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:10",
       "gameDate": "2026-06-24T23:10:00Z"
     },
@@ -800,7 +776,7 @@
       "date": "2026-06-24",
       "gamePk": 823691,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Target Field",
       "awayTeam": {
         "id": 119,
@@ -861,7 +837,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:40",
       "gameDate": "2026-06-24T23:40:00Z"
     },
@@ -872,7 +848,7 @@
       "date": "2026-06-24",
       "gamePk": 823041,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Busch Stadium",
       "awayTeam": {
         "id": 109,
@@ -933,7 +909,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:45",
       "gameDate": "2026-06-24T23:45:00Z"
     },
@@ -1090,8 +1066,8 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 823850,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 140,
@@ -1105,15 +1081,18 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 1,
-        "homeScore": 2,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "TEX",
@@ -1123,10 +1102,13 @@
             0,
             1,
             0,
-            0
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 1,
-          "h": 5,
+          "r": 2,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
@@ -1137,14 +1119,17 @@
             0,
             1,
             1,
+            0,
+            0,
+            2,
             "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 4,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-06-24T16:10:00Z"
       },
       {
@@ -1168,22 +1153,32 @@
           "abbreviation": "NYM",
           "logoKey": "NYM"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 6,
+        "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "CHC",
           "innings": [
             0,
             0,
-            0
+            0,
+            0,
+            3,
+            3,
+            0,
+            "-"
           ],
-          "r": 0,
-          "h": 1,
+          "r": 6,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -1191,14 +1186,19 @@
           "innings": [
             0,
             0,
+            0,
+            3,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 1,
+          "r": 3,
+          "h": 7,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Middle3局",
+        "footerRight": "上8局",
         "gameDate": "2026-06-24T17:10:00Z"
       },
       {
@@ -1328,7 +1328,7 @@
         "date": "2026-06-24",
         "gamePk": 824341,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 111,
@@ -1342,7 +1342,7 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
           1
@@ -1350,23 +1350,23 @@
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-"
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End1局",
         "gameDate": "2026-06-24T19:10:00Z"
       },
       {
@@ -1375,7 +1375,7 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 824018,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Angel Stadium",
         "awayTeam": {
@@ -1393,27 +1393,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1423,14 +1407,6 @@
         "homeLine": {
           "team": "LAA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1438,7 +1414,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "04:07",
+        "footerRight": "上1局",
         "gameDate": "2026-06-24T20:07:00Z"
       },
       {
@@ -1448,7 +1424,7 @@
         "date": "2026-06-24",
         "gamePk": 823367,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 136,
@@ -1509,7 +1485,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-06-24T22:40:00Z"
       },
@@ -1519,8 +1495,8 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 822965,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 118,
@@ -1537,27 +1513,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1567,22 +1527,14 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "06:40",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-24T22:40:00Z"
       },
       {
@@ -1592,7 +1544,7 @@
         "date": "2026-06-24",
         "gamePk": 824259,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 147,
@@ -1653,7 +1605,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-06-24T22:40:00Z"
       },
@@ -1736,7 +1688,7 @@
         "date": "2026-06-24",
         "gamePk": 822798,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Rogers Centre",
         "awayTeam": {
           "id": 117,
@@ -1797,7 +1749,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:07",
         "gameDate": "2026-06-24T23:07:00Z"
       },
@@ -1808,7 +1760,7 @@
         "date": "2026-06-24",
         "gamePk": 824500,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 158,
@@ -1869,7 +1821,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:10",
         "gameDate": "2026-06-24T23:10:00Z"
       },
@@ -1880,7 +1832,7 @@
         "date": "2026-06-24",
         "gamePk": 823691,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Target Field",
         "awayTeam": {
           "id": 119,
@@ -1941,7 +1893,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:40",
         "gameDate": "2026-06-24T23:40:00Z"
       },
@@ -1952,7 +1904,7 @@
         "date": "2026-06-24",
         "gamePk": 823041,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 109,
@@ -2013,7 +1965,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:45",
         "gameDate": "2026-06-24T23:45:00Z"
       },
@@ -2171,8 +2123,8 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 823850,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 140,
@@ -2186,15 +2138,18 @@
           "abbreviation": "MIA",
           "logoKey": "MIA"
         },
-        "awayScore": 1,
-        "homeScore": 2,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "TEX",
@@ -2204,10 +2159,13 @@
             0,
             1,
             0,
-            0
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 1,
-          "h": 5,
+          "r": 2,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
@@ -2218,14 +2176,17 @@
             0,
             1,
             1,
+            0,
+            0,
+            2,
             "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 4,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-06-24T16:10:00Z"
       },
       {
@@ -2249,22 +2210,32 @@
           "abbreviation": "NYM",
           "logoKey": "NYM"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 6,
+        "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "CHC",
           "innings": [
             0,
             0,
-            0
+            0,
+            0,
+            3,
+            3,
+            0,
+            "-"
           ],
-          "r": 0,
-          "h": 1,
+          "r": 6,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -2272,14 +2243,19 @@
           "innings": [
             0,
             0,
+            0,
+            3,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 1,
+          "r": 3,
+          "h": 7,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Middle3局",
+        "footerRight": "上8局",
         "gameDate": "2026-06-24T17:10:00Z"
       },
       {
@@ -2409,7 +2385,7 @@
         "date": "2026-06-24",
         "gamePk": 824341,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 111,
@@ -2423,7 +2399,7 @@
           "abbreviation": "COL",
           "logoKey": "COL"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
           1
@@ -2431,23 +2407,23 @@
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-"
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "COL",
           "innings": [
-            "-"
+            0
           ],
           "r": 0,
-          "h": 0,
-          "e": 0
+          "h": 1,
+          "e": 1
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End1局",
         "gameDate": "2026-06-24T19:10:00Z"
       },
       {
@@ -2456,7 +2432,7 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 824018,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Angel Stadium",
         "awayTeam": {
@@ -2474,27 +2450,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2504,14 +2464,6 @@
         "homeLine": {
           "team": "LAA",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2519,7 +2471,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "04:07",
+        "footerRight": "上1局",
         "gameDate": "2026-06-24T20:07:00Z"
       },
       {
@@ -2529,7 +2481,7 @@
         "date": "2026-06-24",
         "gamePk": 823367,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 136,
@@ -2590,7 +2542,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-06-24T22:40:00Z"
       },
@@ -2600,8 +2552,8 @@
         "league": "MLB",
         "date": "2026-06-24",
         "gamePk": 822965,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 118,
@@ -2618,27 +2570,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2648,22 +2584,14 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "06:40",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-24T22:40:00Z"
       },
       {
@@ -2673,7 +2601,7 @@
         "date": "2026-06-24",
         "gamePk": 824259,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 147,
@@ -2734,7 +2662,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-06-24T22:40:00Z"
       },
@@ -2817,7 +2745,7 @@
         "date": "2026-06-24",
         "gamePk": 822798,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Rogers Centre",
         "awayTeam": {
           "id": 117,
@@ -2878,7 +2806,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:07",
         "gameDate": "2026-06-24T23:07:00Z"
       },
@@ -2889,7 +2817,7 @@
         "date": "2026-06-24",
         "gamePk": 824500,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 158,
@@ -2950,7 +2878,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:10",
         "gameDate": "2026-06-24T23:10:00Z"
       },
@@ -2961,7 +2889,7 @@
         "date": "2026-06-24",
         "gamePk": 823691,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Target Field",
         "awayTeam": {
           "id": 119,
@@ -3022,7 +2950,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:40",
         "gameDate": "2026-06-24T23:40:00Z"
       },
@@ -3033,7 +2961,7 @@
         "date": "2026-06-24",
         "gamePk": 823041,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 109,
@@ -3094,7 +3022,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:45",
         "gameDate": "2026-06-24T23:45:00Z"
       },
