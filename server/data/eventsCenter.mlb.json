@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-27T20:45:38.473Z",
+  "updatedAt": "2026-06-27T21:46:20.523Z",
   "date": "2026-06-27",
   "startDate": "2026-06-27",
   "endDate": "2026-06-27",
@@ -169,14 +169,17 @@
         "abbreviation": "TOR",
         "logoKey": "TOR"
       },
-      "awayScore": 6,
-      "homeScore": 0,
+      "awayScore": 7,
+      "homeScore": 4,
       "innings": [
         1,
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7,
+        8
       ],
       "awayLine": {
         "team": "TEX",
@@ -185,11 +188,14 @@
           0,
           0,
           0,
-          5
+          5,
+          1,
+          0,
+          "-"
         ],
-        "r": 6,
-        "h": 6,
-        "e": 0
+        "r": 7,
+        "h": 9,
+        "e": 1
       },
       "homeLine": {
         "team": "TOR",
@@ -198,14 +204,17 @@
           0,
           0,
           0,
+          2,
+          2,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 3,
+        "r": 4,
+        "h": 10,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下5局",
+      "footerRight": "上8局",
       "gameDate": "2026-06-27T19:07:00Z"
     },
     {
@@ -229,31 +238,40 @@
         "abbreviation": "PIT",
         "logoKey": "PIT"
       },
-      "awayScore": 1,
-      "homeScore": 0,
+      "awayScore": 2,
+      "homeScore": 4,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4
       ],
       "awayLine": {
         "team": "CIN",
         "innings": [
-          1
+          1,
+          0,
+          1,
+          0
         ],
-        "r": 1,
-        "h": 1,
+        "r": 2,
+        "h": 3,
         "e": 0
       },
       "homeLine": {
         "team": "PIT",
         "innings": [
-          "-"
+          0,
+          0,
+          3,
+          1
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 7,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "Middle1局",
+      "footerRight": "下4局",
       "gameDate": "2026-06-27T20:05:00Z"
     },
     {
@@ -263,7 +281,7 @@
       "date": "2026-06-27",
       "gamePk": 823609,
       "status": "LIVE",
-      "statusText": "Delayed Start",
+      "statusText": "In Progress",
       "venue": "Citi Field",
       "awayTeam": {
         "id": 143,
@@ -280,28 +298,31 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "PHI",
         "innings": [
-          "-"
+          0,
+          0
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
         "team": "NYM",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
-      "footerLeft": "Delayed Start",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下2局",
       "gameDate": "2026-06-27T20:10:00Z"
     },
     {
@@ -330,32 +351,44 @@
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "KC",
         "innings": [
           0,
           0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 3,
-        "e": 1
+        "h": 5,
+        "e": 2
       },
       "homeLine": {
         "team": "CWS",
         "innings": [
           0,
           0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 3,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "上3局",
+      "footerRight": "上7局",
       "gameDate": "2026-06-27T20:10:00Z"
     },
     {
@@ -556,8 +589,8 @@
       "league": "MLB",
       "date": "2026-06-27",
       "gamePk": 823770,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "American Family Field",
       "awayTeam": {
         "id": 112,
@@ -574,27 +607,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "CHC",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -604,22 +621,14 @@
       "homeLine": {
         "team": "MIL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "07:10",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-06-27T23:10:00Z"
     },
     {
@@ -676,8 +685,8 @@
       "league": "MLB",
       "date": "2026-06-27",
       "gamePk": 823283,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "Petco Park",
       "awayTeam": {
         "id": 119,
@@ -694,27 +703,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "LAD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -724,22 +717,14 @@
       "homeLine": {
         "team": "SD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "08:40",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-06-28T00:40:00Z"
     },
     {
@@ -748,8 +733,8 @@
       "league": "MLB",
       "date": "2026-06-27",
       "gamePk": 823207,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 144,
@@ -766,27 +751,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "ATL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -796,22 +765,14 @@
       "homeLine": {
         "team": "SF",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "09:05",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-06-28T01:05:00Z"
     },
     {
@@ -1054,14 +1015,17 @@
           "abbreviation": "TOR",
           "logoKey": "TOR"
         },
-        "awayScore": 6,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "TEX",
@@ -1070,11 +1034,14 @@
             0,
             0,
             0,
-            5
+            5,
+            1,
+            0,
+            "-"
           ],
-          "r": 6,
-          "h": 6,
-          "e": 0
+          "r": 7,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "TOR",
@@ -1083,14 +1050,17 @@
             0,
             0,
             0,
+            2,
+            2,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 3,
+          "r": 4,
+          "h": 10,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下5局",
+        "footerRight": "上8局",
         "gameDate": "2026-06-27T19:07:00Z"
       },
       {
@@ -1114,31 +1084,40 @@
           "abbreviation": "PIT",
           "logoKey": "PIT"
         },
-        "awayScore": 1,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
-            1
+            1,
+            0,
+            1,
+            0
           ],
-          "r": 1,
-          "h": 1,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-"
+            0,
+            0,
+            3,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 7,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Middle1局",
+        "footerRight": "下4局",
         "gameDate": "2026-06-27T20:05:00Z"
       },
       {
@@ -1148,7 +1127,7 @@
         "date": "2026-06-27",
         "gamePk": 823609,
         "status": "LIVE",
-        "statusText": "Delayed Start",
+        "statusText": "In Progress",
         "venue": "Citi Field",
         "awayTeam": {
           "id": 143,
@@ -1165,28 +1144,31 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "PHI",
           "innings": [
-            "-"
+            0,
+            0
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "NYM",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Delayed Start",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下2局",
         "gameDate": "2026-06-27T20:10:00Z"
       },
       {
@@ -1215,32 +1197,44 @@
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
             0,
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 3,
-          "e": 1
+          "h": 5,
+          "e": 2
         },
         "homeLine": {
           "team": "CWS",
           "innings": [
             0,
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上3局",
+        "footerRight": "上7局",
         "gameDate": "2026-06-27T20:10:00Z"
       },
       {
@@ -1441,8 +1435,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823770,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 112,
@@ -1459,27 +1453,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "CHC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1489,22 +1467,14 @@
         "homeLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:10",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-27T23:10:00Z"
       },
       {
@@ -1561,8 +1531,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823283,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 119,
@@ -1579,27 +1549,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "LAD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1609,22 +1563,14 @@
         "homeLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "08:40",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-28T00:40:00Z"
       },
       {
@@ -1633,8 +1579,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823207,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 144,
@@ -1651,27 +1597,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1681,22 +1611,14 @@
         "homeLine": {
           "team": "SF",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "09:05",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-28T01:05:00Z"
       },
       {
@@ -1940,14 +1862,17 @@
           "abbreviation": "TOR",
           "logoKey": "TOR"
         },
-        "awayScore": 6,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "TEX",
@@ -1956,11 +1881,14 @@
             0,
             0,
             0,
-            5
+            5,
+            1,
+            0,
+            "-"
           ],
-          "r": 6,
-          "h": 6,
-          "e": 0
+          "r": 7,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "TOR",
@@ -1969,14 +1897,17 @@
             0,
             0,
             0,
+            2,
+            2,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 3,
+          "r": 4,
+          "h": 10,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下5局",
+        "footerRight": "上8局",
         "gameDate": "2026-06-27T19:07:00Z"
       },
       {
@@ -2000,31 +1931,40 @@
           "abbreviation": "PIT",
           "logoKey": "PIT"
         },
-        "awayScore": 1,
-        "homeScore": 0,
+        "awayScore": 2,
+        "homeScore": 4,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
-            1
+            1,
+            0,
+            1,
+            0
           ],
-          "r": 1,
-          "h": 1,
+          "r": 2,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-"
+            0,
+            0,
+            3,
+            1
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 7,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "Middle1局",
+        "footerRight": "下4局",
         "gameDate": "2026-06-27T20:05:00Z"
       },
       {
@@ -2034,7 +1974,7 @@
         "date": "2026-06-27",
         "gamePk": 823609,
         "status": "LIVE",
-        "statusText": "Delayed Start",
+        "statusText": "In Progress",
         "venue": "Citi Field",
         "awayTeam": {
           "id": 143,
@@ -2051,28 +1991,31 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "PHI",
           "innings": [
-            "-"
+            0,
+            0
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "NYM",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
-        "footerLeft": "Delayed Start",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下2局",
         "gameDate": "2026-06-27T20:10:00Z"
       },
       {
@@ -2101,32 +2044,44 @@
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "KC",
           "innings": [
             0,
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 3,
-          "e": 1
+          "h": 5,
+          "e": 2
         },
         "homeLine": {
           "team": "CWS",
           "innings": [
             0,
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 3,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上3局",
+        "footerRight": "上7局",
         "gameDate": "2026-06-27T20:10:00Z"
       },
       {
@@ -2327,8 +2282,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823770,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 112,
@@ -2345,27 +2300,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "CHC",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2375,22 +2314,14 @@
         "homeLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:10",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-27T23:10:00Z"
       },
       {
@@ -2447,8 +2378,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823283,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 119,
@@ -2465,27 +2396,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "LAD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2495,22 +2410,14 @@
         "homeLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "08:40",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-28T00:40:00Z"
       },
       {
@@ -2519,8 +2426,8 @@
         "league": "MLB",
         "date": "2026-06-27",
         "gamePk": 823207,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 144,
@@ -2537,27 +2444,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2567,22 +2458,14 @@
         "homeLine": {
           "team": "SF",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "09:05",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-06-28T01:05:00Z"
       },
       {
