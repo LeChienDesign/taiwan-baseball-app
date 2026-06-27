@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-27T15:47:35.898Z",
+  "updatedAt": "2026-06-27T23:03:49.870Z",
   "requestedDate": "2026-06-27",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 2
     },
     {
       "name": "milb",
@@ -72,11 +72,11 @@
       },
       "seasonStats": {
         "pitcher": {
-          "era": "4.03",
-          "whip": "1.29",
-          "ip": "60.1",
-          "so": 62,
-          "bb": 27,
+          "era": "4.36",
+          "whip": "1.36",
+          "ip": "64.0",
+          "so": 63,
+          "bb": 28,
           "wins": 4,
           "saves": 0
         },
@@ -92,6 +92,13 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-06-27",
+          "opponent": "Detroit Tigers",
+          "result": "先發",
+          "detail1": "3.2局 / 責失4 / 三振1 / 保送1",
+          "detail2": "被安打8 / 用球數58"
+        },
         {
           "date": "2026-06-21",
           "opponent": "Cleveland Guardians",
@@ -119,13 +126,6 @@
           "result": "先發",
           "detail1": "5.0局 / 責失4 / 三振1 / 保送2",
           "detail2": "被安打7 / 用球數87"
-        },
-        {
-          "date": "2026-05-29",
-          "opponent": "Milwaukee Brewers",
-          "result": "先發",
-          "detail1": "5.0局 / 責失3 / 三振7 / 保送4",
-          "detail2": "被安打3 / 用球數91"
         }
       ],
       "news": [
@@ -192,10 +192,10 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".333",
-          "obp": ".500",
-          "slg": ".667",
-          "ops": "1.167",
+          "avg": ".167",
+          "obp": ".286",
+          "slg": ".333",
+          "ops": ".619",
           "hr": 0,
           "rbi": 1,
           "sb": 0,
@@ -203,6 +203,13 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-06-27",
+          "opponent": "New York Yankees",
+          "result": "出賽",
+          "detail1": "3打數 / 0安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振1"
+        },
         {
           "date": "2026-06-26",
           "opponent": "New York Yankees",
@@ -456,17 +463,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".252",
-          "obp": ".283",
-          "slg": ".365",
-          "ops": ".648",
-          "hr": 2,
-          "rbi": 10,
+          "avg": ".261",
+          "obp": ".290",
+          "slg": ".395",
+          "ops": ".685",
+          "hr": 3,
+          "rbi": 11,
           "sb": 1,
-          "hits": 29
+          "hits": 31
         }
       },
       "recentGames": [
+        {
+          "date": "2026-06-27",
+          "opponent": "Houston Astros",
+          "result": "出賽",
+          "detail1": "4打數 / 2安打 / 1打點",
+          "detail2": "全壘打1 / 保送0 / 三振0"
+        },
         {
           "date": "2026-06-26",
           "opponent": "Houston Astros",
@@ -493,13 +507,6 @@
           "opponent": "New York Yankees",
           "result": "出賽",
           "detail1": "2打數 / 1安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振1"
-        },
-        {
-          "date": "2026-06-22",
-          "opponent": "New York Yankees",
-          "result": "出賽",
-          "detail1": "3打數 / 1安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振1"
         }
       ],
