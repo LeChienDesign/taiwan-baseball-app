@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-06T01:26:14.527Z",
+  "updatedAt": "2026-07-06T04:14:16.368Z",
   "date": "2026-07-05",
   "startDate": "2026-07-05",
   "endDate": "2026-07-05",
@@ -946,8 +946,8 @@
       "league": "MLB",
       "date": "2026-07-05",
       "gamePk": 823931,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 135,
@@ -961,15 +961,18 @@
         "abbreviation": "LAD",
         "logoKey": "LAD"
       },
-      "awayScore": 1,
-      "homeScore": 0,
+      "awayScore": 5,
+      "homeScore": 2,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "SD",
@@ -979,10 +982,13 @@
           0,
           1,
           0,
+          0,
+          4,
+          0,
           0
         ],
-        "r": 1,
-        "h": 3,
+        "r": 5,
+        "h": 8,
         "e": 0
       },
       "homeLine": {
@@ -993,14 +999,17 @@
           0,
           0,
           0,
-          "-"
+          0,
+          2,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 1,
+        "r": 2,
+        "h": 4,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下6局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-07-05T23:20:00Z"
     },
     {
@@ -1010,7 +1019,7 @@
       "date": "2026-07-05",
       "gamePk": 824010,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 111,
@@ -1024,31 +1033,52 @@
         "abbreviation": "LAA",
         "logoKey": "LAA"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 7,
+      "homeScore": 3,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
       ],
       "awayLine": {
         "team": "BOS",
         "innings": [
-          "-"
+          0,
+          2,
+          3,
+          0,
+          0,
+          0,
+          2,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 7,
+        "h": 10,
         "e": 0
       },
       "homeLine": {
         "team": "LAA",
         "innings": [
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 3,
+        "h": 7,
+        "e": 2
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下8局",
       "gameDate": "2026-07-06T01:30:00Z"
     }
   ],
@@ -1996,8 +2026,8 @@
         "league": "MLB",
         "date": "2026-07-05",
         "gamePk": 823931,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 135,
@@ -2011,15 +2041,18 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 1,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 2,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "SD",
@@ -2029,10 +2062,13 @@
             0,
             1,
             0,
+            0,
+            4,
+            0,
             0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 5,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
@@ -2043,14 +2079,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            2,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 1,
+          "r": 2,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-05T23:20:00Z"
       },
       {
@@ -2060,7 +2099,7 @@
         "date": "2026-07-05",
         "gamePk": 824010,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 111,
@@ -2074,31 +2113,52 @@
           "abbreviation": "LAA",
           "logoKey": "LAA"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-"
+            0,
+            2,
+            3,
+            0,
+            0,
+            0,
+            2,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 10,
           "e": 0
         },
         "homeLine": {
           "team": "LAA",
           "innings": [
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 7,
+          "e": 2
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下8局",
         "gameDate": "2026-07-06T01:30:00Z"
       }
     ]
@@ -3047,8 +3107,8 @@
         "league": "MLB",
         "date": "2026-07-05",
         "gamePk": 823931,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 135,
@@ -3062,15 +3122,18 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 1,
-        "homeScore": 0,
+        "awayScore": 5,
+        "homeScore": 2,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "SD",
@@ -3080,10 +3143,13 @@
             0,
             1,
             0,
+            0,
+            4,
+            0,
             0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 5,
+          "h": 8,
           "e": 0
         },
         "homeLine": {
@@ -3094,14 +3160,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            2,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 1,
+          "r": 2,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-05T23:20:00Z"
       },
       {
@@ -3111,7 +3180,7 @@
         "date": "2026-07-05",
         "gamePk": 824010,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 111,
@@ -3125,31 +3194,52 @@
           "abbreviation": "LAA",
           "logoKey": "LAA"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 7,
+        "homeScore": 3,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
         ],
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-"
+            0,
+            2,
+            3,
+            0,
+            0,
+            0,
+            2,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 7,
+          "h": 10,
           "e": 0
         },
         "homeLine": {
           "team": "LAA",
           "innings": [
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 7,
+          "e": 2
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下8局",
         "gameDate": "2026-07-06T01:30:00Z"
       }
     ]
