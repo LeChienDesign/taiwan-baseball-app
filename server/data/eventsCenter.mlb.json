@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-05T23:44:10.321Z",
+  "updatedAt": "2026-07-06T01:26:14.527Z",
   "date": "2026-07-05",
   "startDate": "2026-07-05",
   "endDate": "2026-07-05",
@@ -802,8 +802,8 @@
       "league": "MLB",
       "date": "2026-07-05",
       "gamePk": 824980,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Sutter Health Park",
       "awayTeam": {
         "id": 146,
@@ -818,7 +818,7 @@
         "logoKey": "ATH"
       },
       "awayScore": 9,
-      "homeScore": 5,
+      "homeScore": 8,
       "innings": [
         1,
         2,
@@ -844,7 +844,7 @@
           1
         ],
         "r": 9,
-        "h": 15,
+        "h": 16,
         "e": 0
       },
       "homeLine": {
@@ -858,14 +858,14 @@
           0,
           0,
           5,
-          "-"
+          3
         ],
-        "r": 5,
-        "h": 4,
+        "r": 8,
+        "h": 7,
         "e": 1
       },
-      "footerLeft": "In Progress",
-      "footerRight": "Middle9局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-07-05T20:30:00Z"
     },
     {
@@ -961,34 +961,46 @@
         "abbreviation": "LAD",
         "logoKey": "LAD"
       },
-      "awayScore": 0,
+      "awayScore": 1,
       "homeScore": 0,
       "innings": [
         1,
-        2
+        2,
+        3,
+        4,
+        5,
+        6
       ],
       "awayLine": {
         "team": "SD",
         "innings": [
           0,
+          0,
+          0,
+          1,
+          0,
           0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 3,
         "e": 0
       },
       "homeLine": {
         "team": "LAD",
         "innings": [
           0,
+          0,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下2局",
+      "footerRight": "下6局",
       "gameDate": "2026-07-05T23:20:00Z"
     },
     {
@@ -998,7 +1010,7 @@
       "date": "2026-07-05",
       "gamePk": 824010,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Warmup",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 111,
@@ -1035,7 +1047,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "上1局",
       "gameDate": "2026-07-06T01:30:00Z"
     }
@@ -1840,8 +1852,8 @@
         "league": "MLB",
         "date": "2026-07-05",
         "gamePk": 824980,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 146,
@@ -1856,7 +1868,7 @@
           "logoKey": "ATH"
         },
         "awayScore": 9,
-        "homeScore": 5,
+        "homeScore": 8,
         "innings": [
           1,
           2,
@@ -1882,7 +1894,7 @@
             1
           ],
           "r": 9,
-          "h": 15,
+          "h": 16,
           "e": 0
         },
         "homeLine": {
@@ -1896,14 +1908,14 @@
             0,
             0,
             5,
-            "-"
+            3
           ],
-          "r": 5,
-          "h": 4,
+          "r": 8,
+          "h": 7,
           "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle9局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-05T20:30:00Z"
       },
       {
@@ -1999,34 +2011,46 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
             0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下6局",
         "gameDate": "2026-07-05T23:20:00Z"
       },
       {
@@ -2036,7 +2060,7 @@
         "date": "2026-07-05",
         "gamePk": 824010,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 111,
@@ -2073,7 +2097,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-07-06T01:30:00Z"
       }
@@ -2879,8 +2903,8 @@
         "league": "MLB",
         "date": "2026-07-05",
         "gamePk": 824980,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 146,
@@ -2895,7 +2919,7 @@
           "logoKey": "ATH"
         },
         "awayScore": 9,
-        "homeScore": 5,
+        "homeScore": 8,
         "innings": [
           1,
           2,
@@ -2921,7 +2945,7 @@
             1
           ],
           "r": 9,
-          "h": 15,
+          "h": 16,
           "e": 0
         },
         "homeLine": {
@@ -2935,14 +2959,14 @@
             0,
             0,
             5,
-            "-"
+            3
           ],
-          "r": 5,
-          "h": 4,
+          "r": 8,
+          "h": 7,
           "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle9局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-05T20:30:00Z"
       },
       {
@@ -3038,34 +3062,46 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
             0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
             0,
+            0,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下6局",
         "gameDate": "2026-07-05T23:20:00Z"
       },
       {
@@ -3075,7 +3111,7 @@
         "date": "2026-07-05",
         "gamePk": 824010,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 111,
@@ -3112,7 +3148,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-07-06T01:30:00Z"
       }
