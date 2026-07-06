@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-06T20:13:55.166Z",
+  "updatedAt": "2026-07-06T21:49:07.303Z",
   "date": "2026-07-06",
   "startDate": "2026-07-06",
   "endDate": "2026-07-06",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-07-06",
       "gamePk": 824089,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Kauffman Stadium",
       "awayTeam": {
         "id": 143,
@@ -26,14 +26,17 @@
         "logoKey": "KC"
       },
       "awayScore": 1,
-      "homeScore": 10,
+      "homeScore": 15,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "PHI",
@@ -43,10 +46,13 @@
           0,
           0,
           0,
-          "-"
+          0,
+          0,
+          0,
+          0
         ],
         "r": 1,
-        "h": 7,
+        "h": 10,
         "e": 1
       },
       "homeLine": {
@@ -57,14 +63,17 @@
           1,
           1,
           1,
+          1,
+          2,
+          2,
           "-"
         ],
-        "r": 10,
-        "h": 13,
+        "r": 15,
+        "h": 22,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上6局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-07-06T18:10:00Z"
     },
     {
@@ -217,8 +226,8 @@
       "league": "MLB",
       "date": "2026-07-06",
       "gamePk": 823036,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "Busch Stadium",
       "awayTeam": {
         "id": 158,
@@ -235,27 +244,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "MIL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -265,22 +258,14 @@
       "homeLine": {
         "team": "STL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "07:45",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-07-06T23:45:00Z"
     },
     {
@@ -434,7 +419,7 @@
       "date": "2026-07-06",
       "gamePk": 823930,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 115,
@@ -495,7 +480,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "10:10",
       "gameDate": "2026-07-07T02:10:00Z"
     }
@@ -508,8 +493,8 @@
         "league": "MLB",
         "date": "2026-07-06",
         "gamePk": 824089,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 143,
@@ -524,14 +509,17 @@
           "logoKey": "KC"
         },
         "awayScore": 1,
-        "homeScore": 10,
+        "homeScore": 15,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "PHI",
@@ -541,10 +529,13 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 1,
-          "h": 7,
+          "h": 10,
           "e": 1
         },
         "homeLine": {
@@ -555,14 +546,17 @@
             1,
             1,
             1,
+            1,
+            2,
+            2,
             "-"
           ],
-          "r": 10,
-          "h": 13,
+          "r": 15,
+          "h": 22,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-06T18:10:00Z"
       },
       {
@@ -715,8 +709,8 @@
         "league": "MLB",
         "date": "2026-07-06",
         "gamePk": 823036,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 158,
@@ -733,27 +727,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -763,22 +741,14 @@
         "homeLine": {
           "team": "STL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:45",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-07-06T23:45:00Z"
       },
       {
@@ -932,7 +902,7 @@
         "date": "2026-07-06",
         "gamePk": 823930,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 115,
@@ -993,7 +963,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "10:10",
         "gameDate": "2026-07-07T02:10:00Z"
       }
@@ -1007,8 +977,8 @@
         "league": "MLB",
         "date": "2026-07-06",
         "gamePk": 824089,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 143,
@@ -1023,14 +993,17 @@
           "logoKey": "KC"
         },
         "awayScore": 1,
-        "homeScore": 10,
+        "homeScore": 15,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "PHI",
@@ -1040,10 +1013,13 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 1,
-          "h": 7,
+          "h": 10,
           "e": 1
         },
         "homeLine": {
@@ -1054,14 +1030,17 @@
             1,
             1,
             1,
+            1,
+            2,
+            2,
             "-"
           ],
-          "r": 10,
-          "h": 13,
+          "r": 15,
+          "h": 22,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-06T18:10:00Z"
       },
       {
@@ -1214,8 +1193,8 @@
         "league": "MLB",
         "date": "2026-07-06",
         "gamePk": 823036,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 158,
@@ -1232,27 +1211,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1262,22 +1225,14 @@
         "homeLine": {
           "team": "STL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:45",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-07-06T23:45:00Z"
       },
       {
@@ -1431,7 +1386,7 @@
         "date": "2026-07-06",
         "gamePk": 823930,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 115,
@@ -1492,7 +1447,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "10:10",
         "gameDate": "2026-07-07T02:10:00Z"
       }
