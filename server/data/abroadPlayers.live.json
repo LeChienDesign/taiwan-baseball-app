@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-17T15:55:05.026Z",
+  "updatedAt": "2026-07-17T22:49:46.976Z",
   "requestedDate": "2026-07-17",
   "summary": {
     "totalPlayers": 34,
@@ -11,7 +11,7 @@
     "todayGames": 0,
     "finals": 0,
     "probableStarters": 0,
-    "injured": 10,
+    "injured": 11,
     "withNews": 31,
     "withRecentGames": 25
   },
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -54,7 +54,7 @@
       "throws": "R",
       "age": 27,
       "number": "17",
-      "status": "待命",
+      "status": "傷兵",
       "teamColor": "#eb6e1f",
       "trending": true,
       "line1": "大聯盟右投",
@@ -192,17 +192,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".296",
-          "obp": ".355",
-          "slg": ".333",
-          "ops": ".688",
+          "avg": ".290",
+          "obp": ".343",
+          "slg": ".323",
+          "ops": ".666",
           "hr": 0,
-          "rbi": 4,
+          "rbi": 5,
           "sb": 0,
-          "hits": 8
+          "hits": 9
         }
       },
       "recentGames": [
+        {
+          "date": "2026-07-17",
+          "opponent": "Tampa Bay Rays",
+          "result": "出賽",
+          "detail1": "4打數 / 1安打 / 1打點",
+          "detail2": "全壘打0 / 保送0 / 三振1"
+        },
         {
           "date": "2026-07-12",
           "opponent": "New York Mets",
@@ -230,13 +237,6 @@
           "result": "出賽",
           "detail1": "3打數 / 2安打 / 2打點",
           "detail2": "全壘打0 / 保送1 / 三振1"
-        },
-        {
-          "date": "2026-07-05",
-          "opponent": "Los Angeles Angels",
-          "result": "出賽",
-          "detail1": "4打數 / 2安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振2"
         }
       ],
       "news": [
