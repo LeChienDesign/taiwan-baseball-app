@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T03:33:23.416Z",
+  "updatedAt": "2026-07-19T06:14:46.368Z",
   "date": "2026-07-18",
   "startDate": "2026-07-18",
   "endDate": "2026-07-18",
@@ -955,8 +955,8 @@
       "league": "MLB",
       "date": "2026-07-18",
       "gamePk": 824979,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Sutter Health Park",
       "awayTeam": {
         "id": 120,
@@ -970,15 +970,18 @@
         "abbreviation": "ATH",
         "logoKey": "ATH"
       },
-      "awayScore": 0,
-      "homeScore": 6,
+      "awayScore": 1,
+      "homeScore": 15,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "WSH",
@@ -988,11 +991,14 @@
           0,
           0,
           0,
-          "-"
+          0,
+          0,
+          0,
+          1
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 4,
+        "e": 1
       },
       "homeLine": {
         "team": "ATH",
@@ -1002,14 +1008,17 @@
           0,
           0,
           0,
+          2,
+          6,
+          1,
           "-"
         ],
-        "r": 6,
-        "h": 6,
+        "r": 15,
+        "h": 13,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上6局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-07-19T02:05:00Z"
     },
     {
@@ -1018,8 +1027,8 @@
       "league": "MLB",
       "date": "2026-07-18",
       "gamePk": 824008,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 116,
@@ -1041,7 +1050,10 @@
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "DET",
@@ -1051,10 +1063,13 @@
           0,
           0,
           1,
-          "-"
+          0,
+          0,
+          0,
+          0
         ],
         "r": 7,
-        "h": 8,
+        "h": 11,
         "e": 0
       },
       "homeLine": {
@@ -1065,14 +1080,17 @@
           0,
           0,
           0,
-          "-"
+          0,
+          0,
+          0,
+          0
         ],
         "r": 0,
-        "h": 3,
+        "h": 7,
         "e": 1
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上6局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-07-19T02:07:00Z"
     },
     {
@@ -2101,8 +2119,8 @@
         "league": "MLB",
         "date": "2026-07-18",
         "gamePk": 824979,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 120,
@@ -2116,15 +2134,18 @@
           "abbreviation": "ATH",
           "logoKey": "ATH"
         },
-        "awayScore": 0,
-        "homeScore": 6,
+        "awayScore": 1,
+        "homeScore": 15,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "WSH",
@@ -2134,11 +2155,14 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
         "homeLine": {
           "team": "ATH",
@@ -2148,14 +2172,17 @@
             0,
             0,
             0,
+            2,
+            6,
+            1,
             "-"
           ],
-          "r": 6,
-          "h": 6,
+          "r": 15,
+          "h": 13,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-19T02:05:00Z"
       },
       {
@@ -2164,8 +2191,8 @@
         "league": "MLB",
         "date": "2026-07-18",
         "gamePk": 824008,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 116,
@@ -2187,7 +2214,10 @@
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "DET",
@@ -2197,10 +2227,13 @@
             0,
             0,
             1,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 7,
-          "h": 8,
+          "h": 11,
           "e": 0
         },
         "homeLine": {
@@ -2211,14 +2244,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 3,
+          "h": 7,
           "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-19T02:07:00Z"
       },
       {
@@ -3248,8 +3284,8 @@
         "league": "MLB",
         "date": "2026-07-18",
         "gamePk": 824979,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 120,
@@ -3263,15 +3299,18 @@
           "abbreviation": "ATH",
           "logoKey": "ATH"
         },
-        "awayScore": 0,
-        "homeScore": 6,
+        "awayScore": 1,
+        "homeScore": 15,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "WSH",
@@ -3281,11 +3320,14 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
         "homeLine": {
           "team": "ATH",
@@ -3295,14 +3337,17 @@
             0,
             0,
             0,
+            2,
+            6,
+            1,
             "-"
           ],
-          "r": 6,
-          "h": 6,
+          "r": 15,
+          "h": 13,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-19T02:05:00Z"
       },
       {
@@ -3311,8 +3356,8 @@
         "league": "MLB",
         "date": "2026-07-18",
         "gamePk": 824008,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 116,
@@ -3334,7 +3379,10 @@
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "DET",
@@ -3344,10 +3392,13 @@
             0,
             0,
             1,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 7,
-          "h": 8,
+          "h": 11,
           "e": 0
         },
         "homeLine": {
@@ -3358,14 +3409,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 3,
+          "h": 7,
           "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-07-19T02:07:00Z"
       },
       {
