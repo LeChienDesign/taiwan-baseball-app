@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21T01:24:20.140Z",
+  "updatedAt": "2026-07-21T04:42:22.058Z",
   "requestedDate": "2026-07-21",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 2
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -32,7 +32,7 @@
       "name": "npb",
       "ok": true,
       "message": "NPB provider applied",
-      "affectedPlayers": 8
+      "affectedPlayers": 0
     },
     {
       "name": "kbo",
@@ -484,17 +484,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".255",
+          "avg": ".256",
           "obp": ".287",
-          "slg": ".389",
-          "ops": ".676",
+          "slg": ".388",
+          "ops": ".675",
           "hr": 4,
           "rbi": 17,
           "sb": 1,
-          "hits": 40
+          "hits": 41
         }
       },
       "recentGames": [
+        {
+          "date": "2026-07-20",
+          "opponent": "Chicago Cubs",
+          "result": "出賽",
+          "detail1": "3打數 / 1安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振1"
+        },
         {
           "date": "2026-07-19",
           "opponent": "Los Angeles Angels",
@@ -521,13 +528,6 @@
           "opponent": "Athletics",
           "result": "出賽",
           "detail1": "4打數 / 1安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振0"
-        },
-        {
-          "date": "2026-07-08",
-          "opponent": "Athletics",
-          "result": "出賽",
-          "detail1": "2打數 / 0安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振0"
         }
       ],
