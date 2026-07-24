@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-24T00:13:09.000Z",
+  "updatedAt": "2026-07-24T03:26:51.236Z",
   "date": "2026-07-23",
   "startDate": "2026-07-23",
   "endDate": "2026-07-23",
@@ -236,7 +236,7 @@
       "date": "2026-07-23",
       "gamePk": 823042,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Busch Stadium",
       "awayTeam": {
         "id": 109,
@@ -297,7 +297,7 @@
         "h": 13,
         "e": 0
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下9局",
       "gameDate": "2026-07-23T21:15:00Z"
     },
@@ -307,8 +307,8 @@
       "league": "MLB",
       "date": "2026-07-23",
       "gamePk": 824247,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 118,
@@ -322,15 +322,18 @@
         "abbreviation": "DET",
         "logoKey": "DET"
       },
-      "awayScore": 2,
-      "homeScore": 0,
+      "awayScore": 3,
+      "homeScore": 4,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "KC",
@@ -340,11 +343,14 @@
           0,
           0,
           0,
-          2
+          2,
+          0,
+          1,
+          0
         ],
-        "r": 2,
-        "h": 5,
-        "e": 0
+        "r": 3,
+        "h": 9,
+        "e": 1
       },
       "homeLine": {
         "team": "DET",
@@ -354,14 +360,17 @@
           0,
           0,
           0,
+          0,
+          3,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 4,
+        "r": 4,
+        "h": 10,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上6局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-07-23T22:40:00Z"
     }
   ],
@@ -599,7 +608,7 @@
         "date": "2026-07-23",
         "gamePk": 823042,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 109,
@@ -660,7 +669,7 @@
           "h": 13,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-07-23T21:15:00Z"
       },
@@ -670,8 +679,8 @@
         "league": "MLB",
         "date": "2026-07-23",
         "gamePk": 824247,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 118,
@@ -685,15 +694,18 @@
           "abbreviation": "DET",
           "logoKey": "DET"
         },
-        "awayScore": 2,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "KC",
@@ -703,11 +715,14 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            1,
+            0
           ],
-          "r": 2,
-          "h": 5,
-          "e": 0
+          "r": 3,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "DET",
@@ -717,14 +732,17 @@
             0,
             0,
             0,
+            0,
+            3,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 4,
+          "r": 4,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-23T22:40:00Z"
       }
     ]
@@ -963,7 +981,7 @@
         "date": "2026-07-23",
         "gamePk": 823042,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Busch Stadium",
         "awayTeam": {
           "id": 109,
@@ -1024,7 +1042,7 @@
           "h": 13,
           "e": 0
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-07-23T21:15:00Z"
       },
@@ -1034,8 +1052,8 @@
         "league": "MLB",
         "date": "2026-07-23",
         "gamePk": 824247,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 118,
@@ -1049,15 +1067,18 @@
           "abbreviation": "DET",
           "logoKey": "DET"
         },
-        "awayScore": 2,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 4,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "KC",
@@ -1067,11 +1088,14 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            1,
+            0
           ],
-          "r": 2,
-          "h": 5,
-          "e": 0
+          "r": 3,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "DET",
@@ -1081,14 +1105,17 @@
             0,
             0,
             0,
+            0,
+            3,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 4,
+          "r": 4,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上6局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-07-23T22:40:00Z"
       }
     ]
