@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-28T17:24:36.137Z",
+  "updatedAt": "2026-07-28T18:53:18.077Z",
   "date": "2026-07-28",
   "startDate": "2026-07-28",
   "endDate": "2026-07-28",
@@ -11,7 +11,7 @@
       "date": "2026-07-28",
       "gamePk": 824490,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Great American Ball Park",
       "awayTeam": {
         "id": 114,
@@ -25,31 +25,40 @@
         "abbreviation": "CIN",
         "logoKey": "CIN"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 4,
+      "homeScore": 1,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4
       ],
       "awayLine": {
         "team": "CLE",
         "innings": [
-          "-"
+          4,
+          0,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 4,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
         "team": "CIN",
         "innings": [
+          0,
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 1,
+        "h": 4,
+        "e": 1
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "Middle4局",
       "gameDate": "2026-07-28T17:40:00Z"
     },
     {
@@ -203,7 +212,7 @@
       "date": "2026-07-28",
       "gamePk": 823350,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "PNC Park",
       "awayTeam": {
         "id": 109,
@@ -264,7 +273,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "06:40",
       "gameDate": "2026-07-28T22:40:00Z"
     },
@@ -275,7 +284,7 @@
       "date": "2026-07-28",
       "gamePk": 822949,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Tropicana Field",
       "awayTeam": {
         "id": 140,
@@ -336,7 +345,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "06:40",
       "gameDate": "2026-07-28T22:40:00Z"
     },
@@ -347,7 +356,7 @@
       "date": "2026-07-28",
       "gamePk": 823838,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "loanDepot park",
       "awayTeam": {
         "id": 143,
@@ -408,7 +417,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "06:40",
       "gameDate": "2026-07-28T22:40:00Z"
     },
@@ -483,78 +492,6 @@
       "footerLeft": "Scheduled",
       "footerRight": "06:45",
       "gameDate": "2026-07-28T22:45:00Z"
-    },
-    {
-      "id": "mlb-823598",
-      "source": "mlb-official",
-      "league": "MLB",
-      "date": "2026-07-28",
-      "gamePk": 823598,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
-      "venue": "Citi Field",
-      "awayTeam": {
-        "id": 144,
-        "name": "Atlanta Braves",
-        "abbreviation": "ATL",
-        "logoKey": "ATL"
-      },
-      "homeTeam": {
-        "id": 121,
-        "name": "New York Mets",
-        "abbreviation": "NYM",
-        "logoKey": "NYM"
-      },
-      "awayScore": 0,
-      "homeScore": 0,
-      "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
-      ],
-      "awayLine": {
-        "team": "ATL",
-        "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "homeLine": {
-        "team": "NYM",
-        "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-"
-        ],
-        "r": 0,
-        "h": 0,
-        "e": 0
-      },
-      "footerLeft": "Scheduled",
-      "footerRight": "07:10",
-      "gameDate": "2026-07-28T23:10:00Z"
     },
     {
       "id": "mlb-823676",
@@ -1131,6 +1068,78 @@
       "footerLeft": "Scheduled",
       "footerRight": "10:10",
       "gameDate": "2026-07-29T02:10:00Z"
+    },
+    {
+      "id": "mlb-823598",
+      "source": "mlb-official",
+      "league": "MLB",
+      "date": "2026-07-28",
+      "gamePk": 823598,
+      "status": "FINAL",
+      "statusText": "Postponed",
+      "venue": "Citi Field",
+      "awayTeam": {
+        "id": 144,
+        "name": "Atlanta Braves",
+        "abbreviation": "ATL",
+        "logoKey": "ATL"
+      },
+      "homeTeam": {
+        "id": 121,
+        "name": "New York Mets",
+        "abbreviation": "NYM",
+        "logoKey": "NYM"
+      },
+      "awayScore": 0,
+      "homeScore": 0,
+      "innings": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "awayLine": {
+        "team": "ATL",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "homeLine": {
+        "team": "NYM",
+        "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-"
+        ],
+        "r": 0,
+        "h": 0,
+        "e": 0
+      },
+      "footerLeft": "Postponed",
+      "footerRight": "07:10",
+      "gameDate": "2026-07-28T23:10:00Z"
     }
   ],
   "gamesByDate": {
@@ -1142,7 +1151,7 @@
         "date": "2026-07-28",
         "gamePk": 824490,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 114,
@@ -1156,31 +1165,40 @@
           "abbreviation": "CIN",
           "logoKey": "CIN"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "CLE",
           "innings": [
-            "-"
+            4,
+            0,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "Middle4局",
         "gameDate": "2026-07-28T17:40:00Z"
       },
       {
@@ -1334,7 +1352,7 @@
         "date": "2026-07-28",
         "gamePk": 823350,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 109,
@@ -1395,7 +1413,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -1406,7 +1424,7 @@
         "date": "2026-07-28",
         "gamePk": 822949,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 140,
@@ -1467,7 +1485,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -1478,7 +1496,7 @@
         "date": "2026-07-28",
         "gamePk": 823838,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 143,
@@ -1539,7 +1557,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -1614,78 +1632,6 @@
         "footerLeft": "Scheduled",
         "footerRight": "06:45",
         "gameDate": "2026-07-28T22:45:00Z"
-      },
-      {
-        "id": "mlb-823598",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-07-28",
-        "gamePk": 823598,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
-        "venue": "Citi Field",
-        "awayTeam": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "abbreviation": "ATL",
-          "logoKey": "ATL"
-        },
-        "homeTeam": {
-          "id": 121,
-          "name": "New York Mets",
-          "abbreviation": "NYM",
-          "logoKey": "NYM"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "awayLine": {
-          "team": "ATL",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "NYM",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:10",
-        "gameDate": "2026-07-28T23:10:00Z"
       },
       {
         "id": "mlb-823676",
@@ -2262,6 +2208,78 @@
         "footerLeft": "Scheduled",
         "footerRight": "10:10",
         "gameDate": "2026-07-29T02:10:00Z"
+      },
+      {
+        "id": "mlb-823598",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-07-28",
+        "gamePk": 823598,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Citi Field",
+        "awayTeam": {
+          "id": 144,
+          "name": "Atlanta Braves",
+          "abbreviation": "ATL",
+          "logoKey": "ATL"
+        },
+        "homeTeam": {
+          "id": 121,
+          "name": "New York Mets",
+          "abbreviation": "NYM",
+          "logoKey": "NYM"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "ATL",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "NYM",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "07:10",
+        "gameDate": "2026-07-28T23:10:00Z"
       }
     ]
   },
@@ -2274,7 +2292,7 @@
         "date": "2026-07-28",
         "gamePk": 824490,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 114,
@@ -2288,31 +2306,40 @@
           "abbreviation": "CIN",
           "logoKey": "CIN"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 1,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4
         ],
         "awayLine": {
           "team": "CLE",
           "innings": [
-            "-"
+            4,
+            0,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 4,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
           "team": "CIN",
           "innings": [
+            0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 1,
+          "h": 4,
+          "e": 1
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "Middle4局",
         "gameDate": "2026-07-28T17:40:00Z"
       },
       {
@@ -2466,7 +2493,7 @@
         "date": "2026-07-28",
         "gamePk": 823350,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 109,
@@ -2527,7 +2554,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -2538,7 +2565,7 @@
         "date": "2026-07-28",
         "gamePk": 822949,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
           "id": 140,
@@ -2599,7 +2626,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -2610,7 +2637,7 @@
         "date": "2026-07-28",
         "gamePk": 823838,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "loanDepot park",
         "awayTeam": {
           "id": 143,
@@ -2671,7 +2698,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "06:40",
         "gameDate": "2026-07-28T22:40:00Z"
       },
@@ -2746,78 +2773,6 @@
         "footerLeft": "Scheduled",
         "footerRight": "06:45",
         "gameDate": "2026-07-28T22:45:00Z"
-      },
-      {
-        "id": "mlb-823598",
-        "source": "mlb-official",
-        "league": "MLB",
-        "date": "2026-07-28",
-        "gamePk": 823598,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
-        "venue": "Citi Field",
-        "awayTeam": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "abbreviation": "ATL",
-          "logoKey": "ATL"
-        },
-        "homeTeam": {
-          "id": 121,
-          "name": "New York Mets",
-          "abbreviation": "NYM",
-          "logoKey": "NYM"
-        },
-        "awayScore": 0,
-        "homeScore": 0,
-        "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "awayLine": {
-          "team": "ATL",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "homeLine": {
-          "team": "NYM",
-          "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-          ],
-          "r": 0,
-          "h": 0,
-          "e": 0
-        },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:10",
-        "gameDate": "2026-07-28T23:10:00Z"
       },
       {
         "id": "mlb-823676",
@@ -3394,6 +3349,78 @@
         "footerLeft": "Scheduled",
         "footerRight": "10:10",
         "gameDate": "2026-07-29T02:10:00Z"
+      },
+      {
+        "id": "mlb-823598",
+        "source": "mlb-official",
+        "league": "MLB",
+        "date": "2026-07-28",
+        "gamePk": 823598,
+        "status": "FINAL",
+        "statusText": "Postponed",
+        "venue": "Citi Field",
+        "awayTeam": {
+          "id": 144,
+          "name": "Atlanta Braves",
+          "abbreviation": "ATL",
+          "logoKey": "ATL"
+        },
+        "homeTeam": {
+          "id": 121,
+          "name": "New York Mets",
+          "abbreviation": "NYM",
+          "logoKey": "NYM"
+        },
+        "awayScore": 0,
+        "homeScore": 0,
+        "innings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "awayLine": {
+          "team": "ATL",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "homeLine": {
+          "team": "NYM",
+          "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          "r": 0,
+          "h": 0,
+          "e": 0
+        },
+        "footerLeft": "Postponed",
+        "footerRight": "07:10",
+        "gameDate": "2026-07-28T23:10:00Z"
       }
     ]
   }
