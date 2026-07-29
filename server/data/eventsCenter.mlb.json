@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-29T20:39:05.150Z",
+  "updatedAt": "2026-07-29T21:35:09.433Z",
   "date": "2026-07-29",
   "startDate": "2026-07-29",
   "endDate": "2026-07-29",
@@ -226,8 +226,8 @@
       "league": "MLB",
       "date": "2026-07-29",
       "gamePk": 824242,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 110,
@@ -291,13 +291,13 @@
           0,
           0,
           2,
-          "-"
+          0
         ],
         "r": 9,
         "h": 10,
         "e": 1
       },
-      "footerLeft": "In Progress",
+      "footerLeft": "Final",
       "footerRight": "下12局",
       "gameDate": "2026-07-29T17:10:00Z"
     },
@@ -379,7 +379,7 @@
       "league": "MLB",
       "date": "2026-07-29",
       "gamePk": 823598,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Citi Field",
       "awayTeam": {
@@ -397,27 +397,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "ATL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -427,14 +411,6 @@
       "homeLine": {
         "team": "NYM",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -442,7 +418,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:10",
+      "footerRight": "上1局",
       "gameDate": "2026-07-29T23:10:00Z"
     },
     {
@@ -452,7 +428,7 @@
       "date": "2026-07-29",
       "gamePk": 823192,
       "status": "LIVE",
-      "statusText": "Manager challenge",
+      "statusText": "In Progress",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 158,
@@ -466,22 +442,28 @@
         "abbreviation": "SF",
         "logoKey": "SF"
       },
-      "awayScore": 1,
+      "awayScore": 2,
       "homeScore": 3,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6
       ],
       "awayLine": {
         "team": "MIL",
         "innings": [
           0,
           0,
-          1
+          1,
+          1,
+          0,
+          0
         ],
-        "r": 1,
-        "h": 3,
+        "r": 2,
+        "h": 5,
         "e": 1
       },
       "homeLine": {
@@ -489,14 +471,17 @@
         "innings": [
           0,
           3,
+          0,
+          0,
+          0,
           "-"
         ],
         "r": 3,
-        "h": 3,
+        "h": 5,
         "e": 0
       },
-      "footerLeft": "Manager challenge",
-      "footerRight": "下3局",
+      "footerLeft": "In Progress",
+      "footerRight": "下6局",
       "gameDate": "2026-07-29T19:45:00Z"
     },
     {
@@ -521,33 +506,42 @@
         "logoKey": "SD"
       },
       "awayScore": 0,
-      "homeScore": 0,
+      "homeScore": 3,
       "innings": [
         1,
-        2
+        2,
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "COL",
         "innings": [
           0,
+          0,
+          0,
+          0,
           0
         ],
         "r": 0,
-        "h": 1,
+        "h": 3,
         "e": 0
       },
       "homeLine": {
         "team": "SD",
         "innings": [
           0,
+          0,
+          0,
+          3,
           "-"
         ],
-        "r": 0,
-        "h": 1,
-        "e": 0
+        "r": 3,
+        "h": 4,
+        "e": 1
       },
       "footerLeft": "In Progress",
-      "footerRight": "下2局",
+      "footerRight": "下5局",
       "gameDate": "2026-07-29T20:10:00Z"
     },
     {
@@ -700,7 +694,7 @@
       "league": "MLB",
       "date": "2026-07-29",
       "gamePk": 824567,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Rate Field",
       "awayTeam": {
@@ -763,7 +757,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "07:40",
+      "footerRight": "上1局",
       "gameDate": "2026-07-29T23:40:00Z"
     },
     {
@@ -821,7 +815,7 @@
       "date": "2026-07-29",
       "gamePk": 824002,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 117,
@@ -882,7 +876,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "09:38",
       "gameDate": "2026-07-30T01:38:00Z"
     },
@@ -1255,8 +1249,8 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 824242,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 110,
@@ -1320,13 +1314,13 @@
             0,
             0,
             2,
-            "-"
+            0
           ],
           "r": 9,
           "h": 10,
           "e": 1
         },
-        "footerLeft": "In Progress",
+        "footerLeft": "Final",
         "footerRight": "下12局",
         "gameDate": "2026-07-29T17:10:00Z"
       },
@@ -1408,7 +1402,7 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 823598,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Citi Field",
         "awayTeam": {
@@ -1426,27 +1420,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1456,14 +1434,6 @@
         "homeLine": {
           "team": "NYM",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1471,7 +1441,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-07-29T23:10:00Z"
       },
       {
@@ -1481,7 +1451,7 @@
         "date": "2026-07-29",
         "gamePk": 823192,
         "status": "LIVE",
-        "statusText": "Manager challenge",
+        "statusText": "In Progress",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 158,
@@ -1495,22 +1465,28 @@
           "abbreviation": "SF",
           "logoKey": "SF"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
             0,
             0,
-            1
+            1,
+            1,
+            0,
+            0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 2,
+          "h": 5,
           "e": 1
         },
         "homeLine": {
@@ -1518,14 +1494,17 @@
           "innings": [
             0,
             3,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 3,
-          "h": 3,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Manager challenge",
-        "footerRight": "下3局",
+        "footerLeft": "In Progress",
+        "footerRight": "下6局",
         "gameDate": "2026-07-29T19:45:00Z"
       },
       {
@@ -1550,33 +1529,42 @@
           "logoKey": "SD"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "COL",
           "innings": [
             0,
+            0,
+            0,
+            0,
             0
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "SD",
           "innings": [
             0,
+            0,
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 1,
-          "e": 0
+          "r": 3,
+          "h": 4,
+          "e": 1
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下5局",
         "gameDate": "2026-07-29T20:10:00Z"
       },
       {
@@ -1729,7 +1717,7 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 824567,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Rate Field",
         "awayTeam": {
@@ -1792,7 +1780,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:40",
+        "footerRight": "上1局",
         "gameDate": "2026-07-29T23:40:00Z"
       },
       {
@@ -1850,7 +1838,7 @@
         "date": "2026-07-29",
         "gamePk": 824002,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 117,
@@ -1911,7 +1899,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "09:38",
         "gameDate": "2026-07-30T01:38:00Z"
       },
@@ -2285,8 +2273,8 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 824242,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 110,
@@ -2350,13 +2338,13 @@
             0,
             0,
             2,
-            "-"
+            0
           ],
           "r": 9,
           "h": 10,
           "e": 1
         },
-        "footerLeft": "In Progress",
+        "footerLeft": "Final",
         "footerRight": "下12局",
         "gameDate": "2026-07-29T17:10:00Z"
       },
@@ -2438,7 +2426,7 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 823598,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Citi Field",
         "awayTeam": {
@@ -2456,27 +2444,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2486,14 +2458,6 @@
         "homeLine": {
           "team": "NYM",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2501,7 +2465,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:10",
+        "footerRight": "上1局",
         "gameDate": "2026-07-29T23:10:00Z"
       },
       {
@@ -2511,7 +2475,7 @@
         "date": "2026-07-29",
         "gamePk": 823192,
         "status": "LIVE",
-        "statusText": "Manager challenge",
+        "statusText": "In Progress",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 158,
@@ -2525,22 +2489,28 @@
           "abbreviation": "SF",
           "logoKey": "SF"
         },
-        "awayScore": 1,
+        "awayScore": 2,
         "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6
         ],
         "awayLine": {
           "team": "MIL",
           "innings": [
             0,
             0,
-            1
+            1,
+            1,
+            0,
+            0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 2,
+          "h": 5,
           "e": 1
         },
         "homeLine": {
@@ -2548,14 +2518,17 @@
           "innings": [
             0,
             3,
+            0,
+            0,
+            0,
             "-"
           ],
           "r": 3,
-          "h": 3,
+          "h": 5,
           "e": 0
         },
-        "footerLeft": "Manager challenge",
-        "footerRight": "下3局",
+        "footerLeft": "In Progress",
+        "footerRight": "下6局",
         "gameDate": "2026-07-29T19:45:00Z"
       },
       {
@@ -2580,33 +2553,42 @@
           "logoKey": "SD"
         },
         "awayScore": 0,
-        "homeScore": 0,
+        "homeScore": 3,
         "innings": [
           1,
-          2
+          2,
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "COL",
           "innings": [
             0,
+            0,
+            0,
+            0,
             0
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
         "homeLine": {
           "team": "SD",
           "innings": [
             0,
+            0,
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 1,
-          "e": 0
+          "r": 3,
+          "h": 4,
+          "e": 1
         },
         "footerLeft": "In Progress",
-        "footerRight": "下2局",
+        "footerRight": "下5局",
         "gameDate": "2026-07-29T20:10:00Z"
       },
       {
@@ -2759,7 +2741,7 @@
         "league": "MLB",
         "date": "2026-07-29",
         "gamePk": 824567,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Rate Field",
         "awayTeam": {
@@ -2822,7 +2804,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "07:40",
+        "footerRight": "上1局",
         "gameDate": "2026-07-29T23:40:00Z"
       },
       {
@@ -2880,7 +2862,7 @@
         "date": "2026-07-29",
         "gamePk": 824002,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 117,
@@ -2941,7 +2923,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "09:38",
         "gameDate": "2026-07-30T01:38:00Z"
       },
