@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-29T16:16:55.145Z",
+  "updatedAt": "2026-07-29T23:01:24.563Z",
   "requestedDate": "2026-07-29",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -32,7 +32,7 @@
       "name": "npb",
       "ok": true,
       "message": "NPB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "kbo",
@@ -484,17 +484,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".275",
-          "obp": ".307",
-          "slg": ".440",
-          "ops": ".747",
+          "avg": ".272",
+          "obp": ".303",
+          "slg": ".435",
+          "ops": ".738",
           "hr": 6,
-          "rbi": 25,
+          "rbi": 26,
           "sb": 1,
           "hits": 50
         }
       },
       "recentGames": [
+        {
+          "date": "2026-07-29",
+          "opponent": "Baltimore Orioles",
+          "result": "出賽",
+          "detail1": "2打數 / 0安打 / 1打點",
+          "detail2": "全壘打0 / 保送0 / 三振2"
+        },
         {
           "date": "2026-07-28",
           "opponent": "Baltimore Orioles",
@@ -522,13 +529,6 @@
           "result": "出賽",
           "detail1": "4打數 / 2安打 / 2打點",
           "detail2": "全壘打1 / 保送0 / 三振1"
-        },
-        {
-          "date": "2026-07-24",
-          "opponent": "Kansas City Royals",
-          "result": "出賽",
-          "detail1": "3打數 / 2安打 / 1打點",
-          "detail2": "全壘打0 / 保送0 / 三振0"
         }
       ],
       "news": [
@@ -2387,15 +2387,6 @@
       },
       "recentGames": [],
       "news": [
-        {
-          "id": "yi-lei-sun-fighters-official",
-          "title": "孫易磊 Fighters 官方頁",
-          "date": "2026-07-29",
-          "tag": "官方頁",
-          "summary": "目前僅提供 2025 年度逐場資料，未納入 recentGames。",
-          "url": "https://www.fighters.co.jp/team/player/detail/2025_00001362.html",
-          "source": "Fighters Official"
-        },
         {
           "id": "yi-lei-sun-npb-sync",
           "title": "孫易磊 官方資料同步",
