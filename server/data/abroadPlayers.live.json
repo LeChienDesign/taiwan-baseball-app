@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-02T15:52:56.208Z",
+  "updatedAt": "2026-08-02T22:56:41.836Z",
   "requestedDate": "2026-08-02",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -484,17 +484,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".269",
+          "avg": ".268",
           "obp": ".299",
-          "slg": ".430",
-          "ops": ".729",
+          "slg": ".426",
+          "ops": ".725",
           "hr": 6,
           "rbi": 26,
           "sb": 1,
-          "hits": 50
+          "hits": 51
         }
       },
       "recentGames": [
+        {
+          "date": "2026-08-02",
+          "opponent": "Athletics",
+          "result": "出賽",
+          "detail1": "5打數 / 1安打 / 1打點",
+          "detail2": "全壘打0 / 保送0 / 三振0"
+        },
         {
           "date": "2026-07-31",
           "opponent": "Athletics",
@@ -522,13 +529,6 @@
           "result": "出賽",
           "detail1": "3打數 / 1安打 / 2打點",
           "detail2": "全壘打0 / 保送0 / 三振1"
-        },
-        {
-          "date": "2026-07-26",
-          "opponent": "Kansas City Royals",
-          "result": "出賽",
-          "detail1": "3打數 / 1安打 / 0打點",
-          "detail2": "全壘打0 / 保送1 / 三振0"
         }
       ],
       "news": [
