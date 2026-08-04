@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-04T03:21:33.739Z",
+  "updatedAt": "2026-08-04T06:09:16.711Z",
   "date": "2026-08-03",
   "startDate": "2026-08-03",
   "endDate": "2026-08-03",
@@ -443,7 +443,7 @@
       "date": "2026-08-03",
       "gamePk": 824324,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Coors Field",
       "awayTeam": {
         "id": 139,
@@ -504,7 +504,7 @@
         "h": 15,
         "e": 2
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下9局",
       "gameDate": "2026-08-04T00:40:00Z"
     },
@@ -514,8 +514,8 @@
       "league": "MLB",
       "date": "2026-08-03",
       "gamePk": 825095,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Chase Field",
       "awayTeam": {
         "id": 135,
@@ -529,8 +529,8 @@
         "abbreviation": "AZ",
         "logoKey": "AZ"
       },
-      "awayScore": 0,
-      "homeScore": 3,
+      "awayScore": 1,
+      "homeScore": 5,
       "innings": [
         1,
         2,
@@ -538,7 +538,9 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "SD",
@@ -549,10 +551,12 @@
           0,
           0,
           0,
-          "-"
+          1,
+          0,
+          0
         ],
-        "r": 0,
-        "h": 3,
+        "r": 1,
+        "h": 6,
         "e": 1
       },
       "homeLine": {
@@ -564,14 +568,16 @@
           3,
           0,
           0,
+          0,
+          2,
           "-"
         ],
-        "r": 3,
-        "h": 6,
-        "e": 0
+        "r": 5,
+        "h": 9,
+        "e": 1
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上7局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-08-04T01:40:00Z"
     }
   ],
@@ -1016,7 +1022,7 @@
         "date": "2026-08-03",
         "gamePk": 824324,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 139,
@@ -1077,7 +1083,7 @@
           "h": 15,
           "e": 2
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-08-04T00:40:00Z"
       },
@@ -1087,8 +1093,8 @@
         "league": "MLB",
         "date": "2026-08-03",
         "gamePk": 825095,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 135,
@@ -1102,8 +1108,8 @@
           "abbreviation": "AZ",
           "logoKey": "AZ"
         },
-        "awayScore": 0,
-        "homeScore": 3,
+        "awayScore": 1,
+        "homeScore": 5,
         "innings": [
           1,
           2,
@@ -1111,7 +1117,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "SD",
@@ -1122,10 +1130,12 @@
             0,
             0,
             0,
-            "-"
+            1,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 3,
+          "r": 1,
+          "h": 6,
           "e": 1
         },
         "homeLine": {
@@ -1137,14 +1147,16 @@
             3,
             0,
             0,
+            0,
+            2,
             "-"
           ],
-          "r": 3,
-          "h": 6,
-          "e": 0
+          "r": 5,
+          "h": 9,
+          "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-08-04T01:40:00Z"
       }
     ]
@@ -1590,7 +1602,7 @@
         "date": "2026-08-03",
         "gamePk": 824324,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Coors Field",
         "awayTeam": {
           "id": 139,
@@ -1651,7 +1663,7 @@
           "h": 15,
           "e": 2
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下9局",
         "gameDate": "2026-08-04T00:40:00Z"
       },
@@ -1661,8 +1673,8 @@
         "league": "MLB",
         "date": "2026-08-03",
         "gamePk": 825095,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 135,
@@ -1676,8 +1688,8 @@
           "abbreviation": "AZ",
           "logoKey": "AZ"
         },
-        "awayScore": 0,
-        "homeScore": 3,
+        "awayScore": 1,
+        "homeScore": 5,
         "innings": [
           1,
           2,
@@ -1685,7 +1697,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "SD",
@@ -1696,10 +1710,12 @@
             0,
             0,
             0,
-            "-"
+            1,
+            0,
+            0
           ],
-          "r": 0,
-          "h": 3,
+          "r": 1,
+          "h": 6,
           "e": 1
         },
         "homeLine": {
@@ -1711,14 +1727,16 @@
             3,
             0,
             0,
+            0,
+            2,
             "-"
           ],
-          "r": 3,
-          "h": 6,
-          "e": 0
+          "r": 5,
+          "h": 9,
+          "e": 1
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-08-04T01:40:00Z"
       }
     ]
