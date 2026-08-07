@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-07T01:36:51.829Z",
+  "updatedAt": "2026-08-07T03:08:30.365Z",
   "date": "2026-08-06",
   "startDate": "2026-08-06",
   "endDate": "2026-08-06",
@@ -535,8 +535,8 @@
         "abbreviation": "BOS",
         "logoKey": "BOS"
       },
-      "awayScore": 7,
-      "homeScore": 6,
+      "awayScore": 10,
+      "homeScore": 10,
       "innings": [
         1,
         2,
@@ -544,7 +544,11 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9,
+        10,
+        11
       ],
       "awayLine": {
         "team": "CWS",
@@ -555,11 +559,15 @@
           1,
           2,
           0,
-          0
+          0,
+          0,
+          0,
+          2,
+          1
         ],
-        "r": 7,
-        "h": 8,
-        "e": 0
+        "r": 10,
+        "h": 10,
+        "e": 1
       },
       "homeLine": {
         "team": "BOS",
@@ -570,14 +578,18 @@
           3,
           0,
           1,
-          "-"
+          0,
+          0,
+          1,
+          2,
+          1
         ],
-        "r": 6,
-        "h": 9,
+        "r": 10,
+        "h": 15,
         "e": 2
       },
       "footerLeft": "In Progress",
-      "footerRight": "下7局",
+      "footerRight": "End11局",
       "gameDate": "2026-08-06T23:10:00Z"
     },
     {
@@ -601,13 +613,18 @@
         "abbreviation": "ATL",
         "logoKey": "ATL"
       },
-      "awayScore": 0,
-      "homeScore": 2,
+      "awayScore": 3,
+      "homeScore": 11,
       "innings": [
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "MIA",
@@ -615,11 +632,16 @@
           0,
           0,
           0,
-          0
+          0,
+          0,
+          0,
+          2,
+          0,
+          1
         ],
-        "r": 0,
-        "h": 1,
-        "e": 1
+        "r": 3,
+        "h": 8,
+        "e": 3
       },
       "homeLine": {
         "team": "ATL",
@@ -627,14 +649,19 @@
           0,
           0,
           2,
-          0
+          0,
+          0,
+          4,
+          2,
+          3,
+          "-"
         ],
-        "r": 2,
-        "h": 5,
+        "r": 11,
+        "h": 14,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "End4局",
+      "footerRight": "上9局",
       "gameDate": "2026-08-06T23:15:00Z"
     },
     {
@@ -643,8 +670,8 @@
       "league": "MLB",
       "date": "2026-08-06",
       "gamePk": 824080,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Kauffman Stadium",
       "awayTeam": {
         "id": 142,
@@ -658,7 +685,7 @@
         "abbreviation": "KC",
         "logoKey": "KC"
       },
-      "awayScore": 1,
+      "awayScore": 4,
       "homeScore": 3,
       "innings": [
         1,
@@ -667,7 +694,9 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "MIN",
@@ -678,10 +707,12 @@
           0,
           1,
           0,
+          0,
+          3,
           0
         ],
-        "r": 1,
-        "h": 3,
+        "r": 4,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
@@ -693,14 +724,16 @@
           0,
           0,
           1,
-          "-"
+          0,
+          0,
+          0
         ],
         "r": 3,
-        "h": 6,
+        "h": 7,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下7局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-08-06T23:40:00Z"
     },
     {
@@ -710,7 +743,7 @@
       "date": "2026-08-06",
       "gamePk": 825053,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Chase Field",
       "awayTeam": {
         "id": 135,
@@ -724,55 +757,40 @@
         "abbreviation": "AZ",
         "logoKey": "AZ"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 3,
+      "homeScore": 1,
       "innings": [
         1,
         2,
         3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        4
       ],
       "awayLine": {
         "team": "SD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-"
+          1,
+          0,
+          2,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
       "homeLine": {
         "team": "AZ",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-"
+          0,
+          0,
+          1,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 6,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "End4局",
       "gameDate": "2026-08-07T01:40:00Z"
     }
   ],
@@ -1309,8 +1327,8 @@
           "abbreviation": "BOS",
           "logoKey": "BOS"
         },
-        "awayScore": 7,
-        "homeScore": 6,
+        "awayScore": 10,
+        "homeScore": 10,
         "innings": [
           1,
           2,
@@ -1318,7 +1336,11 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9,
+          10,
+          11
         ],
         "awayLine": {
           "team": "CWS",
@@ -1329,11 +1351,15 @@
             1,
             2,
             0,
-            0
+            0,
+            0,
+            0,
+            2,
+            1
           ],
-          "r": 7,
-          "h": 8,
-          "e": 0
+          "r": 10,
+          "h": 10,
+          "e": 1
         },
         "homeLine": {
           "team": "BOS",
@@ -1344,14 +1370,18 @@
             3,
             0,
             1,
-            "-"
+            0,
+            0,
+            1,
+            2,
+            1
           ],
-          "r": 6,
-          "h": 9,
+          "r": 10,
+          "h": 15,
           "e": 2
         },
         "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerRight": "End11局",
         "gameDate": "2026-08-06T23:10:00Z"
       },
       {
@@ -1375,13 +1405,18 @@
           "abbreviation": "ATL",
           "logoKey": "ATL"
         },
-        "awayScore": 0,
-        "homeScore": 2,
+        "awayScore": 3,
+        "homeScore": 11,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIA",
@@ -1389,11 +1424,16 @@
             0,
             0,
             0,
-            0
+            0,
+            0,
+            0,
+            2,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 1,
-          "e": 1
+          "r": 3,
+          "h": 8,
+          "e": 3
         },
         "homeLine": {
           "team": "ATL",
@@ -1401,14 +1441,19 @@
             0,
             0,
             2,
-            0
+            0,
+            0,
+            4,
+            2,
+            3,
+            "-"
           ],
-          "r": 2,
-          "h": 5,
+          "r": 11,
+          "h": 14,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "End4局",
+        "footerRight": "上9局",
         "gameDate": "2026-08-06T23:15:00Z"
       },
       {
@@ -1417,8 +1462,8 @@
         "league": "MLB",
         "date": "2026-08-06",
         "gamePk": 824080,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 142,
@@ -1432,7 +1477,7 @@
           "abbreviation": "KC",
           "logoKey": "KC"
         },
-        "awayScore": 1,
+        "awayScore": 4,
         "homeScore": 3,
         "innings": [
           1,
@@ -1441,7 +1486,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -1452,10 +1499,12 @@
             0,
             1,
             0,
+            0,
+            3,
             0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 4,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -1467,14 +1516,16 @@
             0,
             0,
             1,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 3,
-          "h": 6,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-08-06T23:40:00Z"
       },
       {
@@ -1484,7 +1535,7 @@
         "date": "2026-08-06",
         "gamePk": 825053,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 135,
@@ -1498,55 +1549,40 @@
           "abbreviation": "AZ",
           "logoKey": "AZ"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 1,
         "innings": [
           1,
           2,
           3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          4
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
+            1,
+            0,
+            2,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
           "team": "AZ",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
+            0,
+            0,
+            1,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End4局",
         "gameDate": "2026-08-07T01:40:00Z"
       }
     ]
@@ -2084,8 +2120,8 @@
           "abbreviation": "BOS",
           "logoKey": "BOS"
         },
-        "awayScore": 7,
-        "homeScore": 6,
+        "awayScore": 10,
+        "homeScore": 10,
         "innings": [
           1,
           2,
@@ -2093,7 +2129,11 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9,
+          10,
+          11
         ],
         "awayLine": {
           "team": "CWS",
@@ -2104,11 +2144,15 @@
             1,
             2,
             0,
-            0
+            0,
+            0,
+            0,
+            2,
+            1
           ],
-          "r": 7,
-          "h": 8,
-          "e": 0
+          "r": 10,
+          "h": 10,
+          "e": 1
         },
         "homeLine": {
           "team": "BOS",
@@ -2119,14 +2163,18 @@
             3,
             0,
             1,
-            "-"
+            0,
+            0,
+            1,
+            2,
+            1
           ],
-          "r": 6,
-          "h": 9,
+          "r": 10,
+          "h": 15,
           "e": 2
         },
         "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerRight": "End11局",
         "gameDate": "2026-08-06T23:10:00Z"
       },
       {
@@ -2150,13 +2198,18 @@
           "abbreviation": "ATL",
           "logoKey": "ATL"
         },
-        "awayScore": 0,
-        "homeScore": 2,
+        "awayScore": 3,
+        "homeScore": 11,
         "innings": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIA",
@@ -2164,11 +2217,16 @@
             0,
             0,
             0,
-            0
+            0,
+            0,
+            0,
+            2,
+            0,
+            1
           ],
-          "r": 0,
-          "h": 1,
-          "e": 1
+          "r": 3,
+          "h": 8,
+          "e": 3
         },
         "homeLine": {
           "team": "ATL",
@@ -2176,14 +2234,19 @@
             0,
             0,
             2,
-            0
+            0,
+            0,
+            4,
+            2,
+            3,
+            "-"
           ],
-          "r": 2,
-          "h": 5,
+          "r": 11,
+          "h": 14,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "End4局",
+        "footerRight": "上9局",
         "gameDate": "2026-08-06T23:15:00Z"
       },
       {
@@ -2192,8 +2255,8 @@
         "league": "MLB",
         "date": "2026-08-06",
         "gamePk": 824080,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Kauffman Stadium",
         "awayTeam": {
           "id": 142,
@@ -2207,7 +2270,7 @@
           "abbreviation": "KC",
           "logoKey": "KC"
         },
-        "awayScore": 1,
+        "awayScore": 4,
         "homeScore": 3,
         "innings": [
           1,
@@ -2216,7 +2279,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -2227,10 +2292,12 @@
             0,
             1,
             0,
+            0,
+            3,
             0
           ],
-          "r": 1,
-          "h": 3,
+          "r": 4,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -2242,14 +2309,16 @@
             0,
             0,
             1,
-            "-"
+            0,
+            0,
+            0
           ],
           "r": 3,
-          "h": 6,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下7局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-08-06T23:40:00Z"
       },
       {
@@ -2259,7 +2328,7 @@
         "date": "2026-08-06",
         "gamePk": 825053,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 135,
@@ -2273,55 +2342,40 @@
           "abbreviation": "AZ",
           "logoKey": "AZ"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 1,
         "innings": [
           1,
           2,
           3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          4
         ],
         "awayLine": {
           "team": "SD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
+            1,
+            0,
+            2,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
           "team": "AZ",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
+            0,
+            0,
+            1,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 6,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "End4局",
         "gameDate": "2026-08-07T01:40:00Z"
       }
     ]
