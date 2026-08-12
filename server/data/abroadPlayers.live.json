@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-12T22:41:39.398Z",
+  "updatedAt": "2026-08-12T23:41:00.892Z",
   "requestedDate": "2026-08-12",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 1
     },
     {
       "name": "milb",
@@ -484,17 +484,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".267",
-          "obp": ".300",
-          "slg": ".421",
-          "ops": ".721",
+          "avg": ".269",
+          "obp": ".301",
+          "slg": ".426",
+          "ops": ".727",
           "hr": 6,
           "rbi": 28,
           "sb": 1,
-          "hits": 52
+          "hits": 53
         }
       },
       "recentGames": [
+        {
+          "date": "2026-08-12",
+          "opponent": "Cleveland Guardians",
+          "result": "出賽",
+          "detail1": "2打數 / 1安打 / 0打點",
+          "detail2": "全壘打0 / 保送0 / 三振0"
+        },
         {
           "date": "2026-08-09",
           "opponent": "San Francisco Giants",
@@ -522,13 +529,6 @@
           "result": "出賽",
           "detail1": "2打數 / 0安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振0"
-        },
-        {
-          "date": "2026-08-05",
-          "opponent": "Seattle Mariners",
-          "result": "出賽",
-          "detail1": "1打數 / 0安打 / 0打點",
-          "detail2": "全壘打0 / 保送0 / 三振1"
         }
       ],
       "news": [
@@ -1917,7 +1917,7 @@
       "bats": "L",
       "throws": "R",
       "age": 20,
-      "number": "",
+      "number": "21",
       "status": "待命",
       "teamColor": "#0c2c56",
       "line1": "水手體系年輕右投",
