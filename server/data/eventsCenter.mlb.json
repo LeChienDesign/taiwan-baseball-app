@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-15T22:20:16.038Z",
+  "updatedAt": "2026-08-15T22:43:17.865Z",
   "date": "2026-08-15",
   "startDate": "2026-08-15",
   "endDate": "2026-08-15",
@@ -226,8 +226,8 @@
       "league": "MLB",
       "date": "2026-08-15",
       "gamePk": 823184,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Game Over",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 115,
@@ -251,7 +251,8 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
       "awayLine": {
         "team": "COL",
@@ -259,6 +260,7 @@
           0,
           0,
           1,
+          0,
           0,
           0,
           0,
@@ -279,14 +281,15 @@
           0,
           0,
           0,
+          0,
           "-"
         ],
         "r": 7,
-        "h": 9,
+        "h": 10,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "Middle8局",
+      "footerLeft": "Game Over",
+      "footerRight": "上9局",
       "gameDate": "2026-08-15T20:05:00Z"
     },
     {
@@ -319,7 +322,8 @@
         4,
         5,
         6,
-        7
+        7,
+        8
       ],
       "awayLine": {
         "team": "WSH",
@@ -330,10 +334,11 @@
           1,
           0,
           3,
+          0,
           0
         ],
         "r": 4,
-        "h": 6,
+        "h": 7,
         "e": 0
       },
       "homeLine": {
@@ -345,14 +350,15 @@
           0,
           0,
           1,
+          0,
           0
         ],
         "r": 3,
-        "h": 3,
+        "h": 5,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "End7局",
+      "footerRight": "End8局",
       "gameDate": "2026-08-15T20:10:00Z"
     },
     {
@@ -376,31 +382,37 @@
         "abbreviation": "TB",
         "logoKey": "TB"
       },
-      "awayScore": 0,
+      "awayScore": 1,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2,
+        3
       ],
       "awayLine": {
         "team": "BAL",
         "innings": [
-          0
+          0,
+          1,
+          "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 2,
         "e": 0
       },
       "homeLine": {
         "team": "TB",
         "innings": [
+          0,
+          0,
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 2,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下1局",
+      "footerRight": "上3局",
       "gameDate": "2026-08-15T22:10:00Z"
     },
     {
@@ -410,7 +422,7 @@
       "date": "2026-08-15",
       "gamePk": 824480,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Great American Ball Park",
       "awayTeam": {
         "id": 146,
@@ -435,7 +447,7 @@
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
@@ -447,7 +459,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Warmup",
+      "footerLeft": "In Progress",
       "footerRight": "上1局",
       "gameDate": "2026-08-15T22:40:00Z"
     },
@@ -571,11 +583,27 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "PHI",
         "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
           "-"
         ],
         "r": 0,
@@ -585,6 +613,14 @@
       "homeLine": {
         "team": "MIN",
         "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
           "-"
         ],
         "r": 0,
@@ -793,7 +829,7 @@
       "league": "MLB",
       "date": "2026-08-15",
       "gamePk": 824966,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Sutter Health Park",
       "awayTeam": {
@@ -811,27 +847,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "TEX",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -841,14 +861,6 @@
       "homeLine": {
         "team": "ATH",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -856,7 +868,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "09:40",
+      "footerRight": "上1局",
       "gameDate": "2026-08-16T01:40:00Z"
     }
   ],
@@ -1084,8 +1096,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 823184,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 115,
@@ -1109,7 +1121,8 @@
           5,
           6,
           7,
-          8
+          8,
+          9
         ],
         "awayLine": {
           "team": "COL",
@@ -1117,6 +1130,7 @@
             0,
             0,
             1,
+            0,
             0,
             0,
             0,
@@ -1137,14 +1151,15 @@
             0,
             0,
             0,
+            0,
             "-"
           ],
           "r": 7,
-          "h": 9,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle8局",
+        "footerLeft": "Game Over",
+        "footerRight": "上9局",
         "gameDate": "2026-08-15T20:05:00Z"
       },
       {
@@ -1177,7 +1192,8 @@
           4,
           5,
           6,
-          7
+          7,
+          8
         ],
         "awayLine": {
           "team": "WSH",
@@ -1188,10 +1204,11 @@
             1,
             0,
             3,
+            0,
             0
           ],
           "r": 4,
-          "h": 6,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -1203,14 +1220,15 @@
             0,
             0,
             1,
+            0,
             0
           ],
           "r": 3,
-          "h": 3,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "End7局",
+        "footerRight": "End8局",
         "gameDate": "2026-08-15T20:10:00Z"
       },
       {
@@ -1234,31 +1252,37 @@
           "abbreviation": "TB",
           "logoKey": "TB"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            0
+            0,
+            1,
+            "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "TB",
           "innings": [
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "上3局",
         "gameDate": "2026-08-15T22:10:00Z"
       },
       {
@@ -1268,7 +1292,7 @@
         "date": "2026-08-15",
         "gamePk": 824480,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 146,
@@ -1293,7 +1317,7 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
@@ -1305,7 +1329,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T22:40:00Z"
       },
@@ -1429,11 +1453,27 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "PHI",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -1443,6 +1483,14 @@
         "homeLine": {
           "team": "MIN",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -1651,7 +1699,7 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 824966,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Sutter Health Park",
         "awayTeam": {
@@ -1669,27 +1717,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1699,14 +1731,6 @@
         "homeLine": {
           "team": "ATH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1714,7 +1738,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "09:40",
+        "footerRight": "上1局",
         "gameDate": "2026-08-16T01:40:00Z"
       }
     ]
@@ -1943,8 +1967,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 823184,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 115,
@@ -1968,7 +1992,8 @@
           5,
           6,
           7,
-          8
+          8,
+          9
         ],
         "awayLine": {
           "team": "COL",
@@ -1976,6 +2001,7 @@
             0,
             0,
             1,
+            0,
             0,
             0,
             0,
@@ -1996,14 +2022,15 @@
             0,
             0,
             0,
+            0,
             "-"
           ],
           "r": 7,
-          "h": 9,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle8局",
+        "footerLeft": "Game Over",
+        "footerRight": "上9局",
         "gameDate": "2026-08-15T20:05:00Z"
       },
       {
@@ -2036,7 +2063,8 @@
           4,
           5,
           6,
-          7
+          7,
+          8
         ],
         "awayLine": {
           "team": "WSH",
@@ -2047,10 +2075,11 @@
             1,
             0,
             3,
+            0,
             0
           ],
           "r": 4,
-          "h": 6,
+          "h": 7,
           "e": 0
         },
         "homeLine": {
@@ -2062,14 +2091,15 @@
             0,
             0,
             1,
+            0,
             0
           ],
           "r": 3,
-          "h": 3,
+          "h": 5,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "End7局",
+        "footerRight": "End8局",
         "gameDate": "2026-08-15T20:10:00Z"
       },
       {
@@ -2093,31 +2123,37 @@
           "abbreviation": "TB",
           "logoKey": "TB"
         },
-        "awayScore": 0,
+        "awayScore": 1,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            0
+            0,
+            1,
+            "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "TB",
           "innings": [
+            0,
+            0,
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下1局",
+        "footerRight": "上3局",
         "gameDate": "2026-08-15T22:10:00Z"
       },
       {
@@ -2127,7 +2163,7 @@
         "date": "2026-08-15",
         "gamePk": 824480,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Great American Ball Park",
         "awayTeam": {
           "id": 146,
@@ -2152,7 +2188,7 @@
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
@@ -2164,7 +2200,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
+        "footerLeft": "In Progress",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T22:40:00Z"
       },
@@ -2288,11 +2324,27 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "PHI",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -2302,6 +2354,14 @@
         "homeLine": {
           "team": "MIN",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -2510,7 +2570,7 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 824966,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Sutter Health Park",
         "awayTeam": {
@@ -2528,27 +2588,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "TEX",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2558,14 +2602,6 @@
         "homeLine": {
           "team": "ATH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2573,7 +2609,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "09:40",
+        "footerRight": "上1局",
         "gameDate": "2026-08-16T01:40:00Z"
       }
     ]
