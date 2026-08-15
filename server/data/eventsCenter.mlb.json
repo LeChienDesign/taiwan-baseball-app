@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-15T19:32:27.379Z",
+  "updatedAt": "2026-08-15T19:50:25.414Z",
   "date": "2026-08-15",
   "startDate": "2026-08-15",
   "endDate": "2026-08-15",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-08-15",
       "gamePk": 824239,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Game Over",
       "venue": "Comerica Park",
       "awayTeam": {
         "id": 145,
@@ -49,10 +49,10 @@
           0,
           1,
           0,
-          "-"
+          0
         ],
         "r": 4,
-        "h": 11,
+        "h": 12,
         "e": 0
       },
       "homeLine": {
@@ -66,14 +66,14 @@
           0,
           0,
           0,
-          "-"
+          0
         ],
         "r": 3,
         "h": 7,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上9局",
+      "footerLeft": "Game Over",
+      "footerRight": "下9局",
       "gameDate": "2026-08-15T17:10:00Z"
     },
     {
@@ -103,7 +103,8 @@
         1,
         2,
         3,
-        4
+        4,
+        5
       ],
       "awayLine": {
         "team": "STL",
@@ -111,10 +112,11 @@
           3,
           0,
           0,
-          1
+          1,
+          0
         ],
         "r": 4,
-        "h": 2,
+        "h": 3,
         "e": 1
       },
       "homeLine": {
@@ -123,6 +125,7 @@
           0,
           3,
           0,
+          0,
           "-"
         ],
         "r": 3,
@@ -130,7 +133,7 @@
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下4局",
+      "footerRight": "下5局",
       "gameDate": "2026-08-15T18:20:00Z"
     },
     {
@@ -158,13 +161,15 @@
       "homeScore": 0,
       "innings": [
         1,
-        2
+        2,
+        3
       ],
       "awayLine": {
         "team": "NYY",
         "innings": [
           0,
-          1
+          1,
+          "-"
         ],
         "r": 1,
         "h": 2,
@@ -174,6 +179,7 @@
         "team": "TOR",
         "innings": [
           0,
+          0,
           "-"
         ],
         "r": 0,
@@ -181,7 +187,7 @@
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "上2局",
+      "footerRight": "上3局",
       "gameDate": "2026-08-15T19:07:00Z"
     },
     {
@@ -191,7 +197,7 @@
       "date": "2026-08-15",
       "gamePk": 823184,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Warmup",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 115,
@@ -228,7 +234,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "上1局",
       "gameDate": "2026-08-15T20:05:00Z"
     },
@@ -239,7 +245,7 @@
       "date": "2026-08-15",
       "gamePk": 823588,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "Warmup",
       "venue": "Citi Field",
       "awayTeam": {
         "id": 120,
@@ -276,7 +282,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
+      "footerLeft": "Warmup",
       "footerRight": "上1局",
       "gameDate": "2026-08-15T20:10:00Z"
     },
@@ -598,8 +604,8 @@
       "league": "MLB",
       "date": "2026-08-15",
       "gamePk": 823347,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "PNC Park",
       "awayTeam": {
         "id": 111,
@@ -616,27 +622,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "BOS",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -646,22 +636,14 @@
       "homeLine": {
         "team": "PIT",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "07:15",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-08-15T23:15:00Z"
     },
     {
@@ -961,8 +943,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 824239,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 145,
@@ -1000,10 +982,10 @@
             0,
             1,
             0,
-            "-"
+            0
           ],
           "r": 4,
-          "h": 11,
+          "h": 12,
           "e": 0
         },
         "homeLine": {
@@ -1017,14 +999,14 @@
             0,
             0,
             0,
-            "-"
+            0
           ],
           "r": 3,
           "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上9局",
+        "footerLeft": "Game Over",
+        "footerRight": "下9局",
         "gameDate": "2026-08-15T17:10:00Z"
       },
       {
@@ -1054,7 +1036,8 @@
           1,
           2,
           3,
-          4
+          4,
+          5
         ],
         "awayLine": {
           "team": "STL",
@@ -1062,10 +1045,11 @@
             3,
             0,
             0,
-            1
+            1,
+            0
           ],
           "r": 4,
-          "h": 2,
+          "h": 3,
           "e": 1
         },
         "homeLine": {
@@ -1074,6 +1058,7 @@
             0,
             3,
             0,
+            0,
             "-"
           ],
           "r": 3,
@@ -1081,7 +1066,7 @@
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "下5局",
         "gameDate": "2026-08-15T18:20:00Z"
       },
       {
@@ -1109,13 +1094,15 @@
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3
         ],
         "awayLine": {
           "team": "NYY",
           "innings": [
             0,
-            1
+            1,
+            "-"
           ],
           "r": 1,
           "h": 2,
@@ -1125,6 +1112,7 @@
           "team": "TOR",
           "innings": [
             0,
+            0,
             "-"
           ],
           "r": 0,
@@ -1132,7 +1120,7 @@
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上2局",
+        "footerRight": "上3局",
         "gameDate": "2026-08-15T19:07:00Z"
       },
       {
@@ -1142,7 +1130,7 @@
         "date": "2026-08-15",
         "gamePk": 823184,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 115,
@@ -1179,7 +1167,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T20:05:00Z"
       },
@@ -1190,7 +1178,7 @@
         "date": "2026-08-15",
         "gamePk": 823588,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Citi Field",
         "awayTeam": {
           "id": 120,
@@ -1227,7 +1215,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T20:10:00Z"
       },
@@ -1549,8 +1537,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 823347,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 111,
@@ -1567,27 +1555,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1597,22 +1569,14 @@
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:15",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-08-15T23:15:00Z"
       },
       {
@@ -1913,8 +1877,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 824239,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Game Over",
         "venue": "Comerica Park",
         "awayTeam": {
           "id": 145,
@@ -1952,10 +1916,10 @@
             0,
             1,
             0,
-            "-"
+            0
           ],
           "r": 4,
-          "h": 11,
+          "h": 12,
           "e": 0
         },
         "homeLine": {
@@ -1969,14 +1933,14 @@
             0,
             0,
             0,
-            "-"
+            0
           ],
           "r": 3,
           "h": 7,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上9局",
+        "footerLeft": "Game Over",
+        "footerRight": "下9局",
         "gameDate": "2026-08-15T17:10:00Z"
       },
       {
@@ -2006,7 +1970,8 @@
           1,
           2,
           3,
-          4
+          4,
+          5
         ],
         "awayLine": {
           "team": "STL",
@@ -2014,10 +1979,11 @@
             3,
             0,
             0,
-            1
+            1,
+            0
           ],
           "r": 4,
-          "h": 2,
+          "h": 3,
           "e": 1
         },
         "homeLine": {
@@ -2026,6 +1992,7 @@
             0,
             3,
             0,
+            0,
             "-"
           ],
           "r": 3,
@@ -2033,7 +2000,7 @@
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下4局",
+        "footerRight": "下5局",
         "gameDate": "2026-08-15T18:20:00Z"
       },
       {
@@ -2061,13 +2028,15 @@
         "homeScore": 0,
         "innings": [
           1,
-          2
+          2,
+          3
         ],
         "awayLine": {
           "team": "NYY",
           "innings": [
             0,
-            1
+            1,
+            "-"
           ],
           "r": 1,
           "h": 2,
@@ -2077,6 +2046,7 @@
           "team": "TOR",
           "innings": [
             0,
+            0,
             "-"
           ],
           "r": 0,
@@ -2084,7 +2054,7 @@
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "上2局",
+        "footerRight": "上3局",
         "gameDate": "2026-08-15T19:07:00Z"
       },
       {
@@ -2094,7 +2064,7 @@
         "date": "2026-08-15",
         "gamePk": 823184,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 115,
@@ -2131,7 +2101,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T20:05:00Z"
       },
@@ -2142,7 +2112,7 @@
         "date": "2026-08-15",
         "gamePk": 823588,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "Warmup",
         "venue": "Citi Field",
         "awayTeam": {
           "id": 120,
@@ -2179,7 +2149,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
+        "footerLeft": "Warmup",
         "footerRight": "上1局",
         "gameDate": "2026-08-15T20:10:00Z"
       },
@@ -2501,8 +2471,8 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 823347,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "PNC Park",
         "awayTeam": {
           "id": 111,
@@ -2519,27 +2489,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BOS",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2549,22 +2503,14 @@
         "homeLine": {
           "team": "PIT",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "07:15",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-08-15T23:15:00Z"
       },
       {
