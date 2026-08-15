@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-15T18:07:57.021Z",
+  "updatedAt": "2026-08-15T18:46:04.512Z",
   "date": "2026-08-15",
   "startDate": "2026-08-15",
   "endDate": "2026-08-15",
@@ -26,21 +26,25 @@
         "logoKey": "DET"
       },
       "awayScore": 3,
-      "homeScore": 1,
+      "homeScore": 3,
       "innings": [
         1,
         2,
-        3
+        3,
+        4,
+        5
       ],
       "awayLine": {
         "team": "CWS",
         "innings": [
           1,
           0,
-          2
+          2,
+          0,
+          0
         ],
         "r": 3,
-        "h": 7,
+        "h": 9,
         "e": 0
       },
       "homeLine": {
@@ -48,14 +52,16 @@
         "innings": [
           1,
           0,
-          "-"
+          0,
+          1,
+          1
         ],
-        "r": 1,
-        "h": 2,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
       "footerLeft": "In Progress",
-      "footerRight": "下3局",
+      "footerRight": "下5局",
       "gameDate": "2026-08-15T17:10:00Z"
     },
     {
@@ -65,7 +71,7 @@
       "date": "2026-08-15",
       "gamePk": 824644,
       "status": "LIVE",
-      "statusText": "Warmup",
+      "statusText": "In Progress",
       "venue": "Wrigley Field",
       "awayTeam": {
         "id": 138,
@@ -79,31 +85,34 @@
         "abbreviation": "CHC",
         "logoKey": "CHC"
       },
-      "awayScore": 0,
+      "awayScore": 3,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2
       ],
       "awayLine": {
         "team": "STL",
         "innings": [
-          "-"
+          3,
+          0
         ],
-        "r": 0,
-        "h": 0,
+        "r": 3,
+        "h": 1,
         "e": 0
       },
       "homeLine": {
         "team": "CHC",
         "innings": [
+          0,
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Warmup",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下2局",
       "gameDate": "2026-08-15T18:20:00Z"
     },
     {
@@ -256,7 +265,7 @@
       "league": "MLB",
       "date": "2026-08-15",
       "gamePk": 822941,
-      "status": "SCHEDULED",
+      "status": "LIVE",
       "statusText": "Pre-Game",
       "venue": "Tropicana Field",
       "awayTeam": {
@@ -274,27 +283,11 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "BAL",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -304,14 +297,6 @@
       "homeLine": {
         "team": "TB",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
@@ -319,7 +304,7 @@
         "e": 0
       },
       "footerLeft": "Pre-Game",
-      "footerRight": "06:10",
+      "footerRight": "上1局",
       "gameDate": "2026-08-15T22:10:00Z"
     },
     {
@@ -689,7 +674,7 @@
       "date": "2026-08-15",
       "gamePk": 824884,
       "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "statusText": "Pre-Game",
       "venue": "Truist Park",
       "awayTeam": {
         "id": 109,
@@ -750,7 +735,7 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
+      "footerLeft": "Pre-Game",
       "footerRight": "07:15",
       "gameDate": "2026-08-15T23:15:00Z"
     },
@@ -995,21 +980,25 @@
           "logoKey": "DET"
         },
         "awayScore": 3,
-        "homeScore": 1,
+        "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "CWS",
           "innings": [
             1,
             0,
-            2
+            2,
+            0,
+            0
           ],
           "r": 3,
-          "h": 7,
+          "h": 9,
           "e": 0
         },
         "homeLine": {
@@ -1017,14 +1006,16 @@
           "innings": [
             1,
             0,
-            "-"
+            0,
+            1,
+            1
           ],
-          "r": 1,
-          "h": 2,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下3局",
+        "footerRight": "下5局",
         "gameDate": "2026-08-15T17:10:00Z"
       },
       {
@@ -1034,7 +1025,7 @@
         "date": "2026-08-15",
         "gamePk": 824644,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Wrigley Field",
         "awayTeam": {
           "id": 138,
@@ -1048,31 +1039,34 @@
           "abbreviation": "CHC",
           "logoKey": "CHC"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
-            "-"
+            3,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "CHC",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下2局",
         "gameDate": "2026-08-15T18:20:00Z"
       },
       {
@@ -1225,7 +1219,7 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 822941,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
@@ -1243,27 +1237,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1273,14 +1251,6 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -1288,7 +1258,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "06:10",
+        "footerRight": "上1局",
         "gameDate": "2026-08-15T22:10:00Z"
       },
       {
@@ -1658,7 +1628,7 @@
         "date": "2026-08-15",
         "gamePk": 824884,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Truist Park",
         "awayTeam": {
           "id": 109,
@@ -1719,7 +1689,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:15",
         "gameDate": "2026-08-15T23:15:00Z"
       },
@@ -1965,21 +1935,25 @@
           "logoKey": "DET"
         },
         "awayScore": 3,
-        "homeScore": 1,
+        "homeScore": 3,
         "innings": [
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "awayLine": {
           "team": "CWS",
           "innings": [
             1,
             0,
-            2
+            2,
+            0,
+            0
           ],
           "r": 3,
-          "h": 7,
+          "h": 9,
           "e": 0
         },
         "homeLine": {
@@ -1987,14 +1961,16 @@
           "innings": [
             1,
             0,
-            "-"
+            0,
+            1,
+            1
           ],
-          "r": 1,
-          "h": 2,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "footerLeft": "In Progress",
-        "footerRight": "下3局",
+        "footerRight": "下5局",
         "gameDate": "2026-08-15T17:10:00Z"
       },
       {
@@ -2004,7 +1980,7 @@
         "date": "2026-08-15",
         "gamePk": 824644,
         "status": "LIVE",
-        "statusText": "Warmup",
+        "statusText": "In Progress",
         "venue": "Wrigley Field",
         "awayTeam": {
           "id": 138,
@@ -2018,31 +1994,34 @@
           "abbreviation": "CHC",
           "logoKey": "CHC"
         },
-        "awayScore": 0,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
-            "-"
+            3,
+            0
           ],
-          "r": 0,
-          "h": 0,
+          "r": 3,
+          "h": 1,
           "e": 0
         },
         "homeLine": {
           "team": "CHC",
           "innings": [
+            0,
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Warmup",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下2局",
         "gameDate": "2026-08-15T18:20:00Z"
       },
       {
@@ -2195,7 +2174,7 @@
         "league": "MLB",
         "date": "2026-08-15",
         "gamePk": 822941,
-        "status": "SCHEDULED",
+        "status": "LIVE",
         "statusText": "Pre-Game",
         "venue": "Tropicana Field",
         "awayTeam": {
@@ -2213,27 +2192,11 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "BAL",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2243,14 +2206,6 @@
         "homeLine": {
           "team": "TB",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
@@ -2258,7 +2213,7 @@
           "e": 0
         },
         "footerLeft": "Pre-Game",
-        "footerRight": "06:10",
+        "footerRight": "上1局",
         "gameDate": "2026-08-15T22:10:00Z"
       },
       {
@@ -2628,7 +2583,7 @@
         "date": "2026-08-15",
         "gamePk": 824884,
         "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "statusText": "Pre-Game",
         "venue": "Truist Park",
         "awayTeam": {
           "id": 109,
@@ -2689,7 +2644,7 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
+        "footerLeft": "Pre-Game",
         "footerRight": "07:15",
         "gameDate": "2026-08-15T23:15:00Z"
       },
