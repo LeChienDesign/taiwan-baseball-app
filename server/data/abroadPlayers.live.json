@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-23T15:45:58.492Z",
+  "updatedAt": "2026-08-23T22:21:35.426Z",
   "requestedDate": "2026-08-23",
   "summary": {
     "totalPlayers": 34,
@@ -20,7 +20,7 @@
       "name": "mlb",
       "ok": true,
       "message": "MLB provider applied",
-      "affectedPlayers": 0
+      "affectedPlayers": 2
     },
     {
       "name": "milb",
@@ -72,10 +72,10 @@
       },
       "seasonStats": {
         "pitcher": {
-          "era": "4.35",
-          "whip": "1.35",
-          "ip": "68.1",
-          "so": 67,
+          "era": "4.24",
+          "whip": "1.33",
+          "ip": "70.0",
+          "so": 71,
           "bb": 30,
           "wins": 5,
           "saves": 0
@@ -92,6 +92,13 @@
         }
       },
       "recentGames": [
+        {
+          "date": "2026-08-23",
+          "opponent": "Athletics",
+          "result": "登板",
+          "detail1": "1.2局 / 責失0 / 三振4 / 保送0",
+          "detail2": "被安打1 / 用球數28"
+        },
         {
           "date": "2026-07-24",
           "opponent": "Chicago White Sox",
@@ -119,13 +126,6 @@
           "result": "先發",
           "detail1": "6.0局 / 責失1 / 三振4 / 保送1",
           "detail2": "被安打4 / 用球數83"
-        },
-        {
-          "date": "2026-06-15",
-          "opponent": "Detroit Tigers",
-          "result": "先發",
-          "detail1": "3.1局 / 責失5 / 三振9 / 保送2",
-          "detail2": "被安打6 / 用球數81"
         }
       ],
       "news": [
@@ -484,17 +484,24 @@
       },
       "seasonStats": {
         "hitter": {
-          "avg": ".278",
-          "obp": ".319",
-          "slg": ".435",
-          "ops": ".754",
+          "avg": ".281",
+          "obp": ".321",
+          "slg": ".439",
+          "ops": ".760",
           "hr": 7,
-          "rbi": 31,
+          "rbi": 32,
           "sb": 1,
-          "hits": 60
+          "hits": 62
         }
       },
       "recentGames": [
+        {
+          "date": "2026-08-23",
+          "opponent": "Kansas City Royals",
+          "result": "出賽",
+          "detail1": "5打數 / 2安打 / 1打點",
+          "detail2": "全壘打0 / 保送0 / 三振0"
+        },
         {
           "date": "2026-08-22",
           "opponent": "Kansas City Royals",
@@ -522,13 +529,6 @@
           "result": "出賽",
           "detail1": "1打數 / 0安打 / 0打點",
           "detail2": "全壘打0 / 保送0 / 三振0"
-        },
-        {
-          "date": "2026-08-17",
-          "opponent": "Pittsburgh Pirates",
-          "result": "出賽",
-          "detail1": "3打數 / 3安打 / 2打點",
-          "detail2": "全壘打0 / 保送2 / 三振0"
         }
       ],
       "news": [
