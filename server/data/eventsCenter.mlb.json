@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-23T02:53:17.511Z",
+  "updatedAt": "2026-08-23T03:50:45.262Z",
   "date": "2026-08-22",
   "startDate": "2026-08-22",
   "endDate": "2026-08-22",
@@ -877,8 +877,8 @@
       "league": "MLB",
       "date": "2026-08-22",
       "gamePk": 825044,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Chase Field",
       "awayTeam": {
         "id": 113,
@@ -916,7 +916,7 @@
           1,
           2,
           1,
-          "-"
+          0
         ],
         "r": 11,
         "h": 16,
@@ -933,14 +933,14 @@
           2,
           0,
           1,
-          "-"
+          0
         ],
         "r": 5,
-        "h": 9,
+        "h": 10,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "上9局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-08-23T00:10:00Z"
     },
     {
@@ -1021,8 +1021,8 @@
       "league": "MLB",
       "date": "2026-08-22",
       "gamePk": 823261,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Petco Park",
       "awayTeam": {
         "id": 142,
@@ -1037,7 +1037,7 @@
         "logoKey": "SD"
       },
       "awayScore": 5,
-      "homeScore": 2,
+      "homeScore": 7,
       "innings": [
         1,
         2,
@@ -1045,7 +1045,9 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "MIN",
@@ -1056,11 +1058,13 @@
           1,
           0,
           0,
+          0,
+          0,
           0
         ],
         "r": 5,
         "h": 10,
-        "e": 0
+        "e": 2
       },
       "homeLine": {
         "team": "SD",
@@ -1071,14 +1075,16 @@
           0,
           0,
           1,
+          4,
+          1,
           "-"
         ],
-        "r": 2,
-        "h": 4,
+        "r": 7,
+        "h": 10,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "Middle7局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-08-23T00:40:00Z"
     }
   ],
@@ -1957,8 +1963,8 @@
         "league": "MLB",
         "date": "2026-08-22",
         "gamePk": 825044,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 113,
@@ -1996,7 +2002,7 @@
             1,
             2,
             1,
-            "-"
+            0
           ],
           "r": 11,
           "h": 16,
@@ -2013,14 +2019,14 @@
             2,
             0,
             1,
-            "-"
+            0
           ],
           "r": 5,
-          "h": 9,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上9局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-08-23T00:10:00Z"
       },
       {
@@ -2101,8 +2107,8 @@
         "league": "MLB",
         "date": "2026-08-22",
         "gamePk": 823261,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 142,
@@ -2117,7 +2123,7 @@
           "logoKey": "SD"
         },
         "awayScore": 5,
-        "homeScore": 2,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -2125,7 +2131,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -2136,11 +2144,13 @@
             1,
             0,
             0,
+            0,
+            0,
             0
           ],
           "r": 5,
           "h": 10,
-          "e": 0
+          "e": 2
         },
         "homeLine": {
           "team": "SD",
@@ -2151,14 +2161,16 @@
             0,
             0,
             1,
+            4,
+            1,
             "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 7,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-08-23T00:40:00Z"
       }
     ]
@@ -3038,8 +3050,8 @@
         "league": "MLB",
         "date": "2026-08-22",
         "gamePk": 825044,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Chase Field",
         "awayTeam": {
           "id": 113,
@@ -3077,7 +3089,7 @@
             1,
             2,
             1,
-            "-"
+            0
           ],
           "r": 11,
           "h": 16,
@@ -3094,14 +3106,14 @@
             2,
             0,
             1,
-            "-"
+            0
           ],
           "r": 5,
-          "h": 9,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "上9局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-08-23T00:10:00Z"
       },
       {
@@ -3182,8 +3194,8 @@
         "league": "MLB",
         "date": "2026-08-22",
         "gamePk": 823261,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Petco Park",
         "awayTeam": {
           "id": 142,
@@ -3198,7 +3210,7 @@
           "logoKey": "SD"
         },
         "awayScore": 5,
-        "homeScore": 2,
+        "homeScore": 7,
         "innings": [
           1,
           2,
@@ -3206,7 +3218,9 @@
           4,
           5,
           6,
-          7
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -3217,11 +3231,13 @@
             1,
             0,
             0,
+            0,
+            0,
             0
           ],
           "r": 5,
           "h": 10,
-          "e": 0
+          "e": 2
         },
         "homeLine": {
           "team": "SD",
@@ -3232,14 +3248,16 @@
             0,
             0,
             1,
+            4,
+            1,
             "-"
           ],
-          "r": 2,
-          "h": 4,
+          "r": 7,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle7局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-08-23T00:40:00Z"
       }
     ]
