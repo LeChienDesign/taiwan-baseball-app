@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-03T04:03:24.470Z",
+  "updatedAt": "2026-09-03T08:54:00.903Z",
   "date": "2026-09-02",
   "startDate": "2026-09-02",
   "endDate": "2026-09-02",
@@ -668,7 +668,7 @@
       "date": "2026-09-02",
       "gamePk": 823660,
       "status": "FINAL",
-      "statusText": "Game Over",
+      "statusText": "Final",
       "venue": "Target Field",
       "awayTeam": {
         "id": 116,
@@ -738,7 +738,7 @@
         "h": 9,
         "e": 1
       },
-      "footerLeft": "Game Over",
+      "footerLeft": "Final",
       "footerRight": "下12局",
       "gameDate": "2026-09-02T23:40:00Z"
     },
@@ -964,8 +964,8 @@
       "league": "MLB",
       "date": "2026-09-02",
       "gamePk": 823983,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Angel Stadium",
       "awayTeam": {
         "id": 147,
@@ -979,8 +979,8 @@
         "abbreviation": "LAA",
         "logoKey": "LAA"
       },
-      "awayScore": 1,
-      "homeScore": 1,
+      "awayScore": 6,
+      "homeScore": 3,
       "innings": [
         1,
         2,
@@ -990,7 +990,8 @@
         6,
         7,
         8,
-        9
+        9,
+        10
       ],
       "awayLine": {
         "team": "NYY",
@@ -1003,10 +1004,11 @@
           0,
           0,
           0,
-          0
+          0,
+          5
         ],
-        "r": 1,
-        "h": 7,
+        "r": 6,
+        "h": 12,
         "e": 0
       },
       "homeLine": {
@@ -1020,14 +1022,15 @@
           0,
           1,
           0,
-          "-"
+          0,
+          2
         ],
-        "r": 1,
-        "h": 2,
+        "r": 3,
+        "h": 4,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "下9局",
+      "footerLeft": "Final",
+      "footerRight": "下10局",
       "gameDate": "2026-09-03T01:38:00Z"
     },
     {
@@ -1036,8 +1039,8 @@
       "league": "MLB",
       "date": "2026-09-02",
       "gamePk": 823906,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 138,
@@ -1051,15 +1054,19 @@
         "abbreviation": "LAD",
         "logoKey": "LAD"
       },
-      "awayScore": 2,
-      "homeScore": 5,
+      "awayScore": 8,
+      "homeScore": 6,
       "innings": [
         1,
         2,
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9,
+        10
       ],
       "awayLine": {
         "team": "STL",
@@ -1069,10 +1076,14 @@
           0,
           0,
           0,
-          2
+          2,
+          2,
+          1,
+          0,
+          3
         ],
-        "r": 2,
-        "h": 2,
+        "r": 8,
+        "h": 9,
         "e": 0
       },
       "homeLine": {
@@ -1083,14 +1094,18 @@
           0,
           0,
           0,
-          2
+          2,
+          0,
+          0,
+          0,
+          1
         ],
-        "r": 5,
-        "h": 8,
+        "r": 6,
+        "h": 11,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "End6局",
+      "footerLeft": "Final",
+      "footerRight": "下10局",
       "gameDate": "2026-09-03T02:10:00Z"
     }
   ],
@@ -1760,7 +1775,7 @@
         "date": "2026-09-02",
         "gamePk": 823660,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Target Field",
         "awayTeam": {
           "id": 116,
@@ -1830,7 +1845,7 @@
           "h": 9,
           "e": 1
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下12局",
         "gameDate": "2026-09-02T23:40:00Z"
       },
@@ -2056,8 +2071,8 @@
         "league": "MLB",
         "date": "2026-09-02",
         "gamePk": 823983,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 147,
@@ -2071,8 +2086,8 @@
           "abbreviation": "LAA",
           "logoKey": "LAA"
         },
-        "awayScore": 1,
-        "homeScore": 1,
+        "awayScore": 6,
+        "homeScore": 3,
         "innings": [
           1,
           2,
@@ -2082,7 +2097,8 @@
           6,
           7,
           8,
-          9
+          9,
+          10
         ],
         "awayLine": {
           "team": "NYY",
@@ -2095,10 +2111,11 @@
             0,
             0,
             0,
-            0
+            0,
+            5
           ],
-          "r": 1,
-          "h": 7,
+          "r": 6,
+          "h": 12,
           "e": 0
         },
         "homeLine": {
@@ -2112,14 +2129,15 @@
             0,
             1,
             0,
-            "-"
+            0,
+            2
           ],
-          "r": 1,
-          "h": 2,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下9局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-09-03T01:38:00Z"
       },
       {
@@ -2128,8 +2146,8 @@
         "league": "MLB",
         "date": "2026-09-02",
         "gamePk": 823906,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 138,
@@ -2143,15 +2161,19 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 2,
-        "homeScore": 5,
+        "awayScore": 8,
+        "homeScore": 6,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9,
+          10
         ],
         "awayLine": {
           "team": "STL",
@@ -2161,10 +2183,14 @@
             0,
             0,
             0,
-            2
+            2,
+            2,
+            1,
+            0,
+            3
           ],
-          "r": 2,
-          "h": 2,
+          "r": 8,
+          "h": 9,
           "e": 0
         },
         "homeLine": {
@@ -2175,14 +2201,18 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 5,
-          "h": 8,
+          "r": 6,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End6局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-09-03T02:10:00Z"
       }
     ]
@@ -2853,7 +2883,7 @@
         "date": "2026-09-02",
         "gamePk": 823660,
         "status": "FINAL",
-        "statusText": "Game Over",
+        "statusText": "Final",
         "venue": "Target Field",
         "awayTeam": {
           "id": 116,
@@ -2923,7 +2953,7 @@
           "h": 9,
           "e": 1
         },
-        "footerLeft": "Game Over",
+        "footerLeft": "Final",
         "footerRight": "下12局",
         "gameDate": "2026-09-02T23:40:00Z"
       },
@@ -3149,8 +3179,8 @@
         "league": "MLB",
         "date": "2026-09-02",
         "gamePk": 823983,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Angel Stadium",
         "awayTeam": {
           "id": 147,
@@ -3164,8 +3194,8 @@
           "abbreviation": "LAA",
           "logoKey": "LAA"
         },
-        "awayScore": 1,
-        "homeScore": 1,
+        "awayScore": 6,
+        "homeScore": 3,
         "innings": [
           1,
           2,
@@ -3175,7 +3205,8 @@
           6,
           7,
           8,
-          9
+          9,
+          10
         ],
         "awayLine": {
           "team": "NYY",
@@ -3188,10 +3219,11 @@
             0,
             0,
             0,
-            0
+            0,
+            5
           ],
-          "r": 1,
-          "h": 7,
+          "r": 6,
+          "h": 12,
           "e": 0
         },
         "homeLine": {
@@ -3205,14 +3237,15 @@
             0,
             1,
             0,
-            "-"
+            0,
+            2
           ],
-          "r": 1,
-          "h": 2,
+          "r": 3,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "下9局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-09-03T01:38:00Z"
       },
       {
@@ -3221,8 +3254,8 @@
         "league": "MLB",
         "date": "2026-09-02",
         "gamePk": 823906,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 138,
@@ -3236,15 +3269,19 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 2,
-        "homeScore": 5,
+        "awayScore": 8,
+        "homeScore": 6,
         "innings": [
           1,
           2,
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9,
+          10
         ],
         "awayLine": {
           "team": "STL",
@@ -3254,10 +3291,14 @@
             0,
             0,
             0,
-            2
+            2,
+            2,
+            1,
+            0,
+            3
           ],
-          "r": 2,
-          "h": 2,
+          "r": 8,
+          "h": 9,
           "e": 0
         },
         "homeLine": {
@@ -3268,14 +3309,18 @@
             0,
             0,
             0,
-            2
+            2,
+            0,
+            0,
+            0,
+            1
           ],
-          "r": 5,
-          "h": 8,
+          "r": 6,
+          "h": 11,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End6局",
+        "footerLeft": "Final",
+        "footerRight": "下10局",
         "gameDate": "2026-09-03T02:10:00Z"
       }
     ]
