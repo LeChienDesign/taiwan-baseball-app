@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T23:53:35.158Z",
+  "updatedAt": "2026-09-07T02:13:50.704Z",
   "date": "2026-09-06",
   "startDate": "2026-09-06",
   "endDate": "2026-09-06",
@@ -703,7 +703,7 @@
           0
         ],
         "r": 6,
-        "h": 9,
+        "h": 10,
         "e": 2
       },
       "homeLine": {
@@ -949,8 +949,8 @@
       "league": "MLB",
       "date": "2026-09-06",
       "gamePk": 824552,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Rate Field",
       "awayTeam": {
         "id": 142,
@@ -964,14 +964,18 @@
         "abbreviation": "CWS",
         "logoKey": "CWS"
       },
-      "awayScore": 0,
-      "homeScore": 1,
+      "awayScore": 1,
+      "homeScore": 10,
       "innings": [
         1,
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "MIN",
@@ -980,10 +984,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          1,
+          0,
           0
         ],
-        "r": 0,
-        "h": 2,
+        "r": 1,
+        "h": 4,
         "e": 0
       },
       "homeLine": {
@@ -993,14 +1001,18 @@
           0,
           0,
           0,
-          1
+          1,
+          3,
+          1,
+          5,
+          "-"
         ],
-        "r": 1,
-        "h": 4,
+        "r": 10,
+        "h": 12,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "End5局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-09-06T22:20:00Z"
     },
     {
@@ -1009,8 +1021,8 @@
       "league": "MLB",
       "date": "2026-09-06",
       "gamePk": 823903,
-      "status": "SCHEDULED",
-      "statusText": "Pre-Game",
+      "status": "LIVE",
+      "statusText": "In Progress",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 120,
@@ -1027,52 +1039,28 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
+        1
       ],
       "awayLine": {
         "team": "WSH",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
-        "h": 0,
+        "h": 2,
         "e": 0
       },
       "homeLine": {
         "team": "LAD",
         "innings": [
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
-          "-",
           "-"
         ],
         "r": 0,
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "10:10",
+      "footerLeft": "In Progress",
+      "footerRight": "上1局",
       "gameDate": "2026-09-07T02:10:00Z"
     }
   ],
@@ -1777,7 +1765,7 @@
             0
           ],
           "r": 6,
-          "h": 9,
+          "h": 10,
           "e": 2
         },
         "homeLine": {
@@ -2023,8 +2011,8 @@
         "league": "MLB",
         "date": "2026-09-06",
         "gamePk": 824552,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Rate Field",
         "awayTeam": {
           "id": 142,
@@ -2038,14 +2026,18 @@
           "abbreviation": "CWS",
           "logoKey": "CWS"
         },
-        "awayScore": 0,
-        "homeScore": 1,
+        "awayScore": 1,
+        "homeScore": 10,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -2054,10 +2046,14 @@
             0,
             0,
             0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 0,
-          "h": 2,
+          "r": 1,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -2067,14 +2063,18 @@
             0,
             0,
             0,
-            1
+            1,
+            3,
+            1,
+            5,
+            "-"
           ],
-          "r": 1,
-          "h": 4,
+          "r": 10,
+          "h": 12,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End5局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-09-06T22:20:00Z"
       },
       {
@@ -2083,8 +2083,8 @@
         "league": "MLB",
         "date": "2026-09-06",
         "gamePk": 823903,
-        "status": "SCHEDULED",
-        "statusText": "Pre-Game",
+        "status": "LIVE",
+        "statusText": "In Progress",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 120,
@@ -2101,52 +2101,28 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "10:10",
+        "footerLeft": "In Progress",
+        "footerRight": "上1局",
         "gameDate": "2026-09-07T02:10:00Z"
       }
     ]
@@ -2852,7 +2828,7 @@
             0
           ],
           "r": 6,
-          "h": 9,
+          "h": 10,
           "e": 2
         },
         "homeLine": {
@@ -3098,8 +3074,8 @@
         "league": "MLB",
         "date": "2026-09-06",
         "gamePk": 824552,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Rate Field",
         "awayTeam": {
           "id": 142,
@@ -3113,14 +3089,18 @@
           "abbreviation": "CWS",
           "logoKey": "CWS"
         },
-        "awayScore": 0,
-        "homeScore": 1,
+        "awayScore": 1,
+        "homeScore": 10,
         "innings": [
           1,
           2,
           3,
           4,
-          5
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "MIN",
@@ -3129,10 +3109,14 @@
             0,
             0,
             0,
+            0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 0,
-          "h": 2,
+          "r": 1,
+          "h": 4,
           "e": 0
         },
         "homeLine": {
@@ -3142,14 +3126,18 @@
             0,
             0,
             0,
-            1
+            1,
+            3,
+            1,
+            5,
+            "-"
           ],
-          "r": 1,
-          "h": 4,
+          "r": 10,
+          "h": 12,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End5局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-09-06T22:20:00Z"
       },
       {
@@ -3158,8 +3146,8 @@
         "league": "MLB",
         "date": "2026-09-06",
         "gamePk": 823903,
-        "status": "SCHEDULED",
-        "statusText": "Pre-Game",
+        "status": "LIVE",
+        "statusText": "In Progress",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 120,
@@ -3176,52 +3164,28 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
+          1
         ],
         "awayLine": {
           "team": "WSH",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
-          "h": 0,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
             "-"
           ],
           "r": 0,
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "10:10",
+        "footerLeft": "In Progress",
+        "footerRight": "上1局",
         "gameDate": "2026-09-07T02:10:00Z"
       }
     ]
