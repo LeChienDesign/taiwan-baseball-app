@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-08T00:27:59.310Z",
+  "updatedAt": "2026-09-08T04:11:38.143Z",
   "date": "2026-09-07",
   "startDate": "2026-09-07",
   "endDate": "2026-09-07",
@@ -589,8 +589,8 @@
       "league": "MLB",
       "date": "2026-09-07",
       "gamePk": 823175,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Oracle Park",
       "awayTeam": {
         "id": 138,
@@ -604,31 +604,61 @@
         "abbreviation": "SF",
         "logoKey": "SF"
       },
-      "awayScore": 0,
-      "homeScore": 1,
+      "awayScore": 4,
+      "homeScore": 5,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
       ],
       "awayLine": {
         "team": "STL",
         "innings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
           0
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 4,
+        "h": 9,
+        "e": 1
       },
       "homeLine": {
         "team": "SF",
         "innings": [
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
           1
         ],
-        "r": 1,
-        "h": 1,
+        "r": 5,
+        "h": 10,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "End1局",
+      "footerLeft": "Final",
+      "footerRight": "下11局",
       "gameDate": "2026-09-08T00:10:00Z"
     },
     {
@@ -637,8 +667,8 @@
       "league": "MLB",
       "date": "2026-09-07",
       "gamePk": 823902,
-      "status": "LIVE",
-      "statusText": "Pre-Game",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 113,
@@ -652,31 +682,55 @@
         "abbreviation": "LAD",
         "logoKey": "LAD"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 3,
+      "homeScore": 6,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "CIN",
         "innings": [
-          "-"
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 3,
+        "h": 7,
+        "e": 2
       },
       "homeLine": {
         "team": "LAD",
         "innings": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 6,
+        "h": 3,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "Final",
+      "footerRight": "上9局",
       "gameDate": "2026-09-08T01:10:00Z"
     },
     {
@@ -686,7 +740,7 @@
       "date": "2026-09-07",
       "gamePk": 824958,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "Sutter Health Park",
       "awayTeam": {
         "id": 141,
@@ -700,31 +754,49 @@
         "abbreviation": "ATH",
         "logoKey": "ATH"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 4,
+      "homeScore": 5,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "TOR",
         "innings": [
-          "-"
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          3
         ],
-        "r": 0,
-        "h": 0,
-        "e": 0
+        "r": 4,
+        "h": 7,
+        "e": 3
       },
       "homeLine": {
         "team": "ATH",
         "innings": [
+          2,
+          0,
+          2,
+          0,
+          1,
+          0,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 5,
+        "h": 4,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "下7局",
       "gameDate": "2026-09-08T02:05:00Z"
     }
   ],
@@ -1315,8 +1387,8 @@
         "league": "MLB",
         "date": "2026-09-07",
         "gamePk": 823175,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 138,
@@ -1330,31 +1402,61 @@
           "abbreviation": "SF",
           "logoKey": "SF"
         },
-        "awayScore": 0,
-        "homeScore": 1,
+        "awayScore": 4,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
             0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 4,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "SF",
           "innings": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
             1
           ],
-          "r": 1,
-          "h": 1,
+          "r": 5,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End1局",
+        "footerLeft": "Final",
+        "footerRight": "下11局",
         "gameDate": "2026-09-08T00:10:00Z"
       },
       {
@@ -1363,8 +1465,8 @@
         "league": "MLB",
         "date": "2026-09-07",
         "gamePk": 823902,
-        "status": "LIVE",
-        "statusText": "Pre-Game",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 113,
@@ -1378,31 +1480,55 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 6,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 7,
+          "e": 2
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 6,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-09-08T01:10:00Z"
       },
       {
@@ -1412,7 +1538,7 @@
         "date": "2026-09-07",
         "gamePk": 824958,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 141,
@@ -1426,31 +1552,49 @@
           "abbreviation": "ATH",
           "logoKey": "ATH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-"
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 4,
+          "h": 7,
+          "e": 3
         },
         "homeLine": {
           "team": "ATH",
           "innings": [
+            2,
+            0,
+            2,
+            0,
+            1,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下7局",
         "gameDate": "2026-09-08T02:05:00Z"
       }
     ]
@@ -2042,8 +2186,8 @@
         "league": "MLB",
         "date": "2026-09-07",
         "gamePk": 823175,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Oracle Park",
         "awayTeam": {
           "id": 138,
@@ -2057,31 +2201,61 @@
           "abbreviation": "SF",
           "logoKey": "SF"
         },
-        "awayScore": 0,
-        "homeScore": 1,
+        "awayScore": 4,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
         ],
         "awayLine": {
           "team": "STL",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
             0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 4,
+          "h": 9,
+          "e": 1
         },
         "homeLine": {
           "team": "SF",
           "innings": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
             1
           ],
-          "r": 1,
-          "h": 1,
+          "r": 5,
+          "h": 10,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "End1局",
+        "footerLeft": "Final",
+        "footerRight": "下11局",
         "gameDate": "2026-09-08T00:10:00Z"
       },
       {
@@ -2090,8 +2264,8 @@
         "league": "MLB",
         "date": "2026-09-07",
         "gamePk": 823902,
-        "status": "LIVE",
-        "statusText": "Pre-Game",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 113,
@@ -2105,31 +2279,55 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 3,
+        "homeScore": 6,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "CIN",
           "innings": [
-            "-"
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 3,
+          "h": 7,
+          "e": 2
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 6,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "Final",
+        "footerRight": "上9局",
         "gameDate": "2026-09-08T01:10:00Z"
       },
       {
@@ -2139,7 +2337,7 @@
         "date": "2026-09-07",
         "gamePk": 824958,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "Sutter Health Park",
         "awayTeam": {
           "id": 141,
@@ -2153,31 +2351,49 @@
           "abbreviation": "ATH",
           "logoKey": "ATH"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 4,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "TOR",
           "innings": [
-            "-"
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            3
           ],
-          "r": 0,
-          "h": 0,
-          "e": 0
+          "r": 4,
+          "h": 7,
+          "e": 3
         },
         "homeLine": {
           "team": "ATH",
           "innings": [
+            2,
+            0,
+            2,
+            0,
+            1,
+            0,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 4,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "下7局",
         "gameDate": "2026-09-08T02:05:00Z"
       }
     ]
