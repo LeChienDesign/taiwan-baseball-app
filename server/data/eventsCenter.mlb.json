@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-03T19:00:16.689Z",
+  "updatedAt": "2026-10-03T22:06:02.178Z",
   "date": "2026-10-03",
   "startDate": "2026-10-03",
   "endDate": "2026-10-03",
@@ -10,8 +10,8 @@
       "league": "MLB",
       "date": "2026-10-03",
       "gamePk": 849829,
-      "status": "LIVE",
-      "statusText": "In Progress",
+      "status": "FINAL",
+      "statusText": "Final",
       "venue": "Progressive Field",
       "awayTeam": {
         "id": 145,
@@ -25,7 +25,7 @@
         "abbreviation": "CLE",
         "logoKey": "CLE"
       },
-      "awayScore": 2,
+      "awayScore": 3,
       "homeScore": 0,
       "innings": [
         1,
@@ -33,7 +33,10 @@
         3,
         4,
         5,
-        6
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "CWS",
@@ -43,10 +46,13 @@
           0,
           2,
           0,
+          0,
+          1,
+          0,
           0
         ],
-        "r": 2,
-        "h": 5,
+        "r": 3,
+        "h": 6,
         "e": 0
       },
       "homeLine": {
@@ -57,14 +63,17 @@
           0,
           0,
           0,
-          "-"
+          0,
+          0,
+          0,
+          0
         ],
         "r": 0,
-        "h": 1,
+        "h": 3,
         "e": 0
       },
-      "footerLeft": "In Progress",
-      "footerRight": "Middle6局",
+      "footerLeft": "Final",
+      "footerRight": "下9局",
       "gameDate": "2026-10-03T17:00:00Z"
     },
     {
@@ -74,7 +83,7 @@
       "date": "2026-10-03",
       "gamePk": 849828,
       "status": "LIVE",
-      "statusText": "Pre-Game",
+      "statusText": "In Progress",
       "venue": "UNIQLO Field at Dodger Stadium",
       "awayTeam": {
         "id": 144,
@@ -88,31 +97,49 @@
         "abbreviation": "LAD",
         "logoKey": "LAD"
       },
-      "awayScore": 0,
-      "homeScore": 0,
+      "awayScore": 1,
+      "homeScore": 5,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "awayLine": {
         "team": "ATL",
         "innings": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 1,
+        "h": 2,
         "e": 0
       },
       "homeLine": {
         "team": "LAD",
         "innings": [
+          0,
+          0,
+          0,
+          2,
+          0,
+          3,
           "-"
         ],
-        "r": 0,
-        "h": 0,
+        "r": 5,
+        "h": 7,
         "e": 0
       },
-      "footerLeft": "Pre-Game",
-      "footerRight": "上1局",
+      "footerLeft": "In Progress",
+      "footerRight": "上7局",
       "gameDate": "2026-10-03T20:00:00Z"
     },
     {
@@ -139,11 +166,27 @@
       "awayScore": 0,
       "homeScore": 0,
       "innings": [
-        1
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
       ],
       "awayLine": {
         "team": "NYY",
         "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
           "-"
         ],
         "r": 0,
@@ -153,6 +196,14 @@
       "homeLine": {
         "team": "TB",
         "innings": [
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
+          "-",
           "-"
         ],
         "r": 0,
@@ -169,8 +220,8 @@
       "league": "MLB",
       "date": "2026-10-03",
       "gamePk": 849830,
-      "status": "SCHEDULED",
-      "statusText": "Scheduled",
+      "status": "LIVE",
+      "statusText": "Pre-Game",
       "venue": "American Family Field",
       "awayTeam": {
         "id": 135,
@@ -231,8 +282,8 @@
         "h": 0,
         "e": 0
       },
-      "footerLeft": "Scheduled",
-      "footerRight": "08:30",
+      "footerLeft": "Pre-Game",
+      "footerRight": "上1局",
       "gameDate": "2026-10-04T00:30:00Z"
     }
   ],
@@ -244,8 +295,8 @@
         "league": "MLB",
         "date": "2026-10-03",
         "gamePk": 849829,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Progressive Field",
         "awayTeam": {
           "id": 145,
@@ -259,7 +310,7 @@
           "abbreviation": "CLE",
           "logoKey": "CLE"
         },
-        "awayScore": 2,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
           1,
@@ -267,7 +318,10 @@
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "CWS",
@@ -277,10 +331,13 @@
             0,
             2,
             0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 2,
-          "h": 5,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
@@ -291,14 +348,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-10-03T17:00:00Z"
       },
       {
@@ -308,7 +368,7 @@
         "date": "2026-10-03",
         "gamePk": 849828,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 144,
@@ -322,31 +382,49 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上7局",
         "gameDate": "2026-10-03T20:00:00Z"
       },
       {
@@ -373,11 +451,27 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "NYY",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -387,6 +481,14 @@
         "homeLine": {
           "team": "TB",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -403,8 +505,8 @@
         "league": "MLB",
         "date": "2026-10-03",
         "gamePk": 849830,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 135,
@@ -465,8 +567,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "08:30",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-10-04T00:30:00Z"
       }
     ]
@@ -479,8 +581,8 @@
         "league": "MLB",
         "date": "2026-10-03",
         "gamePk": 849829,
-        "status": "LIVE",
-        "statusText": "In Progress",
+        "status": "FINAL",
+        "statusText": "Final",
         "venue": "Progressive Field",
         "awayTeam": {
           "id": 145,
@@ -494,7 +596,7 @@
           "abbreviation": "CLE",
           "logoKey": "CLE"
         },
-        "awayScore": 2,
+        "awayScore": 3,
         "homeScore": 0,
         "innings": [
           1,
@@ -502,7 +604,10 @@
           3,
           4,
           5,
-          6
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "CWS",
@@ -512,10 +617,13 @@
             0,
             2,
             0,
+            0,
+            1,
+            0,
             0
           ],
-          "r": 2,
-          "h": 5,
+          "r": 3,
+          "h": 6,
           "e": 0
         },
         "homeLine": {
@@ -526,14 +634,17 @@
             0,
             0,
             0,
-            "-"
+            0,
+            0,
+            0,
+            0
           ],
           "r": 0,
-          "h": 1,
+          "h": 3,
           "e": 0
         },
-        "footerLeft": "In Progress",
-        "footerRight": "Middle6局",
+        "footerLeft": "Final",
+        "footerRight": "下9局",
         "gameDate": "2026-10-03T17:00:00Z"
       },
       {
@@ -543,7 +654,7 @@
         "date": "2026-10-03",
         "gamePk": 849828,
         "status": "LIVE",
-        "statusText": "Pre-Game",
+        "statusText": "In Progress",
         "venue": "UNIQLO Field at Dodger Stadium",
         "awayTeam": {
           "id": 144,
@@ -557,31 +668,49 @@
           "abbreviation": "LAD",
           "logoKey": "LAD"
         },
-        "awayScore": 0,
-        "homeScore": 0,
+        "awayScore": 1,
+        "homeScore": 5,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "awayLine": {
           "team": "ATL",
           "innings": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 1,
+          "h": 2,
           "e": 0
         },
         "homeLine": {
           "team": "LAD",
           "innings": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            3,
             "-"
           ],
-          "r": 0,
-          "h": 0,
+          "r": 5,
+          "h": 7,
           "e": 0
         },
-        "footerLeft": "Pre-Game",
-        "footerRight": "上1局",
+        "footerLeft": "In Progress",
+        "footerRight": "上7局",
         "gameDate": "2026-10-03T20:00:00Z"
       },
       {
@@ -608,11 +737,27 @@
         "awayScore": 0,
         "homeScore": 0,
         "innings": [
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
         ],
         "awayLine": {
           "team": "NYY",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -622,6 +767,14 @@
         "homeLine": {
           "team": "TB",
           "innings": [
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
             "-"
           ],
           "r": 0,
@@ -638,8 +791,8 @@
         "league": "MLB",
         "date": "2026-10-03",
         "gamePk": 849830,
-        "status": "SCHEDULED",
-        "statusText": "Scheduled",
+        "status": "LIVE",
+        "statusText": "Pre-Game",
         "venue": "American Family Field",
         "awayTeam": {
           "id": 135,
@@ -700,8 +853,8 @@
           "h": 0,
           "e": 0
         },
-        "footerLeft": "Scheduled",
-        "footerRight": "08:30",
+        "footerLeft": "Pre-Game",
+        "footerRight": "上1局",
         "gameDate": "2026-10-04T00:30:00Z"
       }
     ]
